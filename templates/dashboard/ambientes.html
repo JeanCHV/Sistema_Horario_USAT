@@ -1,0 +1,70 @@
+{% extends "dashboard/index.html" %}
+{% block titulo %} Ambientes {% endblock %}
+{% block contenido %}
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" ><a href="{{url_for('index')}}">Inicio</a></li>
+        <li class="breadcrumb-item active"><a href="{{url_for('ambientes')}}">Ambientes</a></li>
+
+    </ol>
+</nav>
+<script>
+    // $(".breadcrumb-item").on("click", function (e) {
+    //     var tmphref = $(this).attr("data-href");
+    //     if (tmphref) {
+    //         $("#container-body").load("/Pages/" + tmphref, function () { });
+    //     }
+    //     else {
+    //         window.location.reload();
+    //     }
+    // });
+</script>
+<div class="container">
+    <h2>Ambientes</h2>
+
+    <!-- Dropdown para seleccionar ambiente y tipo -->
+    <div class="form-row mb-3">
+        <div class="col-md-3">
+            
+            <select class="form-control" id="ambiente">
+                <option value="">Todos los ambientes</option>
+                <option value="1">Ambiente 1</option>
+                <option value="2">Ambiente 2</option>
+                <option value="3">Ambiente 3</option>
+                <!-- Agregar más opciones según sea necesario -->
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-control" id="tipo_ambiente">
+                <option value="">Tipo ambiente</option>
+                <option value="1">Tipo 1</option>
+                <option value="2">Tipo 2</option>
+                <option value="3">Tipo 3</option>
+                <!-- Agregar más opciones según sea necesario -->
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabla para mostrar los cursos -->
+    <table id="tabla-ambiente" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Tipo Ambiente</th>
+                <th>Estado</th>
+                <!-- Agregar más columnas según sea necesario -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Script para inicializar el DataTable y realizar la búsqueda -->
+<script>
+    $(document).ready(function() {
+        $('#tabla-ambiente').DataTable();
+    });
+</script>
+{% endblock %}
