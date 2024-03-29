@@ -19,5 +19,14 @@ def ambientes():
 def cursos():
     return render_template("dashboard/cursos.html")
 
+
+@app.route("/docentes")
+def docentes():
+    return render_template("dashboard/docentes.html")
+
+@app.route("/horarios")
+def horarios():
+    return render_template("dashboard/horarios.html")
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)
