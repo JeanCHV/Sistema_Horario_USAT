@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <!-- Required meta tags -->
@@ -16,6 +16,7 @@
     <style>
         .bg {
             display: flex;
+            background-size: cover;
         }
 
         .contents {
@@ -28,12 +29,21 @@
 
         .col-md-7 img {
             margin-bottom: 20px;
+            max-width: 100%;
+            height: auto;
         }
 
         .form-group input {
             width: 100%;
         }
     </style>
+    <style>
+        .btn-primary:hover {
+            background-color: #28a745; /* Cambia el color de fondo al pasar el cursor */
+            border-color: #28a745; /* Cambia el color del borde al pasar el cursor */
+        }
+    </style>
+    
 </head>
 
 <body>
@@ -70,22 +80,31 @@
                                 <span class="ml-auto"><a href="#" class="forgot-pass">Olvidé mi Contraseña</a></span>
                             </div>
 
-                            <a href="{{url_for('index')}}" class="btn btn-block btn-primary">Acceder al Sistema</a>
-                            <!-- <form action="{{ url_for('index') }}" >
-                                <input type="submit" value="Acceder al Sistema" class="btn btn-block btn-primary">
-                            </form> -->
-                            
+                            <a href="{{url_for('index')}}" class="btn btn-primary btn-lg btn-block my-4"><strong>Acceder al Sistema</strong></a>
 
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        
-
     </div>
 
+    <script>
+        // Función para ocultar el div con la clase 'bg' en dispositivos móviles
+        function hideBgOnMobile() {
+            var screenWidth = window.innerWidth;
+            var bgDiv = document.querySelector('.bg');
+            if (screenWidth <= 991) { // Cambia 768 por el ancho deseado para dispositivos móviles
+                bgDiv.style.display = 'none';
+            } else {
+                bgDiv.style.display = 'flex'; // Mostrar en dispositivos de escritorio
+            }
+        }
 
+        // Ejecutar la función al cargar la página y cuando se redimensiona la ventana
+        window.onload = hideBgOnMobile;
+        window.onresize = hideBgOnMobile;
+    </script>
 
     <script src="{{ url_for('static', filename='login/js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='login/js/popper.min.js') }}"></script>

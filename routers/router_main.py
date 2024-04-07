@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, redirect, jsonify
 from main import app
 
+import controladores.usuario.usuario as controlador_usuarios
+import clases.usuario_clase as usuario_clase
+
+
 
 @app.route("/")
 @app.route("/login")
@@ -28,4 +32,3 @@ def docentes():
 @app.route("/horarios")
 def horarios():
     return render_template("dashboard/horarios.html")
-

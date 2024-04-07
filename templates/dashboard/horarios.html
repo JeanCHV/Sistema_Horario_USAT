@@ -5,7 +5,7 @@
 {% block contenido %}
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item" ><a href="{{url_for('index')}}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
         <li class="breadcrumb-item active"><a href="{{url_for('horarios')}}">Horarios</a></li>
 
     </ol>
@@ -25,9 +25,9 @@
     <h2>Horarios</h2>
 
     <!-- Dropdown para seleccionar semestre y escuela -->
-    <div class="form-row mb-3">
-        <div class="col-md-3">
-            
+    <div class="form-row sd-6">
+        <div class="col-auto">
+
             <select class="form-control" id="semestre">
                 <option value="">Todos los semestres</option>
                 <option value="1">Semestre 1</option>
@@ -35,8 +35,6 @@
                 <option value="3">Semestre 3</option>
                 <!-- Agregar más opciones según sea necesario -->
             </select>
-        </div>
-        <div class="col-md-3">
             <select class="form-control" id="escuela">
                 <option value="">Todas las escuelas</option>
                 <option value="1">Escuela 1</option>
@@ -44,6 +42,9 @@
                 <option value="3">Escuela 3</option>
                 <!-- Agregar más opciones según sea necesario -->
             </select>
+        </div>
+        <div class="col-md-3">
+
         </div>
     </div>
 
@@ -65,8 +66,16 @@
 
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
 <script>
-    $(document).ready(function() {
-        $('#tabla-cursos').DataTable();
+    $(document).ready(function () {
+        $('#tabla-cursos').DataTable({
+            "paging": false,
+            "info": false,
+            "stateSave": true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/2.0.3/i18n/es-ES.json',
+            },
+
+        });
     });
 </script>
 {% endblock %}

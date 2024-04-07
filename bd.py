@@ -5,4 +5,4 @@ def obtener_conexion():
                                 port=3306,
                                 user='root',
                                 password='',
-                                db='noticia')
+                                db='db_calidad')
