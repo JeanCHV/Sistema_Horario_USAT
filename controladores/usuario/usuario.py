@@ -11,3 +11,4 @@ def obtener_usuarios():
         usuarios = cursor.fetchall()
     conexion.close()
     return usuarios
+
