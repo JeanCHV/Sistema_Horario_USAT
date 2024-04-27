@@ -1,0 +1,18 @@
+{% extends "dashboard/index.html" %}
+{% block titulo %} Horarios por docente {% endblock %}
+{% block contenido %}
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" ><a href="{{url_for('index')}}">Inicio</a></li>
+        <li class="breadcrumb-item active"><a href="{{url_for('horarios')}}">Ambientes</a></li>
+
+    </ol>
+</nav>
+
+<ul class="bg-red-usat nav p-4">
+    <li class="nav-item">
+      <a>Horarios asignados por docente</a><br>
+    </li>
+  </ul>
+
+{% endblock %}
