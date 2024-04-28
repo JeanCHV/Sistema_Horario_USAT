@@ -9,10 +9,34 @@
     </ol>
 </nav>
 
-<ul class="bg-red-usat nav p-4">
+<ul class="bg-red-usat nav p-3">
     <li class="nav-item">
       <a>Horarios asignados por docente</a><br>
     </li>
-  </ul>
+</ul>
+
+<div class="row g-3 align-items-center m-3 p-3" style="background-color: white;">
+    <div class="mb-3 row">
+        <label for="staticEmail" class="col-sm-2 col-form-label">Semestre académico</label>
+        <div class="col-sm-10">
+            <select class="form-select" aria-label="Default select example">
+                <option selected>[-- SELECCIONE --]</option>
+                <option value="1">2024-I</option>
+                <option value="2">2023-II</option>
+                <option value="3">2023-I</option>
+                <option value="4">2022-II</option>
+                <option value="5">2021-I</option>
+                <option value="4">2020-II</option>
+                <option value="5">2020-I</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Docente</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" id="exampleFormControlInput1">
+        </div>
+    </div>
+</div>
 
 {% endblock %}

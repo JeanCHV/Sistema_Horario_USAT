@@ -3,14 +3,18 @@
     src: url(/static/css/Arial_Greek_Regular.ttf);
 }
 
+/* Color principal para botones y cuadros con mensajes */
 .bg-red-usat{
     background-color: #E33439;
     color: white;
 }
 
+/* Color para fondo de pantalla */
 .bg-grey-usat{
     background-color: #E8EBF1;
 }
+
+
 
 .text-red-usat{
     color: #E33439
