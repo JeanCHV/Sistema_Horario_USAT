@@ -3,7 +3,7 @@ class Usuario:
     username = ""
     password = ""
     estado = True
-    idpersona = ""
+    idpersona = 0
     token = ""
 
     def __init__(self, p_idusuario,p_username,p_password,p_estado,p_idpersona,p_token):

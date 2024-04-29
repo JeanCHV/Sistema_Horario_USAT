@@ -118,7 +118,6 @@
 
 			</div>
 		</nav>
-
 		<div class="main bg-grey-usat">
 
 			<nav class="navbar navbar-expand navbar-light navbar-bg sticky-top">
@@ -159,14 +158,14 @@
 							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#"
 								data-bs-toggle="dropdown">
 
-								<img id="github-profile-pic" class="avatar img-fluid rounded me-1" alt="User" />
-								<span id="usernamenav" class="text-dark"></span>
+								<img id="github-profile-pic" src="static/img/{{foto}}" class="avatar img-fluid rounded me-1" alt="foto"/>
+								<span id="usernamenav" class="text-dark">{{primer_nombre}}</span>
 							</a>
 							<div class="dropdown-menu dropdown-menu-end">
 								<a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1"
 										data-feather="user"></i> Perfil</a>
 								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="{{url_for('login')}}">Cerrar Sesión</a>
+								<a class="dropdown-item" href="{{url_for('logout')}}">Cerrar Sesión</a>
 							</div>
 						</li>
 					</ul>
@@ -187,7 +186,7 @@
 			<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
 
 
-			<script>
+			<!-- <script>
 				var username = "JeanCHV";
 				// URL de la API de GitHub para obtener información del usuario
 				var url = "https://api.github.com/users/" + username;
@@ -203,7 +202,7 @@
 					.catch(error => {
 						console.error("Error al obtener la foto de perfil:", error);
 					});
-			</script>
+			</script> -->
 			<main class="content" id="container-body">
 				{%block contenido %} {% endblock %}
 			</main>
