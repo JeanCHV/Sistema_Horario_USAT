@@ -19,174 +19,195 @@
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-2.0.3/datatables.min.css" />
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+	<link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.5.0/css/rowReorder.bootstrap5.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.bootstrap5.css">
 
-    <style>
-        .loader-wrapper {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.7); /* fondo semi-transparente */
-            z-index: 9999; /* asegura que la pantalla de carga esté en la parte superior */
-            display: none; /* ocultar por defecto */
-        }
+	<style>
+		.loader-wrapper {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255, 255, 255, 0.7);
+			/* fondo semi-transparente */
+			z-index: 9999;
+			/* asegura que la pantalla de carga esté en la parte superior */
+			display: none;
+			/* ocultar por defecto */
+		}
 
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 4px solid #3498db;
-            width: 50px;
-            height: 50px;
-            animation: spin 2s linear infinite;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            margin-top: -25px; /* mitad de la altura del loader */
-            margin-left: -25px; /* mitad del ancho del loader */
-        }
+		.loader {
+			border: 4px solid #f3f3f3;
+			border-radius: 50%;
+			border-top: 4px solid #3498db;
+			width: 50px;
+			height: 50px;
+			animation: spin 2s linear infinite;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-top: -25px;
+			/* mitad de la altura del loader */
+			margin-left: -25px;
+			/* mitad del ancho del loader */
+		}
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
+			}
+
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+	</style>
 </head>
 
 <body>
 	<div class="wrapper">
-        <!-- Pantalla de carga -->
-        <div id="loader" class="loader-wrapper">
-            <div class="loader"></div>
-        </div>
-	<div class="wrapper">
-		<nav id="sidebar" class="sidebar js-sidebar">
-			<div class="sidebar-content js-simplebar">
+		<!-- Pantalla de carga -->
+		<div id="loader" class="loader-wrapper">
+			<div class="loader"></div>
+		</div>
+		<div class="wrapper">
+			<nav id="sidebar" class="sidebar js-sidebar">
+				<div class="sidebar-content js-simplebar">
 
-				<a class="sidebar-brand" href="{{url_for('index')}}">
-					<img src="{{ url_for('static', filename='login/images/usat_logo_blank.png') }}" alt="logoescuela"
-						style="max-width: 110px; display: flex;">
-				</a>
+					<a class="sidebar-brand" href="{{url_for('index')}}">
+						<img src="{{ url_for('static', filename='login/images/usat_logo_blank.png') }}"
+							alt="logoescuela" style="max-width: 110px; display: flex;">
+					</a>
 
-				<ul class="sidebar-nav">
-					<li class="sidebar-header">
-						Inicio
-					</li>
+					<ul class="sidebar-nav">
+						<li class="sidebar-header">
+							Inicio
+						</li>
 
-					<li class="sidebar-item ">
-						<a class="sidebar-link" href="{{url_for('index')}}">
-							<i class="align-middle" data-feather="sliders"></i> <span
-								class="align-middle">Resumen</span>
-						</a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="pages-profile.html">
-							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Perfil</span>
-						</a>
-					</li>
-					<li class="sidebar-header">
-						Gestión
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{url_for('ambientes')}}">
-							<i class="align-middle" data-feather="square"></i> <span
-								class="align-middle">Ambientes</span>
-						</a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{url_for('cursos')}}">
-							<i class="align-middle" data-feather="check-square"></i> <span
-								class="align-middle">Cursos</span>
-						</a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{url_for('docentes')}}">
-							<i class="align-middle" data-feather="grid"></i> <span class="align-middle">Docentes</span>
-						</a>
-					</li>
-
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{{url_for('horarios')}}">
-							<i class="align-middle" data-feather="align-left"></i> <span
-								class="align-middle">Horarios</span>
-						</a>
-					</li>
-				</ul>
-
-
-			</div>
-		</nav>
-		<div class="main bg-grey-usat">
-
-			<nav class="navbar navbar-expand navbar-light navbar-bg sticky-top">
-				<a class="sidebar-toggle js-sidebar-toggle">
-					<i class="hamburger align-self-center"></i>
-				</a>
-				<div class="navbar-collapse collapse">
-					
-					<ul class="navbar-nav navbar-align">
-						<button class="theme-toggle" id="theme-toggle" title="Activar/desactivar modo oscuro" aria-label="auto" aria-live="polite" style="border: none; background: none; color: black;">
-							<svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
-							  <mask class="moon" id="moon-mask">
-								<rect x="0" y="0" width="100%" height="100%" fill="white" />
-								<circle cx="24" cy="10" r="6" fill="black" />
-							  </mask>
-							  <circle class="sun" cx="12" cy="12" r="6" mask="url(#moon-mask)" fill="currentColor" />
-							  <g class="sun-beams" stroke="currentColor">
-								<line x1="12" y1="1" x2="12" y2="3" />
-								<line x1="12" y1="21" x2="12" y2="23" />
-								<line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-								<line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-								<line x1="1" y1="12" x2="3" y2="12" />
-								<line x1="21" y1="12" x2="23" y2="12" />
-								<line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-								<line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-							   </g>
-							</svg>
-						  </button>
-						  
-						  
-						  
-						<li class="nav-item dropdown">
-							<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#"
-								data-bs-toggle="dropdown">
-								<i class="align-middle" data-feather="settings"></i>
+						<li class="sidebar-item ">
+							<a class="sidebar-link" href="{{url_for('index')}}">
+								<i class="align-middle" data-feather="sliders"></i> <span
+									class="align-middle">Resumen</span>
 							</a>
+						</li>
 
-							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#"
-								data-bs-toggle="dropdown">
-
-								<img id="github-profile-pic" src="static/img/{{foto}}" class="avatar img-fluid rounded me-1" alt="foto"/>
-								<span id="usernamenav" class="text-dark">{{primer_nombre}}</span>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="pages-profile.html">
+								<i class="align-middle" data-feather="user"></i> <span
+									class="align-middle">Perfil</span>
 							</a>
-							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1"
-										data-feather="user"></i> Perfil</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="{{url_for('logout')}}">Cerrar Sesión</a>
-							</div>
+						</li>
+						<li class="sidebar-header">
+							Gestión
+						</li>
+
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{{url_for('ambientes')}}">
+								<i class="align-middle" data-feather="square"></i> <span
+									class="align-middle">Ambientes</span>
+							</a>
+						</li>
+
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{{url_for('cursos')}}">
+								<i class="align-middle" data-feather="check-square"></i> <span
+									class="align-middle">Cursos</span>
+							</a>
+						</li>
+
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{{url_for('docentes')}}">
+								<i class="align-middle" data-feather="grid"></i> <span
+									class="align-middle">Docentes</span>
+							</a>
+						</li>
+
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{{url_for('horarios')}}">
+								<i class="align-middle" data-feather="align-left"></i> <span
+									class="align-middle">Horarios</span>
+							</a>
 						</li>
 					</ul>
+
+
 				</div>
 			</nav>
-			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-				integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-				crossorigin="anonymous"></script>
-			<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-				integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-				crossorigin="anonymous"></script>
-			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-				integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-				crossorigin="anonymous"></script>
-			<script src="{{ url_for('static', filename='dashboard/js/app.js') }}"></script>
-			<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
-			<!-- Datatables libraries -->
-			<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+			<div class="main bg-grey-usat">
+
+				<nav class="navbar navbar-expand navbar-light navbar-bg sticky-top">
+					<a class="sidebar-toggle js-sidebar-toggle">
+						<i class="hamburger align-self-center"></i>
+					</a>
+					<div class="navbar-collapse collapse">
+
+						<ul class="navbar-nav navbar-align">
+							<button class="theme-toggle" id="theme-toggle" title="Activar/desactivar modo oscuro"
+								aria-label="auto" aria-live="polite"
+								style="border: none; background: none; color: black;">
+								<svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
+									<mask class="moon" id="moon-mask">
+										<rect x="0" y="0" width="100%" height="100%" fill="white" />
+										<circle cx="24" cy="10" r="6" fill="black" />
+									</mask>
+									<circle class="sun" cx="12" cy="12" r="6" mask="url(#moon-mask)"
+										fill="currentColor" />
+									<g class="sun-beams" stroke="currentColor">
+										<line x1="12" y1="1" x2="12" y2="3" />
+										<line x1="12" y1="21" x2="12" y2="23" />
+										<line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+										<line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+										<line x1="1" y1="12" x2="3" y2="12" />
+										<line x1="21" y1="12" x2="23" y2="12" />
+										<line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+										<line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+									</g>
+								</svg>
+							</button>
 
 
-			<!-- <script>
+
+							<li class="nav-item dropdown">
+								<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#"
+									data-bs-toggle="dropdown">
+									<i class="align-middle" data-feather="settings"></i>
+								</a>
+
+								<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#"
+									data-bs-toggle="dropdown">
+
+									<img id="github-profile-pic" src="static/img/{{foto}}"
+										class="avatar img-fluid rounded me-1" alt="foto" />
+									<span id="usernamenav" class="text-dark">{{primer_nombre}}</span>
+								</a>
+								<div class="dropdown-menu dropdown-menu-end">
+									<a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1"
+											data-feather="user"></i> Perfil</a>
+									<div class="dropdown-divider"></div>
+									<a class="dropdown-item" href="{{url_for('logout')}}">Cerrar Sesión</a>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</nav>
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+					integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+					crossorigin="anonymous"></script>
+				<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+					integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+					crossorigin="anonymous"></script>
+				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+					integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+					crossorigin="anonymous"></script>
+				<script src="{{ url_for('static', filename='dashboard/js/app.js') }}"></script>
+				<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+				<!-- Datatables libraries -->
+				<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+				<script src="https://cdn.datatables.net/rowreorder/1.5.0/js/dataTables.rowReorder.js"></script>
+				<script src="https://cdn.datatables.net/rowreorder/1.5.0/js/rowReorder.bootstrap5.js"></script>
+				<script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
+				<script src="https://cdn.datatables.net/responsive/3.0.2/js/responsive.bootstrap5.js"></script>
+
+				<!-- <script>
 				var username = "JeanCHV";
 				// URL de la API de GitHub para obtener información del usuario
 				var url = "https://api.github.com/users/" + username;
@@ -203,40 +224,41 @@
 						console.error("Error al obtener la foto de perfil:", error);
 					});
 			</script> -->
-			<main class="content" id="container-body">
-				{%block contenido %} {% endblock %}
-			</main>
-			<footer class="footer">
-				<div class="container-fluid">
-					<div class="row text-muted">
-						<div class="col-6 text-start">
-							<p class="mb-0">
-								<a class="text-muted" href="https://adminkit.io/"
-									target="_blank"><strong>USAT</strong></a> - <a class="text-muted"
-									href="https://adminkit.io/" target="_blank"><strong>2024-I</strong></a> &copy;
-							</p>
+				<main class="content" id="container-body" style="padding: 15px;">
+					{%block contenido %} {% endblock %}
+				</main>
+				<footer class="footer">
+					<div class="container-fluid">
+						<div class="row text-muted">
+							<div class="col-6 text-start">
+								<p class="mb-0">
+									<a class="text-muted" href="https://adminkit.io/"
+										target="_blank"><strong>USAT</strong></a> - <a class="text-muted"
+										href="https://adminkit.io/" target="_blank"><strong>2024-I</strong></a> &copy;
+								</p>
+							</div>
 						</div>
 					</div>
-				</div>
-			</footer>
+				</footer>
+			</div>
 		</div>
-	</div>
 
 
 </body>
-    <!-- Script para mostrar la pantalla de carga al hacer clic en los enlaces de la barra lateral -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Selecciona todos los elementos con la clase 'sidebar-link'
-            var sidebarLinks = document.querySelectorAll(".sidebar-link");
+<!-- Script para mostrar la pantalla de carga al hacer clic en los enlaces de la barra lateral -->
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		// Selecciona todos los elementos con la clase 'sidebar-link'
+		var sidebarLinks = document.querySelectorAll(".sidebar-link");
 
-            // Agrega un evento 'click' a cada elemento 'sidebar-link'
-            sidebarLinks.forEach(function(link) {
-                link.addEventListener("click", function() {
-                    // Muestra la pantalla de carga al hacer clic
-                    document.getElementById("loader").style.display = "block";
-                });
-            });
-        });
-    </script>
+		// Agrega un evento 'click' a cada elemento 'sidebar-link'
+		sidebarLinks.forEach(function (link) {
+			link.addEventListener("click", function () {
+				// Muestra la pantalla de carga al hacer clic
+				document.getElementById("loader").style.display = "block";
+			});
+		});
+	});
+</script>
+
 </html>

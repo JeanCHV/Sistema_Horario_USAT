@@ -3,7 +3,7 @@
 {% block contenido %}
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item" ><a href="{{url_for('index')}}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
         <li class="breadcrumb-item active"><a href="{{url_for('ambientes')}}">Ambientes</a></li>
 
     </ol>
@@ -20,10 +20,49 @@
     // });
 </script>
 <div class="container">
-    <h2>Ambientes</h2>
 
-    <!-- Dropdown para seleccionar ambiente y tipo -->
-    <div class="form-row mb-3">
+
+    <div class="card" id="card_ambientes">
+        <div class="card-header bg-primary text-white" id="headingOne" data-bs-toggle="collapse"
+            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            Ambientes
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+
+            <div class="card-body">
+                <div class="search-box">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="text" id="buscar_ambientes" class="form-control"
+                                    placeholder="Buscar Ambientes...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body show">
+                    <!-- Tabla para mostrar los cursos -->
+                    <table id="tabla-ambiente" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo Ambiente</th>
+                                <th>Estado</th>
+                                <!-- Agregar más columnas según sea necesario -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <a href="#" id="btn_agregar_ambiente" data-href="ambiente_agregar.html" class="btn btn-success">Agregar Nuevo
+            Ambiente</a>
+    </div>
+    <!-- <div class="form-row mb-3">
         <div class="col-md-3">
             
             <select class="form-control" id="ambiente">
@@ -31,7 +70,6 @@
                 <option value="1">Ambiente 1</option>
                 <option value="2">Ambiente 2</option>
                 <option value="3">Ambiente 3</option>
-                <!-- Agregar más opciones según sea necesario -->
             </select>
         </div>
         <div class="col-md-3">
@@ -40,31 +78,51 @@
                 <option value="1">Tipo 1</option>
                 <option value="2">Tipo 2</option>
                 <option value="3">Tipo 3</option>
-                <!-- Agregar más opciones según sea necesario -->
             </select>
         </div>
-    </div>
+    </div> -->
 
-    <!-- Tabla para mostrar los cursos -->
-    <table id="tabla-ambiente" class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Tipo Ambiente</th>
-                <th>Estado</th>
-                <!-- Agregar más columnas según sea necesario -->
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
-        </tbody>
-    </table>
+
 </div>
 
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
 <script>
-    $(document).ready(function() {
-        $('#tabla-ambiente').DataTable();
+    $(document).ready(function () {
+        var ambientes = [];
+        $.ajax({
+            url: '/get_ambientes',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                ambientes =response;
+                console.log(response);
+
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                
+            }
+        });
+        $('#tabla-ambiente').DataTable({
+            "data": ambientes,
+            "paging": false,
+            "info": false,
+            "stateSave": true,
+            "columns": [
+
+                { "data": "nombre" },
+                { "data": "aforo" },
+                { "data": "estado" },
+                {
+                    "data": null,
+                    "defaultContent": "<button class='btn btn-success' id='servicio-btn-agregar'><i class='ri-add-fill'></i></button>"
+                }
+            ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            }
+        });
+        $('#collapseOne').collapse('show');
     });
 </script>
 {% endblock %}

@@ -5,7 +5,7 @@
 {% block contenido %}
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item" ><a href="{{url_for('index')}}">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
         <li class="breadcrumb-item active"><a href="{{url_for('cursos')}}">Cursos</a></li>
 
     </ol>
@@ -22,9 +22,56 @@
     // });
 </script>
 <div class="container">
-    <h2>Cursos</h2>
 
-    <!-- Dropdown para seleccionar semestre y escuela -->
+
+    <div class="card" id="card_cursos">
+        <div class="card-header bg-primary text-white" id="headingOne" data-bs-toggle="collapse"
+            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            Cursos
+        </div>
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+
+            <div class="card-body">
+                <div class="search-box">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="text" id="buscar_cursos" class="form-control"
+                                    placeholder="Buscar Cursos...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body show">
+                    <!-- Tabla para mostrar los cursos -->
+                    <table id="tabla-cursos" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cod. Curso</th>
+                                <th>Creditos</th>
+                                <th>Horas Teoria</th>
+                                <th>Horas Practica</th>
+                                <th>Ciclo</th>
+                                <th>Tipo Curso</th>
+                                <th>Estado</th>
+                                <th>Plan Estudio</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <a href="#" id="btn_agregar_cursos" data-href="cursos_agregar.html" class="btn btn-success">Agregar Nuevo
+            Cursos</a>
+    </div>
+    <!-- <h2>Cursos</h2>
+
     <div class="form-row mb-3">
         <div class="col-md-3">
             
@@ -33,7 +80,6 @@
                 <option value="1">Semestre 1</option>
                 <option value="2">Semestre 2</option>
                 <option value="3">Semestre 3</option>
-                <!-- Agregar más opciones según sea necesario -->
             </select>
         </div>
         <div class="col-md-3">
@@ -42,31 +88,69 @@
                 <option value="1">Escuela 1</option>
                 <option value="2">Escuela 2</option>
                 <option value="3">Escuela 3</option>
-                <!-- Agregar más opciones según sea necesario -->
             </select>
         </div>
     </div>
 
-    <!-- Tabla para mostrar los cursos -->
     <table id="tabla-cursos" class="table table-striped">
         <thead>
             <tr>
                 <th>Nombre</th>
                 <th>Semestre</th>
                 <th>Escuela</th>
-                <!-- Agregar más columnas según sea necesario -->
             </tr>
         </thead>
         <tbody>
-            <!-- Los datos de los cursos se cargarán dinámicamente aquí -->
         </tbody>
-    </table>
+    </table> -->
 </div>
 
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
 <script>
-    $(document).ready(function() {
-        $('#tabla-cursos').DataTable();
+    $(document).ready(function () {
+        var cursos = [];
+        $.ajax({
+            url: '/get_cursos',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                //console.log(response);
+                cursos = response;
+                console.log(cursos);
+
+                // Inicializar DataTable dentro de la función success
+                $('#tabla-cursos').DataTable({
+                    "data": cursos,
+                    "paging": false,
+                    "info": false,
+                    "responsive": true,
+                    "rowReorder": {
+                        "selector": 'td:nth-child(2)'
+                    },
+                    "stateSave": true,
+                    "columns": [
+                        { "data": "nombre" },
+                        { "data": "cod_curso" },
+                        { "data": "creditos" },
+                        { "data": "horas_teoria" },
+                        { "data": "horas_practica" },
+                        { "data": "ciclo" },
+                        { "data": "tipo_curso" },
+                        { "data": "estado" },
+                        { "data": "id_plan_estudio" },
+
+                    ],
+                    "language": {
+                        "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log('error', error);
+            }
+        });
+        $('#collapseOne').collapse('show');
     });
 </script>
+
 {% endblock %}

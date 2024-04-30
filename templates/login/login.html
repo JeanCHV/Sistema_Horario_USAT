@@ -40,11 +40,13 @@
     </style>
     <style>
         .btn-primary:hover {
-            background-color: #28a745; /* Cambia el color de fondo al pasar el cursor */
-            border-color: #28a745; /* Cambia el color del borde al pasar el cursor */
+            background-color: #28a745;
+            /* Cambia el color de fondo al pasar el cursor */
+            border-color: #28a745;
+            /* Cambia el color del borde al pasar el cursor */
         }
     </style>
-    
+
 </head>
 
 <body>
@@ -52,7 +54,8 @@
 
     <div class="d-lg-flex half">
         <div class="bg order-1 order-md-2"
-            style="background-image: url('{{ url_for('static', filename='login/images/usat_logo_red.png') }}');))"></div>
+            style="background-image: url('{{ url_for('static', filename='login/images/usat_logo_red.png') }}');))">
+        </div>
         <div class="contents order-2 order-md-1">
 
             <div class="container">
@@ -67,10 +70,12 @@
                         <form action="{{ url_for('procesar_login') }}" method="post">
                             <div class="form-group first">
 
-                                <input type="text" class="form-control" placeholder="Usuario" id="username" name="username" required>
+                                <input type="text" class="form-control" placeholder="Usuario" id="username"
+                                    name="username" required>
                             </div>
                             <div class="form-group last mb-3">
-                                <input type="password" class="form-control" placeholder="Contraseña" id="password" name="password" required>
+                                <input type="password" class="form-control" placeholder="Contraseña" id="password"
+                                    name="password" required>
                             </div>
 
                             <div class="d-flex mb-5 align-items-center">
@@ -82,15 +87,24 @@
                             </div>
 
                             <!-- <a href="{{url_for('index')}}" class="btn btn-primary btn-lg btn-block my-4"><strong>Acceder al Sistema</strong></a> -->
-                            <button type="submit" class="tn btn-primary btn-lg btn-block my-4"><strong>Acceder al Sistema</strong></button>
+                            <button type="submit" class="tn btn-primary btn-lg btn-block my-4">
+                                <strong>Acceder al Sistema</strong>
+                            </button>
 
                         </form>
+                        <button type="button" id="btnLogin" class="tn btn-primary btn-lg btn-block my-4">
+                            <strong>Acceder al Sistema v2</strong>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script src="{{ url_for('static', filename='login/js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='login/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='login/js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
     <script>
         // Función para ocultar el div con la clase 'bg' en dispositivos móviles
         function hideBgOnMobile() {
@@ -106,14 +120,54 @@
         // Ejecutar la función al cargar la página y cuando se redimensiona la ventana
         window.onload = hideBgOnMobile;
         window.onresize = hideBgOnMobile;
+        //fUNION DINAMICA PARA MOSTRAR ALERTAS
+        function mostrarAlerta(icon, title, text) {
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: text
+            });
+        }
+
+
+        $('#btnLogin').click(function () {
+            var username = $('#username').val();
+            var password = $('#password').val();
+            var recordar_check = $('#recordar_check').prop('checked');
+            try {
+                $.ajax({
+                    url: '/login1',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        username: username,
+                        password: password,
+                        recordar_check: recordar_check
+                    }),
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            mostrarAlerta("success", "OK", response.success);
+                            window.location.href = "{{ url_for('index') }}";
+                        } else if (response.error) {
+                            mostrarAlerta("error", "Error al Iniciar Sesión", response.error);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                        mostrarAlerta("error", "Error en la Procesamiento de Solicitud", error);  // Cambiado a error.responseText
+                    }
+                });
+            } catch (e) {
+                mostrarAlerta("error", "Error en AJAX", error.responseText);  // Cambiado a error.responseText
+            }
+        });
+
     </script>
 
-    <script src="{{ url_for('static', filename='login/js/jquery-3.3.1.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='login/js/popper.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='login/js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='login/js/main.js') }}"></script>
-    
-    
+
+
+
 </body>
 
 </html>
