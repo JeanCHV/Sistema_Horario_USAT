@@ -249,8 +249,21 @@
 <script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
 <!-- Script para mostrar la pantalla de carga al hacer clic en los enlaces de la barra lateral -->
 <script>
-	document.getElementById("github-profile-pic").src = "static/img/"+localStorage.getItem("f")||"static/img/"+sessionStorage.getItem("f");
-	document.getElementById("usernamenav").textContent = localStorage.getItem("n")||sessionStorage.getItem("n");
+	var imgSrc = localStorage.getItem("f");
+	if (!imgSrc) {
+		imgSrc = sessionStorage.getItem("f");
+	}
+	if (imgSrc) {
+		document.getElementById("github-profile-pic").src = "static/img/" + imgSrc;
+	}
+
+	var username = localStorage.getItem("n");
+	if (!username) {
+		username = sessionStorage.getItem("n");
+	}
+	if (username) {
+		document.getElementById("usernamenav").textContent = username;
+	}
 	
 	document.addEventListener("DOMContentLoaded", function () {
 
