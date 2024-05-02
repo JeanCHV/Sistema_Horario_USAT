@@ -138,6 +138,18 @@
             } else {
                 bgDiv.style.display = 'flex'; // Mostrar en dispositivos de escritorio
             }
+
+            var username = localStorage.getItem('username');
+            var token = localStorage.getItem('token');
+
+            if (!username || !token) {
+                username = sessionStorage.getItem('username');
+                token = sessionStorage.getItem('token');
+            }
+
+            if (username && token){
+                window.location.href = '/index';
+            }
         }
 
         // Ejecutar la función al cargar la página y cuando se redimensiona la ventana
