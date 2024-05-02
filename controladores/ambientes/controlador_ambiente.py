@@ -3,11 +3,19 @@ from bd import obtener_conexion
 def obtener_ambientes():
     conexion = obtener_conexion()
     ambientes = []
+
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT idambiente, nombre, aforo,   estado, idedificio, idambientetipo FROM ambiente")
-        ambientes = cursor.fetchall()
+        cursor.execute("SELECT idambiente, nombre, aforo, estado, idedificio, idambientetipo FROM ambiente")
+        column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+        rows = cursor.fetchall()
+
+        for row in rows:
+            ambiente_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
+            ambientes.append(ambiente_dict)
+
     conexion.close()
     return ambientes
+
 
 # def obtener_usuario_con_tipopersona_por_username(username):
 #     conexion = obtener_conexion()

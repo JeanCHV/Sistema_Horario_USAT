@@ -96,6 +96,21 @@
             success: function (response) {
                 ambientes =response;
                 console.log(response);
+                $('#tabla-ambiente').DataTable({
+            "data": ambientes,
+            "paging": true,
+            "info": true,
+            "stateSave": true,
+            "columns": [
+
+                { "data": "nombre" },
+                { "data": "aforo" },
+                { "data": "estado" }
+            ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            }
+        });
 
             },
             error: function (xhr, status, error) {
@@ -103,25 +118,7 @@
                 
             }
         });
-        $('#tabla-ambiente').DataTable({
-            "data": ambientes,
-            "paging": false,
-            "info": false,
-            "stateSave": true,
-            "columns": [
 
-                { "data": "nombre" },
-                { "data": "aforo" },
-                { "data": "estado" },
-                {
-                    "data": null,
-                    "defaultContent": "<button class='btn btn-success' id='servicio-btn-agregar'><i class='ri-add-fill'></i></button>"
-                }
-            ],
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-            }
-        });
         $('#collapseOne').collapse('show');
     });
 </script>

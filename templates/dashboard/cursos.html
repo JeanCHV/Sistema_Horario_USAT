@@ -128,6 +128,7 @@
                         "selector": 'td:nth-child(2)'
                     },
                     "stateSave": true,
+                    "searching": false,
                     "columns": [
                         { "data": "nombre" },
                         { "data": "cod_curso" },
@@ -149,8 +150,18 @@
                 console.log('error', error);
             }
         });
+        // Manejo de la búsqueda
+        $('#buscar_cursos').on('keyup', function () {
+            var searchText = $(this).val().toLowerCase();
+            $('#tabla-cursos tbody tr').filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+            });
+        });
+
         $('#collapseOne').collapse('show');
     });
 </script>
 
 {% endblock %}
+```
+
