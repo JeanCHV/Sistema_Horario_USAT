@@ -18,6 +18,7 @@ import controladores.controlador_usuario as controlador_usuario
 import controladores.ambientes.controlador_ambiente as controlador_ambientes
 import controladores.cursos.controlador_cursos as controlador_cursos
 import controladores.controlador_persona as controlador_persona
+import controladores.controlador_semestre as controlador_semestre
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
@@ -141,5 +142,5 @@ def horarios():
 
 @app.route("/horarios_por_docente")
 def horarios_por_docente():
-    return render_template("horarios/horarios_por_docente.html")
-
+    semestres = controlador_semestre.obtener_semestres()
+    return render_template("horarios/horarios_por_docente.html",semestres=semestres)
