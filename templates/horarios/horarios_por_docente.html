@@ -1,15 +1,47 @@
 {% extends "dashboard/index.html" %}
 {% block titulo %} Horarios por docente {% endblock %}
 {% block contenido %}
-<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+<style>
+    .texto-label{
+        color: #70767F;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .texto-input{
+        color: black;
+    }
+
+    .foot{
+        background-color: black;
+        border-color: black;
+    }
+
+    .foot:hover{
+        background-color: black;
+        border-color: black;
+    }
+
+    .foot:active{
+        background-color: black;
+        border-color: black;
+    }
+
+    @media (max-width: 570px) {
+    #foto_perfil {
+        display: none;
+    }
+    }
+</style>
+<!-- <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item" ><a href="{{url_for('index')}}">Inicio</a></li>
         <li class="breadcrumb-item active"><a href="{{url_for('horarios')}}">Ambientes</a></li>
 
     </ol>
-</nav>
+</nav> -->
 
-<section class="col-12">
+<!-- <section class="col-12">
     <ul class="bg-red-usat nav p-3">
         <li class="nav-item">
           <a>Horarios asignados por docente</a><br>
@@ -85,12 +117,12 @@
             </tbody>
           </table>
     </div>
-</section>
+</section> -->
 
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item" href="Home"><a>Inicio</a></li>
-        <li class="breadcrumb-item active" data-href="servicios.html"><a>Servicios</a></li>
+        <li class="breadcrumb-item active" data-href="#"><a>Horarios por docente</a></li>
 
     </ol>
 </nav>
@@ -105,41 +137,214 @@
         }
     });
 
+    function mostrarAlerta(icon, title, text) {
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: text
+            });
+        }
+
 
 </script>
 
-<div class="card" id="card_servicios">
-    <div class="card-header bg-primary text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-        Servicios
+<!-- <div class="card" id="card_servicios">
+    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Horarios asignados por docente
     </div>
     <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
-
         <div class="card-body">
-            <div class="search-box">
-                <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <input type="text" id="buscar_servicio" class="form-control" placeholder="Buscar Servicio...">
+            <div class="row align-items-center m-2 p-3 row-cols-2" style="background-color: white;">
+                <div class="mb-3 col-10">
+                    <div class="row-cols-1">
+                        <div class="col-12">
+                            <label for="staticEmail" class="col-xxl-12 col-xl-12 col-form-label">Semestre académico</label>
+                                <select class="form-select" aria-label="Default select example">
+                                    <option selected>[-- SELECCIONE --]</option>
+                                    <option value="1">2024-I</option>
+                                    <option value="2">2023-II</option>
+                                    <option value="3">2023-I</option>
+                                    <option value="4">2022-II</option>
+                                    <option value="5">2021-I</option>
+                                    <option value="4">2020-II</option>
+                                    <option value="5">2020-I</option>
+                                </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="inputPassword" class="col-sm-2 col-form-label">Docente</label>
+                            <div class="col-sm-10 col-xxl-12">
+                                <input type="email" class="form-control" id="exampleFormControlInput1">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="card-body show">
-                <table id="tabla_servicios" class="table table-striped table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Precio Minimo</th>
-                        </tr>
+                <div class="mb-3 col-2">
+                        <img id="foto_perfil" src="..." class="img-thumbnail" alt="...">
+                </div>
+                <table class="table table-bordered text-center">
+                    <thead class="border border-warning bg-blue-horario-usat">
+                      <tr class="">
+                        <th scope="col" class="border border-warning text-light">Hora</th>
+                        <th scope="col" class="border border-warning text-light">Lunes</th>
+                        <th scope="col" class="border border-warning text-light">Martes</th>
+                        <th scope="col" class="border border-warning text-light">Miércoles</th>
+                        <th scope="col" class="border border-warning text-light">Jueves</th>
+                        <th scope="col" class="border border-warning text-light">Viernes</th>
+                        <th scope="col" class="border border-warning text-light">Sábado</th>
+                        <th scope="col" class="border border-warning text-light">Domingo</th>
+                      </tr>
                     </thead>
-                </table>
+                    <tbody class="" style="background-color: #EEEEEE;">
+                      <tr class="">
+                        <th scope="row">7:00 a.m. - 8:00 a.m.</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <th scope="row">8:00 a.m. - 9:00 a.m.</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <th scope="row">9:00 a.m. - 10:00 a.m.</th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
             </div>
         </div>
     </div>
-    <a href="#" id="btn_agregar_servicio" data-href="servicio_agregar.html" class="btn btn-success">Agregar Nuevo Servicio</a>
+    <a href="#" id="" data-href="" class="btn btn-success" style="height: 20px;"></a>
+</div> -->
+
+<div class="card" id="card_servicios">
+    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Horarios asignados por docente
+    </div>
+    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+        <div class="card-body">
+            <div class="container">
+                <!-- Div superior -->
+                <div class="row row align-items-end my-3">
+                    <div class="col-md-10 order-md-1 order-sm-2">
+                        <!-- Primer input y label -->
+                        <div class="form-group row mb-3 d-flex justify-content-center">
+                            <label for="combo_semestre" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Semestre académico:</label>
+                            <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                                <select class="form-select" aria-label="Default select example" id="combo_semestre">
+                                    <option selected>[-- SELECCIONE --]</option>
+                                    {% for semestre in semestres %}
+                                        <option value="{{semestre[1]}}" class="texto-input">{{semestre[1]}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Segundo input y label -->
+                        <div class="form-group row d-flex justify-content-center">
+                            <label for="input_docente" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
+                            <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                                <input type="text" class="form-control texto-input" id="input_docente" placeholder="">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-2 order-md-2 order-sm-1  d-flex justify-content-center align-items-center">
+                        <!-- Foto -->
+                        <img src="" class="img-fluid" alt="Foto" id="foto_perfil">
+                    </div>
+                </div>
+                <!-- Tabla inferior -->
+                <div class="row mt-5">
+                    <div class="col-md-12">
+                        <table class="table table-bordered text-center">
+                            <thead class="border border-warning bg-blue-horario-usat">
+                              <tr class="">
+                                <th scope="col" class="border border-warning text-light">Hora</th>
+                                <th scope="col" class="border border-warning text-light">Lunes</th>
+                                <th scope="col" class="border border-warning text-light">Martes</th>
+                                <th scope="col" class="border border-warning text-light">Miércoles</th>
+                                <th scope="col" class="border border-warning text-light">Jueves</th>
+                                <th scope="col" class="border border-warning text-light">Viernes</th>
+                                <th scope="col" class="border border-warning text-light">Sábado</th>
+                                <th scope="col" class="border border-warning text-light">Domingo</th>
+                              </tr>
+                            </thead>
+                            <tbody class="" style="background-color: #EEEEEE;">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div href="#" id="" data-href="" class="btn btn-success foot" style="height: 20px;"></div>
 </div>
 
+
+<script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
+<script>
+    const lista_horarios = [
+    '7:00 a.m. - 8:00 a.m.',
+     '8:00 a.m. - 9:00 a.m.',
+     '9:00 a.m. - 10:00 a.m.',
+     '10:00 a.m. - 11:00 a.m.',
+     '11:00 a.m. - 12:00 p.m.',
+     '12:00 p.m. - 13:00 p.m.',
+     '13:00 p.m. - 14:00 p.m.',
+     '14:00 p.m. - 15:00 p.m.',
+     '15:00 p.m. - 16:00 p.m.',
+     '16:00 p.m. - 17:00 p.m.',
+     '17:00 p.m. - 18:00 p.m.',
+     '18:00 p.m. - 19:00 p.m.',
+     '19:00 p.m. - 20:00 p.m.',
+     '20:00 p.m. - 21:00 p.m.',
+     '21:00 p.m. - 22:00 p.m.'
+    ];
+    const tabla = document.querySelector("tbody");
+    const input_docente = document.getElementById('input_docente');
+    
+    foto_perfil = localStorage.getItem("f");
+    if (!foto_perfil){
+        foto_perfil = sessionStorage.getItem("f"); 
+    }
+    document.getElementById("foto_perfil").src = "/static/img/"+foto_perfil;
+
+    lista_horarios.forEach(hora => {
+        let fila = `<tr> <th scope="row">${hora}</th>`;
+        
+        for (let i = 0; i < 7; i++) {
+            fila += "<td></td>";
+        }       
+        fila += "</tr>";       
+        tabla.insertAdjacentHTML("beforeend", fila);
+    });
+
+    
+    input_docente.addEventListener('keypress',function(event){
+        if (event.key=='Enter'){
+            if (input_docente.value === ''){
+                mostrarAlerta("warning","No se pudo encontrar el docente","Por favor ingrese el nombre o nombres de los docentes");
+            }
+        }
+    });
+
+</script>
 
 {% endblock %}
