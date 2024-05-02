@@ -144,3 +144,11 @@ def horarios():
 def horarios_por_docente():
     semestres = controlador_semestre.obtener_semestres()
     return render_template("horarios/horarios_por_docente.html",semestres=semestres)
+
+@app.route("/get_personas_activas", methods=["GET"])
+def get_personas_activas():
+    personas_activas = controlador_persona.obtener_personas_activas()
+    lista_personas_activas = []
+    for persona in personas_activas:
+        lista_personas_activas.append(persona[1] + ' ' + persona[2])
+    return jsonify(lista_personas_activas)
