@@ -39,12 +39,38 @@
         }
     </style>
     <style>
-        .btn-primary:hover {
-            background-color: #28a745;
-            /* Cambia el color de fondo al pasar el cursor */
-            border-color: #28a745;
-            /* Cambia el color del borde al pasar el cursor */
+        #loginButton{
+            background-color: #E33439;
+            color: white;
+            border: none;
         }
+
+        #loginButton:active {
+            background-color: #a6272b;
+        }
+
+        #loginButton:hover {
+            background-color: #a6272b;
+            /* Cambia el color de fondo al pasar el cursor */
+        }
+
+        .control--checkbox input:checked + .control__indicator {
+            background-color: #484848; /* Cambia este color cuando el checkbox está marcado */
+            border-color: #a6272b; /* Cambia el color del borde cuando el checkbox está marcado */
+        }
+
+        .control:hover #recordar_check:checked + .control__indicator {
+        background-color: #ff0000; /* Cambia este color cuando pasas el cursor sobre el label */
+        }
+
+        .control--checkbox input:hover + .control__indicator {
+        background-color: #ff0000; /* Cambia este color cuando el cursor está sobre el checkbox */
+        }
+
+        .control #recordar_check:checked:focus + .control__indicator {
+        background-color: #ff0000; /* Cambia este color cuando está marcado y enfocado */
+        }
+
     </style>
 
 </head>
@@ -86,15 +112,12 @@
                                 <span class="ml-auto"><a href="#" class="forgot-pass">Olvidé mi Contraseña</a></span>
                             </div>
 
-                            <!-- <a href="{{url_for('index')}}" class="btn btn-primary btn-lg btn-block my-4"><strong>Acceder al Sistema</strong></a> -->
-                            <button type="button" class="tn btn-primary btn-lg btn-block my-4" onclick="procesar_login()">
+                            <button id="loginButton" class="tn btn-primary btn-lg btn-block my-4" type="button" onclick="procesar_login()">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                 <strong>Acceder al Sistema</strong>
                             </button>
 
                         </form>
-                        <!-- <button type="button" id="btnLogin" class="tn btn-primary btn-lg btn-block my-4">
-                            <strong>Acceder al Sistema v2</strong>
-                        </button> -->
                     </div>
                 </div>
             </div>
@@ -181,6 +204,8 @@
             }
 
             else{
+                document.getElementById("loginButton").disabled = true;
+                document.querySelector("#loginButton .spinner-border").classList.remove("d-none");
                 fetch('/procesar_login', {
                 method: 'POST',
                 headers: {
@@ -205,12 +230,18 @@
                             sessionStorage.setItem('n',data.nombre)
                             sessionStorage.setItem('f',data.foto)
                         }
+                        document.getElementById("loginButton").disabled = false;
+                        document.querySelector("#loginButton .spinner-border").classList.add("d-none");
                         window.location.href = '/index';
                     }else{
+                        document.getElementById("loginButton").disabled = false;
+                        document.querySelector("#loginButton .spinner-border").classList.add("d-none");
                         mostrarAlerta("warning", "No se pudo acceder al sistema", data.mensaje);
                     }
                 })
                 .catch(error=>{
+                    document.getElementById("loginButton").disabled = false;
+                    document.querySelector("#loginButton .spinner-border").classList.add("d-none");
                     mostrarAlerta("error", "Error al acceder al sistema", error);
                 });
             }
