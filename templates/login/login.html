@@ -67,15 +67,15 @@
                         <h3>Bienvenido</h3>
                         <p class="mb-4">Ingrese sus credenciales para acceder al sistema
                         </p>
-                        <form action="{{ url_for('procesar_login') }}" method="post">
+                        <form action="" method="post">
                             <div class="form-group first">
 
                                 <input type="text" class="form-control" placeholder="Usuario" id="username"
-                                    name="username" required>
+                                    name="username">
                             </div>
                             <div class="form-group last mb-3">
                                 <input type="password" class="form-control" placeholder="Contraseña" id="password"
-                                    name="password" required>
+                                    name="password">
                             </div>
 
                             <div class="d-flex mb-5 align-items-center">
@@ -87,14 +87,14 @@
                             </div>
 
                             <!-- <a href="{{url_for('index')}}" class="btn btn-primary btn-lg btn-block my-4"><strong>Acceder al Sistema</strong></a> -->
-                            <button type="submit" class="tn btn-primary btn-lg btn-block my-4">
+                            <button type="button" class="tn btn-primary btn-lg btn-block my-4" onclick="procesar_login()">
                                 <strong>Acceder al Sistema</strong>
                             </button>
 
                         </form>
-                        <button type="button" id="btnLogin" class="tn btn-primary btn-lg btn-block my-4">
+                        <!-- <button type="button" id="btnLogin" class="tn btn-primary btn-lg btn-block my-4">
                             <strong>Acceder al Sistema v2</strong>
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             </div>
@@ -133,7 +133,7 @@
         $('#btnLogin').click(function () {
             var username = $('#username').val();
             var password = $('#password').val();
-            var recordar_check = $('#recordar_check').prop('checked');
+            var recordar = $('#recordar_check').prop('checked');
             try {
                 $.ajax({
                     url: '/login1',
@@ -142,7 +142,6 @@
                     data: JSON.stringify({
                         username: username,
                         password: password,
-                        recordar_check: recordar_check
                     }),
                     success: function (response) {
                         console.log(response);
@@ -162,6 +161,60 @@
                 mostrarAlerta("error", "Error en AJAX", error.responseText);  // Cambiado a error.responseText
             }
         });
+
+        function procesar_login(){
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var recordar = document.getElementById("recordar_check").checked;
+
+            if (username.trim()=="" || password.trim()==""){
+
+                if (username.trim()=="" && password.trim()==""){
+                mostrarAlerta("warning", "No se pudo acceder al sistema", "Por favor ingrese un nombre de usuario y contraseña");
+                }
+                else if(username.trim()==""){
+                mostrarAlerta("warning", "No se pudo acceder al sistema", "Por favor ingrese un nombre de usuario");
+                }
+                else if(password.trim()==""){
+                mostrarAlerta("warning", "No se pudo acceder al sistema", "Por favor ingrese una contraseña");
+                }
+            }
+
+            else{
+                fetch('/procesar_login', {
+                method: 'POST',
+                headers: {
+                    'Content-type':'application/json'
+                },
+                body: JSON.stringify({
+                    username:username,
+                    password:password,
+                })
+                })
+                .then(response => response.json())
+                .then(data =>{
+                    if (data.logeo){
+                        if (recordar){
+                            localStorage.setItem('username',username)
+                            localStorage.setItem('token',data.token)
+                            localStorage.setItem('n',data.nombre)
+                            localStorage.setItem('f',data.foto)
+                        }else{
+                            sessionStorage.setItem('username',username)
+                            sessionStorage.setItem('token',data.token)
+                            sessionStorage.setItem('n',data.nombre)
+                            sessionStorage.setItem('f',data.foto)
+                        }
+                        window.location.href = '/index';
+                    }else{
+                        mostrarAlerta("warning", "No se pudo acceder al sistema", data.mensaje);
+                    }
+                })
+                .catch(error=>{
+                    mostrarAlerta("error", "Error al acceder al sistema", error);
+                });
+            }
+        }
 
     </script>
 

@@ -25,102 +25,69 @@ import clases.persona as clase_persona
 @app.route("/")
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    try:
-        username = session.get("username")
-        token = session.get("token")
-        usuario = controlador_usuario.obtener_usuario_por_username(username)
-        if username is None:
-            return render_template("login/login.html")
+    return render_template("login/login.html")
 
-        if token == usuario[5] and usuario[3]:
-            return render_template("dashboard/home.html")
+"""MÉTODO A MODIFICAR A FUTURO PARA VALIDAR TIPO DE USUARIO Y PERMISOS"""
+""" @app.route("/validar_login", methods=["POST"])
+def validar_login():
+    try:
+        username = request.json.get('username')
+        token = request.json.get('token')
+
+        usuario = controlador_usuario.obtener_usuario_por_username(username)
+
+        if usuario == None or username != usuario[1] or token != usuario[5] or not usuario[3]:
+            return jsonify({'logeo':False})
+        else:
+            return jsonify({'logeo': True}) 
     except:
-        return render_template("login/login.html")
+        return jsonify({'logeo':False}) """
 
 
 @app.route("/logout")
 def logout():
     resp = make_response(redirect("/login"))
-    """ session.pop('username',None)
-    session.pop('token',None) """
     session.clear()
     return resp
 
-
 @app.route("/procesar_login", methods=["POST"])
 def procesar_login():
-    username = request.form["username"]
-    password = request.form["password"]
-    rec_chk = request.form.get("recordar_check")
-    usuario = controlador_usuario.obtener_usuario_con_tipopersona_por_username(username)
-
-    if usuario == None or not usuario[3]:
-        return render_template("login/login.html")
-    else:
-        # Encriptar password ingresado por usuario
-        h = hashlib.new("sha256")
-        h.update(bytes(password, encoding="utf-8"))
-        encpassword = h.hexdigest()
-        if encpassword == usuario[2]:
-            # Obteniendo token
-            t = hashlib.new("sha256")
-            entale = random.randint(1, 1024)
-            strEntale = str(entale)
-            t.update(bytes(strEntale, encoding="utf-8"))
-            token = t.hexdigest()
-            if rec_chk == "on":
-                session["username"] = username
-                session["token"] = token
-                session.permanent = True
-                controlador_usuario.actualizar_token(username, token)
-                return redirect("/index")
-            else:
-                session["username"] = username
-                session["token"] = token
-                session.permanent = False
-                controlador_usuario.actualizar_token(username, token)
-                return redirect("/index")
-
-        return render_template("login/login.html")
-
-
-@app.route("/login1", methods=["POST"])
-def login1():
     try:
-        # Obtengo datos JSON del AJAX
-        data = request.get_json()
-        username = data.get("username")
-        password = data.get("password")
-        recordar_check = data.get("recordar_check")
+        username = request.json.get('username')
+        password = request.json.get('password')
+        usuario = controlador_usuario.obtener_usuario_con_tipopersona_por_username(username)
 
-        # Llamo a la función del controlador usuario
-        usuario = controlador_usuario.obtener_usuario_con_tipopersona_por_username(
-            username
-        )
-
-        # Verifica si el resultado de la consulta es nulo
-        if usuario is None:
-            return jsonify({"error": "Usuario o contraseña incorrectos"})
-        pass_enc=encriptar_password(password)
-        # Verifica si la contraseña es correcta
-        if pass_enc == usuario[2]:
-            # Genera token
-            token = hashlib.sha256(str(random.randint(1, 1024)).encode()).hexdigest()
-
-            # Configura la sesión
-            session["username"] = username
-            session["token"] = token
-            session.permanent = recordar_check
-
-            # Actualiza el token en la base de datos
-            controlador_usuario.actualizar_token(username, token)
-
-            return jsonify({"success": "Inicio Sesión"})
+        if usuario == None:
+            return jsonify({'mensaje':'El usuario no existe', 'logeo':False})
+        
+        elif username != usuario[1]:
+            return jsonify({'mensaje':'El username es incorrecto', 'logeo':False})
+        
+        elif not usuario[3]:
+            return jsonify({'mensaje':'El usuario está inactivo', 'logeo':False})
+        
         else:
-            return jsonify({"error": "Contraseña Incorrecta",'data':data})
+            # Encriptar password ingresado por usuario
+            h = hashlib.new("sha256")
+            h.update(bytes(password, encoding="utf-8"))
+            encpassword = h.hexdigest()
+            if encpassword == usuario[2]:
+                # Obteniendo token
+                t = hashlib.new("sha256")
+                entale = random.randint(1, 1024)
+                strEntale = str(entale)
+                t.update(bytes(strEntale, encoding="utf-8"))
+                token = t.hexdigest()
+                controlador_usuario.actualizar_token(username, token)
+                persona = controlador_persona.obtener_persona_por_id(usuario[4])
+                foto = persona[9]
+                nombre = persona[1].split()[0]
+                return jsonify({'logeo': True, 'token': token, 'foto':foto, 'nombre':nombre})
 
-    except Exception as e:
-        return jsonify({"error": str(e)})
+            return jsonify({'mensaje':'La contraseña es incorrecta', 'logeo':False})
+    except:
+        return jsonify({'mensaje':'Error al procesar el login', 'logeo':False})
+    
 
 @app.route("/get_ambientes", methods=["GET"])
 def get_ambientes():
@@ -131,27 +98,25 @@ def get_cursos():
     cursos = controlador_cursos.obtener_cursos()
     return jsonify(cursos)
 
+@app.route("/validar_sesion", methods=["POST"])
+def get_datos_usuario():
+    try:
+        username = request.json.get('username')
+        token = request.json.get('token')
+
+        usuario = controlador_usuario.obtener_usuario_por_username(username)
+
+        if usuario == None or username != usuario[1] or token != usuario[5] or not usuario[3]:
+            return jsonify({'logeo':False,'alerta':'No hay una sesión activa, por favor vuelva a acceder al sistema'})
+        else:
+            return jsonify({'logeo':True}) 
+    except Exception as e:
+        return jsonify({'logeo':False,'alerta':str(e)})
+
 @app.route("/index")
 def index():
-    try:
-        username = session.get("username")
-        token = session.get("token")
-        usuario = controlador_usuario.obtener_usuario_por_username(username)
-        persona = controlador_persona.obtener_persona_por_id(usuario[4])
-        foto = persona[9]
-        primer_nombre = persona[1].split()[0]
-        if username is None:
-            return render_template("login/login.html")
-
-        if token == usuario[5] and usuario[3]:
-            return render_template(
-                "dashboard/index.html",
-                foto=foto,
-                primer_nombre=primer_nombre,
-                esSesionIniciada=True,
-            )
-    except:
-        return render_template("login/login.html")
+    return render_template("dashboard/home.html")
+    
 
 
 @app.route("/ambientes")
@@ -178,9 +143,3 @@ def horarios():
 def horarios_por_docente():
     return render_template("horarios/horarios_por_docente.html")
 
-
-def encriptar_password(password):
-    h = hashlib.new("sha256")
-    h.update(bytes(password, encoding="utf-8"))
-    encpassword = h.hexdigest()
-    return encpassword
