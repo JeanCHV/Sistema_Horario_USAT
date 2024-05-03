@@ -33,91 +33,6 @@
     }
     }
 </style>
-<!-- <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item" ><a href="{{url_for('index')}}">Inicio</a></li>
-        <li class="breadcrumb-item active"><a href="{{url_for('horarios')}}">Ambientes</a></li>
-
-    </ol>
-</nav> -->
-
-<!-- <section class="col-12">
-    <ul class="bg-red-usat nav p-3">
-        <li class="nav-item">
-          <a>Horarios asignados por docente</a><br>
-        </li>
-    </ul>
-    
-    <div class="row align-items-center m-2 p-3 row-cols-1" style="background-color: white;">
-        <div class="mb-3 row">
-            <label for="staticEmail" class="col-sm-2 col-form-label">Semestre académico</label>
-            <div class="col-sm-10">
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>[-- SELECCIONE --]</option>
-                    <option value="1">2024-I</option>
-                    <option value="2">2023-II</option>
-                    <option value="3">2023-I</option>
-                    <option value="4">2022-II</option>
-                    <option value="5">2021-I</option>
-                    <option value="4">2020-II</option>
-                    <option value="5">2020-I</option>
-                </select>
-            </div>
-        </div>
-        <div class="mb-3 row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">Docente</label>
-            <div class="col-sm-10">
-                <input type="email" class="form-control" id="exampleFormControlInput1">
-            </div>
-        </div>
-        <table class="table table-bordered text-center">
-            <thead class="border border-warning bg-blue-horario-usat">
-              <tr class="">
-                <th scope="col" class="border border-warning text-light">Hora</th>
-                <th scope="col" class="border border-warning text-light">Lunes</th>
-                <th scope="col" class="border border-warning text-light">Martes</th>
-                <th scope="col" class="border border-warning text-light">Miércoles</th>
-                <th scope="col" class="border border-warning text-light">Jueves</th>
-                <th scope="col" class="border border-warning text-light">Viernes</th>
-                <th scope="col" class="border border-warning text-light">Sábado</th>
-                <th scope="col" class="border border-warning text-light">Domingo</th>
-              </tr>
-            </thead>
-            <tbody class="" style="background-color: #EEEEEE;">
-              <tr class="">
-                <th scope="row">7:00 a.m. - 8:00 a.m.</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <th scope="row">8:00 a.m. - 9:00 a.m.</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <th scope="row">9:00 a.m. - 10:00 a.m.</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-    </div>
-</section> -->
 
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -148,90 +63,6 @@
 
 </script>
 
-<!-- <div class="card" id="card_servicios">
-    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-        Horarios asignados por docente
-    </div>
-    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
-        <div class="card-body">
-            <div class="row align-items-center m-2 p-3 row-cols-2" style="background-color: white;">
-                <div class="mb-3 col-10">
-                    <div class="row-cols-1">
-                        <div class="col-12">
-                            <label for="staticEmail" class="col-xxl-12 col-xl-12 col-form-label">Semestre académico</label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>[-- SELECCIONE --]</option>
-                                    <option value="1">2024-I</option>
-                                    <option value="2">2023-II</option>
-                                    <option value="3">2023-I</option>
-                                    <option value="4">2022-II</option>
-                                    <option value="5">2021-I</option>
-                                    <option value="4">2020-II</option>
-                                    <option value="5">2020-I</option>
-                                </select>
-                        </div>
-                        <div class="col-12">
-                            <label for="inputPassword" class="col-sm-2 col-form-label">Docente</label>
-                            <div class="col-sm-10 col-xxl-12">
-                                <input type="email" class="form-control" id="exampleFormControlInput1">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3 col-2">
-                        <img id="foto_perfil" src="..." class="img-thumbnail" alt="...">
-                </div>
-                <table class="table table-bordered text-center">
-                    <thead class="border border-warning bg-blue-horario-usat">
-                      <tr class="">
-                        <th scope="col" class="border border-warning text-light">Hora</th>
-                        <th scope="col" class="border border-warning text-light">Lunes</th>
-                        <th scope="col" class="border border-warning text-light">Martes</th>
-                        <th scope="col" class="border border-warning text-light">Miércoles</th>
-                        <th scope="col" class="border border-warning text-light">Jueves</th>
-                        <th scope="col" class="border border-warning text-light">Viernes</th>
-                        <th scope="col" class="border border-warning text-light">Sábado</th>
-                        <th scope="col" class="border border-warning text-light">Domingo</th>
-                      </tr>
-                    </thead>
-                    <tbody class="" style="background-color: #EEEEEE;">
-                      <tr class="">
-                        <th scope="row">7:00 a.m. - 8:00 a.m.</th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">8:00 a.m. - 9:00 a.m.</th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">9:00 a.m. - 10:00 a.m.</th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-            </div>
-        </div>
-    </div>
-    <a href="#" id="" data-href="" class="btn btn-success" style="height: 20px;"></a>
-</div> -->
 
 <div class="card" id="card_servicios">
     <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -262,7 +93,7 @@
                                 <!-- Utiliza un input de tipo "search" -->
                                 <input type="search" class="form-control texto-input" id="input_docente" placeholder="Buscar docente...">
                                 <!-- Contenedor para mostrar las sugerencias -->
-                                <div id="sugerencias-container" class="sugerencias-container"></div>
+                                <div id="search_bar"></div>
                             </div>
                         </div>
                     </div>
@@ -374,6 +205,7 @@
         }
     });
 
+    var widget = new AutoComplete('search_bar', listaDatos);
 
 </script>
 
