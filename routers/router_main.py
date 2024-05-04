@@ -148,7 +148,5 @@ def horarios_por_docente():
 @app.route("/get_personas_activas", methods=["GET"])
 def get_personas_activas():
     personas_activas = controlador_persona.obtener_personas_activas()
-    lista_personas_activas = []
-    for persona in personas_activas:
-        lista_personas_activas.append(persona[1] + ' ' + persona[2])
-    return jsonify(lista_personas_activas)
+    return jsonify(personas_activas) 
+    

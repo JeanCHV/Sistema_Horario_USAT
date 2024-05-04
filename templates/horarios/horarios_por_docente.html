@@ -1,6 +1,7 @@
 {% extends "dashboard/index.html" %}
 {% block titulo %} Horarios por docente {% endblock %}
 {% block contenido %}
+<script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
 <style>
     .texto-label{
         color: #70767F;
@@ -32,6 +33,11 @@
         display: none;
     }
     }
+
+    #foto_perfil{
+        max-height: 100px;
+    }
+
 </style>
 
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
@@ -42,7 +48,7 @@
     </ol>
 </nav>
 <script>
-    $(".breadcrumb-item").on("click", function (e) {
+    /* $(".breadcrumb-item").on("click", function (e) {
         var tmphref = $(this).attr("data-href");
         if (tmphref) {
             $("#container-body").load("/Pages/" + tmphref, function () { });
@@ -50,21 +56,12 @@
         else {
             window.location.reload();
         }
-    });
-
-    function mostrarAlerta(icon, title, text) {
-            Swal.fire({
-                icon: icon,
-                title: title,
-                text: text
-            });
-        }
-
+    }); */
 
 </script>
 
 
-<div class="card" id="card_servicios">
+<div class="card mx-2" id="card_horarios">
     <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
         Horarios asignados por docente
     </div>
@@ -81,46 +78,46 @@
                                 <select class="form-select" aria-label="Default select example" id="combo_semestre">
                                     <option selected>[-- SELECCIONE --]</option>
                                     {% for semestre in semestres %}
-                                        <option value="{{semestre[1]}}" class="texto-input">{{semestre[1]}}</option>
+                                        <option value="{{semestre[1]}}">{{semestre[1]}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
                         <!-- Segundo input y label -->
-                        <div class="form-group row d-flex justify-content-center">
-                            <label for="input_docente" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
+                        <div class="form-group row d-flex justify-content-center" style="align-items: center;">
+                            <label for="search_bar" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                                <!-- Utiliza un input de tipo "search" -->
-                                <input type="search" class="form-control texto-input" id="input_docente" placeholder="Buscar docente...">
-                                <!-- Contenedor para mostrar las sugerencias -->
+                                <!-- Buscador con autocompletado de sugerencias -->
                                 <div id="search_bar"></div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-2 order-md-2 order-sm-1  d-flex justify-content-center align-items-center">
                         <!-- Foto -->
-                        <img src="" class="img-fluid" alt="Foto" id="foto_perfil">
+                        <img src="/static/img/USUARIO.jpg" class="img-fluid" alt="Foto" id="foto_perfil">
                     </div>
                 </div>
                 <!-- Tabla inferior -->
-                <div class="row mt-5">
-                    <div class="col-md-12">
-                        <table class="table table-bordered text-center">
-                            <thead class="border border-warning bg-blue-horario-usat">
-                              <tr class="">
-                                <th scope="col" class="border border-warning text-light">Hora</th>
-                                <th scope="col" class="border border-warning text-light">Lunes</th>
-                                <th scope="col" class="border border-warning text-light">Martes</th>
-                                <th scope="col" class="border border-warning text-light">Miércoles</th>
-                                <th scope="col" class="border border-warning text-light">Jueves</th>
-                                <th scope="col" class="border border-warning text-light">Viernes</th>
-                                <th scope="col" class="border border-warning text-light">Sábado</th>
-                                <th scope="col" class="border border-warning text-light">Domingo</th>
-                              </tr>
-                            </thead>
-                            <tbody class="" style="background-color: #EEEEEE;">
-                            </tbody>
-                        </table>
+                <div class="card-body show">
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <table class="table table-bordered text-center">
+                                <thead class="border border-warning bg-blue-horario-usat">
+                                  <tr class="">
+                                    <th scope="col" class="border border-warning text-light">Hora</th>
+                                    <th scope="col" class="border border-warning text-light">Lunes</th>
+                                    <th scope="col" class="border border-warning text-light">Martes</th>
+                                    <th scope="col" class="border border-warning text-light">Miércoles</th>
+                                    <th scope="col" class="border border-warning text-light">Jueves</th>
+                                    <th scope="col" class="border border-warning text-light">Viernes</th>
+                                    <th scope="col" class="border border-warning text-light">Sábado</th>
+                                    <th scope="col" class="border border-warning text-light">Domingo</th>
+                                  </tr>
+                                </thead>
+                                <tbody class="" style="background-color: #EEEEEE;">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -131,81 +128,139 @@
 </div>
 
 
-<script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
 <script>
-    const lista_horarios = [
-    '7:00 a.m. - 8:00 a.m.',
-     '8:00 a.m. - 9:00 a.m.',
-     '9:00 a.m. - 10:00 a.m.',
-     '10:00 a.m. - 11:00 a.m.',
-     '11:00 a.m. - 12:00 p.m.',
-     '12:00 p.m. - 13:00 p.m.',
-     '13:00 p.m. - 14:00 p.m.',
-     '14:00 p.m. - 15:00 p.m.',
-     '15:00 p.m. - 16:00 p.m.',
-     '16:00 p.m. - 17:00 p.m.',
-     '17:00 p.m. - 18:00 p.m.',
-     '18:00 p.m. - 19:00 p.m.',
-     '19:00 p.m. - 20:00 p.m.',
-     '20:00 p.m. - 21:00 p.m.',
-     '21:00 p.m. - 22:00 p.m.'
-    ];
-    const tabla = document.querySelector("tbody");
-    const input_docente = document.getElementById('input_docente');
-    
-    foto_perfil = localStorage.getItem("f");
-    if (!foto_perfil){
-        foto_perfil = sessionStorage.getItem("f"); 
-    }
-    document.getElementById("foto_perfil").src = "/static/img/"+foto_perfil;
-
-    lista_horarios.forEach(hora => {
-        let fila = `<tr> <th scope="row">${hora}</th>`;
-        
-        for (let i = 0; i < 7; i++) {
-            fila += "<td></td>";
-        }       
-        fila += "</tr>";       
-        tabla.insertAdjacentHTML("beforeend", fila);
-    });
-
-    let listaDatos = [];
-
-    function obtenerDatos() {
-        fetch('/get_personas_activas')
-            .then(response => response.json())
-            .then(data => {
-                listaDatos = data;
-                
-            })
-            .catch(error => {
-                console.error('Error:', error);
+        function mostrarAlerta(icon, title, text) {
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: text
             });
-    }
-
-    obtenerDatos();
-
-    function buscarElementos(texto) {
-        texto = texto.trim().toLowerCase();
-        return listaDatos.filter(elemento => {
-        let nombreCompleto = elemento.trim().toLowerCase();
-        return nombreCompleto.includes(texto);
-    });
-    }
-
-    input_docente.addEventListener('keypress',function(event){
-        if (event.key=='Enter'){
-            if (input_docente.value === ''){
-                mostrarAlerta("warning","No se pudo encontrar el docente","Por favor ingrese el nombre o nombres de los docentes");
-            }else{
-                var textoBusqueda = event.target.value;
-                var resultados = buscarElementos(textoBusqueda);
-                alert(resultados)
-            }
         }
-    });
 
-    var widget = new AutoComplete('search_bar', listaDatos);
+        function mostrarFoto(nombre_foto){
+            nombre_foto = nombre_foto.toUpperCase().replace(/ /g, "_");
+            nombre_formateado = nombre_foto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            document.getElementById("foto_perfil").src = "/static/img/"+nombre_formateado+".jpg";
+        }
+
+    $(document).ready(function(){
+        const lista_horarios = [
+        '7:00 a.m. - 8:00 a.m.',
+        '8:00 a.m. - 9:00 a.m.',
+        '9:00 a.m. - 10:00 a.m.',
+        '10:00 a.m. - 11:00 a.m.',
+        '11:00 a.m. - 12:00 p.m.',
+        '12:00 p.m. - 13:00 p.m.',
+        '13:00 p.m. - 14:00 p.m.',
+        '14:00 p.m. - 15:00 p.m.',
+        '15:00 p.m. - 16:00 p.m.',
+        '16:00 p.m. - 17:00 p.m.',
+        '17:00 p.m. - 18:00 p.m.',
+        '18:00 p.m. - 19:00 p.m.',
+        '19:00 p.m. - 20:00 p.m.',
+        '20:00 p.m. - 21:00 p.m.',
+        '21:00 p.m. - 22:00 p.m.'
+        ];
+        const tabla = document.querySelector("tbody");
+
+        lista_horarios.forEach(hora => {
+            let fila = `<tr> <th scope="row">${hora}</th>`;
+            
+            for (let i = 0; i < 7; i++) {
+                fila += "<td></td>";
+            }       
+            fila += "</tr>";       
+            tabla.insertAdjacentHTML("beforeend", fila);
+        });
+
+        let listaDocentes = [];
+
+        function obtenerDatos() {
+            fetch('/get_personas_activas')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(element => {
+                        listaDocentes.push(element[2] + ' '+ element[1])
+                    });
+                    var widget = new AutoComplete('search_bar', listaDocentes);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+        obtenerDatos();
+        var inputEl = document.getElementById('tuInputId'); // Obtén el elemento input por su ID
+
+        $('#collapseOne').collapse('show');
+    }); 
+    
+    var docentes_seleccionados = []
+    // Función para configurar el observador de mutaciones
+    function setupMutationObserver() {
+    // Seleccionar el elemento con la clase "tokens-6a7a0"
+    var tokensContainer = document.querySelector('.tokens-6a7a0');
+    // Verificar si el elemento está presente en el documento
+    if (tokensContainer) {
+        // Crear un observer para observar cambios en el contenido del elemento
+        var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            // Verificar si se insertó un nodo
+            if (mutation.type === 'childList') {
+            // Recorrer los nodos insertados
+            mutation.addedNodes.forEach(function(node) {
+                // Verificar si el nodo insertado tiene la clase "token-group-c7334"
+                if (node.classList && node.classList.contains('token-group-c7334')) {
+                // Encontrar el span con la clase "token-75233" dentro del nodo insertado
+                var tokenSpan = node.querySelector('.token-75233');
+                    // Ejecutar acciones al encontrar el span
+                    if (tokenSpan){
+                        docentes_seleccionados.push(tokenSpan.textContent);                      
+                    }
+                }
+                
+            });
+            // Verificar si se eliminó un nodo
+            mutation.removedNodes.forEach(function(node) {
+            // Verificar si el nodo eliminado tenía la clase "token-group-c7334"
+                if (node.classList && node.classList.contains('token-group-c7334')) {
+                    // Aquí puedes ejecutar acciones cuando se elimina un elemento con la clase "token-group-c7334"                   
+                    var tokenSpan = node.querySelector('.token-75233');
+                    if (tokenSpan) {
+                        // Eliminar el texto del span de la lista
+                        var index = docentes_seleccionados.indexOf(tokenSpan.textContent);
+                        if (index !== -1) {
+                        docentes_seleccionados.splice(index, 1);
+                        }
+                    }
+                }
+            });
+
+            }
+        });
+        if(docentes_seleccionados.length>1){
+            mostrarFoto("USUARIOS");
+        }else if (docentes_seleccionados.length==1) {
+            mostrarFoto(docentes_seleccionados[0]);
+        } else {
+            mostrarFoto("USUARIO");
+        }
+
+        });
+    
+        // Configurar las opciones del observer para observar cambios en el contenido y la estructura del elemento
+        var observerConfig = { childList: true, subtree: true };
+    
+        // Comenzar a observar el elemento
+        observer.observe(tokensContainer, observerConfig);
+    } else {
+        // El elemento aún no está presente, esperar y volver a intentarlo
+        setTimeout(setupMutationObserver, 500); // Intentar nuevamente después de 500 milisegundos
+    }
+    }
+
+    // Llamar a la función de configuración del observador de mutaciones
+    setupMutationObserver();
+
 
 </script>
 
