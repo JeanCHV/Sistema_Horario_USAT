@@ -19,6 +19,7 @@ import controladores.ambientes.controlador_ambiente as controlador_ambientes
 import controladores.cursos.controlador_cursos as controlador_cursos
 import controladores.controlador_persona as controlador_persona
 import controladores.controlador_semestre as controlador_semestre
+import controladores.controlador_horario as controlador_horario
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
@@ -148,5 +149,12 @@ def horarios_por_docente():
 @app.route("/get_personas_activas", methods=["GET"])
 def get_personas_activas():
     personas_activas = controlador_persona.obtener_personas_activas()
-    return jsonify(personas_activas) 
+    return jsonify(personas_activas)
+
+@app.route("/get_horarios_docentesNombres_semestre", methods=["POST"])
+def get_horarios_docentesNombres_semestre():
+    nombre_docente = request.json.get('nombre_docente')
+    semestre = request.json.get('semestre')
+    horarios = controlador_horario.obtener_horarios_por_docenteNombre_semestre(nombre_docente,semestre)
+    return jsonify(horarios)  
     

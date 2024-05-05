@@ -47,18 +47,6 @@
 
     </ol>
 </nav>
-<script>
-    /* $(".breadcrumb-item").on("click", function (e) {
-        var tmphref = $(this).attr("data-href");
-        if (tmphref) {
-            $("#container-body").load("/Pages/" + tmphref, function () { });
-        }
-        else {
-            window.location.reload();
-        }
-    }); */
-
-</script>
 
 
 <div class="card mx-2" id="card_horarios">
@@ -100,10 +88,10 @@
                 <!-- Tabla inferior -->
                 <div class="card-body show">
                     <div class="row mt-3">
-                        <div class="col-md-12">
-                            <table class="table table-bordered text-center">
+                        <div class="col-md-12" id="espacio_tabla">
+                            <table class="table table-bordered text-center" id="tabla_inicial">
                                 <thead class="border border-warning bg-blue-horario-usat">
-                                  <tr class="">
+                                  <tr>
                                     <th scope="col" class="border border-warning text-light">Hora</th>
                                     <th scope="col" class="border border-warning text-light">Lunes</th>
                                     <th scope="col" class="border border-warning text-light">Martes</th>
@@ -115,6 +103,16 @@
                                   </tr>
                                 </thead>
                                 <tbody class="" style="background-color: #EEEEEE;">
+                                    <tr>
+                                        <th scope="row">X</th>
+                                        <th scope="row">X</th>
+                                        <th scope="row">X</th>
+                                        <th scope="row">X</th>
+                                        <th scope="row">X</th>
+                                        <th scope="row">X</th>
+                                        <th scope="row">X</th>
+                                        <th scope="row">X</th>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -144,43 +142,14 @@
         }
 
     $(document).ready(function(){
-        const lista_horarios = [
-        '7:00 a.m. - 8:00 a.m.',
-        '8:00 a.m. - 9:00 a.m.',
-        '9:00 a.m. - 10:00 a.m.',
-        '10:00 a.m. - 11:00 a.m.',
-        '11:00 a.m. - 12:00 p.m.',
-        '12:00 p.m. - 13:00 p.m.',
-        '13:00 p.m. - 14:00 p.m.',
-        '14:00 p.m. - 15:00 p.m.',
-        '15:00 p.m. - 16:00 p.m.',
-        '16:00 p.m. - 17:00 p.m.',
-        '17:00 p.m. - 18:00 p.m.',
-        '18:00 p.m. - 19:00 p.m.',
-        '19:00 p.m. - 20:00 p.m.',
-        '20:00 p.m. - 21:00 p.m.',
-        '21:00 p.m. - 22:00 p.m.'
-        ];
-        const tabla = document.querySelector("tbody");
-
-        lista_horarios.forEach(hora => {
-            let fila = `<tr> <th scope="row">${hora}</th>`;
-            
-            for (let i = 0; i < 7; i++) {
-                fila += "<td></td>";
-            }       
-            fila += "</tr>";       
-            tabla.insertAdjacentHTML("beforeend", fila);
-        });
-
         let listaDocentes = [];
 
-        function obtenerDatos() {
+        function obtenerDatosDocentes() {
             fetch('/get_personas_activas')
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(element => {
-                        listaDocentes.push(element[2] + ' '+ element[1])
+                        listaDocentes.push(element[2] + ' ' + element[1])
                     });
                     var widget = new AutoComplete('search_bar', listaDocentes);
                 })
@@ -188,12 +157,102 @@
                     console.error('Error:', error);
                 });
         }
-        obtenerDatos();
+        obtenerDatosDocentes();
         var inputEl = document.getElementById('tuInputId'); // Obtén el elemento input por su ID
 
         $('#collapseOne').collapse('show');
-    }); 
+    });
     
+
+
+
+
+    function obtenerHorarios(lista_nombres_docentes,semestre) {
+        lista_nombres_docentes.forEach(nombre_docente => {
+            fetch('/get_horarios_docentesNombres_semestre', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nombre_docente : nombre_docente,
+                semestre : semestre,
+            })
+            })
+            .then(response => response.json())
+            .then(data => {
+                mostrarHorariosEnTabla(nombre_docente,data);
+            })
+            .catch(error => {
+            console.error('Error:', error);
+            }); 
+        });
+        }
+
+        function mostrarHorariosEnTabla(nomb_docente,data){
+            nombreX_docente = nomb_docente.toUpperCase().replace(/ /g, "_");
+            nombre_docente = nombreX_docente.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            if(!document.querySelector(`#fila-propietario-tabla-${nombre_docente}`)){
+                const dias_semana = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+                const lista_horarios = [
+                '7:00 a.m. - 8:00 a.m.',
+                '8:00 a.m. - 9:00 a.m.',
+                '9:00 a.m. - 10:00 a.m.',
+                '10:00 a.m. - 11:00 a.m.',
+                '11:00 a.m. - 12:00 p.m.',
+                '12:00 p.m. - 13:00 p.m.',
+                '13:00 p.m. - 14:00 p.m.',
+                '14:00 p.m. - 15:00 p.m.',
+                '15:00 p.m. - 16:00 p.m.',
+                '16:00 p.m. - 17:00 p.m.',
+                '17:00 p.m. - 18:00 p.m.',
+                '18:00 p.m. - 19:00 p.m.',
+                '19:00 p.m. - 20:00 p.m.',
+                '20:00 p.m. - 21:00 p.m.',
+                '21:00 p.m. - 22:00 p.m.'
+                ];
+                
+                document.getElementById("espacio_tabla").innerHTML+=
+                `
+                    <table class="table table-bordered text-center" id="fila-propietario-tabla-${nombre_docente}">
+                        <div class="border border-warning bg-blue-horario-usat" 
+                        style="display: flex;align-items:center;justify-content: center;color: white;font-weight: bold;height: 45px;">
+                            ${nomb_docente}
+                        </div>
+                        <thead class="border border-warning bg-blue-horario-usat">
+                            <tr class="fila-dias-tabla-${nombre_docente}">
+                            </tr>
+                        </thead>
+                        <tbody class="" style="background-color: #EEEEEE;">
+                            <tr class="fila-horas-tabla-${nombre_docente}">
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+                for (let i = 0; i < dias_semana.length; i++) {
+                    if(i==0){
+                        document.querySelector(`.fila-dias-tabla-${nombre_docente}`).innerHTML+=
+                        `
+                            <th scope="col" class="border border-warning text-light">Hora</th>
+                            <th scope="col" class="border border-warning text-light">${dias_semana[i]}</th>
+                        `;
+                    }else{
+                        document.querySelector(`.fila-dias-tabla-${nombre_docente}`).innerHTML+=
+                        `
+                            <th scope="col" class="border border-warning text-light">${dias_semana[i]}</th>
+                        `;
+                    }     
+                }
+
+                for (let i = 0; i < dias_semana.length+1; i++) {
+                    document.querySelector(`.fila-horas-tabla-${nombre_docente}`).innerHTML+=
+                    `
+                        <th scope="row">X</th>
+                    `;
+                }
+            }
+        }
+
     var docentes_seleccionados = []
     // Función para configurar el observador de mutaciones
     function setupMutationObserver() {
@@ -213,8 +272,8 @@
                 // Encontrar el span con la clase "token-75233" dentro del nodo insertado
                 var tokenSpan = node.querySelector('.token-75233');
                     // Ejecutar acciones al encontrar el span
-                    if (tokenSpan){
-                        docentes_seleccionados.push(tokenSpan.textContent);                      
+                    if (tokenSpan){                       
+                        docentes_seleccionados.push(tokenSpan.textContent);
                     }
                 }
                 
@@ -225,26 +284,46 @@
                 if (node.classList && node.classList.contains('token-group-c7334')) {
                     // Aquí puedes ejecutar acciones cuando se elimina un elemento con la clase "token-group-c7334"                   
                     var tokenSpan = node.querySelector('.token-75233');
-                    if (tokenSpan) {
+                    if (tokenSpan) {                        
                         // Eliminar el texto del span de la lista
                         var index = docentes_seleccionados.indexOf(tokenSpan.textContent);
                         if (index !== -1) {
                         docentes_seleccionados.splice(index, 1);
-                        }
+                        }                      
                     }
                 }
             });
 
             }
         });
-        if(docentes_seleccionados.length>1){
-            mostrarFoto("USUARIOS");
-        }else if (docentes_seleccionados.length==1) {
+        semestre = document.getElementById('combo_semestre').value;
+        docentes_seleccionados_sin_repeticiones = docentes_seleccionados.filter((elemento,index)=>{
+            return docentes_seleccionados.indexOf(elemento) === index;
+        });
+        if(semestre!='[-- SELECCIONE --]'){
+            if(docentes_seleccionados_sin_repeticiones.length==0){
+                document.getElementById("tabla_inicial").style.visibility = "visible";
+                
+            }else if(docentes_seleccionados_sin_repeticiones.length>1){
+                obtenerHorarios(docentes_seleccionados_sin_repeticiones,semestre);
+                document.getElementById("tabla_inicial").style.visibility ="collapse";
+
+            }else if (docentes_seleccionados_sin_repeticiones.length==1) {
+                obtenerHorarios(docentes_seleccionados_sin_repeticiones,semestre);
+                document.getElementById("tabla_inicial").style.visibility ="collapse";  
+
+            }
+        }
+
+        if(docentes_seleccionados_sin_repeticiones.length>1){
+        mostrarFoto("USUARIOS");
+
+        }else if (docentes_seleccionados_sin_repeticiones.length==1) {
             mostrarFoto(docentes_seleccionados[0]);
+
         } else {
             mostrarFoto("USUARIO");
         }
-
         });
     
         // Configurar las opciones del observer para observar cambios en el contenido y la estructura del elemento
@@ -255,11 +334,18 @@
     } else {
         // El elemento aún no está presente, esperar y volver a intentarlo
         setTimeout(setupMutationObserver, 500); // Intentar nuevamente después de 500 milisegundos
+
+        
     }
     }
 
     // Llamar a la función de configuración del observador de mutaciones
     setupMutationObserver();
+
+    document.getElementById("combo_semestre").addEventListener("change", function() {
+        var semestre = this.value;
+        obtenerHorarios(docentes_seleccionados_sin_repeticiones,semestre);
+    });
 
 
 </script>
