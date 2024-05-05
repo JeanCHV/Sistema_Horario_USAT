@@ -2,11 +2,11 @@ import pymysql
 
 
 def obtener_conexion():
-    return pymysql.connect(host='sql3.freemysqlhosting.net',
+    return pymysql.connect(host='bkvjs2sg6xirjg6gaoca-mysql.services.clever-cloud.com',
                                 port=3306,
-                                user='sql3702269',
-                                password='j1pBlTp3hP',
-                                db='sql3702269')
+                                user='ugctyihetkrc2clv',
+                                password='BwWVzLlZ2IEbvqPx33cy',
+                                db='bkvjs2sg6xirjg6gaoca')
 
 """ def obtener_conexion():
     return pymysql.connect(host='127.0.0.1',
