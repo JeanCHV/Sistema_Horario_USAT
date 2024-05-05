@@ -87,8 +87,8 @@ def procesar_login():
                 return jsonify({'logeo': True, 'token': token, 'foto':foto, 'nombre':nombre})
 
             return jsonify({'mensaje':'La contraseña es incorrecta', 'logeo':False})
-    except:
-        return jsonify({'mensaje':'Error al procesar el login', 'logeo':False})
+    except NameError:
+        return jsonify({'mensaje':'Error al procesar el login'+NameError, 'logeo':False})
     
 
 @app.route("/get_ambientes", methods=["GET"])
