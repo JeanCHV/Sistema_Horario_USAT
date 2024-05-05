@@ -259,6 +259,22 @@
             }
         }
 
+        document.getElementById("username").addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (document.getElementById("username").value.trim().length>0 && 
+                document.getElementById("password").value.trim().length>0)
+                procesar_login();
+            }
+        });
+
+        document.getElementById("password").addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (document.getElementById("username").value.trim().length>0 && 
+                document.getElementById("password").value.trim().length>0)
+                procesar_login();
+            }
+        });
+
     </script>
 
 
