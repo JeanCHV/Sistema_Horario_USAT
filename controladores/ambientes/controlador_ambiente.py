@@ -1,4 +1,5 @@
 from bd import obtener_conexion
+from flask import request, jsonify
 
 def obtener_ambientes():
     conexion = obtener_conexion()
@@ -15,6 +16,20 @@ def obtener_ambientes():
 
     conexion.close()
     return ambientes
+
+def agregar_ambiente(nombre, aforo, estado, idedificio, idambientetipo):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("INSERT INTO ambiente (nombre, aforo, estado, idedificio, idambientetipo) VALUES (%s, %s, %s, %s, %s)",
+                           (nombre, aforo, estado, idedificio, idambientetipo))
+            conexion.commit()
+            return {"mensaje": "Ambiente agregado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
 
 
 # def obtener_usuario_con_tipopersona_por_username(username):

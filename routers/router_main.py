@@ -19,6 +19,7 @@ import controladores.ambientes.controlador_ambiente as controlador_ambientes
 import controladores.cursos.controlador_cursos as controlador_cursos
 import controladores.controlador_persona as controlador_persona
 import controladores.controlador_semestre as controlador_semestre
+import controladores.controlador_horario as controlador_horario
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
@@ -86,14 +87,34 @@ def procesar_login():
                 return jsonify({'logeo': True, 'token': token, 'foto':foto, 'nombre':nombre})
 
             return jsonify({'mensaje':'La contraseña es incorrecta', 'logeo':False})
-    except:
-        return jsonify({'mensaje':'Error al procesar el login', 'logeo':False})
+    except NameError:
+        return jsonify({'mensaje':'Error al procesar el login'+NameError, 'logeo':False})
     
 
 @app.route("/get_ambientes", methods=["GET"])
 def get_ambientes():
     ambientes = controlador_ambientes.obtener_ambientes()
     return jsonify(ambientes)
+#AGREGAR AMBIENTE
+@app.route("/agregar_ambiente", methods=["POST"])
+def agregar_ambiente():
+    try:
+        nombre = request.json.get('nombre')
+        aforo = request.json.get('aforo')
+        estado = request.json.get('estado')
+        idedificio = request.json.get('idedificio')
+        idambientetipo = request.json.get('idambientetipo')
+
+        # Realiza las validaciones necesarias aquí antes de agregar el ambiente
+
+        # Llama al controlador para agregar el ambiente
+        resultado = controlador_ambientes.agregar_ambiente(nombre, aforo, estado, idedificio, idambientetipo)
+
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 @app.route("/get_cursos", methods=["GET"])
 def get_cursos():
     cursos = controlador_cursos.obtener_cursos()
@@ -148,7 +169,12 @@ def horarios_por_docente():
 @app.route("/get_personas_activas", methods=["GET"])
 def get_personas_activas():
     personas_activas = controlador_persona.obtener_personas_activas()
-    lista_personas_activas = []
-    for persona in personas_activas:
-        lista_personas_activas.append(persona[1] + ' ' + persona[2])
-    return jsonify(lista_personas_activas)
+    return jsonify(personas_activas)
+
+@app.route("/get_horarios_docentesNombres_semestre", methods=["POST"])
+def get_horarios_docentesNombres_semestre():
+    nombre_docente = request.json.get('nombre_docente')
+    semestre = request.json.get('semestre')
+    horarios = controlador_horario.obtener_horarios_por_docenteNombre_semestre(nombre_docente,semestre)
+    return jsonify(horarios)  
+    

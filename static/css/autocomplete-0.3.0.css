@@ -14,8 +14,8 @@ div.clear-53545 {
 }
 
 div.autocomplete-container-7a26d {
-  border: 2px solid #ccc;
-  color: #333;
+  border: 1px solid #DEE2E6;
+  color: #495057;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   font-style: normal;
@@ -24,7 +24,8 @@ div.autocomplete-container-7a26d {
   padding: 4px;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
-  border-radius: 8px;
+  border-radius: 3px;
+  align-items: center;
 }
 
 div.placeholder-d722a {
@@ -41,16 +42,16 @@ input.input-8f2fe {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
-  color: #000;
+  color: #000000;
   float: left;
-  font-size: 16px;
+  font-size: 15px;
   height: 20px;
   line-height: 20px;
   margin: 10px 0;
   outline: none;
-  /* padding: 0; */
-  padding-left: 10px;
+  padding: 0;
   vertical-align: middle;
+  margin-left: 10px;
   width: 120px;
 }
 
@@ -98,12 +99,14 @@ ul.dropdown-a3d44 {
   padding: 0;
   position: absolute;
   z-index: 10;
+  min-width: 100px;
+  white-space: pre-line;
 }
 
 li.list-item-d13e9 {
   background: #f9f9f9;
   border-bottom: 1px solid #d8d8d8;
-  font-size: 13px;
+  font-size: 15px;
   list-style: none;
   margin: 0;
   padding: 4px;
@@ -114,7 +117,7 @@ li.option-7b59f {
 }
 
 li.highlighted-ea4c1 {
-  background: #00519d;
+  background: #5f5e5e;
   color: #fff;
 }
 
@@ -124,4 +127,14 @@ li.last-option-c1e64 {
 
 span.children-indicator-ca540 {
   float: right;
+}
+
+div.autocomplete-container-7a26d:focus-within {
+  border: 1px solid #98BBED;
+  color: #495057;
+  box-shadow: 0 0 0 4px #CEDEF6
+}
+
+input.input-8f2fe:focus-within {
+  color: #495057;
 }
