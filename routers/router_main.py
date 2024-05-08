@@ -95,6 +95,26 @@ def procesar_login():
 def get_ambientes():
     ambientes = controlador_ambientes.obtener_ambientes()
     return jsonify(ambientes)
+#AGREGAR AMBIENTE
+@app.route("/agregar_ambiente", methods=["POST"])
+def agregar_ambiente():
+    try:
+        nombre = request.json.get('nombre')
+        aforo = request.json.get('aforo')
+        estado = request.json.get('estado')
+        idedificio = request.json.get('idedificio')
+        idambientetipo = request.json.get('idambientetipo')
+
+        # Realiza las validaciones necesarias aquí antes de agregar el ambiente
+
+        # Llama al controlador para agregar el ambiente
+        resultado = controlador_ambientes.agregar_ambiente(nombre, aforo, estado, idedificio, idambientetipo)
+
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 @app.route("/get_cursos", methods=["GET"])
 def get_cursos():
     cursos = controlador_cursos.obtener_cursos()
