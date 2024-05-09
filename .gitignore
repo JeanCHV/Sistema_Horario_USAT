@@ -35,6 +35,11 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+#Visual Paradigm backup files
+
+*.vpp.vbak
+*.vpp.bak*
+*.vpp.lck
 
 # Unit test / coverage reports
 htmlcov/
