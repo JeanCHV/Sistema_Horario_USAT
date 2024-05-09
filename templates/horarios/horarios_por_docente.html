@@ -135,11 +135,22 @@
             });
         }
 
-        function mostrarFoto(nombre_foto){
+        function mostrarFoto(nombre_foto) {
             nombre_foto = nombre_foto.toUpperCase().replace(/ /g, "_");
             nombre_formateado = nombre_foto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            document.getElementById("foto_perfil").src = "/static/img/"+nombre_formateado+".jpg";
+
+            var img = new Image();
+            img.src = "/static/img/" + nombre_formateado + ".jpg";
+
+            img.onload = function() {
+                document.getElementById("foto_perfil").src = img.src;
+            };
+            
+            img.onerror = function() {
+                document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
+            };
         }
+
 
     $(document).ready(function(){
         let listaDocentes = [];
