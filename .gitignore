@@ -167,3 +167,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 VP/bd_calidad20241.vpp.bak_010d
+/clases/__pycache__
+/controladores/__pycache__
+/controladores/ambientes/__pycache__
+/controladores/cursos/__pycache__
+/controladores/docente/__pycache__
+/controladores/usuario/__pycache__
+/routers/__pycache__
