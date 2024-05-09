@@ -160,6 +160,10 @@ def docentes():
 def horarios():
     return render_template("dashboard/horarios.html")
 
+@app.route("/usuario")
+def horarios():
+    return render_template("dashboard/usuario.html")
+
 
 @app.route("/horarios_por_docente")
 def horarios_por_docente():
