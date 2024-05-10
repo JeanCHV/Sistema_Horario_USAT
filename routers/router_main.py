@@ -161,7 +161,7 @@ def horarios():
     return render_template("dashboard/horarios.html")
 
 @app.route("/usuario")
-def horarios():
+def usuario():
     return render_template("dashboard/usuario.html")
 
 
