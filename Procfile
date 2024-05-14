@@ -1,1 +1,1 @@
-web: colorama main:app
+web: gunicorn main:app
