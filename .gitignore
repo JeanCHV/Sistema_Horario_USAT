@@ -180,3 +180,5 @@ VP/bd_calidad20241.vpp.bak_010d
 /controladores/cursos/__pycache__
 /controladores/usuario/__pycache__
 /routers/__pycache__
+/controladores/ambientes
+/controladores/ambientes/__pycache__
