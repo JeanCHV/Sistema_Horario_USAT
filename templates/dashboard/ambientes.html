@@ -9,15 +9,7 @@
     </ol>
 </nav>
 <script>
-    // $(".breadcrumb-item").on("click", function (e) {
-    //     var tmphref = $(this).attr("data-href");
-    //     if (tmphref) {
-    //         $("#container-body").load("/Pages/" + tmphref, function () { });
-    //     }
-    //     else {
-    //         window.location.reload();
-    //     }
-    // });
+
 </script>
 <div class="container">
 
@@ -56,6 +48,7 @@
                                 <th>Aforo</th>
                                 <th>Estado</th>
                                 <th>Edificio</th>
+                                <th>Opciones</th>
                                 <!-- Agregar más columnas según sea necesario -->
                             </tr>
                         </thead>
@@ -220,6 +213,23 @@ $(document).ready(function() {
             }
         });
     });
+    //OPCIONES CRUD PARA AMBIENTE (MODIFICAR Y ELIMINAR)
+// Manejar clic en botón de modificar
+$('#tabla-ambiente tbody').on('click', 'button.btn-modificar', function() {
+    var data = table.row($(this).parents('tr')).data();
+    $('#modalModificarAmbiente').modal('show');
+    // Llenar el formulario de modificación con los datos actuales del ambiente
+    $('#nombreAmbienteModificar').val(data.nombre);
+    $('#aforoAmbienteModificar').val(data.aforo);
+    $('#estadoAmbienteModificar').val(data.estado);
+    $('#idedificioModificar').val(data.idedificio);
+    $('#idambientetipoModificar').val(data.idambientetipo);
+});
+
+
+
+
+
 
 });
 </script>
