@@ -146,9 +146,16 @@ def ambientes():
     return render_template("dashboard/ambientes.html")
 
 
+@app.route("/rellenar_tabla,<string>escuela")
+def rellenar_tabla(escuela):
+    cursos = controlador_cursos.obtener_curso(escuela)
+    return cursos
+
 @app.route("/cursos")
 def cursos():
-    return render_template("dashboard/cursos.html")
+    semestres = controlador_cursos.obtener_semestres()
+    escuelas = controlador_cursos.obtener_escuelas()
+    return render_template("dashboard/cursos.html", semestres=semestres, escuelas=escuelas)
 
 
 @app.route("/docentes")

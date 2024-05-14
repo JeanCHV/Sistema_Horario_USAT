@@ -7,161 +7,168 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
         <li class="breadcrumb-item active"><a href="{{url_for('cursos')}}">Cursos</a></li>
-
     </ol>
 </nav>
-<script>
-    // $(".breadcrumb-item").on("click", function (e) {
-    //     var tmphref = $(this).attr("data-href");
-    //     if (tmphref) {
-    //         $("#container-body").load("/Pages/" + tmphref, function () { });
-    //     }
-    //     else {
-    //         window.location.reload();
-    //     }
-    // });
-</script>
 <div class="container">
-
-
-    <div class="card" id="card_cursos">
-        <div class="card-header bg-primary text-white" id="headingOne" data-bs-toggle="collapse"
+    <div class="card mt-3" id="card_cursos">
+        <div class="card-header  bg-red-usat   text-white" id="headingOne" data-bs-toggle="collapse"
             data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            Cursos
+            Cursos 
         </div>
-        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+        <div class="ms-4 mt-3  ">
+            <!-- Semestre -->
+            <div class="d-flex mb-3 mt-3">
+                <label for="" class="mb-2  me-4  mt-2">Semestre:</label>
+                <select class="form-select w-25 me-3  " aria-label="Default select example" id="semestre" onchange="hola()">
+                    <option selected disabled>  -----Seleccione un semestre-----</option>
+                    {% for semestre in semestres %}
+                    <option>{{ semestre[0] }} </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Escuelas -->
+            <div class="d-flex mb-3 mt-3">
+                <label for="" class="mb-2 mt-2" >Escuela :</label>
+                <select class="form-select w-25 me-3 " aria-label="Default select example" id="escuela" style="margin-left:33px" onchange="hola()">
+                    <option selected disabled>-----Seleccione una escuela-----</option>
+                    {% for escuela in escuelas %}
+                    <option>{{ escuela[0] }} </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            <div class="card-body">
-                <div class="search-box">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <input type="text" id="buscar_cursos" class="form-control"
-                                    placeholder="Buscar Cursos...">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- CURSOS -->
 
-                <div class="card-body show">
-                    <!-- Tabla para mostrar los cursos -->
-                    <table id="tabla-cursos" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Cod. Curso</th>
-                                <th>Creditos</th>
-                                <th>Horas Teoria</th>
-                                <th>Horas Practica</th>
-                                <th>Ciclo</th>
-                                <th>Tipo Curso</th>
-                                <th>Estado</th>
-                                <th>Plan Estudio</th>
+            <div class="d-flex">
+                <label for="" class="mb-2 mt-2 form-label me-4">Cursos:</label>
+                <input type="text" class="form-control  w-25  danger"  placeholder="Buscar Cursos" onkeypress="filtrado()"  id="curso" style="margin-left:18px" >
+            </div>
 
-                            </tr>
-                        </thead>
-                        <tbody>
+        </div>
+        <hr class="border-black">
+        <div class="me-5 ms-5 " id="miTabla">
+            <table class="table">   
+                <thead>       
+                    <tr>
+                        <th>
+                            Código
+                        </th>
+                        <th>
+                            Nombre del curso
+                        </th>
+                        <th>
+                            Ciclo
+                        </th>
+                        <th>
+                            N° Grupos
+                        </th>
+                        <th>
+                            <input type="checkbox" class="form-check-input   me-3 border border-dark" onclick="seleccionar_toda()" id="est"> 
+                        </th>
+                        
+                    </tr>
+                </thead>
+                <tbody id="cuerpo_tabla">
 
-                        </tbody>
-                    </table>
-                </div>
+                </tbody>
+
+            </table>
+            <div class="text-end mb-2">
+                <button class="btn  btn-success bg_green_button me-2">Guardar</button>
+                <button class="btn btn-danger me-5">Cancelar</button>
             </div>
         </div>
-        <a href="#" id="btn_agregar_cursos" data-href="cursos_agregar.html" class="btn btn-success">Agregar Nuevo
-            Cursos</a>
     </div>
-    <!-- <h2>Cursos</h2>
-
-    <div class="form-row mb-3">
-        <div class="col-md-3">
-            
-            <select class="form-control" id="semestre">
-                <option value="">Todos los semestres</option>
-                <option value="1">Semestre 1</option>
-                <option value="2">Semestre 2</option>
-                <option value="3">Semestre 3</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select class="form-control" id="escuela">
-                <option value="">Todas las escuelas</option>
-                <option value="1">Escuela 1</option>
-                <option value="2">Escuela 2</option>
-                <option value="3">Escuela 3</option>
-            </select>
-        </div>
-    </div>
-
-    <table id="tabla-cursos" class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Semestre</th>
-                <th>Escuela</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table> -->
 </div>
 
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
 <script>
-    $(document).ready(function () {
-        var cursos = [];
-        $.ajax({
-            url: '/get_cursos',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                //console.log(response);
-                cursos = response;
-                console.log(cursos);
 
-                // Inicializar DataTable dentro de la función success
-                $('#tabla-cursos').DataTable({
-                    "data": cursos,
-                    "paging": true,
-                    "info": true,
-                    "responsive": true,
-                    "rowReorder": {
-                        "selector": 'td:nth-child(2)'
-                    },
-                    "stateSave": true,
-                    "searching": false,
-                    "columns": [
-                        { "data": "nombre" },
-                        { "data": "cod_curso" },
-                        { "data": "creditos" },
-                        { "data": "horas_teoria" },
-                        { "data": "horas_practica" },
-                        { "data": "ciclo" },
-                        { "data": "tipo_curso" },
-                        { "data": "estado" },
-                        { "data": "id_plan_estudio" },
+    function seleccionar_toda() {
+        var checkbox = document.getElementById('est');
+        var isChecked = checkbox.checked; 
+        var input_check = document.querySelectorAll('input[type="checkbox"]');
+    
+        for (var i = 0; i < input_check.length; i++) {
+            input_check[i].checked = isChecked; 
+        }
+    }
+    
+    function validar() {
+        var semestre = document.getElementById('semestre');
+        var escuela = document.getElementById('escuela');
+        
+        if (semestre.selectedIndex > 0 && escuela.selectedIndex > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-                    ],
-                    "language": {
-                        "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+    function filtrado() {
+        // Validar el estado y obtener el valor del campo de curso
+        const estado = validar();
+        const curso = document.getElementById('curso').value;
+    
+        // Verificar si el estado es verdadero y si el campo de curso tiene contenido
+        if (estado && curso.length > 0) {
+            const filtro = curso.toUpperCase();
+            const filas = document.getElementById('cuerpo_tabla').getElementsByTagName('tr');
+    
+            // Iterar sobre las filas de la tabla y ocultar aquellas que no coincidan con el curso
+            for (let i = 0; i < filas.length; i++) {
+                const nombreCurso = filas[i].getElementsByTagName('td')[1];
+                if (nombreCurso) {
+                    const textoCurso = nombreCurso.textContent || nombreCurso.innerText;
+                    if (textoCurso.toUpperCase().includes(filtro)) {
+                        filas[i].style.display = '';
+                    } else {
+                        filas[i].style.display = 'none';
                     }
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log('error', error);
+                }       
             }
-        });
-        // Manejo de la búsqueda
-        $('#buscar_cursos').on('keyup', function () {
-            var searchText = $(this).val().toLowerCase();
-            $('#tabla-cursos tbody tr').filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+        } else {
+            // Si el estado no es verdadero o el campo de curso está vacío, mostrar un mensaje de error o realizar otra acción
+            console.log("Error: El estado no es válido o el campo de curso está vacío.");
+        }
+    }
+    
+    function hola() {
+        var estado = validar();
+        console.log(estado);
+        if (estado == true) {    
+            console.log(document.getElementById('semestre').value);
+        } else {
+            console.log('bays');
+        }
+    }
+    function rellenarTabla(escuela) {
+        fetch(`/rellenar_tabla/${escuela}`)
+          .then(response => response.json())
+          .then(data => {
+            const cuerpoTabla = document.getElementById('cuerpo_tabla');
+            // Limpiar contenido previo de la tabla
+            cuerpoTabla.innerHTML = '';
+    
+            data.forEach(curso => {
+              const fila = document.createElement('tr');
+              fila.innerHTML = `
+                <td>${curso.idcurso}</td>
+                <td>${curso.nombre}</td>
+                <td>${curso.ciclo}</td>
+                <td class="" style="width:90px">
+                    <input type="number" id="miCampoNumerico" class="form-control bg-white text-black">
+                </td>
+                <td>
+                    <input type="checkbox" class="form-check-input me-3 border border-dark">
+                </td>
+              `;
+              cuerpoTabla.appendChild(fila);
             });
-        });
-
-        $('#collapseOne').collapse('show');
-    });
+          })
+          .catch(error => {
+            console.error('Error al obtener los datos de la tabla:', error);
+          });
+    }
 </script>
-
 {% endblock %}
-```
-
