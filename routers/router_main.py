@@ -113,8 +113,44 @@ def agregar_ambiente():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+#ELIMINAR AMBIENTE 
+@app.route("/eliminar_ambiente", methods=["POST"])
+def eliminar_ambiente_route():
+    try:
+        data = request.json
+        idambiente = data.get('id')
+        resultado = controlador_ambientes.eliminar_ambiente(idambiente)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+#DAR DE BAJA AMBIENTE 
 
+@app.route("/dar_baja_ambiente", methods=["POST"])
+def dar_baja_ambiente_route():
+    try:
+        data = request.json
+        idambiente = data.get('id')
+        resultado = controlador_ambientes.dar_baja_ambiente(idambiente)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+#MODIFICAR AMBIENTE 
 
+@app.route("/modificar_ambiente", methods=["POST"])
+def modificar_ambiente_route():
+    try:
+        data = request.json
+        idambiente = data.get('id')
+        nombre = data.get('nombre')
+        aforo = data.get('aforo')
+        estado = data.get('estado')
+        idedificio = data.get('idedificio')
+        idambientetipo = data.get('idambientetipo')
+        resultado = controlador_ambientes.modificar_ambiente(idambiente, nombre, aforo, estado, idedificio, idambientetipo)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+   
 @app.route("/get_cursos", methods=["GET"])
 def get_cursos():
     cursos = controlador_cursos.obtener_cursos()

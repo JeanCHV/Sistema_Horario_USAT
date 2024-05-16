@@ -87,8 +87,12 @@
                             </div>
                             <div class="mb-3">
                                 <label for="estadoAmbiente" class="form-label">Estado:</label>
-                                <input type="text" class="form-control" id="estadoAmbiente" name="estadoAmbiente" required>
-                            </div>
+                                <select class="form-control" id="estadoAmbiente" name="estadoAmbiente" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="A">Activo</option>
+                                    <option value="I">Inactivo</option>
+                                </select>
+                                </div>
                             <div class="mb-3">
                                 <label for="idedificio" class="form-label">Edificio:</label>
                                 <select class="form-control" id="idedificio" name="idedificio" required>
@@ -119,7 +123,7 @@
 
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
 <script>
-$(document).ready(function() {
+ $(document).ready(function() {
     var ambientes = [];
     var edificios = {
         1: "EDIFICIO ANTIGUO",
@@ -261,7 +265,7 @@ $(document).ready(function() {
     $('#tabla-ambiente tbody').on('click', '.btnDarDeBaja', function() {
         var id = $(this).data('id');
         $.ajax({
-            url: '/dar_de_baja_ambiente',
+            url: '/dar_baja_ambiente',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ id: id }),
@@ -280,6 +284,53 @@ $(document).ready(function() {
                 console.log(error);
             }
         });
+    });
+
+    $('#tabla-ambiente tbody').on('click', '.btnModificar', function() {
+        var id = $(this).data('id');
+        var ambiente = ambientes.find(a => a.id == id);
+        if (ambiente) {
+            $('#nombreAmbiente').val(ambiente.nombre);
+            $('#aforoAmbiente').val(ambiente.aforo);
+            $('#estadoAmbiente').val(ambiente.estado);
+            $('#idedificio').val(ambiente.idedificio);
+            $('#idambientetipo').val(ambiente.idambientetipo);
+            $('#modalAgregarAmbiente').modal('show');
+
+            $('#formModificarAmbiente').off('submit').on('submit', function(e) {
+                e.preventDefault();
+                var data = {
+                    id: id,
+                    nombre: $('#nombreAmbiente').val(),
+                    aforo: $('#aforoAmbiente').val(),
+                    estado: $('#estadoAmbiente').val(),
+                    idedificio: $('#idedificio').val(),
+                    idambientetipo: $('#idambientetipo').val()
+                };
+
+                $.ajax({
+                    url: '/modificar_ambiente',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        console.log(response);
+                        $('#mensajeResultado').removeClass().empty();
+                        if (response.error) {
+                            $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                        } else {
+                            $('#mensajeResultado').addClass('alert alert-success').text('Ambiente modificado correctamente');
+                            cargarAmbientes();
+                            $('#modalAgregarAmbiente').modal('hide');
+                        }
+                        $('#mensajeResultado').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            });
+        }
     });
 });
 

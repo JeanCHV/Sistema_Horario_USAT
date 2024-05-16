@@ -31,14 +31,37 @@ def agregar_ambiente(nombre, aforo, estado, idedificio, idambientetipo):
         conexion.close()
 
 
-def eliminar_ambiente(nombre, aforo, estado, idedificio, idambientetipo):
+def eliminar_ambiente(idambiente):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("INSERT INTO ambiente (nombre, aforo, estado, idedificio, idambientetipo) VALUES (%s, %s, %s, %s, %s)",
-                           (nombre, aforo, estado, idedificio, idambientetipo))
+            cursor.callproc('sp_Ambiente_Gestion', [4, idambiente, None, None, None, None, None])
             conexion.commit()
-            return {"mensaje": "Ambiente agregado correctamente"}
+            return {"mensaje": "Ambiente eliminado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def dar_baja_ambiente(idambiente):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Ambiente_Gestion', [3, idambiente, None, None, None, None, None])
+            conexion.commit()
+            return {"mensaje": "Ambiente dado de baja correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def modificar_ambiente(idambiente, nombre, aforo, estado, idedificio, idambientetipo):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Ambiente_Gestion', [2, idambiente, nombre, aforo, estado, idedificio, idambientetipo])
+            conexion.commit()
+            return {"mensaje": "Ambiente modificado correctamente"}
     except Exception as e:
         return {"error": str(e)}
     finally:
