@@ -182,3 +182,6 @@ def get_horarios_docentesNombres_semestre():
     horarios = controlador_horario.obtener_horarios_por_docenteNombre_semestre(nombre_docente,semestre)
     return jsonify(horarios)  
     
+@app.route("/perfil")
+def perfil():
+    return render_template("dashboard/perfil.html")
