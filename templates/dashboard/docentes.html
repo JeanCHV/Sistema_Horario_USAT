@@ -5,7 +5,6 @@
 {% block contenido %}
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
-<<<<<<< Updated upstream
         <li class="breadcrumb-item" href="Home"><a>Inicio</a></li>
         <li class="breadcrumb-item active" data-href="#"><a>Docentes</a></li>
 
@@ -40,50 +39,6 @@
         </div>
     </div>
     <div href="#" id="" data-href="" class="btn btn-success foot" style="height: 20px;"></div>
-=======
-        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
-        <li class="breadcrumb-item active"><a href="{{ url_for('mostrar_docentes') }}">Docentes</a></li>
-    </ol>
-</nav>
-
-<div class="container">
-    <div class="container">
-        <!-- Contenedor para mostrar mensajes de resultado -->
-        <div id="mensajeResultado" style="display: none;"></div>
-
-        <div class="card mx-2" id="card_horarios">
-            <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                Docentes
-            </div>
-            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
-                <div class="card-body">
-
-                    <div class="card-body show">
-                        <!-- Tabla para mostrar los docentes -->
-                        <table id="tabla-ambiente" class="table table-striped" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Teléfono</th>
-                                    <th>Correo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for persona in persona %}
-                                    <tr>
-                                        <td>{{ persona.nombre_completo }}</td>
-                                        <td>{{ persona.telefono }}</td>
-                                        <td>{{ persona.correo }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
->>>>>>> Stashed changes
 </div>
 
 {% endblock %}

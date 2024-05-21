@@ -20,7 +20,7 @@ import controladores.cursos.controlador_cursos as controlador_cursos
 import controladores.controlador_persona as controlador_persona
 import controladores.controlador_semestre as controlador_semestre
 import controladores.controlador_horario as controlador_horario
-import controladores.controlador_docente as controlador_docente
+import controladores.docente.controlador_docente as controlador_docente
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
@@ -253,9 +253,9 @@ def cursosxescuela():
 
 
 @app.route('/docentes')
-def mostrar_docentes():
+def docentes():
     persona = controlador_docente.mostrar_docentes()
-    return render_template('dashboard/docentes.html', docentes=persona)
+    return render_template('dashboard/docentes.html',personas=persona)
 
 @app.route("/horarios")
 def horarios():
