@@ -207,6 +207,9 @@ def horarios():
 def usuario():
     return render_template("dashboard/usuario.html")
 
+@app.route("/ReporteAmbiente")
+def ReporteAmbiente():
+    return render_template("dashboard/Reporte.html")
 
 @app.route("/horarios_por_docente")
 def horarios_por_docente():
