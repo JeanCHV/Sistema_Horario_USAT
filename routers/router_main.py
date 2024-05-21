@@ -150,11 +150,64 @@ def modificar_ambiente_route():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
-   
+
+##GESTIONAR CURSOS
 @app.route("/get_cursos", methods=["GET"])
 def get_cursos():
     cursos = controlador_cursos.obtener_cursos()
     return jsonify(cursos)
+
+##OBTENER PLANES DE ESTUDIO
+@app.route('/obtener_planes_estudio', methods=['GET'])
+def obtener_PE():
+    planes_de_estudio = controlador_cursos.obtener_planes_de_estudio()  
+    return jsonify(planes_de_estudio)
+
+##AGREGAR CURSO - MEJORAR
+@app.route("/agregar_curso", methods=["POST"])
+def agregar_curso():
+    try:
+        nombre = request.json.get('nombre')
+        cod_curso = request.json.get('cod_curso')
+        creditos = request.json.get('creditos')
+        horas_teoria = request.json.get('horas_teoria')
+        horas_practica = request.json.get('horas_practica')
+        ciclo = request.json.get('ciclo')
+
+        resultado = controlador_cursos.agregar_curso(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+##ELIMINAR CURSO
+@app.route("/eliminar_curso", methods=["POST"])
+def eliminar_curso():
+    try:
+        data = request.json
+        idcurso = data.get('id')
+        resultado = controlador_cursos.eliminar_curso(idcurso)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+##MODIFICAR CURSO - MEJORAR
+@app.route("/modificar_curso", methods=["POST"])
+def modificar_curso():
+    try:
+        data = request.json
+        idcurso = data.get('id')
+        nombre = data.get('nombre')
+        cod_curso = data.get('cod_curso')
+        creditos = data.get('creditos')
+        horas_teoria = data.get('horas_teoria')
+        horas_practica = data.get('horas_practica')
+        ciclo = data.get('ciclo')
+        resultado = controlador_cursos.modificar_curso(idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 
 @app.route("/validar_sesion", methods=["POST"])
 def get_datos_usuario():
@@ -181,17 +234,21 @@ def index():
 def ambientes():
     return render_template("dashboard/ambientes.html")
 
+@app.route("/cursos")
+def cursos():
+    return render_template("dashboard/cursos.html")
+
 
 @app.route("/rellenar_tabla,<string>escuela")
 def rellenar_tabla(escuela):
-    cursos = controlador_cursos.obtener_curso(escuela)
+    cursos = controlador_cursos.obtener_cursoxescuela(escuela)
     return cursos
 
-@app.route("/cursos")
-def cursos():
+@app.route("/cursosxescuela")
+def cursosxescuela():
     semestres = controlador_cursos.obtener_semestres()
     escuelas = controlador_cursos.obtener_escuelas()
-    return render_template("dashboard/cursos.html", semestres=semestres, escuelas=escuelas)
+    return render_template("dashboard/cursosxescuela.html", semestres=semestres, escuelas=escuelas)
 
 
 @app.route("/docentes")
