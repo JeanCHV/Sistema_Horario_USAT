@@ -1,0 +1,249 @@
+{% extends "dashboard/index.html" %}
+{% block titulo %} Cursos {% endblock %}
+{% block contenido %}
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('cursos') }}">Cursos</a></li>
+    </ol>
+</nav>
+
+<div class="container">
+    <div id="mensajeResultado" style="display: none;"></div>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            Cursos
+        </div>
+        <div class="card-body">
+            
+            <table id="tabla-curso" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Código</th>
+                        <th>Créditos</th>
+                        <th>Horas Teoría</th>
+                        <th>Horas Práctica</th>
+                        <th>Tipo</th>
+                        <th>Ciclo</th>
+                        <th>Plan de Estudio</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los datos de los cursos se cargarán dinámicamente aquí -->
+                </tbody>
+            </table>
+        </div>
+        <a href="#" id="btn_agregar_curso" class="btn btn-success">Agregar Nuevo Curso</a>
+
+        <div class="modal fade" id="modalAgregarCurso" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Agregar/Modificar Curso</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formAgregarCurso">
+                            <div class="mb-3">
+                                <label for="nombreCurso" class="form-label">Nombre:</label>
+                                <input type="text" class="form-control" id="nombreCurso" name="nombreCurso" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="codigoCurso" class="form-label">Código:</label>
+                                <input type="text" class="form-control" id="codigoCurso" name="codigoCurso" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="creditosCurso" class="form-label">Créditos:</label>
+                                <input type="number" class="form-control" id="creditosCurso" name="creditosCurso" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="horasTeoriaCurso" class="form-label">Horas Teoría:</label>
+                                <input type="number" class="form-control" id="horasTeoriaCurso" name="horasTeoriaCurso" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="horasPracticaCurso" class="form-label">Horas Práctica:</label>
+                                <input type="number" class="form-control" id="horasPracticaCurso" name="horasPracticaCurso" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tipoCurso" class="form-label">Tipo de Curso:</label>
+                                <select class="form-control" id="tipoCurso" name="tipoCurso" required>
+                                    <option value="0">Presencial</option>
+                                    <option value="1">Virtual</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cicloCurso" class="form-label">Ciclo:</label>
+                                <input type="text" class="form-control" id="cicloCurso" name="cicloCurso" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="planEstudioCurso" class="form-label">Plan de Estudio:</label>
+                                <select class="form-control" id="planEstudioCurso" name="planEstudioCurso" required>
+                                    <!-- Opciones de planes de estudio cargadas dinámicamente -->
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    var cursos = [];
+    var table = $('#tabla-curso').DataTable({
+        "paging": true,
+        "info": true,
+        "columns": [
+            { "data": "nombre" },
+            { "data": "cod_curso" },
+            { "data": "creditos" },
+            { "data": "horas_teoria" },
+            { "data": "horas_practica" },
+            { "data": "tipo_curso" },
+            { "data": "ciclo" },
+            { "data": "nombre_plan_estudio" },  // Asegúrate de ajustar según la respuesta del servidor
+            {
+                "data": null,
+                "render": function(data, type, row) {
+                    return `
+                        <button class="btn btn-warning btn-sm btnModificar" data-id="${row.id}">Modificar</button>
+                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id}">Eliminar</button>
+                    `;
+                }
+            }
+        ],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+        }
+    });
+
+    function cargarCursos() {
+        $.ajax({
+            url: '/get_cursos',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function(response) {
+                cursos = response;
+                table.clear().rows.add(cursos).draw();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    cargarCursos();
+
+    function cargarPlanesDeEstudio() {
+    $.ajax({
+        url: '/obtener_planes_estudio',  // Asegúrate de que esta URL es correcta
+        type: 'GET',
+        contentType: 'application/json',
+        success: function(response) {
+            var select = $('#planEstudioCurso');
+            select.empty();  // Limpiar opciones existentes
+            select.append($('<option>', { value: '', text: 'Seleccione un plan de estudio' }));
+            response.forEach(function(plan) {
+                select.append($('<option>', {
+                    value: plan.id_plan_estudio,
+                    text: plan.nombre
+                }));
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log('Error al cargar los planes de estudio:', error);
+        }
+    });
+}
+
+    $('#btn_agregar_curso').click(function(e) {
+        e.preventDefault();
+        $('#modalAgregarCurso').modal('show');
+        $('#formAgregarCurso')[0].reset();
+        cargarPlanesDeEstudio();  // Cargar planes de estudio al abrir el modal
+    });
+
+    $('#formAgregarCurso').submit(function(e) {
+        e.preventDefault();
+        var data = {
+            nombre: $('#nombreCurso').val(),
+            cod_curso: $('#codigoCurso').val(),
+            creditos: $('#creditosCurso').val(),
+            horas_teoria: $('#horasTeoriaCurso').val(),
+            horas_practica: $('#horasPracticaCurso').val(),
+            tipo: $('#tipoCurso').val(),
+            ciclo: $('#cicloCurso').val(),
+            id_plan_estudio: $('#planEstudioCurso').val()  // Asegúrate de ajustar según cómo obtengas los datos
+        };
+
+        $.ajax({
+            url: '/agregar_curso',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                console.log(response);
+                $('#mensajeResultado').removeClass().empty();
+                if (response.error) {
+                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                } else {
+                    $('#mensajeResultado').addClass('alert alert-success').text('Curso agregado correctamente');
+                    cargarCursos();
+                    $('#modalAgregarCurso').modal('hide');
+                }
+                $('#mensajeResultado').show();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $('#tabla-curso tbody').on('click', '.btnModificar', function() {
+        var id = $(this).data('id');
+        var curso = cursos.find(c => c.id == id);
+        if (curso) {
+            $('#nombreCurso').val(curso.nombre);
+            $('#codigoCurso').val(curso.cod_curso);
+            $('#creditosCurso').val(curso.creditos);
+            $('#horasTeoriaCurso').val(curso.horas_teoria);
+            $('#horasPracticaCurso').val(curso.horas_practica);
+            $('#tipoCurso').val(curso.tipo);
+            $('#cicloCurso').val(curso.ciclo);
+            $('#planEstudioCurso').val(curso.id_plan_estudio);  // Asegúrate de ajustar según cómo obtengas los datos
+            $('#modalAgregarCurso').modal('show');
+        }
+    });
+
+    $('#tabla-curso tbody').on('click', '.btnEliminar', function() {
+        var id = $(this).data('id');
+        $.ajax({
+            url: '/eliminar_curso',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ id: id }),
+            success: function(response) {
+                console.log(response);
+                $('#mensajeResultado').removeClass().empty();
+                if (response.error) {
+                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                } else {
+                    $('#mensajeResultado').addClass('alert alert-success').text('Curso eliminado correctamente');
+                    cargarCursos();
+                }
+                $('#mensajeResultado').show();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

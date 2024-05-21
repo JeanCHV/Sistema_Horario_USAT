@@ -1,18 +1,78 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
-
+    <link rel="shortcut icon" href="{{ url_for('static', filename='dashboard/img/icons/usat_logo_red.jpg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='login/fonts/icomoon/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='login/css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='login/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='login/css/style.css') }}">
+    <script src="{{ url_for('static', filename='login/js/login.js') }}"></script>
 
     <title>USAT - Iniciar Sesion </title>
+    <style>
+        .bg {
+            display: flex;
+            background-size: cover;
+        }
+
+        .contents {
+            width: 100%;
+        }
+
+        .col-md-7 {
+            text-align: center;
+        }
+
+        .col-md-7 img {
+            margin-bottom: 20px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .form-group input {
+            width: 100%;
+        }
+    </style>
+    <style>
+        #loginButton{
+            background-color: #E33439;
+            color: white;
+            border: none;
+        }
+
+        #loginButton:active {
+            background-color: #a6272b;
+        }
+
+        #loginButton:hover {
+            background-color: #a6272b;
+            /* Cambia el color de fondo al pasar el cursor */
+        }
+
+        .control--checkbox input:checked + .control__indicator {
+            background-color: #484848; /* Cambia este color cuando el checkbox está marcado */
+            border-color: #a6272b; /* Cambia el color del borde cuando el checkbox está marcado */
+        }
+
+        .control:hover #recordar_check:checked + .control__indicator {
+        background-color: #ff0000; /* Cambia este color cuando pasas el cursor sobre el label */
+        }
+
+        .control--checkbox input:hover + .control__indicator {
+        background-color: #ff0000; /* Cambia este color cuando el cursor está sobre el checkbox */
+        }
+
+        .control #recordar_check:checked:focus + .control__indicator {
+        background-color: #ff0000; /* Cambia este color cuando está marcado y enfocado */
+        }
+
+    </style>
+
 </head>
 
 <body>
@@ -20,7 +80,8 @@
 
     <div class="d-lg-flex half">
         <div class="bg order-1 order-md-2"
-            style="background-image: url('{{ url_for('static', filename='login/images/usat_logo_red.png') }}');))"></div>
+            style="background-image: url('{{ url_for('static', filename='login/images/usat_logo_red.png') }}');))">
+        </div>
         <div class="contents order-2 order-md-1">
 
             <div class="container">
@@ -32,43 +93,193 @@
                         <h3>Bienvenido</h3>
                         <p class="mb-4">Ingrese sus credenciales para acceder al sistema
                         </p>
-                        <form action="{{url_for('index')}}" method="post">
+                        <form action="" method="post">
                             <div class="form-group first">
 
-                                <input type="text" class="form-control" placeholder="Usuario"
-                                    id="username">
+                                <input type="text" class="form-control" placeholder="Usuario" id="username"
+                                    name="username">
                             </div>
                             <div class="form-group last mb-3">
-                                <input type="password" class="form-control" placeholder="Contraseña" id="password">
+                                <input type="password" class="form-control" placeholder="Contraseña" id="password"
+                                    name="password">
                             </div>
 
                             <div class="d-flex mb-5 align-items-center">
                                 <label class="control control--checkbox mb-0"><span class="caption">Recordar</span>
-                                    <input type="checkbox" checked="checked" />
+                                    <input type="checkbox" checked="checked" id="recordar_check" name="recordar_check">
                                     <div class="control__indicator"></div>
                                 </label>
                                 <span class="ml-auto"><a href="#" class="forgot-pass">Olvidé mi Contraseña</a></span>
                             </div>
-                            <div >
-                                <button type="submit"class="btn btn-block btn-primary">Acceder al sistema</button>
-                            </div>
-                            
+
+                            <button id="loginButton" class="tn btn-primary btn-lg btn-block my-4" type="button" onclick="procesar_login()">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                <strong>Acceder al Sistema</strong>
+                            </button>
 
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
-
-
-
-    <script src="{{ url_for('static', filename='login/js/jquery-3.3.1.min.js') }}"></script>
+    <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
     <script src="{{ url_for('static', filename='login/js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='login/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='login/js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
+    <script>
+        // Función para ocultar el div con la clase 'bg' en dispositivos móviles
+        function hideBgOnMobile() {
+            var screenWidth = window.innerWidth;
+            var bgDiv = document.querySelector('.bg');
+            if (screenWidth <= 991) { // Cambia 768 por el ancho deseado para dispositivos móviles
+                bgDiv.style.display = 'none';
+            } else {
+                bgDiv.style.display = 'flex'; // Mostrar en dispositivos de escritorio
+            }
+
+            var username = localStorage.getItem('username');
+            var token = localStorage.getItem('token');
+
+            if (!username || !token) {
+                username = sessionStorage.getItem('username');
+                token = sessionStorage.getItem('token');
+            }
+
+            if (username && token){
+                window.location.href = '/index';
+            }
+        }
+
+        // Ejecutar la función al cargar la página y cuando se redimensiona la ventana
+        window.onload = hideBgOnMobile;
+        window.onresize = hideBgOnMobile;
+        //fUNION DINAMICA PARA MOSTRAR ALERTAS
+        function mostrarAlerta(icon, title, text) {
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: text
+            });
+        }
+
+
+        $('#btnLogin').click(function () {
+            var username = $('#username').val();
+            var password = $('#password').val();
+            var recordar = $('#recordar_check').prop('checked');
+            try {
+                $.ajax({
+                    url: '/login1',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        username: username,
+                        password: password,
+                    }),
+                    success: function (response) {
+                        console.log(response);
+                        if (response.success) {
+                            mostrarAlerta("success", "OK", response.success);
+                            window.location.href = "{{ url_for('index') }}";
+                        } else if (response.error) {
+                            mostrarAlerta("error", "Error al Iniciar Sesión", response.error);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                        mostrarAlerta("error", "Error en la Procesamiento de Solicitud", error);  // Cambiado a error.responseText
+                    }
+                });
+            } catch (e) {
+                mostrarAlerta("error", "Error en AJAX", error.responseText);  // Cambiado a error.responseText
+            }
+        });
+
+        function procesar_login(){
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var recordar = document.getElementById("recordar_check").checked;
+
+            if (username.trim()=="" || password.trim()==""){
+
+                if (username.trim()=="" && password.trim()==""){
+                mostrarAlerta("warning", "No se pudo acceder al sistema", "Por favor ingrese un nombre de usuario y contraseña");
+                }
+                else if(username.trim()==""){
+                mostrarAlerta("warning", "No se pudo acceder al sistema", "Por favor ingrese un nombre de usuario");
+                }
+                else if(password.trim()==""){
+                mostrarAlerta("warning", "No se pudo acceder al sistema", "Por favor ingrese una contraseña");
+                }
+            }
+
+            else{
+                document.getElementById("loginButton").disabled = true;
+                document.querySelector("#loginButton .spinner-border").classList.remove("d-none");
+                fetch('/procesar_login', {
+                method: 'POST',
+                headers: {
+                    'Content-type':'application/json'
+                },
+                body: JSON.stringify({
+                    username:username,
+                    password:password,
+                })
+                })
+                .then(response => response.json())
+                .then(data =>{
+                    if (data.logeo){
+                        if (recordar){
+                            localStorage.setItem('username',username)
+                            localStorage.setItem('token',data.token)
+                            localStorage.setItem('n',data.nombre)
+                            localStorage.setItem('f',data.foto)
+                        }else{
+                            sessionStorage.setItem('username',username)
+                            sessionStorage.setItem('token',data.token)
+                            sessionStorage.setItem('n',data.nombre)
+                            sessionStorage.setItem('f',data.foto)
+                        }
+                        document.getElementById("loginButton").disabled = false;
+                        document.querySelector("#loginButton .spinner-border").classList.add("d-none");
+                        window.location.href = '/index';
+                    }else{
+                        document.getElementById("loginButton").disabled = false;
+                        document.querySelector("#loginButton .spinner-border").classList.add("d-none");
+                        mostrarAlerta("warning", "No se pudo acceder al sistema", data.mensaje);
+                    }
+                })
+                .catch(error=>{
+                    document.getElementById("loginButton").disabled = false;
+                    document.querySelector("#loginButton .spinner-border").classList.add("d-none");
+                    mostrarAlerta("error", "Error al acceder al sistema", error);
+                });
+            }
+        }
+
+        document.getElementById("username").addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (document.getElementById("username").value.trim().length>0 && 
+                document.getElementById("password").value.trim().length>0)
+                procesar_login();
+            }
+        });
+
+        document.getElementById("password").addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                if (document.getElementById("username").value.trim().length>0 && 
+                document.getElementById("password").value.trim().length>0)
+                procesar_login();
+            }
+        });
+
+    </script>
+
+
+
+
 </body>
 
 </html>

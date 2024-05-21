@@ -1,7 +1,7 @@
-from bd import obtenerConexion
+from bd import obtener_conexion
 
 def obtener_personas():
-    conexion = obtenerConexion()
+    conexion = obtener_conexion()
     personas = []
     with conexion.cursor() as cursor:
         cursor.execute("SELECT idpersona,nombres,apellidos,n_documento,telefono,correo,tipopersona,cantHoras,tiempo_ref,foto FROM persona")
@@ -9,9 +9,17 @@ def obtener_personas():
     conexion.close()
     return personas
 
+def obtener_personas_activas():
+    conexion = obtener_conexion()
+    personas = []
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT per.idpersona, nombres, apellidos, n_documento,telefono, correo, tipopersona, cantHoras, tiempo_ref, foto FROM persona per INNER JOIN usuario usu ON usu.idpersona = per.idpersona WHERE usu.estado = 'ACTIVO'")
+        personas = cursor.fetchall()
+    conexion.close()
+    return personas
 
 def obtener_persona_por_id(id):
-    conexion = obtenerConexion()
+    conexion = obtener_conexion()
     persona = None
     with conexion.cursor() as cursor:
         cursor.execute(
@@ -21,7 +29,7 @@ def obtener_persona_por_id(id):
     return persona
 
 def obtener_persona_por_dni(dni):
-    conexion = obtenerConexion()
+    conexion = obtener_conexion()
     persona = None
     with conexion.cursor() as cursor:
         cursor.execute(

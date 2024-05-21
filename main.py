@@ -1,14 +1,8 @@
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask
 app = Flask(__name__)
-
-@app.route("/")
-@app.route("/login")
-def login():
-    return render_template("login/login.html")
-
-@app.route("/index")
-def index():
-    return render_template("dashboard/index.html")
+app.debug = False
+app.secret_key = 'super-secret'
+from routers.router_main import *
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run( debug=False)

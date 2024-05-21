@@ -1,0 +1,23 @@
+@font-face{
+    font-family: 'Arial Greek';
+    src: url(/static/css/Arial_Greek_Regular.ttf);
+}
+
+/* Color principal para botones y cuadros con mensajes */
+.bg-red-usat{
+    background-color: #E33439;
+    color: white;
+}
+
+/* Color para fondo de pantalla */
+.bg-grey-usat{
+    background-color: #E8EBF1;
+}
+
+.bg-blue-horario-usat{
+    background-color: #2196F3;
+}
+
+.text-red-usat{
+    color: #E33439
+}

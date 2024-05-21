@@ -14598,6 +14598,9 @@ screen and (-ms-high-contrast:active) {
 }
 
 #root,
+:root {
+    color-scheme: dark ;
+  }
 body,
 html {
     height: 100%
@@ -14617,13 +14620,13 @@ screen and (-ms-high-contrast:active) {
 
 .sidebar {
     direction: ltr;
-    max-width: 260px;
+    max-width: 160px;
     min-width: 260px
 }
 
 .sidebar,
 .sidebar-content {
-    background: #222e3c;
+    background: #E33439;
     transition: margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out
 }
 
@@ -14642,9 +14645,9 @@ screen and (-ms-high-contrast:active) {
 
 .sidebar-link,
 a.sidebar-link {
-    background: #222e3c;
+    background: #E33439;
     border-left: 3px solid transparent;
-    color: rgba(233, 236, 239, .5);
+    color: rgb(255 255 255);
     cursor: pointer;
     display: block;
     font-weight: 400;
@@ -14658,7 +14661,7 @@ a.sidebar-link {
 .sidebar-link svg,
 a.sidebar-link i,
 a.sidebar-link svg {
-    color: rgba(233, 236, 239, .5);
+    color: rgb(255 255 255);
     margin-right: .75rem
 }
 
@@ -14735,7 +14738,7 @@ a.sidebar-link svg {
 
 .sidebar-header {
     background: transparent;
-    color: #ced4da;
+    color: #ffffff;
     font-size: .75rem;
     padding: 1.5rem 1.5rem .375rem
 }
