@@ -182,10 +182,10 @@ def ambientes():
     return render_template("dashboard/ambientes.html")
 
 
-@app.route("/rellenar_tabla,<string>escuela")
+@app.route("/rellenar_tabla/<string:escuela>")
 def rellenar_tabla(escuela):
     cursos = controlador_cursos.obtener_curso(escuela)
-    return cursos
+    return jsonify(cursos)
 
 @app.route("/cursos")
 def cursos():
