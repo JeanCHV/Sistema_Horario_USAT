@@ -207,6 +207,54 @@ def modificar_curso():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+#GESTIONAR DOCENTE
+    
+
+@app.route("/get_docentes", methods=["GET"])
+def get_docentes():
+    try:
+        docentes = controlador_docente.obtener_docentes()
+        return jsonify(docentes)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route("/agregar_docente", methods=["POST"])
+def agregar_docente():
+    try:
+        nombres = request.json.get('nombres')
+        correo = request.json.get('correo')
+
+        # Llama al controlador para agregar el docente
+        resultado = controlador_docente.agregar_docente(nombres, correo)
+
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route("/eliminar_docente", methods=["POST"])
+def eliminar_docente_route():
+    try:
+        data = request.json
+        idpersona = data.get('idpersona')
+        resultado = controlador_docente.eliminar_docente(idpersona)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route("/modificar_docente", methods=["POST"])
+def modificar_docente_route():
+    try:
+        data = request.json
+        idpersona = data.get('idpersona')
+        nombres = data.get('nombres')
+        correo = data.get('correo')
+        resultado = controlador_docente.modificar_docente(idpersona, nombres, correo)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 
 
 
@@ -252,10 +300,13 @@ def cursosxescuela():
     return render_template("dashboard/cursosxescuela.html", semestres=semestres, escuelas=escuelas)
 
 
-@app.route('/docentes')
+@app.route('/docentes', methods=["GET"])
 def docentes():
-    persona = controlador_docente.mostrar_docentes()
-    return render_template('dashboard/docentes.html',personas=persona)
+    try:
+        persona = controlador_docente.obtener_docentes()
+        return render_template('dashboard/docentes.html', personas=persona)
+    except Exception as e:
+        return str(e), 500
 
 @app.route("/horarios")
 def horarios():
