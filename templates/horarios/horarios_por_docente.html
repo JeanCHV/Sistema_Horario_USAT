@@ -6,64 +6,72 @@
     /*INICIO ESTILOS DEL BUSCADOR*/
     #buscador-multiopcion-sugerencias{
         position: relative;
+        margin: 0;
+        padding: 0;
         /*background-color: black;*/
     }
 
-    #bmos-barra-busqueda{
-        height: max(auto,50px);
-        width: 500px;
-        background-color: white;
-        /*overflow-x: hidden;*/
+    #buscador-multiopcion-sugerencias #bmos-barra-busqueda {
+        height: max(40px,auto);
+        width: 100%;
+        /* background-color: red; */
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         padding-inline: 10px;
-        border-radius: 10px;
+        border: 1px #DEE2E6 solid;
+        border-radius: 4px;
+        outline: none;
         overflow-y: hidden;
         cursor: text;
+
+        &:active{
+            border: 1px #9DBEEE solid;
+            outline: 4px #CEDEF6 solid;
+        }
     }
-    
-    #bmos-barra-busqueda p{
+
+    #buscador-multiopcion-sugerencias #bmos-barra-busqueda p {
         order: 2;
-        pointer-events:fill;
+        pointer-events: fill;
         width: 100%;
+        margin: 0;
         white-space: nowrap;
         overflow-x: hidden;
-        flex: 1 0 min(100%,20%);
-        /*background-color: rgb(197, 197, 197);*/
+        flex: 1 0 min(100%, 20%);
+
+        &:focus-within {
+            outline: none;
+        }
     }
 
-    #bmos-barra-busqueda p:focus-within{
-        outline: none;
-    }
-
-    .bmos-etiqueta{
+    #buscador-multiopcion-sugerencias #bmos-barra-busqueda .bmos-etiqueta {
         background-color: rgb(217, 217, 217);
         padding: 6px;
         border-radius: 8px;
         margin: 3px;
         order: 1;
         flex: 0 1 auto;
+
+        &:hover {
+            background-color: rgb(185, 185, 185);
+        }
+
+        button {
+            font-size: 20px;
+            border: none;
+            margin-left: 5px;
+            margin-right: 0px;
+            background-color: transparent;
+            color: rgb(62, 62, 62);
+        }
     }
 
-    .bmos-etiqueta:hover{
-        background-color: rgb(185, 185, 185);
-    }
-
-    .bmos-etiqueta button{
-        font-size: 20px;
-        border: none;
-        margin-left: 5px;
-        margin-right: 0px;
-        background-color: transparent;
-        color: rgb(62, 62, 62);
-    }
-
-    #buscador-multiopcion-sugerencias.active #bmos-lista-sugerencias{
+    #buscador-multiopcion-sugerencias.active #bmos-lista-sugerencias {
         display: block;
     }
 
-    #buscador-multiopcion-sugerencias #bmos-lista-sugerencias{
+    #buscador-multiopcion-sugerencias #bmos-lista-sugerencias {
         background-color: rgb(217, 217, 217);
         list-style: none;
         margin-top: 8px;
@@ -74,13 +82,13 @@
         position: absolute;
     }
 
-    .bmos-sugerencia{
+    #buscador-multiopcion-sugerencias #bmos-lista-sugerencias .bmos-sugerencia {
         padding: 11px;
         padding-left: 10px;
-    }
 
-    .bmos-sugerencia:hover{
-        background-color: rgb(185, 185, 185);
+        &:hover {
+            background-color: rgb(185, 185, 185);
+        }
     }
     /*FIN ESTILOS DEL BUSCADOR*/
 
