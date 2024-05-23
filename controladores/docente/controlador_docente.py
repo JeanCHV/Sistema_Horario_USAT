@@ -6,7 +6,7 @@ def obtener_docentes():
     docentes = []
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT idpersona, CONCAT(nombres, ' ', apellidos) AS nombre, correo FROM persona WHERE tipopersona = 'D'")
+            cursor.execute("SELECT idpersona, CONCAT(nombres, ' ', apellidos) AS nombre, correo, telefono FROM persona WHERE tipopersona = 'D'")
             column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
             rows = cursor.fetchall()
 
