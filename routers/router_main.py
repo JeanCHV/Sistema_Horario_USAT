@@ -312,10 +312,6 @@ def docentes():
 def horarios():
     return render_template("dashboard/horarios.html")
 
-@app.route("/usuario")
-def usuario():
-    return render_template("dashboard/usuario.html")
-
 @app.route("/ReporteAmbiente")
 def ReporteAmbiente():
     return render_template("dashboard/Reporte.html")
@@ -339,4 +335,5 @@ def get_horarios_docentesNombres_semestre():
     
 @app.route("/perfil")
 def perfil():
+
     return render_template("dashboard/perfil.html")
