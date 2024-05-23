@@ -174,17 +174,15 @@ def get_datos_usuario():
 @app.route("/index")
 def index():
     return render_template("dashboard/home.html")
-    
-
 
 @app.route("/ambientes")
 def ambientes():
     return render_template("dashboard/ambientes.html")
 
 
-@app.route("/rellenar_tabla/<string:escuela>")
-def rellenar_tabla(escuela):
-    cursos = controlador_cursos.obtener_curso(escuela)
+@app.route("/rellenar_tabla/<string:semestre>/<string:escuela>")
+def rellenar_tabla(semestre,escuela):
+    cursos = controlador_cursos.obtener_cursoxescuela(semestre,escuela)
     return jsonify(cursos)
 
 @app.route("/cursos")

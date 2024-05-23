@@ -17,17 +17,41 @@ from bd import obtener_conexion
 #     conexion.close()
 #     return cursos
 
-def obtener_cursoxescuela(escuela):
+def obtener_cursoxescuela(escuela,semestre):
     conexion = obtener_conexion()
     cursos = []
     with conexion.cursor() as cursor:
         cursor.execute('''
-            SELECT c.idcurso, c.nombre, c.ciclo 
-            FROM curso AS c 
-            INNER JOIN plan_estudio AS pe ON c.id_plan_estudio = pe.id_plan_estudio 
-            INNER JOIN escuela AS es ON pe.id_escuela = es.id_escuela
-            WHERE es.nombre = %s;
-        ''', (escuela,))
+            SELECT 
+                c.idcurso, 
+                c.nombre, 
+                c.ciclo, 
+                COALESCE(grupo_count.contador, 0) AS n_grupos
+            FROM 
+                curso AS c
+            INNER JOIN 
+                plan_estudio AS pe ON c.id_plan_estudio = pe.id_plan_estudio
+            INNER JOIN 
+                escuela AS es ON pe.id_escuela = es.id_escuela
+            LEFT JOIN (
+                SELECT 
+                    gr.idcurso, 
+                    COUNT(*) AS contador
+                FROM 
+                    grupo AS gr
+                INNER JOIN 
+                    semestre_academico AS se ON gr.idsemestre = se.idsemestre
+                WHERE 
+                    se.descripcion = %s
+                GROUP BY 
+                    gr.idcurso
+            ) AS grupo_count ON c.idcurso = grupo_count.idcurso
+            WHERE 
+                es.nombre = %s
+            GROUP BY 
+                c.idcurso, c.nombre, c.ciclo;
+
+        ''', (semestre,escuela,))
         nombres_columnas = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         filas = cursor.fetchall()
         for fila in filas:
@@ -58,7 +82,6 @@ def obtener_escuelas():
 def obtener_cursos():
     conexion = obtener_conexion()
     cursos = []
-
     with conexion.cursor() as cursor:
         cursor.execute("""
     SELECT c.nombre, c.cod_curso, c.creditos, c.horas_teoria, c.horas_practica, 
@@ -69,7 +92,6 @@ def obtener_cursos():
     """)
         column_names = [desc[0] for desc in cursor.description]  
         rows = cursor.fetchall()
-
         for row in rows:
             curso_dict = dict(zip(column_names, row)) 
             cursos.append(curso_dict)

@@ -135,11 +135,13 @@
     function hola() {
         var estado = validar();
         if (estado == true) {  
-            rellenarTabla(document.getElementById('escuela').value);
+            var semestre = document.getElementById("semestre").value
+            var escuela = document.getElementById('escuela').value
+            rellenarTabla(semestre,escuela );
         }
     }
-    function rellenarTabla(escuela) {
-        fetch(`/rellenar_tabla/${escuela}`)
+    function rellenarTabla(semestre,escuela) {
+        fetch(`/rellenar_tabla/${semestre}/${escuela}`)
             .then(response => response.json())
             .then(data => {
                 const cuerpoTabla = document.getElementById('cuerpo_tabla');
@@ -154,7 +156,7 @@
                         <td>${curso.nombre}</td>
                         <td>${curso.ciclo}</td>
                         <td style="width:90px">
-                            <input type="number" class="form-control bg-white text-black">
+                            <input type="number" class="form-control bg-white text-black" value=${curso.n_grupos}>
                         </td>
                         <td>
                             <input type="checkbox" class="form-check-input me-4 border border-black">
