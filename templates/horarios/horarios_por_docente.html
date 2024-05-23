@@ -5,19 +5,15 @@
 <style>
     /*INICIO ESTILOS DEL BUSCADOR*/
     #buscador-multiopcion-sugerencias{
-        /* border: 1px #DEE2E6 solid;
-        border-radius: 4px;
-
-        &:active{
-            border: 1px #9DBEEE solid;
-            outline: 4px#CEDEF6 solid;
-        } */
+        position: relative;
+        /*background-color: black;*/
     }
 
     #bmos-barra-busqueda{
         height: max(auto,50px);
         width: 500px;
         background-color: white;
+        /*overflow-x: hidden;*/
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -27,12 +23,11 @@
         cursor: text;
     }
     
-    #bmos-barra-busqueda .bmos-p{
+    #bmos-barra-busqueda p{
         order: 2;
         pointer-events:fill;
         width: 100%;
         white-space: nowrap;
-        /* margin: 0; */
         overflow-x: hidden;
         flex: 1 0 min(100%,20%);
         /*background-color: rgb(197, 197, 197);*/
@@ -164,7 +159,7 @@
                                 <!-- Buscador con autocompletado de sugerencias -->
                                 <div id="buscador-multiopcion-sugerencias" class="">
                                     <div id="bmos-barra-busqueda" contenteditable="false">
-                                        <p class="bmos-p" contenteditable="true"></p>
+                                        <p contenteditable="true"></p>
                                     </div>
                                     <ul id="bmos-lista-sugerencias">
                                     </ul>
