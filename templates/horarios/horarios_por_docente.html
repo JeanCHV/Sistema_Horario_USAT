@@ -12,9 +12,9 @@
     }
 
     #buscador-multiopcion-sugerencias #bmos-barra-busqueda {
-        height: max(40px,auto);
         width: 100%;
         /* background-color: red; */
+        height: 100%;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -35,7 +35,7 @@
         order: 2;
         pointer-events: fill;
         width: 100%;
-        margin: 0;
+        margin: 5px 0;
         white-space: nowrap;
         overflow-x: hidden;
         flex: 1 0 min(100%, 20%);
@@ -286,16 +286,16 @@
 
         if(datos_entrada.length){
             bmos_contenedor.classList.add("active");
-            datos_salida = generar_sugerencias(datos_entrada);
-            datos_filtrados = filtrar_sugerencias(datos_salida);
-            mostrar_sugerencias(datos_filtrados);
+            datos_salida = bmos_generar_sugerencias(datos_entrada);
+            datos_filtrados = bmos_filtrar_sugerencias(datos_salida);
+            bmos_mostrar_sugerencias(datos_filtrados);
 
         }else{
             bmos_contenedor.classList.remove("active");
         }
     };
 
-    function generar_sugerencias(dato) {
+    function bmos_generar_sugerencias(dato) {
     let datos_salida = [];
     bmos_lista_datos.forEach(element => {
         var nombre = element[2] + " " + element[1];
@@ -309,52 +309,49 @@
 }
 
 
-    function mostrar_sugerencias(lista){
+    function bmos_mostrar_sugerencias(lista){
         bmos_lista_sugerencias.innerHTML = "";
         lista.forEach(element => {
             bmos_lista_sugerencias.innerHTML += 
-            `<li class="bmos-sugerencia" onclick="insertar_etiqueta(this);"
+            `<li class="bmos-sugerencia" onclick="bmos_insertar_etiqueta(this);"
              id="${element[0]}">${element[1]}</li>`;
         });
     }
 
-    function insertar_etiqueta(element){
-        bmos_input.textContent = "";
-        bmos_contenedor.classList.remove("active");
-        var nuevoSpan = document.createElement("span");
-        nuevoSpan.className = "bmos-etiqueta";
-        nuevoSpan.setAttribute("contenteditable", "false");
-        nuevoSpan.setAttribute("id",`${element.id}`);
-        nuevoSpan.innerHTML = `${element.textContent}<button>X</button>`;
-        nuevoSpan.onclick = function() {
-            eliminarEtiqueta(nuevoSpan);
-        };
-        bmos_barra_busqueda.appendChild(nuevoSpan);
-        bmos_input.focus();
+    function bmos_insertar_etiqueta(element){
+        if(element.id != -1){
+            bmos_input.textContent = "";
+            bmos_contenedor.classList.remove("active");
+            var nuevoSpan = document.createElement("span");
+            nuevoSpan.className = "bmos-etiqueta";
+            nuevoSpan.setAttribute("contenteditable", "false");
+            nuevoSpan.setAttribute("id",`${element.id}`);
+            nuevoSpan.innerHTML = `${element.textContent}<button onclick="bmos_eliminarEtiqueta(this);">X</button>`;       
+            bmos_barra_busqueda.appendChild(nuevoSpan);
+            bmos_input.focus();
+            }
     }
 
-    function eliminarEtiqueta(element){
-        element.remove();
+    function bmos_eliminarEtiqueta(element){
+        element.parentNode.remove();
     }
     
-    function filtrar_sugerencias(lista_sugerencias){
-        if (!Array.isArray(lista_sugerencias)) {
-            console.error("Error: lista_sugerencias no es un array.");
-            return [];
+    function bmos_filtrar_sugerencias(lista_sugerencias){
+        if(lista_sugerencias.length){
+            let lista_sugerencias_2 = lista_sugerencias.map(function(elements){
+                return elements[1];
+            });
+            bmos_barra_busqueda.querySelectorAll('.bmos-etiqueta').forEach(etiqueta =>{
+                var sugerencia = (etiqueta.textContent).slice(0,-1);
+
+                indice = lista_sugerencias_2.indexOf(sugerencia);
+                if(indice!=-1){
+                    lista_sugerencias.splice(indice,1);
+                }
+            });
+        }else{
+            lista_sugerencias.push([-1,"No hay resultados"]);
         }
-
-        let lista_sugerencias_2 = lista_sugerencias.map(function(elements){
-            return elements[1];
-        });
-        bmos_barra_busqueda.querySelectorAll('.bmos-etiqueta').forEach(etiqueta =>{
-            var sugerencia = (etiqueta.textContent).slice(0,-1);
-
-            indice = lista_sugerencias_2.indexOf(sugerencia);
-            if(indice>=0){
-                console.log(sugerencia + " si está seleccionado");
-                lista_sugerencias.splice(indice,1);
-            }
-        });
         return lista_sugerencias;
     }
 
@@ -368,11 +365,14 @@
             event.preventDefault();
         }
     });
+
+    document.addEventListener("click", (event) => {
+        const buscadorMultiopcion = document.querySelector("#buscador-multiopcion-sugerencias");
+        if (!buscadorMultiopcion.contains(event.target)) {
+            buscadorMultiopcion.classList.remove("active");
+        }
+    });
     /*FIN SCRIPT BUSCADOR*/
-
-
-    
-
 
 </script>
 
