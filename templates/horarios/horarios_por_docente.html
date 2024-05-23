@@ -5,15 +5,19 @@
 <style>
     /*INICIO ESTILOS DEL BUSCADOR*/
     #buscador-multiopcion-sugerencias{
-        position: relative;
-        /*background-color: black;*/
+        /* border: 1px #DEE2E6 solid;
+        border-radius: 4px;
+
+        &:active{
+            border: 1px #9DBEEE solid;
+            outline: 4px#CEDEF6 solid;
+        } */
     }
 
     #bmos-barra-busqueda{
         height: max(auto,50px);
         width: 500px;
         background-color: white;
-        /*overflow-x: hidden;*/
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -23,14 +27,14 @@
         cursor: text;
     }
     
-    #bmos-barra-busqueda p{
+    #bmos-barra-busqueda .bmos-p{
         order: 2;
         pointer-events:fill;
         width: 100%;
         white-space: nowrap;
+        /* margin: 0; */
         overflow-x: hidden;
         flex: 1 0 min(100%,20%);
-        background-color: red;
         /*background-color: rgb(197, 197, 197);*/
     }
 
@@ -160,7 +164,7 @@
                                 <!-- Buscador con autocompletado de sugerencias -->
                                 <div id="buscador-multiopcion-sugerencias" class="">
                                     <div id="bmos-barra-busqueda" contenteditable="false">
-                                        <p contenteditable="true"></p>
+                                        <p class="bmos-p" contenteditable="true"></p>
                                     </div>
                                     <ul id="bmos-lista-sugerencias">
                                     </ul>
@@ -215,44 +219,7 @@
 
 
 <script>
-        let bmos_lista_datos = [
-        [
-            1,
-            "Jeancarlos",
-            "Chafloque Velásquez",
-            "71870269",
-            "960920160",
-            "jc_26.10@hotmail.com",
-            "A",
-            0,
-            0,
-            "CHAFLOQUE_VELASQUEZ_JEANCARLOS.jpg"
-        ],
-        [
-            2,
-            "Bruno Sebastian",
-            "Pisfil Falla",
-            "75062773",
-            "956213658",
-            "bunopisfil11@gmail.com",
-            "A",
-            0,
-            0,
-            "BRUNOPISFILFALLA.jpg"
-        ],
-        [
-            5,
-            "Segundo Jose",
-            "Castillo Zumaran",
-            "16761275",
-            "987564823",
-            "scastillo@usat.edu.pe",
-            "D",
-            0,
-            0,
-            "CASTILLO ZUMARAN SEGUNDO JOSE.jpg"
-        ]
-        ];
+        let bmos_lista_datos = [];
 
         function mostrarAlerta(icon, title, text) {
             Swal.fire({
@@ -295,6 +262,7 @@
         } 
 
     $(document).ready(function(){
+        obtener_docentes();
         $('#collapseOne').collapse('show');
     });
     
@@ -315,15 +283,16 @@
 
         if(datos_entrada.length){
             bmos_contenedor.classList.add("active");
-            datos_salida = filtrar_sugerencias(datos_entrada);
-            mostrar_sugerencias(datos_salida);
+            datos_salida = generar_sugerencias(datos_entrada);
+            datos_filtrados = filtrar_sugerencias(datos_salida);
+            mostrar_sugerencias(datos_filtrados);
 
         }else{
             bmos_contenedor.classList.remove("active");
         }
     };
 
-    function filtrar_sugerencias(dato) {
+    function generar_sugerencias(dato) {
     let datos_salida = [];
     bmos_lista_datos.forEach(element => {
         var nombre = element[2] + " " + element[1];
@@ -365,6 +334,27 @@
         element.remove();
     }
     
+    function filtrar_sugerencias(lista_sugerencias){
+        if (!Array.isArray(lista_sugerencias)) {
+            console.error("Error: lista_sugerencias no es un array.");
+            return [];
+        }
+
+        let lista_sugerencias_2 = lista_sugerencias.map(function(elements){
+            return elements[1];
+        });
+        bmos_barra_busqueda.querySelectorAll('.bmos-etiqueta').forEach(etiqueta =>{
+            var sugerencia = (etiqueta.textContent).slice(0,-1);
+
+            indice = lista_sugerencias_2.indexOf(sugerencia);
+            if(indice>=0){
+                console.log(sugerencia + " si está seleccionado");
+                lista_sugerencias.splice(indice,1);
+            }
+        });
+        return lista_sugerencias;
+    }
+
     bmos_barra_busqueda.addEventListener("click",()=>{
         bmos_input.focus();
     });
