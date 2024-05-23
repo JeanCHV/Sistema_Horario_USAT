@@ -23,6 +23,7 @@
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Correo</th>
+                        <th>Teléfono</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -33,22 +34,55 @@
         </div>
         <a href="#" id="btn_agregar_docente" class="btn btn-success">Agregar Nuevo Docente</a>
 
-        <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="modalModificarDocente" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Agregar/Modificar Docente</h5>
+                        <h5 class="modal-title">Modificar Docente</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="formAgregarDocente">
+                        <form id="formModificarDocente">
                             <div class="mb-3">
-                                <label for="nombreDocente" class="form-label">Nombre:</label>
-                                <input type="text" class="form-control" id="nombreDocente" name="nombreDocente" required>
+                                <label for="modificarNombreDocente" class="form-label">Nombres:</label>
+                                <input type="text" class="form-control" id="modificarNombreDocente" name="nombres" required>
                             </div>
                             <div class="mb-3">
-                                <label for="correoDocente" class="form-label">Correo:</label>
-                                <input type="email" class="form-control" id="correoDocente" name="correoDocente" required>
+                                <label for="modificarApellidosDocente" class="form-label">Apellidos:</label>
+                                <input type="text" class="form-control" id="modificarApellidosDocente" name="apellidos" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificarDocumentoDocente" class="form-label">Número de Documento:</label>
+                                <input type="text" class="form-control" id="modificarDocumentoDocente" name="n_documento" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificarTelefonoDocente" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificarCorreoDocente" class="form-label">Correo:</label>
+                                <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificarTipoPersona" class="form-label">Tipo de Persona:</label>
+                                <select class="form-control" id="modificarTipoPersona" name="tipopersona" required>
+                                    <option value="D">Docente</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificarCantHoras" class="form-label">Cantidad de Horas:</label>
+                                <input type="number" class="form-control" id="modificarCantHoras" name="cantHoras" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificarTiempoRef" class="form-label">Tiempo de Referencia:</label>
+                                <input type="number" class="form-control" id="modificarTiempoRef" name="tiempo_ref" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="modificarEstadoDocente" class="form-label">Estado:</label>
+                                <select class="form-control" id="modificarEstadoDocente" name="estado" required>
+                                    <option value="A">Activo</option>
+                                    <option value="I">Inactivo</option>
+                                </select>
                             </div>
                             <button type="submit" class="btn btn-primary">Guardar</button>
                         </form>
@@ -60,147 +94,134 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    var docentes = [];
-    var table = $('#tabla-docente').DataTable({
-        "paging": true,
-        "info": true,
-        "columns": [
-            { "data": "idpersona" },
-            { "data": "nombre" },
-            { "data": "correo" },
-            {
-                "data": null,
-                "render": function(data, type, row) {
-                    return `
-                        <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}">Modificar</button>
-                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}">Eliminar</button>
-                    `;
-                }
-            }
-        ],
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-        }
-    });
-
-    function cargarDocentes() {
-        $.ajax({
-            url: '/get_docentes',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function(response) {
-                docentes = response;
-                table.clear().rows.add(docentes).draw();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    }
-
-    cargarDocentes();
-
-    $('#btn_agregar_docente').click(function(e) {
-        e.preventDefault();
-        $('#modalAgregarDocente').modal('show');
-        $('#formAgregarDocente')[0].reset();
-    });
-
-    $('#formAgregarDocente').submit(function(e) {
-        e.preventDefault();
-        var data = {
-            nombre: $('#nombreDocente').val(),
-            correo: $('#correoDocente').val()
-        };
-
-        $.ajax({
-            url: '/agregar_docente',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function(response) {
-                console.log(response);
-                $('#mensajeResultado').removeClass().empty();
-                if (response.error) {
-                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Docente agregado correctamente');
-                    cargarDocentes();
-                    $('#modalAgregarDocente').modal('hide');
-                }
-                $('#mensajeResultado').show();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $('#tabla-docente tbody').on('click', '.btnModificar', function() {
-        var id = $(this).data('id');
-        var docente = docentes.find(d => d.idpersona == id);
-        if (docente) {
-            $('#nombreDocente').val(docente.nombre);
-            $('#correoDocente').val(docente.correo);
-            $('#modalAgregarDocente').modal('show');
-
-            $('#formAgregarDocente').off('submit').on('submit', function(e) {
-                e.preventDefault();
-                var data = {
-                    idpersona: id,
-                    nombre: $('#nombreDocente').val(),
-                    correo: $('#correoDocente').val()
-                };
-
-                $.ajax({
-                    url: '/modificar_docente',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function(response) {
-                        console.log(response);
-                        $('#mensajeResultado').removeClass().empty();
-                        if (response.error) {
-                            $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                        } else {
-                            $('#mensajeResultado').addClass('alert alert-success').text('Docente modificado correctamente');
-                            cargarDocentes();
-                            $('#modalAgregarDocente').modal('hide');
-                        }
-                        $('#mensajeResultado').show();
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(error);
+    $(document).ready(function() {
+        var docentes = [];
+        var table = $('#tabla-docente').DataTable({
+            "paging": true,
+            "info": true,
+            "columns": [
+                { "data": "idpersona" },
+                { "data": "nombre" },
+                { "data": "correo" },
+                { "data": "telefono" },
+                {
+                    "data": null,
+                    "render": function(data, type, row) {
+                        return `
+                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}">Modificar</button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}">Eliminar</button>
+                        `;
                     }
-                });
+                }
+            ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            }
+        });
+    
+        function cargarDocentes() {
+            $.ajax({
+                url: '/get_docentes',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function(response) {
+                    docentes = response;
+                    table.clear().rows.add(docentes).draw();
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
             });
         }
-    });
-
-    $('#tabla-docente tbody').on('click', '.btnEliminar', function() {
-        var id = $(this).data('id');
-        $.ajax({
-            url: '/eliminar_docente',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ idpersona: id }),
-            success: function(response) {
-                console.log(response);
-                $('#mensajeResultado').removeClass().empty();
-                if (response.error) {
-                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Docente eliminado correctamente');
-                    cargarDocentes();
+    
+        cargarDocentes();
+    
+        $('#btn_agregar_docente').click(function(e) {
+            e.preventDefault();
+            $('#modalAgregarDocente').modal('show');
+            $('#formAgregarDocente')[0].reset();
+        });
+    
+        $('#formModificarDocente').submit(function(e) {
+            e.preventDefault();
+            var data = {
+                idpersona: $('#modificarIdPersona').val(),
+                nombres: $('#modificarNombreDocente').val(),
+                apellidos: $('#modificarApellidosDocente').val(),
+                n_documento: $('#modificarDocumentoDocente').val(),
+                telefono: $('#modificarTelefonoDocente').val(),
+                correo: $('#modificarCorreoDocente').val(),
+                tipopersona: $('#modificarTipoPersona').val(),
+                cantHoras: $('#modificarCantHoras').val(),
+                tiempo_ref: $('#modificarTiempoRef').val(),
+                estado: $('#modificarEstadoDocente').val()
+            };
+    
+            $.ajax({
+                url: '/modificar_docente',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    console.log(response);
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Docente modificado correctamente');
+                        cargarDocentes();
+                        $('#modalModificarDocente').modal('hide');
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
                 }
-                $('#mensajeResultado').show();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
+            });
+        });
+    
+        $('#tabla-docente tbody').on('click', '.btnModificar', function() {
+            var id = $(this).data('id');
+            var docente = docentes.find(d => d.idpersona == id);
+            if (docente) {
+                $('#modificarIdPersona').val(docente.idpersona);
+                $('#modificarNombreDocente').val(docente.nombres);
+                $('#modificarApellidosDocente').val(docente.apellidos);
+                $('#modificarDocumentoDocente').val(docente.n_documento);
+                $('#modificarTelefonoDocente').val(docente.telefono);
+                $('#modificarCorreoDocente').val(docente.correo);
+                $('#modificarTipoPersona').val(docente.tipopersona);
+                $('#modificarCantHoras').val(docente.cantHoras);
+                $('#modificarTiempoRef').val(docente.tiempo_ref);
+                $('#modificarEstadoDocente').val(docente.estado);
+                $('#modalModificarDocente').modal('show');
             }
         });
+    
+        $('#tabla-docente tbody').on('click', '.btnEliminar', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '/eliminar_docente',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ idpersona: id }),
+                success: function(response) {
+                    console.log(response);
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Docente eliminado correctamente');
+                        cargarDocentes();
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
     });
-});
-</script>
+    </script>
+    
 {% endblock %}
