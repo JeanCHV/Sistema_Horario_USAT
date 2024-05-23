@@ -79,7 +79,7 @@
                     <div class="row mt-3">
                         <div class="col-md-12" id="espacio_tabla">
                             <table class="table table-bordered text-center" id="tabla_inicial">
-                                <thead class="border border-warning bg-blue-horario-usat">
+                                <thead class="border border-warning bg-red-usat -horario-usat">
                                   <tr>
                                     <th scope="col" class="border border-warning text-light">Hora</th>
                                     <th scope="col" class="border border-warning text-light">Lunes</th>
@@ -107,12 +107,14 @@
                         </div>
                     </div>
                 </div>
+                <!-- Espacio y botón verde -->
+                <!-- Espacio y botón verde -->
+                <div class="d-flex justify-content-center mt-3"> <!-- Cambio en el margen superior -->
+                    <button class="btn btn-success btn-lg" onclick="generarHorario()">Generar Horario</button> <!-- Cambio en el tamaño -->
+                </div>
             </div>
         </div>
     </div>
-    <!-- Espacio y botón verde -->
-    <div class="mb-3"></div>
-    <button class="btn btn-success foot" style="height: 40px;" onclick="generarHorario()">Generar Horario</button>
 </div>
 
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
@@ -131,5 +133,6 @@
 </script>
 
 {% endblock %}
+
 
 
