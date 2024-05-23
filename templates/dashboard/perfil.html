@@ -84,7 +84,29 @@
       }, 2000);
     });
   </script>
+
+  <style>
+    .profile-img-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 250px;
+      height: 250px;
+      border: 4px solid #000; /* Borde más grueso */
+      border-radius: 50%; /* Mantener el borde redondeado */
+      overflow: hidden; /* Recortar cualquier desbordamiento de la imagen */
+    }
+
+    .profile-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Asegura que la imagen mantenga su proporción */
+    }
+  </style>
 {% endblock %}
+
+
+
 
 
 
