@@ -11,9 +11,6 @@ import hashlib
 import random
 from main import app
 
-import controladores.usuario.usuario as controlador_usuarios
-import clases.usuario_clase as usuario_clase
-
 import controladores.controlador_usuario as controlador_usuario
 import controladores.ambientes.controlador_ambiente as controlador_ambientes
 import controladores.cursos.controlador_cursos as controlador_cursos
@@ -255,7 +252,14 @@ def modificar_docente_route():
         return jsonify({"error": str(e)})
 
 
-
+#Gestionar Perfil
+#@app.route('/perfil', methods=["GET"])
+#def perfil():
+#    try:
+#        usuario= controlador_usuario.obtener_usuario_por_id()
+#        return jsonify(usuario)
+#    except Exception as e:
+#        return jsonify({"error": str(e)})
 
 
 @app.route("/validar_sesion", methods=["POST"])
@@ -299,6 +303,9 @@ def cursosxescuela():
     escuelas = controlador_cursos.obtener_escuelas()
     return render_template("dashboard/cursosxescuela.html", semestres=semestres, escuelas=escuelas)
 
+@app.route("/usuario")
+def usuario():
+    return render_template("dashboard/usuario.html")
 
 @app.route('/docentes', methods=["GET"])
 def docentes():

@@ -1,0 +1,73 @@
+@ -1,72 +0,0 @@
+{% extends "dashboard/index.html" %}
+
+{% block titulo %} Perfil de Usuario {% endblock %}
+
+{% block contenido %}
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
+        <li class="breadcrumb-item active"><a href="{{url_for('perfil')}}">Perfil de Usuario</a></li>
+    </ol>
+</nav>
+
+<div class="container">
+    <h2>Perfil de Usuario</h2>
+
+    <!-- Formulario para editar información del usuario -->
+    <form>
+        <div class="form-row">
+            <div class="col-md-6">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" placeholder="Nombre">
+            </div>
+            <div class="col-md-6">
+                <label for="apellido">Apellido</label>
+                <input type="text" class="form-control" id="apellido" placeholder="Apellido">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" class="form-control" id="email" placeholder="Correo Electrónico">
+            </div>
+            <div class="col-md-6">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" class="form-control" id="telefono" placeholder="Teléfono">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
+
+    <!-- Tabla para mostrar los datos del usuario -->
+    <table id="tabla-usuario" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Correo Electrónico</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los datos del usuario se cargarán dinámicamente aquí -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Script para inicializar el DataTable y realizar la búsqueda -->
+<script>
+    $(document).ready(function () {
+        $('#tabla-usuario').DataTable({
+            "paging": true,
+            "pagingType": 'numbers',
+            "info": false,
+            "stateSave": true,
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.0.3/i18n/es-ES.json',
+            },
+        });
+    });
+</script>
+
+{% endblock %}
