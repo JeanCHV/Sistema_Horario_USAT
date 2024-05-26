@@ -63,3 +63,21 @@ def dar_baja_ambiente(idambiente):
         return {"error": str(e)}
     finally:
         conexion.close()
+
+
+#Querys Algoritmo Genetico
+def get_ambientes():
+    conexion = obtener_conexion()
+    ambientes = []
+
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT ambiente.idambiente,ambiente.nombre,ambiente.aforo FROM ambiente WHERE ambiente.estado='A'")
+        column_names = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+
+        for row in rows:
+            ambiente_dict = dict(zip(column_names, row))
+            ambientes.append(ambiente_dict)
+
+    conexion.close()
+    return ambientes

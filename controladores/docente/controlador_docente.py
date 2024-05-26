@@ -62,3 +62,22 @@ def modificar_docente(idpersona, nombres, correo):
     finally:
         conexion.close()
 
+#Querys Algoritmo Genetico
+def get_docentes():
+    conexion = obtener_conexion()
+    docentes = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT persona.idpersona,persona.nombres,persona.apellidos,persona.cantHoras,persona.tiempo_ref FROM persona WHERE persona.tipopersona='D' AND persona.estado=1")
+            column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+            rows = cursor.fetchall()
+
+            for row in rows:
+                docente_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
+                docentes.append(docente_dict)
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+    return docentes

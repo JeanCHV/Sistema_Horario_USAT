@@ -131,3 +131,19 @@ def modificar_curso(idcurso, nombre, cod_curso, creditos, horas_teoria, horas_pr
     finally:
         conexion.close()
 
+
+def get_cursos():
+    conexion = obtener_conexion()
+    cursos = []
+
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT curso.idcurso,curso.nombre,curso.horas_teoria,curso.horas_practica,curso.tipo_curso FROM curso WHERE curso.estado='A'")
+        column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+        rows = cursor.fetchall()
+
+        for row in rows:
+            curso_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
+            cursos.append(curso_dict)
+
+    conexion.close()
+    return cursos
