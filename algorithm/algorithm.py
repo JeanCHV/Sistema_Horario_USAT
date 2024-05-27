@@ -9,43 +9,47 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import controladores.docente.controlador_docente as controlador_docente
 import controladores.ambientes.controlador_ambiente as controlador_ambiente
 import controladores.cursos.controlador_cursos as controlador_cursos
+import controladores.grupo.controlador_grupo as controlador_grupo
+import controladores.docente_disponibilidad.controlador_docente_disponibilidad as controlador_docente_disponibilidad
 
 docentes1 = controlador_docente.get_docentes()
 ambientes1 = controlador_ambiente.get_ambientes()
 cursos1 = controlador_cursos.get_cursos()
+grupo= controlador_grupo.get_grupo()
+disponibilidad=controlador_docente_disponibilidad.get_disponibilidad()
+
+DOCENTES=docentes1
+AMBIENTES=ambientes1
+CURSOS=cursos1
+GRUPOS_HORARIO =grupo
+DISPONIBILIDAD_DOCENTES=disponibilidad
+
 # Definición de parámetros
 NUM_PROFESORES = len(docentes1)
 NUM_CURSOS = len(cursos1)
 NUM_AULAS = len(ambientes1)
-HORAS = [f"{h}:00" for h in range(9, 18)]
+HORAS = [f"{h}:00" for h in range(9, 22)]
 DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"]
 
 # Ejemplo de disponibilidad de docentes en formato JSON
-DISPONIBILIDAD_DOCENTES_JSON = '''
-[
-    {"dia": "Lunes", "hora_inicio": "9:00", "hora_fin": "11:00", "idpersona": 0},
-    {"dia": "Martes", "hora_inicio": "11:00", "hora_fin": "13:00", "idpersona": 0},
-    {"dia": "Lunes", "hora_inicio": "11:00", "hora_fin": "13:00", "idpersona": 1},
-    {"dia": "Miércoles", "hora_inicio": "13:00", "hora_fin": "15:00", "idpersona": 1},
-    {"dia": "Jueves", "hora_inicio": "9:00", "hora_fin": "11:00", "idpersona": 2},
-    {"dia": "Viernes", "hora_inicio": "15:00", "hora_fin": "17:00", "idpersona": 2},
-    {"dia": "Martes", "hora_inicio": "10:00", "hora_fin": "12:00", "idpersona": 3},
-    {"dia": "Jueves", "hora_inicio": "14:00", "hora_fin": "16:00", "idpersona": 3},
-    {"dia": "Miércoles", "hora_inicio": "10:00", "hora_fin": "12:00", "idpersona": 4},
-    {"dia": "Viernes", "hora_inicio": "9:00", "hora_fin": "11:00", "idpersona": 4}
-]
-'''
+# DISPONIBILIDAD_DOCENTES= '''
+# [
+#     {"dia": "Lunes", "hora_inicio": "9:00", "hora_fin": "11:00", "idpersona": 0},
+#     {"dia": "Martes", "hora_inicio": "11:00", "hora_fin": "13:00", "idpersona": 0},
+#     {"dia": "Lunes", "hora_inicio": "11:00", "hora_fin": "13:00", "idpersona": 1},
+#     {"dia": "Miércoles", "hora_inicio": "13:00", "hora_fin": "15:00", "idpersona": 1},
+#     {"dia": "Jueves", "hora_inicio": "9:00", "hora_fin": "11:00", "idpersona": 2},
+#     {"dia": "Viernes", "hora_inicio": "15:00", "hora_fin": "17:00", "idpersona": 2},
+#     {"dia": "Martes", "hora_inicio": "10:00", "hora_fin": "12:00", "idpersona": 3},
+#     {"dia": "Jueves", "hora_inicio": "14:00", "hora_fin": "16:00", "idpersona": 3},
+#     {"dia": "Miércoles", "hora_inicio": "10:00", "hora_fin": "12:00", "idpersona": 4},
+#     {"dia": "Viernes", "hora_inicio": "9:00", "hora_fin": "11:00", "idpersona": 4}
+# ]
+# '''
 
-DISPONIBILIDAD_DOCENTES = json.loads(DISPONIBILIDAD_DOCENTES_JSON)
-
-# def get_docente():
-#     docentes1 = controlador_docente.get_docentes()
-#     print (len(docentes1))
-#     print (docentes1)
-# get_docente()
 
 # Datos de los docentes
-DOCENTES=docentes1
+
 # DOCENTES = [
 #     {"idpersona": 0, "nombres": "Juan", "apellidos": "Perez", "cantHoras": 10, "tiempo_ref": 30},
 #     {"idpersona": 1, "nombres": "Ana", "apellidos": "Gomez", "cantHoras": 8, "tiempo_ref": 30},
@@ -56,7 +60,7 @@ DOCENTES=docentes1
 
 # Datos de los ambientes
 
-AMBIENTES=ambientes1
+
 # AMBIENTES = [
 #     {"idambiente": 0, "nombre": "Aula 101", "aforo": 30},
 #     {"idambiente": 1, "nombre": "Aula 102", "aforo": 25},
@@ -64,7 +68,7 @@ AMBIENTES=ambientes1
 # ]
 
 # Datos de los cursos
-CURSOS=cursos1
+
 # CURSOS = [
 #     {"idcurso": 0, "nombre": "Matemáticas", "horas_teoria": 2, "horas_practica": 1, "ciclo": 1, "tipo_curso": 'P'},
 #     {"idcurso": 1, "nombre": "Física", "horas_teoria": 3, "horas_practica": 1, "ciclo": 1, "tipo_curso": 'P'},
@@ -80,18 +84,19 @@ CURSOS=cursos1
 
 
 # Datos de los grupos de horario
-GRUPOS_HORARIO = [
-    {"id_grupo": 0, "nombre": "Grupo A", "vacantes": 25, "idcurso": 0},
-    {"id_grupo": 1, "nombre": "Grupo B", "vacantes": 20, "idcurso": 1},
-    {"id_grupo": 2, "nombre": "Grupo C", "vacantes": 30, "idcurso": 2},
-    {"id_grupo": 3, "nombre": "Grupo D", "vacantes": 20, "idcurso": 3},
-    {"id_grupo": 4, "nombre": "Grupo E", "vacantes": 15, "idcurso": 4},
-    {"id_grupo": 5, "nombre": "Grupo F", "vacantes": 25, "idcurso": 5},
-    {"id_grupo": 6, "nombre": "Grupo G", "vacantes": 20, "idcurso": 6},
-    {"id_grupo": 7, "nombre": "Grupo H", "vacantes": 20, "idcurso": 7},
-    {"id_grupo": 8, "nombre": "Grupo I", "vacantes": 25, "idcurso": 8},
-    {"id_grupo": 9, "nombre": "Grupo J", "vacantes": 30, "idcurso": 9}
-]
+
+# GRUPOS_HORARIO = [
+#     {"id_grupo": 0, "nombre": "Grupo A", "vacantes": 25, "idcurso": 0},
+#     {"id_grupo": 1, "nombre": "Grupo B", "vacantes": 20, "idcurso": 1},
+#     {"id_grupo": 2, "nombre": "Grupo C", "vacantes": 30, "idcurso": 2},
+#     {"id_grupo": 3, "nombre": "Grupo D", "vacantes": 20, "idcurso": 3},
+#     {"id_grupo": 4, "nombre": "Grupo E", "vacantes": 15, "idcurso": 4},
+#     {"id_grupo": 5, "nombre": "Grupo F", "vacantes": 25, "idcurso": 5},
+#     {"id_grupo": 6, "nombre": "Grupo G", "vacantes": 20, "idcurso": 6},
+#     {"id_grupo": 7, "nombre": "Grupo H", "vacantes": 20, "idcurso": 7},
+#     {"id_grupo": 8, "nombre": "Grupo I", "vacantes": 25, "idcurso": 8},
+#     {"id_grupo": 9, "nombre": "Grupo J", "vacantes": 30, "idcurso": 9}
+# ]
 
 # Generar una población inicial
 def generar_poblacion(tamano):
