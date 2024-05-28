@@ -92,7 +92,6 @@
             fetch(`/rellenar_tabla/${escuela}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     table.clear();
                     table.rows.add(data);
                     table.draw();
