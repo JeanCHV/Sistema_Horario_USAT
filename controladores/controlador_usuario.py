@@ -34,7 +34,7 @@ def obtener_usuario_por_id(id):
     usuario = None
     with conexion.cursor() as cursor:
         cursor.execute(
-            "SELECT idusuario, username, password, estado, idpersona, token FROM usuario WHERE id = %s", (id,))
+            "SELECT idusuario, username, password, estado, idpersona, token FROM usuario WHERE idusuario = %s", (id,))
         usuario = cursor.fetchone()
     conexion.close()
     return usuario

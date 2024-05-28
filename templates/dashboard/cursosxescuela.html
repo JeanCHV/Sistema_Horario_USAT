@@ -19,7 +19,7 @@
             <!-- Semestre -->
             <div class="d-flex mb-3 mt-3">
                 <label for="" class="mb-2  me-4  mt-2">Semestre:</label>
-                <select class="form-select w-25 me-3  " aria-label="Default select example" id="semestre" onchange="hola()">
+                <select class="form-select w-25 me-3  " aria-label="Default select example" id="semestre" onchange="validar()">
                     <option selected disabled>  -----Seleccione un semestre-----</option>
                     {% for semestre in semestres %}
                     <option>{{ semestre[0] }} </option>
@@ -29,7 +29,7 @@
             <!-- Escuelas -->
             <div class="d-flex mb-3 mt-3">
                 <label for="" class="mb-2 mt-2" >Escuela :</label>
-                <select class="form-select w-25 me-3 " aria-label="Default select example" id="escuela" style="margin-left:33px" onchange="hola()">
+                <select class="form-select w-25 me-3 " aria-label="Default select example" id="escuela" style="margin-left:33px" onchange="validar()">
                     <option selected disabled>-----Seleccione una escuela-----</option>
                     {% for escuela in escuelas %}
                     <option>{{ escuela[0] }} </option>
@@ -99,9 +99,7 @@
         var escuela = document.getElementById('escuela');
         
         if (semestre.selectedIndex > 0 && escuela.selectedIndex > 0) {
-            return true;
-        } else {
-            return false;
+            rellenarTabla(escuela.value);
         }
     }
 
@@ -114,7 +112,6 @@
         if (estado && curso.length > 0) {
             const filtro = curso.toUpperCase();
             const filas = document.getElementById('cuerpo_tabla').getElementsByTagName('tr');
-    
             // Iterar sobre las filas de la tabla y ocultar aquellas que no coincidan con el curso
             for (let i = 0; i < filas.length; i++) {
                 const nombreCurso = filas[i].getElementsByTagName('td')[1];
@@ -133,23 +130,14 @@
         }
     }
     
-    function hola() {
-        var estado = validar();
-        console.log(estado);
-        if (estado == true) {    
-            console.log(document.getElementById('semestre').value);
-        } else {
-            console.log('bays');
-        }
-    }
     function rellenarTabla(escuela) {
         fetch(`/rellenar_tabla/${escuela}`)
           .then(response => response.json())
           .then(data => {
+            console.log(data)
             const cuerpoTabla = document.getElementById('cuerpo_tabla');
             // Limpiar contenido previo de la tabla
             cuerpoTabla.innerHTML = '';
-    
             data.forEach(curso => {
               const fila = document.createElement('tr');
               fila.innerHTML = `
@@ -170,5 +158,6 @@
             console.error('Error al obtener los datos de la tabla:', error);
           });
     }
+
 </script>
 {% endblock %}

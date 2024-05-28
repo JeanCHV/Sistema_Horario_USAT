@@ -18,6 +18,7 @@ import controladores.controlador_persona as controlador_persona
 import controladores.controlador_semestre as controlador_semestre
 import controladores.controlador_horario as controlador_horario
 import controladores.docente.controlador_docente as controlador_docente
+import controladores.grupo.controlador_grupo as controlador_grupo
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
@@ -292,10 +293,10 @@ def cursos():
     return render_template("dashboard/cursos.html")
 
 
-@app.route("/rellenar_tabla,<string>escuela")
+@app.route("/rellenar_tabla/<string:escuela>")
 def rellenar_tabla(escuela):
-    cursos = controlador_cursos.obtener_cursoxescuela(escuela)
-    return cursos
+    cursos = controlador_grupo.obtener_cursoxescuela(escuela)
+    return jsonify(cursos)
 
 @app.route("/cursosxescuela")
 def cursosxescuela():
