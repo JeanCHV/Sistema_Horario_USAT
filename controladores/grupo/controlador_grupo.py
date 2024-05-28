@@ -9,7 +9,7 @@ def obtener_cursoxescuela(escuela):
                                         c.idcurso, 
                                         c.nombre, 
                                         c.ciclo, 
-                                        COUNT(g.idgrupo) AS total_grupos
+                                        COUNT(g.id_grupo) AS total_grupos
                                     FROM 
                                         curso AS c
                                     INNER JOIN 
