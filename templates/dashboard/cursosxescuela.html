@@ -112,7 +112,6 @@
         if (estado && curso.length > 0) {
             const filtro = curso.toUpperCase();
             const filas = document.getElementById('cuerpo_tabla').getElementsByTagName('tr');
-    
             // Iterar sobre las filas de la tabla y ocultar aquellas que no coincidan con el curso
             for (let i = 0; i < filas.length; i++) {
                 const nombreCurso = filas[i].getElementsByTagName('td')[1];
