@@ -24,7 +24,7 @@
     <div id="mensajeResultado" style="display: none;"></div>
 
     <div class="card" id="card_ambientes">
-        <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
+        <div class="card-header  bg-red-usat  text-white" id="headingOne" data-bs-toggle="collapse"
             data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
             Ambientes
         </div>
@@ -111,7 +111,7 @@
                                     <option value="2">Laboratorio</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-success bg_green_button">Guardar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                         </form>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
                 "data": null,
                 "render": function(data, type, row) {
                     return `
-                        <button class="btn btn-primary btn-sm btnModificar" data-id="${row.id}">Modificar</button>
+                        <button class="btn btn-warning btn-sm btnModificar" data-id="${row.id}">Modificar</button>
                         <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id}">Eliminar</button>
                         <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.id}">Dar de Baja</button>
                     `;
