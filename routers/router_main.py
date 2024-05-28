@@ -293,10 +293,10 @@ def cursos():
     return render_template("dashboard/cursos.html")
 
 
-@app.route("/rellenar_tabla,<string>escuela")
+@app.route("/rellenar_tabla/<string:escuela>")
 def rellenar_tabla(escuela):
     cursos = controlador_grupo.obtener_cursoxescuela(escuela)
-    return cursos
+    return jsonify(cursos)
 
 @app.route("/cursosxescuela")
 def cursosxescuela():
