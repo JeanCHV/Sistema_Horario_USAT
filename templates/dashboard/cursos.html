@@ -41,7 +41,7 @@
 
             <div class="d-flex">
                 <label for="" class="mb-2 mt-2 form-label me-4">Cursos:</label>
-                <input type="text" class="form-control  w-25  danger"  placeholder="Buscar Cursos"  onkeyup="filtrado()"  id="curso" style="margin-left:18px" >
+                <input type="text" class="form-control  w-25  danger"  placeholder="Buscar Cursos" onkeypress="filtrado()"  id="curso" style="margin-left:18px" >
             </div>
 
         </div>
@@ -74,7 +74,7 @@
 
             </table>
             <div class="text-end mb-2">
-                <button class="btn  btn-success bg_green_button me-2" onclick="quien_selecciono()">Guardar</button>
+                <button class="btn  btn-success bg_green_button me-2">Guardar</button>
                 <button class="btn btn-danger me-5">Cancelar</button>
             </div>
         </div>
@@ -111,9 +111,10 @@
         const curso = document.getElementById('curso').value;
     
         // Verificar si el estado es verdadero y si el campo de curso tiene contenido
-        if (estado) {
+        if (estado && curso.length > 0) {
             const filtro = curso.toUpperCase();
             const filas = document.getElementById('cuerpo_tabla').getElementsByTagName('tr');
+    
             // Iterar sobre las filas de la tabla y ocultar aquellas que no coincidan con el curso
             for (let i = 0; i < filas.length; i++) {
                 const nombreCurso = filas[i].getElementsByTagName('td')[1];
@@ -134,83 +135,40 @@
     
     function hola() {
         var estado = validar();
-        if (estado == true) {  
-            var semestre = document.getElementById("semestre").value
-            var escuela = document.getElementById('escuela').value
-            rellenarTabla(semestre,escuela );
+        console.log(estado);
+        if (estado == true) {    
+            console.log(document.getElementById('semestre').value);
+        } else {
+            console.log('bays');
         }
     }
-    function rellenarTabla(semestre,escuela) {
-        fetch(`/rellenar_tabla/${semestre}/${escuela}`)
-            .then(response => response.json())
-            .then(data => {
-                const cuerpoTabla = document.getElementById('cuerpo_tabla');
-                // Limpiar contenido previo de la tabla
-                cuerpoTabla.innerHTML = '';
+    function rellenarTabla(escuela) {
+        fetch(`/rellenar_tabla/${escuela}`)
+          .then(response => response.json())
+          .then(data => {
+            const cuerpoTabla = document.getElementById('cuerpo_tabla');
+            // Limpiar contenido previo de la tabla
+            cuerpoTabla.innerHTML = '';
     
-                data.forEach(curso => {
-                    const fila = document.createElement('tr');
-                    fila.innerHTML = `
-                    <tr>
-                        <td>${curso.idcurso}</td>
-                        <td>${curso.nombre}</td>
-                        <td>${curso.ciclo}</td>
-                        <td style="width:90px">
-                            <input type="number" class="form-control bg-white text-black" value=${curso.n_grupos}>
-                        </td>
-                        <td>
-                            <input type="checkbox" class="form-check-input me-4 border border-black">
-                        </td>
-                    </tr>
-                    `;
-                    cuerpoTabla.appendChild(fila);
-                });
-            })
-            .catch(error => {
-                console.error('Error al obtener los datos de la tabla:', error);
+            data.forEach(curso => {
+              const fila = document.createElement('tr');
+              fila.innerHTML = `
+                <td>${curso.idcurso}</td>
+                <td>${curso.nombre}</td>
+                <td>${curso.ciclo}</td>
+                <td class="" style="width:90px">
+                    <input type="number" id="miCampoNumerico" class="form-control bg-white text-black">
+                </td>
+                <td>
+                    <input type="checkbox" class="form-check-input me-3 border border-dark">
+                </td>
+              `;
+              cuerpoTabla.appendChild(fila);
             });
+          })
+          .catch(error => {
+            console.error('Error al obtener los datos de la tabla:', error);
+          });
     }
-
-    var id = 0;
-    var n_grupos = 0;
-    let diccionario = []
-    
-    function quien_selecciono() {
-        
-            // Obtiene todos los elementos con la clase "hta"
-            let filas = document.querySelectorAll("tr")
-            for(var x = 0; x < filas.length; x++){
-                if (x != 0){
-                    let th = filas[x].children
-                    for (let y = 0; y < th.length; y++) {
-                        if(y==0){
-                            id = th[y].textContent;
-                        }else if (y == 3 ){
-                            let grupo = th[y].querySelector("input"); 
-                            if (grupo) { 
-                                n_grupos = grupo.value;
-                            } 
-                        }else if(y==4){
-                            let checkbox = th[y].querySelector("input"); 
-                            if (checkbox) { 
-                                if (checkbox.checked) {
-                                    diccionario.push({
-                                        "id" : id,
-                                        "n_grupos" : n_grupos,
-                                        "vacantes" : 10,
-                                        "semestre": document.getElementById("semestre").value
-                                    })
-                                }else{
-                                    console.log("nop");
-                                }
-                        }
-                    }
-                }
-            }
-    }
-    console.log(diccionario);
-}
-
-    
 </script>
 {% endblock %}

@@ -5,40 +5,24 @@
 {% block contenido %}
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item" href="Home"><a>Inicio</a></li>
-        <li class="breadcrumb-item active" data-href="#"><a>Docentes</a></li>
-
+        <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
+        <li class="breadcrumb-item active"><a href="{{url_for('perfil')}}">Perfil</a></li>
     </ol>
 </nav>
 
-<div class="card mx-2" id="card_docentes">
-    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-        Docentes
-    </div>
-    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
-        <div class="card-body">
-            <div class="container">
-                <div class="card-body show">
-                    <!-- Tabla para mostrar los cursos -->
-                    <table id="tabla-ambiente" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Nombre</th>
-                                <th>Telefono</th>
-                                <th>Correo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
+<div class="container">
+    <h2>Mi Perfil</h2>
+
+    <!-- Datos del perfil -->
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Nombre:</strong> Nombre del usuario</p>
+            <p><strong>Email:</strong> email@example.com</p>
+            <!-- Agregar más datos según sea necesario -->
         </div>
     </div>
-    <div href="#" id="" data-href="" class="btn btn-success foot" style="height: 20px;"></div>
-</div>
 
+    <!-- Botón para editar perfil -->
+    <a href="#" class="btn btn-primary">Editar Perfil</a>
+</div>
 {% endblock %}
