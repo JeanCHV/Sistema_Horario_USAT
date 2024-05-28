@@ -262,10 +262,27 @@
             });
         });
     
+
+
+        $('#tabla-ambiente tbody').on('click', '.btnModificar', function() {
+            $('#modalModificarAmbiente').modal('show');
+            var id = $(this).data('id');
+            var ambiente = ambientes.find(a => a.id == id);
+            if (ambiente) {
+                $('#idAmbienteModificar').val(ambiente.id);
+                $('#nombreModificar').val(ambiente.nombre);
+                $('#aforoModificar').val(ambiente.aforo);
+                $('#estadoModificar').val(ambiente.estado);
+                $('#idedificioModificar').val(ambiente.idedificio);
+                $('#idambientetipoModificar').val(ambiente.idambientetipo);
+                $('#modalModificarAmbiente').modal('show');
+            }
+        });
+
+    
         $('#formModificarAmbiente').submit(function(e) {
             e.preventDefault();
             var data = {
-                id: $('#idAmbienteModificar').val(),
                 nombre: $('#nombreModificar').val(),
                 aforo: $('#aforoModificar').val(),
                 estado: $('#estadoModificar').val(),
@@ -295,20 +312,11 @@
             });
         });
     
-        $('#tabla-ambiente tbody').on('click', '.btnModificar', function() {
-            var id = $(this).data('id');
-            var ambiente = ambientes.find(a => a.id == id);
-            if (ambiente) {
-                $('#idAmbienteModificar').val(ambiente.id);
-                $('#nombreModificar').val(ambiente.nombre);
-                $('#aforoModificar').val(ambiente.aforo);
-                $('#estadoModificar').val(ambiente.estado);
-                $('#idedificioModificar').val(ambiente.idedificio);
-                $('#idambientetipoModificar').val(ambiente.idambientetipo);
-                $('#modalModificarAmbiente').modal('show');
-            }
-        });
+
     
+
+
+
         $('#tabla-ambiente tbody').on('click', '.btnEliminar', function() {
             var id = $(this).data('id');
             $.ajax({
