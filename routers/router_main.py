@@ -162,7 +162,7 @@ def obtener_PE():
     planes_de_estudio = controlador_cursos.obtener_planes_de_estudio()  
     return jsonify(planes_de_estudio)
 
-##AGREGAR CURSO - MEJORAR
+##AGREGAR CURSO 
 @app.route("/agregar_curso", methods=["POST"])
 def agregar_curso():
     try:
@@ -172,8 +172,15 @@ def agregar_curso():
         horas_teoria = request.json.get('horas_teoria')
         horas_practica = request.json.get('horas_practica')
         ciclo = request.json.get('ciclo')
+        tipo_curso = request.json.get('tipo_curso')
+        estado = request.json.get('estado')
+        id_plan_estudio = request.json.get('id_plan_estudio')
 
-        resultado = controlador_cursos.agregar_curso(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo)
+        # Verificar que todos los campos requeridos estén presentes
+        if not all([nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio]):
+            return jsonify({"error": "Todos los campos son obligatorios"}), 400
+        
+        resultado = controlador_cursos.agregar_curso(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -182,29 +189,42 @@ def agregar_curso():
 @app.route("/eliminar_curso", methods=["POST"])
 def eliminar_curso():
     try:
-        data = request.json
-        idcurso = data.get('id')
+        data = request.get_json()  # Captura correctamente el JSON
+        idcurso = data.get('idcurso')  # Asegúrate de capturar 'idcurso'
+        print(f"ID del curso a eliminar recibido: {idcurso}")  # Imprime el idcurso en el servidor
         resultado = controlador_cursos.eliminar_curso(idcurso)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
 
-##MODIFICAR CURSO - MEJORAR
+
+##MODIFICAR CURSO
 @app.route("/modificar_curso", methods=["POST"])
-def modificar_curso():
+def modificar_curso_endpoint():
     try:
         data = request.json
-        idcurso = data.get('id')
+        idcurso = data.get('idcurso')
         nombre = data.get('nombre')
         cod_curso = data.get('cod_curso')
         creditos = data.get('creditos')
         horas_teoria = data.get('horas_teoria')
         horas_practica = data.get('horas_practica')
         ciclo = data.get('ciclo')
-        resultado = controlador_cursos.modificar_curso(idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo)
+        tipo_curso = data.get('tipo_curso')
+        estado = data.get('estado')
+        id_plan_estudio = data.get('id_plan_estudio')
+        resultado = controlador_cursos.modificar_curso(idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+##OBTENER CURSO POR ID
+
+@app.route('/get_curso/<int:idcurso>', methods=['GET'])
+def get_curso(idcurso):
+    resultado = controlador_cursos.obtener_curso_por_id(idcurso)
+    return jsonify(resultado)
+
     
 #GESTIONAR DOCENTE
     
