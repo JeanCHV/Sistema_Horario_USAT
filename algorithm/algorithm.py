@@ -28,7 +28,7 @@ DISPONIBILIDAD_DOCENTES=disponibilidad
 NUM_PROFESORES = len(docentes1)
 NUM_CURSOS = len(cursos1)
 NUM_AULAS = len(ambientes1)
-HORAS = [f"{h}:00" for h in range(9, 22)]
+HORAS = [f"{h}:00" for h in range(7, 23)]
 DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"]
 
 # Ejemplo de disponibilidad de docentes en formato JSON
