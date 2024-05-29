@@ -32,7 +32,7 @@ def modificar_ambiente(idambiente, nombre, aforo, estado, idedificio, idambiente
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.callproc('sp_Ambiente_Gestion', [2, idambiente, nombre, aforo, estado, idedificio, idambientetipo])
+            cursor.callproc('sp_Ambiente_Gestion', [2, None, nombre, aforo, estado, idedificio, idambientetipo])
             conexion.commit()
             return {"mensaje": "Ambiente modificado correctamente"}
     except Exception as e:
