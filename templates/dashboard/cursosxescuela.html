@@ -7,13 +7,14 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
         <li class="breadcrumb-item active"><a href="{{ url_for('cursos') }}">Cursos</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('cursos') }}">Grupos por Curso</a></li>
     </ol>
 </nav>
 <div class="container">
     <div class="card mt-3" id="card_cursos">
         <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
             data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            Cursos 
+            Grupo por curso
         </div>
         <div class="ms-4 mt-3">
             <!-- Semestre -->
@@ -52,8 +53,8 @@
                 <tbody id="cuerpo_tabla">
                 </tbody>
             </table>
-            <div class="text-end mb-2">
-                <button class="btn btn-success bg_green_button me-2">Guardar</button>
+            <div class="text-end mb-2 mt-3">
+                <button class="btn btn-success bg_green_button me-2" onclick="dato_selecciondo()">Guardar</button>
                 <button class="btn btn-danger me-5">Cancelar</button>
             </div>
         </div>
@@ -67,27 +68,35 @@
             "paging": true,
             "info": true,
             "columns": [
-                { "data": "idcurso" },
-                { "data": "nombre" },
-                { "data": "ciclo" },
+                { "data": "idcurso", "className": "text-center id" }, 
+                { "data": "nombre"},
+                { "data": "ciclo", "className": "text-center" },
                 {
                     "data": "total_grupos",
                     "render": function(data, type, row) {
-                        return `<input type="number" value="${data}" id="miCampoNumerico" class="form-control bg-white text-black text-center">`;
-                    }
+                        return `<input type="number" value="${data}" class="numeric-input form-control bg-white text-black mx-auto text-center grupos" style="width:80px">`;
+                    },
+                    "className": "text-center"
                 },
                 {
                     "data": null,
                     "render": function(data, type, row) {
                         return `<input type="checkbox" class="form-check-input me-3 border border-dark">`;
-                    }
+                    },
+                    "className": "text-center",
+                    "orderable": false
                 }
             ],
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
             }
         });
-
+    
+        // Eliminamos el atributo "step" de los campos numéricos al inicializar la tabla
+        table.on('draw.dt', function() {
+            $('.numeric-input').removeAttr('step');
+        });
+    
         window.rellenarTabla = function(escuela) {
             fetch(`/rellenar_tabla/${escuela}`)
                 .then(response => response.json())
@@ -100,17 +109,34 @@
                     console.error('Error al obtener los datos de la tabla:', error);
                 });
         };
-
+    
         window.seleccionar_toda = function() {
             var checkbox = document.getElementById('est');
             var isChecked = checkbox.checked;
             var input_check = document.querySelectorAll('input[type="checkbox"]');
-
             for (var i = 0; i < input_check.length; i++) {
                 input_check[i].checked = isChecked;
             }
         };
 
+        window. dato_selecciondo = function() {
+            var input_check = document.querySelectorAll('input[type="checkbox"]');
+            for (var i = 0; i < input_check.length; i++) {
+                if (input_check[i].checked && i>0) {
+                    padre = input_check[i].parentElement.parentElement;
+                    valor = padre.querySelectorAll('.grupos');
+                    ids = padre.querySelectorAll(".id");
+                    valor = valor[0]
+                    ids = ids[0]
+                    id_v = ids.textContent
+                    console.log("id: " + id_v)
+                    console.log("valor: " + valor.value);     
+                    console.log("------")               
+                }
+            }
+            
+        }
+    
         window.validar = function() {
             var semestre = document.getElementById('semestre');
             var escuela = document.getElementById('escuela');
@@ -119,5 +145,6 @@
             }
         };
     });
+    
 </script>
 {% endblock %}
