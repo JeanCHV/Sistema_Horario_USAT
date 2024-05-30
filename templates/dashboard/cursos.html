@@ -7,42 +7,47 @@
         <li class="breadcrumb-item active"><a href="{{ url_for('cursos') }}">Cursos</a></li>
     </ol>
 </nav>
-
+<!-- Comentarios para junior -->
+<!-- Debes dejar nombre,codigo, estado y los botones, ademas de agregar un boton de detalles el cual si mantendra todos los campos-->
 <!--<div class="container">
 </div>-->
 
-    <div class="card">
+<div class="container-fluid my-4">
+    <div class="card w-100">
         <div class="card-header bg-red-usat text-white">
             Cursos
         </div>
         <div class="card-body">
-            <!-- <div class="table-responsive">
-                
-            </div> -->
-            <table id="tabla-curso" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Código</th>
-                        <th>Créditos</th>
-                        <th>Horas Teoría</th>
-                        <th>Horas Práctica</th>
-                        <th>Ciclo</th>
-                        <th>Tipo</th>
-                        <th>Estado</th>
-                        <th>Plan de Estudio</th>
-                        <th>Opciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Los datos de los cursos se cargarán dinámicamente aquí -->
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="tabla-curso" class="table table-striped table-bordered tabla-cursos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Código</th>
+                            <th>Créditos</th>
+                            <th>Horas Teoría</th>
+                            <th>Horas Práctica</th>
+                            <th>Ciclo</th>
+                            <th>Tipo</th>
+                            <th>Estado</th>
+                            <th>Plan de Estudio</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los datos de los cursos se cargarán dinámicamente aquí -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <a href="#" id="btn_agregar_curso" class="btn btn-success">Agregar Nuevo Curso</a>
+            </div>
         </div>
         <div class="card-footer">
-            <a href="#" id="btn_agregar_curso" class="btn btn-success">Agregar Nuevo Curso</a>
+            <!-- Aquí puedes agregar más contenido o botones -->
         </div>
     </div>
+</div>
 
     <!-- MODAL AGREGAR CURSO -->
     <div class="modal fade" id="modalAgregarCurso" tabindex="-1" aria-hidden="true">

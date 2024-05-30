@@ -21,3 +21,56 @@
 .text-red-usat{
     color: #E33439
 }
+.table-responsive {
+    overflow-x: auto;
+}
+
+.card-footer {
+    text-align: center;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.card-footer {
+    text-align: center;
+}
+
+.tabla-cursos {
+    table-layout: auto;
+    width: 100%;
+}
+
+.tabla-cursos th,
+.tabla-cursos td {
+    min-width: 100px; /* Ajusta según sea necesario */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.tabla-cursos th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+}
+
+@media (max-width: 767.98px) {
+    .tabla-cursos th, .tabla-cursos td {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+}
+
+@media (min-width: 1920px) {
+    .tabla-cursos {
+        width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
+        margin: 0 auto;
+    }
+}
