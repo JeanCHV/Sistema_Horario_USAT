@@ -329,6 +329,9 @@ def ambientes():
 def cursos():
     return render_template("dashboard/cursos.html")
 
+@app.route("/ambientesxcurso")
+def ambientesxcurso():
+    return render_template("dashboard/ambientesxcurso.html")
 
 @app.route("/rellenar_tabla/<string:escuela>")
 def rellenar_tabla(escuela):
