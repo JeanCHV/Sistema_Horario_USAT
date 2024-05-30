@@ -354,11 +354,11 @@ def get_personas_activas():
     personas_activas = controlador_persona.obtener_personas_activas()
     return jsonify(personas_activas)
 
-@app.route("/get_horarios_docentesNombres_semestre", methods=["POST"])
+@app.route("/get_horarios_docentesId_semestre", methods=["POST"])
 def get_horarios_docentesNombres_semestre():
-    nombre_docente = request.json.get('nombre_docente')
+    id_docente = request.json.get('id_docente')
     semestre = request.json.get('semestre')
-    horarios = controlador_horario.obtener_horarios_por_docenteNombre_semestre(nombre_docente,semestre)
+    horarios = controlador_horario.obtener_horarios_por_docenteId_semestre(id_docente,semestre)
     return jsonify(horarios)  
     
 @app.route("/perfil")
