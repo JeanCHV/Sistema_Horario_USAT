@@ -233,7 +233,7 @@ def modificar_curso_endpoint():
     
 ##OBTENER CURSO POR ID
 
-@app.route('/get_curso/<int:idcurso>', methods=['GET'])
+@app.route('/obtener_curso/<int:idcurso>', methods=['GET'])
 def get_curso(idcurso):
     resultado = controlador_cursos.obtener_curso_por_id(idcurso)
     return jsonify(resultado)
@@ -284,6 +284,11 @@ def modificar_docente_route():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+
+@app.route('/get_docente/<int:idpersona>', methods=['GET'])
+def get_docente(idpersona):
+    resultado = controlador_docente.obtener_docente_por_id(idpersona)
+    return jsonify(resultado)
 
 
 #Gestionar Perfil

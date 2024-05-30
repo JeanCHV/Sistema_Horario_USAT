@@ -17,12 +17,11 @@
             Docentes
         </div>
         <div class="card-body">
-            
             <table id="tabla-docente" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
+                        <th>Nombres</th>
                         <th>Correo</th>
                         <th>Teléfono</th>
                         <th>Opciones</th>
@@ -35,6 +34,59 @@
         </div>
         <a href="#" id="btn_agregar_docente" class="btn btn-success">Agregar Nuevo Docente</a>
 
+        <!-- MODAL AGREGAR DOCENTE -->
+        <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Agregar Docente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formAgregarDocente">
+                            <div class="mb-3">
+                                <label for="nombreDocente" class="form-label">Nombres:</label>
+                                <input type="text" class="form-control" id="nombreDocente" name="nombres" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="apellidosDocente" class="form-label">Apellidos:</label>
+                                <input type="text" class="form-control" id="apellidosDocente" name="apellidos" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="documentoDocente" class="form-label">Número de Documento:</label>
+                                <input type="text" class="form-control" id="documentoDocente" name="n_documento" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="telefonoDocente" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="telefonoDocente" name="telefono" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="correoDocente" class="form-label">Correo:</label>
+                                <input type="email" class="form-control" id="correoDocente" name="correo" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cantHorasDocente" class="form-label">Cantidad de Horas:</label>
+                                <input type="number" class="form-control" id="cantHorasDocente" name="cantHoras" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tiempoRefDocente" class="form-label">Tiempo de Referencia:</label>
+                                <input type="number" class="form-control" id="tiempoRefDocente" name="tiempo_ref" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="estadoDocente" class="form-label">Estado:</label>
+                                <select class="form-control" id="estadoDocente" name="estado" required>
+                                    <option value="A">Activo</option>
+                                    <option value="I">Inactivo</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL MODIFICAR DOCENTE -->
         <div class="modal fade" id="modalModificarDocente" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -65,12 +117,6 @@
                                 <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" required>
                             </div>
                             <div class="mb-3">
-                                <label for="modificarTipoPersona" class="form-label">Tipo de Persona:</label>
-                                <select class="form-control" id="modificarTipoPersona" name="tipopersona" required>
-                                    <option value="D">Docente</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
                                 <label for="modificarCantHoras" class="form-label">Cantidad de Horas:</label>
                                 <input type="number" class="form-control" id="modificarCantHoras" name="cantHoras" required>
                             </div>
@@ -85,7 +131,8 @@
                                     <option value="I">Inactivo</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <input type="hidden" id="modificarIdDocente" name="idpersona">
+                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </form>
                     </div>
                 </div>
@@ -119,7 +166,7 @@
                 "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
             }
         });
-    
+
         function cargarDocentes() {
             $.ajax({
                 url: '/get_docentes',
@@ -134,30 +181,65 @@
                 }
             });
         }
-    
+
         cargarDocentes();
-    
+
         $('#btn_agregar_docente').click(function(e) {
             e.preventDefault();
             $('#modalAgregarDocente').modal('show');
             $('#formAgregarDocente')[0].reset();
         });
-    
+
+        $('#formAgregarDocente').submit(function(e) {
+            e.preventDefault();
+            var data = {
+                nombres: $('#nombreDocente').val(),
+                apellidos: $('#apellidosDocente').val(),
+                n_documento: $('#documentoDocente').val(),
+                telefono: $('#telefonoDocente').val(),
+                correo: $('#correoDocente').val(),
+                cantHoras: $('#cantHorasDocente').val(),
+                tiempo_ref: $('#tiempoRefDocente').val(),
+                estado: $('#estadoDocente').val()
+            };
+
+            $.ajax({
+                url: '/agregar_docente',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    console.log(response);
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Docente agregado correctamente');
+                        cargarDocentes();
+                        $('#modalAgregarDocente').modal('hide');
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
         $('#formModificarDocente').submit(function(e) {
             e.preventDefault();
             var data = {
-                idpersona: $('#modificarIdPersona').val(),
+                idpersona: $('#modificarIdDocente').val(),
                 nombres: $('#modificarNombreDocente').val(),
                 apellidos: $('#modificarApellidosDocente').val(),
                 n_documento: $('#modificarDocumentoDocente').val(),
                 telefono: $('#modificarTelefonoDocente').val(),
                 correo: $('#modificarCorreoDocente').val(),
-                tipopersona: $('#modificarTipoPersona').val(),
                 cantHoras: $('#modificarCantHoras').val(),
                 tiempo_ref: $('#modificarTiempoRef').val(),
                 estado: $('#modificarEstadoDocente').val()
             };
-    
+
             $.ajax({
                 url: '/modificar_docente',
                 type: 'POST',
@@ -180,27 +262,24 @@
                 }
             });
         });
-    
 
-    
         $('#tabla-docente tbody').on('click', '.btnModificar', function() {
             var id = $(this).data('id');
             var docente = docentes.find(d => d.idpersona == id);
             if (docente) {
-                $('#modificarIdPersona').val(docente.idpersona);
-                $('#modificarNombreDocente').val(docente.nombres);
-                $('#modificarApellidosDocente').val(docente.apellidos);
+                $('#modificarIdDocente').val(docente.idpersona);
+                $('#modificarNombreDocente').val(docente.nombre.split(" ")[0]);
+                $('#modificarApellidosDocente').val(docente.nombre.split(" ").slice(1).join(" "));
                 $('#modificarDocumentoDocente').val(docente.n_documento);
                 $('#modificarTelefonoDocente').val(docente.telefono);
                 $('#modificarCorreoDocente').val(docente.correo);
-                $('#modificarTipoPersona').val(docente.tipopersona);
                 $('#modificarCantHoras').val(docente.cantHoras);
                 $('#modificarTiempoRef').val(docente.tiempo_ref);
                 $('#modificarEstadoDocente').val(docente.estado);
                 $('#modalModificarDocente').modal('show');
             }
         });
-    
+
         $('#tabla-docente tbody').on('click', '.btnEliminar', function() {
             var id = $(this).data('id');
             $.ajax({
@@ -225,6 +304,6 @@
             });
         });
     });
-    </script>
-    
+</script>
+
 {% endblock %}
