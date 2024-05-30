@@ -10,6 +10,9 @@ from flask import (
 import hashlib
 import random
 from main import app
+import os
+from werkzeug.utils import secure_filename
+from bd import obtener_conexion
 
 import controladores.controlador_usuario as controlador_usuario
 import controladores.ambientes.controlador_ambiente as controlador_ambientes
@@ -83,6 +86,8 @@ def procesar_login():
                 persona = controlador_persona.obtener_persona_por_id(usuario[4])
                 foto = persona[9]
                 nombre = persona[1].split()[0]
+                # Almacenar el ID del usuario en la sesión
+                session['user_id'] = usuario[0]
                 return jsonify({'logeo': True, 'token': token, 'foto':foto, 'nombre':nombre})
 
             return jsonify({'mensaje':'La contraseña es incorrecta', 'logeo':False})
@@ -116,12 +121,14 @@ def agregar_ambiente():
 @app.route("/eliminar_ambiente", methods=["POST"])
 def eliminar_ambiente_route():
     try:
-        data = request.json
-        idambiente = data.get('id')
+        data = request.get_json()
+        idambiente = data.get('idambiente')
+        print(f"ID del ambiente a eliminar recibido: {idambiente}")
         resultado = controlador_ambientes.eliminar_ambiente(idambiente)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
 #DAR DE BAJA AMBIENTE 
 
 @app.route("/dar_baja_ambiente", methods=["POST"])
@@ -139,7 +146,7 @@ def dar_baja_ambiente_route():
 def modificar_ambiente_route():
     try:
         data = request.json
-        idambiente = data.get('id')
+        idambiente = data.get('idambiente')
         nombre = data.get('nombre')
         aforo = data.get('aforo')
         estado = data.get('estado')
@@ -149,6 +156,7 @@ def modificar_ambiente_route():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+
 
 ##GESTIONAR CURSOS
 @app.route("/get_cursos", methods=["GET"])
@@ -189,9 +197,9 @@ def agregar_curso():
 @app.route("/eliminar_curso", methods=["POST"])
 def eliminar_curso():
     try:
-        data = request.get_json()  # Captura correctamente el JSON
-        idcurso = data.get('idcurso')  # Asegúrate de capturar 'idcurso'
-        print(f"ID del curso a eliminar recibido: {idcurso}")  # Imprime el idcurso en el servidor
+        data = request.get_json()  
+        idcurso = data.get('idcurso')  
+        print(f"ID del curso a eliminar recibido: {idcurso}")  
         resultado = controlador_cursos.eliminar_curso(idcurso)
         return jsonify(resultado)
     except Exception as e:
@@ -220,7 +228,7 @@ def modificar_curso_endpoint():
     
 ##OBTENER CURSO POR ID
 
-@app.route('/get_curso/<int:idcurso>', methods=['GET'])
+@app.route('/obtener_curso/<int:idcurso>', methods=['GET'])
 def get_curso(idcurso):
     resultado = controlador_cursos.obtener_curso_por_id(idcurso)
     return jsonify(resultado)
@@ -359,14 +367,87 @@ def get_personas_activas():
     personas_activas = controlador_persona.obtener_personas_activas()
     return jsonify(personas_activas)
 
-@app.route("/get_horarios_docentesNombres_semestre", methods=["POST"])
+@app.route("/get_horarios_docentesId_semestre", methods=["POST"])
 def get_horarios_docentesNombres_semestre():
-    nombre_docente = request.json.get('nombre_docente')
+    id_docente = request.json.get('id_docente')
     semestre = request.json.get('semestre')
-    horarios = controlador_horario.obtener_horarios_por_docenteNombre_semestre(nombre_docente,semestre)
+    horarios = controlador_horario.obtener_horarios_por_docenteId_semestre(id_docente,semestre)
     return jsonify(horarios)  
     
+######### PERFIL ############
 @app.route("/perfil")
 def perfil():
-
     return render_template("dashboard/perfil.html")
+
+####### DATOS DE LA PANTALLA PERFIL ##########
+@app.route('/datos_usuario', methods=['GET'])
+def api_obtener_usuario():
+    user_id = session.get('user_id')  
+    if user_id:
+        usuario = controlador_usuario.obtener_datos_usuario(user_id)
+        if usuario:
+            return jsonify({
+                'nombres': usuario[0],
+                'apellidos': usuario[1],
+                'n_documento': usuario[2],
+                'correo': usuario[3],
+                'telefono': usuario[4],
+                'username': usuario[5],
+                'foto': usuario[6]
+            })
+        else:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+    else:
+        return jsonify({"error": "No autenticado"}), 401
+
+###### MODIFICAR LOS DATOS DE LA PANTALLA PERFIL #########
+
+@app.route('/actualizar_datos', methods=['POST'])
+def api_actualizar_usuario():
+    user_id = session.get('user_id')  # Suponiendo que almacenas el ID del usuario en la sesión
+    if user_id:
+        data = request.json
+        nombres = data.get('nombres')
+        apellidos = data.get('apellidos')
+        n_documento = data.get('n_documento')
+        correo = data.get('correo')
+        telefono = data.get('telefono')
+        resultado = controlador_usuario.actualizar_datos_usuario(user_id, nombres, apellidos, n_documento, correo, telefono)
+        return jsonify(resultado)
+    else:
+        return jsonify({"error": "No autenticado"}), 401
+    
+
+####### CAMBIAR FOTO ###########
+@app.route('/actualizar_foto', methods=['POST'])
+def upload_foto():
+    if 'foto' not in request.files:
+        return jsonify({"error": "No se encontró el archivo"}), 400
+
+    file = request.files['foto']
+    if file.filename == '':
+        return jsonify({"error": "No se seleccionó ningún archivo"}), 400
+
+    if file:
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        
+        # Aquí debes actualizar la ruta de la imagen en la base de datos
+        user_id = session.get('user_id')
+        if user_id:
+            conexion = obtener_conexion()
+            try:
+                with conexion.cursor() as cursor:
+                    cursor.execute("UPDATE persona SET foto = %s WHERE idpersona = (SELECT idpersona FROM usuario WHERE idusuario = %s)",
+                                   (filename, user_id))
+                    conexion.commit()
+                    return jsonify({"mensaje": "Foto actualizada correctamente", "foto": filename})
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+            finally:
+                conexion.close()
+        else:
+            return jsonify({"error": "No autenticado"}), 401
+    else:
+        return jsonify({"error": "Error al subir el archivo"}), 500
+

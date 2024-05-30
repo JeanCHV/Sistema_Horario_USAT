@@ -198,16 +198,6 @@
                                   </tr>
                                 </thead>
                                 <tbody class="" style="background-color: #EEEEEE;">
-                                    <tr>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -222,7 +212,26 @@
 
 
 <script>
-        let bmos_lista_datos = [];
+    const tabla_horarios = document.querySelector("#tabla_inicial");
+    const tabla_filas =  tabla_horarios.querySelector("tbody");
+    const columna_horas=[];
+    for (let i = 7; i < 22; i++) {
+        var hora_inicio = "";
+        var hora_fin ="";
+        if(i<9){
+            hora_inicio = "0"+i.toString();
+            hora_fin    = ("0"+(i+1).toString());
+        }else if(i===9){
+            hora_inicio = "0"+i.toString();
+            hora_fin    = (i+1).toString();
+        }else{
+            hora_inicio = i.toString();
+            hora_fin    = (i+1).toString();
+        }
+        columna_horas.push(hora_inicio+"-"+hora_fin);
+    }
+    const columna_dias=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+    let bmos_lista_datos = [];
 
         function mostrarAlerta(icon, title, text) {
             Swal.fire({
@@ -260,7 +269,7 @@
                 
             })
             .catch(error => {
-            console.error('Error:', error);
+                mostrarAlerta("error", "No se pudo obtener los horarios", error.responseText);
             });
         } 
 
@@ -329,7 +338,7 @@
             nuevoSpan.innerHTML = `${element.textContent}<button onclick="bmos_eliminarEtiqueta(this);">X</button>`;       
             bmos_barra_busqueda.appendChild(nuevoSpan);
             bmos_input.focus();
-            }
+        }
     }
 
     function bmos_eliminarEtiqueta(element){
@@ -373,6 +382,97 @@
         }
     });
     /*FIN SCRIPT BUSCADOR*/
+
+    /*INICIO SCRIPT MOSTRAR TABLAS*/
+
+    function obtenerHorariosDocente(id_docente,semestre){
+        return fetch('/get_horarios_docentesId_semestre', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id_docente: id_docente,
+                semestre: semestre
+            })
+            })
+            .then(response => response.json())
+
+            .catch(error => {
+                console.error('Error al obtener horarios:', error);
+            });
+    }
+
+    // let horarios = obtenerHorariosDocente(element.id, '2024-I')
+    //             .then(horarios => {
+    //                 mostrarHorarios(horarios);
+    //             })
+    //             .catch(error => {
+    //                 console.error('Error al obtener horarios:', error);
+    //             });
+    //         }
+    let horarios_prueba = [[1,'AMBIENTE 001','CALIDAD Y DESARROLLO DE SOFTWARE','LUNES','07:00:00','09:00:00',2,3,'A']
+                            ,[2,'AMBIENTE 002','DISEÑO DE SOFTWARE','LUNES','13:00:00','15:00:00',3,3,'B']
+                            ,[3,'AMBIENTE 003','INVESTIGACIÓN DE INGENIERÍA','MIERCOLES','18:00:00','20:00:00',4,1,'C']];
+
+                            function mostrarHorarios(horarios_docente) {
+    let filas = "";
+    
+    // Días de la semana
+    const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    
+    // Horas
+    const horas = [];
+    for (let i = 7; i <= 21; i++) {
+        horas.push(`${i.toString().padStart(2, '0')}:00`);
+    }
+    
+    // Crear celdas vacías para todas las horas y días
+    const celdasVacias = Array.from({ length: horas.length }, () => Array.from({ length: diasSemana.length }, () => ""));
+    
+    // Llenar las celdas con los horarios
+    horarios_docente.forEach(horario => {
+        const diaIndex = diasSemana.indexOf(horario[3]);
+        const horaInicio = horario[4].substring(0, 5);
+        const horaFin = horario[5].substring(0, 5);
+        
+        for (let i = 0; i < horas.length; i++) {
+            if (horas[i] >= horaInicio && horas[i] < horaFin) {
+                celdasVacias[i][diaIndex] = `${horario[1]}<br>${horario[2]}`;
+            }
+        }
+    });
+    
+    // Construir filas de la tabla
+    for (let i = 0; i < horas.length; i++) {
+        filas += "<tr>";
+        filas += `<td>${horas[i]}-${horas[i + 1]}</td>`; // Mostrar el rango de horas en la primera columna
+        for (let j = 0; j < diasSemana.length; j++) {
+            if (celdasVacias[i][j] !== "") {
+                let rowspan = 1;
+                // Verificar si se deben fusionar celdas
+                while (i + rowspan < horas.length && celdasVacias[i + rowspan][j] === "") {
+                    rowspan++;
+                }
+                filas += `<td rowspan="${rowspan}">${celdasVacias[i][j]}</td>`;
+                i += rowspan - 1; // Saltar filas fusionadas
+            } else {
+                filas += "<td></td>";
+            }
+        }
+        filas += "</tr>";
+    }
+
+    tabla_filas.innerHTML = filas;
+}
+
+// Ejemplo de uso con tus datos de prueba
+mostrarHorarios(horarios_prueba);
+
+
+
+
+    /*FIN SCRIPT MOSTRAR TABLAS*/
 
 </script>
 
