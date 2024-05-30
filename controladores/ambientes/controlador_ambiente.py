@@ -56,7 +56,7 @@ def dar_baja_ambiente(idambiente):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.callproc('sp_Ambiente_Gestion', [3, idambiente, None, None, None, None, None])
+            cursor.execute("UPDATE ambiente SET estado='I' WHERE idambiente= %s ", (idambiente,))
             conexion.commit()
             return {"mensaje": "Ambiente dado de baja correctamente"}
     except Exception as e:

@@ -130,13 +130,12 @@ def eliminar_ambiente_route():
         return jsonify({"error": str(e)})
     
 #DAR DE BAJA AMBIENTE 
-
 @app.route("/dar_baja_ambiente", methods=["POST"])
 def dar_baja_ambiente_route():
     try:
         data = request.json
-        idambiente = data.get('id')
-        resultado = controlador_ambientes.dar_baja_ambiente(idambiente)
+        idambiente = data.get('idambiente')
+        resultado = controlador_ambientes.dar_baja_ambiente(idambiente,)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
