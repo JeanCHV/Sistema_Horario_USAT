@@ -272,6 +272,11 @@ def modificar_docente_route():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+@app.route('/get_docente/<int:idpersona>', methods=['GET'])
+def get_docente(idpersona):
+    resultado = controlador_docente.obtener_docente_por_id(idpersona)
+    return jsonify(resultado)
+
 
 #Gestionar Perfil
 #@app.route('/perfil', methods=["GET"])
