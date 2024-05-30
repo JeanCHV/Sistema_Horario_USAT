@@ -89,7 +89,7 @@ def obtener_docente_por_id(idpersona):
     persona = None
     try:
         with conexion.cursor() as cursor:
-            persona.execute("SELECT * FROM curso WHERE idpersona = %s", (idpersona,))
+            persona.execute("SELECT * FROM persona WHERE idpersona = %s", (idpersona,))
             persona = cursor.fetchone()
             if persona:
                 columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas

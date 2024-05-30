@@ -20,7 +20,7 @@
             <!-- Semestre -->
             <div class="d-flex mb-3 mt-3">
                 <label for="" class="mb-2 me-4 mt-2">Semestre:</label>
-                <select class="form-select w-25 me-3" aria-label="Default select example" id="semestre" onchange="validar()">
+                <select class="form-select" aria-label="Default select example" id="semestre" onchange="validar()">
                     <option selected disabled>-----Seleccione un semestre-----</option>
                     {% for semestre in semestres %}
                     <option>{{ semestre[0] }}</option>
@@ -30,7 +30,7 @@
             <!-- Escuelas -->
             <div class="d-flex mb-3 mt-3">
                 <label for="" class="mb-2 mt-2">Escuela:</label>
-                <select class="form-select w-25 me-3" aria-label="Default select example" id="escuela" style="margin-left:33px" onchange="validar()">
+                <select class="form-select" aria-label="Default select example" id="escuela" style="margin-left:33px" onchange="validar()">
                     <option selected disabled>-----Seleccione una escuela-----</option>
                     {% for escuela in escuelas %}
                     <option>{{ escuela[0] }}</option>
@@ -53,14 +53,58 @@
                 <tbody id="cuerpo_tabla">
                 </tbody>
             </table>
-            <div class="text-end mb-2 mt-3">
-                <button class="btn btn-success bg_green_button me-2" onclick="dato_selecciondo()">Guardar</button>
-                <button class="btn btn-danger me-5">Cancelar</button>
-            </div>
+        </div>
+        <div class="text-end mb-2 mt-3" id="contenedor-botones">
+            <button class="btn btn-danger">Cancelar</button>
+            <button class="btn btn-success bg_green_button" onclick="dato_selecciondo()">Guardar</button>
         </div>
     </div>
 </div>
+<style>
+    #semestre,#escuela{
+        width: min(100%,280px);
+        margin: 0 1rem 0 0;
+    }
 
+    #card_cursos{
+        width: 100%;
+        margin: 0;
+    }
+
+    #contenedor-botones{
+        position: sticky;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+
+        & button{
+            width: min(100%,13rem);
+            height: 3rem;
+            margin-inline: 5px;
+        }
+    }
+
+    #miTabla{
+        overflow-x: scroll;
+
+    }
+
+    #miTabla ::-webkit-scrollbar{
+        display: none;
+    }
+
+    @media (max-width:763px){
+        #contenedor-botones{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            & button{
+                width: 100%;
+            }
+        }
+    }
+</style>
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
 <script>
     $(document).ready(function() {
@@ -145,6 +189,7 @@
             }
         };
     });
+
     
 </script>
 {% endblock %}

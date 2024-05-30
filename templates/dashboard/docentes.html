@@ -265,19 +265,27 @@
 
         $('#tabla-docente tbody').on('click', '.btnModificar', function() {
             var id = $(this).data('id');
-            var docente = docentes.find(d => d.idpersona == id);
-            if (docente) {
-                $('#modificarIdDocente').val(docente.idpersona);
-                $('#modificarNombreDocente').val(docente.nombre.split(" ")[0]);
-                $('#modificarApellidosDocente').val(docente.nombre.split(" ").slice(1).join(" "));
-                $('#modificarDocumentoDocente').val(docente.n_documento);
-                $('#modificarTelefonoDocente').val(docente.telefono);
-                $('#modificarCorreoDocente').val(docente.correo);
-                $('#modificarCantHoras').val(docente.cantHoras);
-                $('#modificarTiempoRef').val(docente.tiempo_ref);
-                $('#modificarEstadoDocente').val(docente.estado);
-                $('#modalModificarDocente').modal('show');
-            }
+            $.ajax({
+                url: '/get_docente/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var docente = response;
+                    $('#modificarIdDocente').val(docente.idpersona);
+                    $('#modificarNombreDocente').val(docente.nombres);
+                    $('#modificarApellidosDocente').val(docente.apellidos);
+                    $('#modificarDocumentoDocente').val(docente.n_documento);
+                    $('#modificarTelefonoDocente').val(docente.telefono);
+                    $('#modificarCorreoDocente').val(docente.correo);
+                    $('#modificarCantHoras').val(docente.cantHoras);
+                    $('#modificarTiempoRef').val(docente.tiempo_ref);
+                    $('#modificarEstadoDocente').val(docente.estado);
+                    $('#modalModificarDocente').modal('show');
+                    },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
         });
 
         $('#tabla-docente tbody').on('click', '.btnEliminar', function() {
