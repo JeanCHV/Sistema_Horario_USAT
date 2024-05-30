@@ -156,6 +156,11 @@ def modificar_ambiente_route():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+##OBTENER AMBIENTE POR ID
+@app.route('/get_ambiente/<int:idambiente>', methods=['GET'])
+def get_ambiente(idambiente):
+    resultado = controlador_ambientes.obtener_ambiente_por_id(idambiente)
+    return jsonify(resultado)
 
 
 ##GESTIONAR CURSOS
