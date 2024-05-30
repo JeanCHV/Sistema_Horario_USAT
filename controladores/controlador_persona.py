@@ -13,7 +13,7 @@ def obtener_personas_activas():
     conexion = obtener_conexion()
     personas = []
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT per.idpersona, nombres, apellidos, n_documento,telefono, correo, tipopersona, cantHoras, tiempo_ref, foto FROM persona per INNER JOIN usuario usu ON usu.idpersona = per.idpersona WHERE usu.estado = 'ACTIVO'")
+        cursor.execute("SELECT per.idpersona, nombres, apellidos, n_documento,telefono, correo, tipopersona, cantHoras, tiempo_ref, foto FROM persona per INNER JOIN usuario usu ON usu.idpersona = per.idpersona WHERE usu.estado = 'A'")
         personas = cursor.fetchall()
     conexion.close()
     return personas

@@ -9,157 +9,158 @@
 </nav>
 
 <div class="container">
-    <div id="mensajeResultado" style="display: none;"></div>
+  
+</div>
 
-    <div class="card" id="card_ambientes">
-        <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
-            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            Ambientes
-        </div>
-        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
-            <div class="card-body">
-                <div class="search-box">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <select id="filtro_edificio" class="form-control">
-                                    <option value="">Todos los edificios</option>
-                                    <option value="1">Edificio antiguo</option>
-                                    <option value="2">Edificio Juan Pablo II</option>
-                                    <option value="3">Edificio de idiomas</option>
-                                    <option value="4">Edificio de aulas decanas</option>
-                                </select>
-                            </div>
+<!-- <div id="mensajeResultado" style="display: none;"></div> -->
+
+<div class="card mx-2" id="card_ambientes">
+    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
+        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Ambientes
+    </div>
+    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+        <div class="card-body">
+            <div class="search-box">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <select id="filtro_edificio" class="form-control">
+                                <option value="">Todos los edificios</option>
+                                <option value="1">Edificio antiguo</option>
+                                <option value="2">Edificio Juan Pablo II</option>
+                                <option value="3">Edificio de idiomas</option>
+                                <option value="4">Edificio de aulas decanas</option>
+                            </select>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="card-body show">
-                    <table id="tabla-ambiente" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Aforo</th>
-                                <th>Estado</th>
-                                <th>Edificio</th>
-                                <th>Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card-body show">
+                <table id="tabla-ambiente" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Aforo</th>
+                            <th>Estado</th>
+                            <th>Edificio</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
+                    </tbody>
+                </table>
             </div>
         </div>
-        <a href="#" id="btn_agregar_ambiente" class="btn btn-success">Agregar Nuevo Ambiente</a>
-
-        <!-- Modal para agregar un ambiente -->
-        <div class="modal fade" id="modalAgregarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Agregar Ambiente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formAgregarAmbiente">
-                            <div class="mb-3">
-                                <label for="nombreAgregar" class="form-label">Nombre:</label>
-                                <input type="text" class="form-control" id="nombreAgregar" name="nombreAgregar" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="aforoAgregar" class="form-label">Aforo:</label>
-                                <input type="number" class="form-control" id="aforoAgregar" name="aforoAgregar" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="estadoAgregar" class="form-label">Estado:</label>
-                                <select class="form-control" id="estadoAgregar" name="estadoAgregar" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="idedificioAgregar" class="form-label">Edificio:</label>
-                                <select class="form-control" id="idedificioAgregar" name="idedificioAgregar" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="1">Edificio Antiguo</option>
-                                    <option value="2">Edificio Juan Pablo II</option>
-                                    <option value="3">Edificio de Idiomas</option>
-                                    <option value="4">Edificio de Aulas Decanas</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="idambientetipoAgregar" class="form-label">Tipo de Ambiente:</label>
-                                <select class="form-control" id="idambientetipoAgregar" name="idambientetipoAgregar" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="1">Aula</option>
-                                    <option value="2">Laboratorio</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal para modificar un ambiente -->
-        <div class="modal fade" id="modalModificarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modificar Ambiente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formModificarAmbiente">
-                            <input type="hidden" id="idAmbienteModificar">
-                            <div class="mb-3">
-                                <label for="nombreModificar" class="form-label">Nombre:</label>
-                                <input type="text" class="form-control" id="nombreModificar" name="nombreModificar" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="aforoModificar" class="form-label">Aforo:</label>
-                                <input type="number" class="form-control" id="aforoModificar" name="aforoModificar" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="estadoModificar" class="form-label">Estado:</label>
-                                <select class="form-control" id="estadoModificar" name="estadoModificar" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="idedificioModificar" class="form-label">Edificio:</label>
-                                <select class="form-control" id="idedificioModificar" name="idedificioModificar" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="1">Edificio Antiguo</option>
-                                    <option value="2">Edificio Juan Pablo II</option>
-                                    <option value="3">Edificio de Idiomas</option>
-                                    <option value="4">Edificio de Aulas Decanas</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="idambientetipoModificar" class="form-label">Tipo de Ambiente:</label>
-                                <select class="form-control" id="idambientetipoModificar" name="idambientetipoModificar" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="1">Aula</option>
-                                    <option value="2">Laboratorio</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
-</div>
+    <a href="#" id="btn_agregar_ambiente" class="btn btn-success">Agregar Nuevo Ambiente</a>
 
+    <!-- Modal para agregar un ambiente -->
+    <div class="modal fade" id="modalAgregarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Ambiente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarAmbiente">
+                        <div class="mb-3">
+                            <label for="nombreAgregar" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreAgregar" name="nombreAgregar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="aforoAgregar" class="form-label">Aforo:</label>
+                            <input type="number" class="form-control" id="aforoAgregar" name="aforoAgregar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoAgregar" class="form-label">Estado:</label>
+                            <select class="form-control" id="estadoAgregar" name="estadoAgregar" required>
+                                <option value="">Seleccione</option>
+                                <option value="A">Activo</option>
+                                <option value="I">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idedificioAgregar" class="form-label">Edificio:</label>
+                            <select class="form-control" id="idedificioAgregar" name="idedificioAgregar" required>
+                                <option value="">Seleccione</option>
+                                <option value="1">Edificio Antiguo</option>
+                                <option value="2">Edificio Juan Pablo II</option>
+                                <option value="3">Edificio de Idiomas</option>
+                                <option value="4">Edificio de Aulas Decanas</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idambientetipoAgregar" class="form-label">Tipo de Ambiente:</label>
+                            <select class="form-control" id="idambientetipoAgregar" name="idambientetipoAgregar" required>
+                                <option value="">Seleccione</option>
+                                <option value="1">Aula</option>
+                                <option value="2">Laboratorio</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para modificar un ambiente -->
+    <div class="modal fade" id="modalModificarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modificar Ambiente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formModificarAmbiente">
+                        <input type="hidden" id="idAmbienteModificar">
+                        <div class="mb-3">
+                            <label for="nombreModificar" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreModificar" name="nombreModificar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="aforoModificar" class="form-label">Aforo:</label>
+                            <input type="number" class="form-control" id="aforoModificar" name="aforoModificar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoModificar" class="form-label">Estado:</label>
+                            <select class="form-control" id="estadoModificar" name="estadoModificar" required>
+                                <option value="">Seleccione</option>
+                                <option value="A">Activo</option>
+                                <option value="I">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idedificioModificar" class="form-label">Edificio:</label>
+                            <select class="form-control" id="idedificioModificar" name="idedificioModificar" required>
+                                <option value="">Seleccione</option>
+                                <option value="1">Edificio Antiguo</option>
+                                <option value="2">Edificio Juan Pablo II</option>
+                                <option value="3">Edificio de Idiomas</option>
+                                <option value="4">Edificio de Aulas Decanas</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idambientetipoModificar" class="form-label">Tipo de Ambiente:</label>
+                            <select class="form-control" id="idambientetipoModificar" name="idambientetipoModificar" required>
+                                <option value="">Seleccione</option>
+                                <option value="1">Aula</option>
+                                <option value="2">Laboratorio</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 <script>
     $(document).ready(function() {
         var ambientes = [];

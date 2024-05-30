@@ -8,13 +8,18 @@
     </ol>
 </nav>
 
-<div class="container">
+<!--<div class="container">
+</div>-->
+
     <div class="card">
         <div class="card-header bg-red-usat text-white">
             Cursos
         </div>
         <div class="card-body">
-            <table id="tabla-curso" class="table table-striped" style="width:100%">
+            <!-- <div class="table-responsive">
+                
+            </div> -->
+            <table id="tabla-curso" class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>Nombre</th>
@@ -34,132 +39,134 @@
                 </tbody>
             </table>
         </div>
-        <a href="#" id="btn_agregar_curso" class="btn btn-success">Agregar Nuevo Curso</a>
-
-        <!-- MODAL AGREGAR CURSO -->
-        <div class="modal fade" id="modalAgregarCurso" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Agregar Curso</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formAgregarCurso">
-                            <div class="mb-3">
-                                <label for="nombreCurso" class="form-label">Nombre:</label>
-                                <input type="text" class="form-control" id="nombreCurso" name="nombreCurso" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="codigoCurso" class="form-label">Código:</label>
-                                <input type="text" class="form-control" id="codigoCurso" name="codigoCurso" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="creditosCurso" class="form-label">Créditos:</label>
-                                <input type="number" class="form-control" id="creditosCurso" name="creditosCurso" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="horasTeoriaCurso" class="form-label">Horas Teoría:</label>
-                                <input type="number" class="form-control" id="horasTeoriaCurso" name="horasTeoriaCurso" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="horasPracticaCurso" class="form-label">Horas Práctica:</label>
-                                <input type="number" class="form-control" id="horasPracticaCurso" name="horasPracticaCurso" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="cicloCurso" class="form-label">Ciclo:</label>
-                                <input type="text" class="form-control" id="cicloCurso" name="cicloCurso" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="tipoCurso" class="form-label">Tipo de Curso:</label>
-                                <select class="form-control" id="tipoCurso" name="tipoCurso" required>
-                                    <option value="0">Presencial</option>
-                                    <option value="1">Virtual</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="estadoCurso" class="form-label">Estado:</label>
-                                <select class="form-control" id="estadoCurso" name="estadoCurso" required>
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="planEstudioCurso" class="form-label">Plan de Estudio:</label>
-                                <select class="form-control" id="planEstudioCurso" name="planEstudioCurso" required>
-                                    <!-- Opciones de planes de estudio cargadas dinámicamente -->
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <div class="card-footer">
+            <a href="#" id="btn_agregar_curso" class="btn btn-success">Agregar Nuevo Curso</a>
         </div>
+    </div>
 
-        <!-- MODAL MODIFICAR CURSO -->
-        <div class="modal fade" id="modalModificarCurso" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Modificar Curso</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formModificarCurso">
-                            <div class="mb-3">
-                                <label for="nombreCursoMod" class="form-label">Nombre:</label>
-                                <input type="text" class="form-control" id="nombreCursoMod" name="nombreCursoMod" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="codigoCursoMod" class="form-label">Código:</label>
-                                <input type="text" class="form-control" id="codigoCursoMod" name="codigoCursoMod" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="creditosCursoMod" class="form-label">Créditos:</label>
-                                <input type="number" class="form-control" id="creditosCursoMod" name="creditosCursoMod" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="horasTeoriaCursoMod" class="form-label">Horas Teoría:</label>
-                                <input type="number" class="form-control" id="horasTeoriaCursoMod" name="horasTeoriaCursoMod" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="horasPracticaCursoMod" class="form-label">Horas Práctica:</label>
-                                <input type="number" class="form-control" id="horasPracticaCursoMod" name="horasPracticaCursoMod" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="cicloCursoMod" class="form-label">Ciclo:</label>
-                                <input type="text" class="form-control" id="cicloCursoMod" name="cicloCursoMod" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="tipoCursoMod" class="form-label">Tipo de Curso:</label>
-                                <select class="form-control" id="tipoCursoMod" name="tipoCursoMod" required>
-                                    <option value="0">Presencial</option>
-                                    <option value="1">Virtual</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="estadoCursoMod" class="form-label">Estado:</label>
-                                <select class="form-control" name="estadoCursoMod" id="estadoCursoMod">
-                                    <option value="A">ACTIVO</option>
-                                    <option value="I">INACTIVO</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="planEstudioCursoMod" class="form-label">Plan de Estudio:</label>
-                                <select class="form-control" id="planEstudioCursoMod" name="planEstudioCursoMod" required>
-                                    <!-- Opciones de planes de estudio cargadas dinámicamente -->
-                                </select>
-                            </div>
-                            <input type="hidden" id="idCursoMod" name="idCursoMod">
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        </form>
-                    </div>
+    <!-- MODAL AGREGAR CURSO -->
+    <div class="modal fade" id="modalAgregarCurso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarCurso">
+                        <div class="mb-3">
+                            <label for="nombreCurso" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreCurso" name="nombreCurso" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="codigoCurso" class="form-label">Código:</label>
+                            <input type="text" class="form-control" id="codigoCurso" name="codigoCurso" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="creditosCurso" class="form-label">Créditos:</label>
+                            <input type="number" class="form-control" id="creditosCurso" name="creditosCurso" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="horasTeoriaCurso" class="form-label">Horas Teoría:</label>
+                            <input type="number" class="form-control" id="horasTeoriaCurso" name="horasTeoriaCurso" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="horasPracticaCurso" class="form-label">Horas Práctica:</label>
+                            <input type="number" class="form-control" id="horasPracticaCurso" name="horasPracticaCurso" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cicloCurso" class="form-label">Ciclo:</label>
+                            <input type="text" class="form-control" id="cicloCurso" name="cicloCurso" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipoCurso" class="form-label">Tipo de Curso:</label>
+                            <select class="form-control" id="tipoCurso" name="tipoCurso" required>
+                                <option value="0">Presencial</option>
+                                <option value="1">Virtual</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoCurso" class="form-label">Estado:</label>
+                            <select class="form-control" id="estadoCurso" name="estadoCurso" required>
+                                <option value="A">Activo</option>
+                                <option value="I">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="planEstudioCurso" class="form-label">Plan de Estudio:</label>
+                            <select class="form-control" id="planEstudioCurso" name="planEstudioCurso" required>
+                                <!-- Opciones de planes de estudio cargadas dinámicamente -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- MODAL MODIFICAR CURSO -->
+    <div class="modal fade" id="modalModificarCurso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modificar Curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formModificarCurso">
+                        <div class="mb-3">
+                            <label for="nombreCursoMod" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreCursoMod" name="nombreCursoMod" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="codigoCursoMod" class="form-label">Código:</label>
+                            <input type="text" class="form-control" id="codigoCursoMod" name="codigoCursoMod" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="creditosCursoMod" class="form-label">Créditos:</label>
+                            <input type="number" class="form-control" id="creditosCursoMod" name="creditosCursoMod" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="horasTeoriaCursoMod" class="form-label">Horas Teoría:</label>
+                            <input type="number" class="form-control" id="horasTeoriaCursoMod" name="horasTeoriaCursoMod" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="horasPracticaCursoMod" class="form-label">Horas Práctica:</label>
+                            <input type="number" class="form-control" id="horasPracticaCursoMod" name="horasPracticaCursoMod" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cicloCursoMod" class="form-label">Ciclo:</label>
+                            <input type="text" class="form-control" id="cicloCursoMod" name="cicloCursoMod" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipoCursoMod" class="form-label">Tipo de Curso:</label>
+                            <select class="form-control" id="tipoCursoMod" name="tipoCursoMod" required>
+                                <option value="0">Presencial</option>
+                                <option value="1">Virtual</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoCursoMod" class="form-label">Estado:</label>
+                            <select class="form-control" name="estadoCursoMod" id="estadoCursoMod">
+                                <option value="A">ACTIVO</option>
+                                <option value="I">INACTIVO</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="planEstudioCursoMod" class="form-label">Plan de Estudio:</label>
+                            <select class="form-control" id="planEstudioCursoMod" name="planEstudioCursoMod" required>
+                                <!-- Opciones de planes de estudio cargadas dinámicamente -->
+                            </select>
+                        </div>
+                        <input type="hidden" id="idCursoMod" name="idCursoMod">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 <script>
     $(document).ready(function () {

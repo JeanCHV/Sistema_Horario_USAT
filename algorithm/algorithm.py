@@ -47,7 +47,6 @@ DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"]
 # ]
 # '''
 
-
 # Datos de los docentes
 
 # DOCENTES = [
