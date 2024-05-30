@@ -268,11 +268,11 @@
         $('#tabla-ambiente tbody').on('click', '.btnModificar', function() {
             var id = $(this).data('id');
             $.ajax({
-                url: '/get_ambientes/' + id,
+                url: '/get_ambiente/' + id,
                 type: 'GET',
                 contentType: 'application/json',
                 success: function (response) {
-                    var curso = response;
+                    var ambiente = response;
                     $('#idAmbienteModificar').val(ambiente.idambiente);
                     $('#nombreModificar').val(ambiente.nombre);
                     $('#aforoModificar').val(ambiente.aforo);

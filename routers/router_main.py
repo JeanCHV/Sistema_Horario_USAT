@@ -156,6 +156,11 @@ def modificar_ambiente_route():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+##OBTENER AMBIENTE POR ID
+@app.route('/get_ambiente/<int:idambiente>', methods=['GET'])
+def get_ambiente(idambiente):
+    resultado = controlador_ambientes.obtener_ambiente_por_id(idambiente)
+    return jsonify(resultado)
 
 
 ##GESTIONAR CURSOS
@@ -325,6 +330,9 @@ def ambientes():
 def cursos():
     return render_template("dashboard/cursos.html")
 
+@app.route("/ambientesxcurso")
+def ambientesxcurso():
+    return render_template("dashboard/ambientesxcurso.html")
 
 @app.route("/rellenar_tabla/<string:escuela>")
 def rellenar_tabla(escuela):
