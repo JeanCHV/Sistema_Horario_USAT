@@ -121,12 +121,14 @@ def agregar_ambiente():
 @app.route("/eliminar_ambiente", methods=["POST"])
 def eliminar_ambiente_route():
     try:
-        data = request.json
-        idambiente = data.get('id')
+        data = request.get_json()
+        idambiente = data.get('idambiente')
+        print(f"ID del ambiente a eliminar recibido: {idambiente}")
         resultado = controlador_ambientes.eliminar_ambiente(idambiente)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
 #DAR DE BAJA AMBIENTE 
 
 @app.route("/dar_baja_ambiente", methods=["POST"])
@@ -144,7 +146,7 @@ def dar_baja_ambiente_route():
 def modificar_ambiente_route():
     try:
         data = request.json
-        idambiente = data.get('id')
+        idambiente = data.get('idambiente')
         nombre = data.get('nombre')
         aforo = data.get('aforo')
         estado = data.get('estado')
@@ -154,6 +156,7 @@ def modificar_ambiente_route():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+
 
 ##GESTIONAR CURSOS
 @app.route("/get_cursos", methods=["GET"])
