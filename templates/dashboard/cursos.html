@@ -281,8 +281,6 @@
 
         $('#tabla-curso tbody').on('click', '.btnEliminar', function () {
             var id = $(this).data('id');
-            var nombre = $(this).data('nombre');
-
             if (confirm(`¿Seguro que quieres eliminar el curso: ${nombre}?`)) {
                 if (id) {
                     $.ajax({
@@ -313,7 +311,6 @@
 
         $('#tabla-curso tbody').on('click', '.btnModificar', function () {
             var id = $(this).data('id');
-
             $.ajax({
                 url: '/get_curso/' + id,
                 type: 'GET',

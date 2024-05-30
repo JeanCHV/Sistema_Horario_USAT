@@ -188,9 +188,9 @@
                     "data": null,
                     "render": function(data, type, row) {
                         return `
-                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.id}">Modificar</button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id}">Eliminar</button>
-                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.id}">Dar de Baja</button>
+                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}">Modificar</button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}">Eliminar</button>
+                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.idambiente}">Dar de Baja</button>
                         `;
                     }
                 }
@@ -265,24 +265,32 @@
 
 
         $('#tabla-ambiente tbody').on('click', '.btnModificar', function() {
-            $('#modalModificarAmbiente').modal('show');
             var id = $(this).data('id');
-            var ambiente = ambientes.find(a => a.id == id);
-            if (ambiente) {
-                $('#idAmbienteModificar').val(ambiente.id);
-                $('#nombreModificar').val(ambiente.nombre);
-                $('#aforoModificar').val(ambiente.aforo);
-                $('#estadoModificar').val(ambiente.estado);
-                $('#idedificioModificar').val(ambiente.idedificio);
-                $('#idambientetipoModificar').val(ambiente.idambientetipo);
-                $('#modalModificarAmbiente').modal('show');
-            }
+            $.ajax({
+                url: '/get_ambientes/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var curso = response;
+                    $('#idAmbienteModificar').val(ambiente.idambiente);
+                    $('#nombreModificar').val(ambiente.nombre);
+                    $('#aforoModificar').val(ambiente.aforo);
+                    $('#estadoModificar').val(ambiente.estado);
+                    $('#idedificioModificar').val(ambiente.idedificio);
+                    $('#idambientetipoModificar').val(ambiente.idambientetipo);
+                    $('#modalModificarAmbiente').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
         });
 
     
         $('#formModificarAmbiente').submit(function(e) {
             e.preventDefault();
             var data = {
+                idambiente: $('#idAmbienteModificar').val(),
                 nombre: $('#nombreModificar').val(),
                 aforo: $('#aforoModificar').val(),
                 estado: $('#estadoModificar').val(),
@@ -314,8 +322,6 @@
     
 
     
-
-
 
         $('#tabla-ambiente tbody').on('click', '.btnEliminar', function() {
             var id = $(this).data('id');
