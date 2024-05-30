@@ -75,8 +75,8 @@
                             <div class="mb-3">
                                 <label for="estadoDocente" class="form-label">Estado:</label>
                                 <select class="form-control" id="estadoDocente" name="estado" required>
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary">Guardar</button>
@@ -127,8 +127,8 @@
                             <div class="mb-3">
                                 <label for="modificarEstadoDocente" class="form-label">Estado:</label>
                                 <select class="form-control" id="modificarEstadoDocente" name="estado" required>
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
                                 </select>
                             </div>
                             <input type="hidden" id="modificarIdDocente" name="idpersona">
@@ -143,175 +143,183 @@
 
 <script>
     $(document).ready(function() {
-        var docentes = [];
-        var table = $('#tabla-docente').DataTable({
-            "paging": true,
-            "info": true,
-            "columns": [
-                { "data": "idpersona" },
-                { "data": "nombre" },
-                { "data": "correo" },
-                { "data": "telefono" },
-                {
-                    "data": null,
-                    "render": function(data, type, row) {
-                        return `
-                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}">Modificar</button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}">Eliminar</button>
-                        `;
-                    }
+    var docentes = [];
+    var table = $('#tabla-docente').DataTable({
+        "paging": true,
+        "info": true,
+        "columns": [
+            { "data": "idpersona" },
+            { "data": "nombre" },  
+            { "data": "correo" },
+            { "data": "telefono" },
+            {
+                "data": null,
+                "render": function(data, type, row) {
+                    return `
+                        <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}">Modificar</button>
+                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}" data-nombre="${row.nombre}">Eliminar</button>
+                    `;
                 }
-            ],
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            }
+        ],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+        }
+    });
+
+    function cargarDocentes() {
+        $.ajax({
+            url: '/get_docentes',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function(response) {
+                docentes = response;
+                table.clear().rows.add(docentes).draw();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
             }
         });
+    }
 
-        function cargarDocentes() {
-            $.ajax({
-                url: '/get_docentes',
-                type: 'GET',
-                contentType: 'application/json',
-                success: function(response) {
-                    docentes = response;
-                    table.clear().rows.add(docentes).draw();
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
+    cargarDocentes();
+
+    $('#btn_agregar_docente').click(function(e) {
+        e.preventDefault();
+        $('#modalAgregarDocente').modal('show');
+        $('#formAgregarDocente')[0].reset();
+    });
+
+    $('#formAgregarDocente').submit(function(e) {
+        e.preventDefault();
+        var data = {
+            nombres: $('#nombreDocente').val(),
+            apellidos: $('#apellidosDocente').val(),
+            n_documento: $('#documentoDocente').val(),
+            telefono: $('#telefonoDocente').val(),
+            correo: $('#correoDocente').val(),
+            cantHoras: $('#cantHorasDocente').val(),
+            tiempo_ref: $('#tiempoRefDocente').val(),
+            estado: $('#estadoDocente').val()
+        };
+
+        $.ajax({
+            url: '/agregar_docente',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                $('#mensajeResultado').removeClass().empty();
+                if (response.error) {
+                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                } else {
+                    $('#mensajeResultado').addClass('alert alert-success').text('Docente agregado correctamente');
+                    cargarDocentes();
+                    $('#modalAgregarDocente').modal('hide');
                 }
-            });
-        }
-
-        cargarDocentes();
-
-        $('#btn_agregar_docente').click(function(e) {
-            e.preventDefault();
-            $('#modalAgregarDocente').modal('show');
-            $('#formAgregarDocente')[0].reset();
-        });
-
-        $('#formAgregarDocente').submit(function(e) {
-            e.preventDefault();
-            var data = {
-                nombres: $('#nombreDocente').val(),
-                apellidos: $('#apellidosDocente').val(),
-                n_documento: $('#documentoDocente').val(),
-                telefono: $('#telefonoDocente').val(),
-                correo: $('#correoDocente').val(),
-                cantHoras: $('#cantHorasDocente').val(),
-                tiempo_ref: $('#tiempoRefDocente').val(),
-                estado: $('#estadoDocente').val()
-            };
-
-            $.ajax({
-                url: '/agregar_docente',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function(response) {
-                    console.log(response);
-                    $('#mensajeResultado').removeClass().empty();
-                    if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                    } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Docente agregado correctamente');
-                        cargarDocentes();
-                        $('#modalAgregarDocente').modal('hide');
-                    }
-                    $('#mensajeResultado').show();
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        });
-
-        $('#formModificarDocente').submit(function(e) {
-            e.preventDefault();
-            var data = {
-                idpersona: $('#modificarIdDocente').val(),
-                nombres: $('#modificarNombreDocente').val(),
-                apellidos: $('#modificarApellidosDocente').val(),
-                n_documento: $('#modificarDocumentoDocente').val(),
-                telefono: $('#modificarTelefonoDocente').val(),
-                correo: $('#modificarCorreoDocente').val(),
-                cantHoras: $('#modificarCantHoras').val(),
-                tiempo_ref: $('#modificarTiempoRef').val(),
-                estado: $('#modificarEstadoDocente').val()
-            };
-
-            $.ajax({
-                url: '/modificar_docente',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function(response) {
-                    console.log(response);
-                    $('#mensajeResultado').removeClass().empty();
-                    if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                    } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Docente modificado correctamente');
-                        cargarDocentes();
-                        $('#modalModificarDocente').modal('hide');
-                    }
-                    $('#mensajeResultado').show();
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        });
-
-        $('#tabla-docente tbody').on('click', '.btnModificar', function() {
-            var id = $(this).data('id');
-            $.ajax({
-                url: '/get_docente/' + id,
-                type: 'GET',
-                contentType: 'application/json',
-                success: function (response) {
-                    var docente = response;
-                    $('#modificarIdDocente').val(docente.idpersona);
-                    $('#modificarNombreDocente').val(docente.nombres);
-                    $('#modificarApellidosDocente').val(docente.apellidos);
-                    $('#modificarDocumentoDocente').val(docente.n_documento);
-                    $('#modificarTelefonoDocente').val(docente.telefono);
-                    $('#modificarCorreoDocente').val(docente.correo);
-                    $('#modificarCantHoras').val(docente.cantHoras);
-                    $('#modificarTiempoRef').val(docente.tiempo_ref);
-                    $('#modificarEstadoDocente').val(docente.estado);
-                    $('#modalModificarDocente').modal('show');
-                    },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        });
-
-        $('#tabla-docente tbody').on('click', '.btnEliminar', function() {
-            var id = $(this).data('id');
-            $.ajax({
-                url: '/eliminar_docente',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ idpersona: id }),
-                success: function(response) {
-                    console.log(response);
-                    $('#mensajeResultado').removeClass().empty();
-                    if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                    } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Docente eliminado correctamente');
-                        cargarDocentes();
-                    }
-                    $('#mensajeResultado').show();
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
+                $('#mensajeResultado').show();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
         });
     });
+
+    $('#formModificarDocente').submit(function(e) {
+        e.preventDefault();
+        var data = {
+            idpersona: $('#modificarIdDocente').val(),
+            nombres: $('#modificarNombreDocente').val(),
+            apellidos: $('#modificarApellidosDocente').val(),
+            n_documento: $('#modificarDocumentoDocente').val(),
+            telefono: $('#modificarTelefonoDocente').val(),
+            correo: $('#modificarCorreoDocente').val(),
+            cantHoras: $('#modificarCantHoras').val(),
+            tiempo_ref: $('#modificarTiempoRef').val(),
+            estado: $('#modificarEstadoDocente').val()
+        };
+
+        $.ajax({
+            url: '/modificar_docente',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(response) {
+                $('#mensajeResultado').removeClass().empty();
+                if (response.error) {
+                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                } else {
+                    $('#mensajeResultado').addClass('alert alert-success').text('Docente modificado correctamente');
+                    cargarDocentes();
+                    $('#modalModificarDocente').modal('hide');
+                }
+                $('#mensajeResultado').show();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $('#tabla-docente tbody').on('click', '.btnModificar', function() {
+        var id = $(this).data('id');
+        console.log(id);
+        $.ajax({
+            url: '/obtener_docente_por_id/' + id,
+            type: 'GET',
+            contentType: 'application/json',
+            success: function(response) {
+                var docente = response;
+                $('#modificarIdDocente').val(docente.idpersona);
+                $('#modificarNombreDocente').val(docente.nombres);
+                $('#modificarApellidosDocente').val(docente.apellidos);
+                $('#modificarDocumentoDocente').val(docente.n_documento);
+                $('#modificarTelefonoDocente').val(docente.telefono);
+                $('#modificarCorreoDocente').val(docente.correo);
+                $('#modificarCantHoras').val(docente.cantHoras);
+                $('#modificarTiempoRef').val(docente.tiempo_ref);
+                $('#modificarEstadoDocente').val(docente.estado);
+                $('#modalModificarDocente').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    });
+
+    $('#tabla-docente tbody').on('click', '.btnEliminar', function() {
+        var id = $(this).data('id');
+        var nombre = $(this).data('nombre');
+
+        if (confirm(`¿Seguro que quieres eliminar el docente: ${nombre}?`)) {
+            if (id) {
+                $.ajax({
+                    url: '/eliminar_docente',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ idpersona: id }),
+                    success: function(response) {
+                        $('#mensajeResultado').removeClass().empty();
+                        if (response.error) {
+                            $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                        } else {
+                            $('#mensajeResultado').addClass('alert alert-success').text('Docente eliminado correctamente');
+                            cargarDocentes();
+                        }
+                        $('#mensajeResultado').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            } else {
+                console.log('ID no definido');
+            }
+        }
+    });
+});
+
+
 </script>
 
 {% endblock %}

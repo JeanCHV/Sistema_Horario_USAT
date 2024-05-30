@@ -168,6 +168,13 @@ def get_cursos():
     cursos = controlador_cursos.obtener_cursos()
     return jsonify(cursos)
 
+##VER DETALLES CURSOS
+
+@app.route("/ver_cursos/<int:idcurso>", methods=["GET"])
+def ver_detalles_cursos(idcurso):
+    cursos = controlador_cursos.ver_detalle_cursos(idcurso)
+    return jsonify(cursos)
+
 ##OBTENER PLANES DE ESTUDIO
 @app.route('/obtener_planes_estudio', methods=['GET'])
 def obtener_PE():
@@ -253,17 +260,23 @@ def get_docentes():
 def agregar_docente():
     try:
         nombres = request.json.get('nombres')
+        apellidos = request.json.get('apellidos')
+        n_documento = request.json.get('n_documento')
+        telefono = request.json.get('telefono')
         correo = request.json.get('correo')
-
+        cantHoras = request.json.get('cantHoras')
+        tiempo_ref = request.json.get('tiempo_ref')
+        estado = request.json.get('estado')
         # Llama al controlador para agregar el docente
-        resultado = controlador_docente.agregar_docente(nombres, correo)
+        resultado = controlador_docente.agregar_docente(nombres, apellidos, n_documento, telefono, correo, cantHoras, tiempo_ref, estado)
+
 
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
 
 @app.route("/eliminar_docente", methods=["POST"])
-def eliminar_docente_route():
+def eliminar_docente():
     try:
         data = request.json
         idpersona = data.get('idpersona')
@@ -273,19 +286,26 @@ def eliminar_docente_route():
         return jsonify({"error": str(e)})
 
 @app.route("/modificar_docente", methods=["POST"])
-def modificar_docente_route():
+def modificar_docente():
     try:
         data = request.json
         idpersona = data.get('idpersona')
         nombres = data.get('nombres')
+        apellidos = data.get('apellidos')
+        n_documento = data.get('n_documento')
+        telefono = data.get('telefono')
         correo = data.get('correo')
-        resultado = controlador_docente.modificar_docente(idpersona, nombres, correo)
+        cantHoras = data.get('cantHoras')
+        tiempo_ref = data.get('tiempo_ref')
+        estado = data.get('estado')
+
+        resultado = controlador_docente.modificar_docente(idpersona, nombres, apellidos, n_documento, telefono, correo, cantHoras, tiempo_ref, estado)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
 
-@app.route('/get_docente/<int:idpersona>', methods=['GET'])
-def get_docente(idpersona):
+@app.route('/obtener_docente_por_id/<int:idpersona>', methods=['GET'])
+def obtener_docente_por_id(idpersona):
     resultado = controlador_docente.obtener_docente_por_id(idpersona)
     return jsonify(resultado)
 

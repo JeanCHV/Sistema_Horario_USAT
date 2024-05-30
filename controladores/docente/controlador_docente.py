@@ -20,14 +20,11 @@ def obtener_docentes():
 
     return docentes
 
-def agregar_docente(nombres, correo):
+def agregar_docente(nombres, apellidos,n_documento, telefono, correo, cantHoras, tiempo_ref, estado):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO persona (nombres, apellidos, correo, tipopersona) VALUES (%s, '', %s, 'D')",
-                (nombres, correo)
-            )
+            cursor.callproc('sp_Persona_Gestion', [1, None, nombres, apellidos,n_documento, telefono, correo, 'D', cantHoras, tiempo_ref, estado])
             conexion.commit()
             return {"mensaje": "Docente agregado correctamente"}
     except Exception as e:
@@ -39,7 +36,7 @@ def eliminar_docente(idpersona):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("DELETE FROM persona WHERE idpersona = %s AND tipopersona = 'D'", (idpersona,))
+            cursor.callproc('sp_Persona_Gestion', [3, idpersona, None, None, None, None, None, None, None, None, None])
             conexion.commit()
             return {"mensaje": "Docente eliminado correctamente"}
     except Exception as e:
@@ -47,14 +44,11 @@ def eliminar_docente(idpersona):
     finally:
         conexion.close()
 
-def modificar_docente(idpersona, nombres, correo):
+def modificar_docente(idpersona, nombres, apellidos,n_documento, telefono, correo, cantHoras, tiempo_ref, estado):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.execute(
-                "UPDATE persona SET nombres = %s, correo = %s WHERE idpersona = %s AND tipopersona = 'D'",
-                (nombres, correo, idpersona)
-            )
+            cursor.callproc('sp_Persona_Gestion', [2, idpersona, nombres, apellidos,n_documento, telefono, correo, 'D', cantHoras, tiempo_ref, estado])
             conexion.commit()
             return {"mensaje": "Docente modificado correctamente"}
     except Exception as e:
@@ -82,14 +76,14 @@ def get_docentes():
 
     return docentes
 
-##OBTENER CURSO POR ID
+##OBTENER DOCENTE POR ID
 
 def obtener_docente_por_id(idpersona):
     conexion = obtener_conexion()
     persona = None
     try:
         with conexion.cursor() as cursor:
-            persona.execute("SELECT * FROM persona WHERE idpersona = %s", (idpersona,))
+            cursor.execute("SELECT * FROM persona WHERE idpersona = %s", (idpersona,))
             persona = cursor.fetchone()
             if persona:
                 columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas
