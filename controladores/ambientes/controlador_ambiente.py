@@ -32,7 +32,7 @@ def modificar_ambiente(idambiente, nombre, aforo, estado, idedificio, idambiente
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.callproc('sp_Ambiente_Gestion', [2, None, nombre, aforo, estado, idedificio, idambientetipo])
+            cursor.callproc('sp_Ambiente_Gestion', [2, idambiente, nombre, aforo, estado, idedificio, idambientetipo])
             conexion.commit()
             return {"mensaje": "Ambiente modificado correctamente"}
     except Exception as e:
@@ -63,7 +63,25 @@ def dar_baja_ambiente(idambiente):
         return {"error": str(e)}
     finally:
         conexion.close()
+##OBTENER AMBIENTE POR ID
 
+def obtener_ambiente_por_id(idambiente):
+    conexion = obtener_conexion()
+    ambiente = None
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT * FROM ambiente WHERE idambiente = %s", (idambiente,))
+            ambiente = cursor.fetchone()
+            if ambiente:
+                columnas = [desc[0] for desc in cursor.description]  
+                ambiente_dict = dict(zip(columnas, ambiente))  
+                return ambiente_dict
+            else:
+                return {"error": "Ambiente no encontrado"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
 
 #Querys Algoritmo Genetico
 def get_ambientes():
