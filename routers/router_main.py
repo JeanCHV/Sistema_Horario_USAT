@@ -225,7 +225,7 @@ def modificar_curso_endpoint():
     
 ##OBTENER CURSO POR ID
 
-@app.route('/get_curso/<int:idcurso>', methods=['GET'])
+@app.route('/obtener_curso/<int:idcurso>', methods=['GET'])
 def get_curso(idcurso):
     resultado = controlador_cursos.obtener_curso_por_id(idcurso)
     return jsonify(resultado)
