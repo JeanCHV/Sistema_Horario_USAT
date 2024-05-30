@@ -156,6 +156,11 @@ def modificar_ambiente_route():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+##OBTENER AMBIENTE POR ID
+@app.route('/get_ambiente/<int:idambiente>', methods=['GET'])
+def get_ambiente(idambiente):
+    resultado = controlador_ambientes.obtener_ambiente_por_id(idambiente)
+    return jsonify(resultado)
 
 
 ##GESTIONAR CURSOS
@@ -228,7 +233,7 @@ def modificar_curso_endpoint():
     
 ##OBTENER CURSO POR ID
 
-@app.route('/get_curso/<int:idcurso>', methods=['GET'])
+@app.route('/obtener_curso/<int:idcurso>', methods=['GET'])
 def get_curso(idcurso):
     resultado = controlador_cursos.obtener_curso_por_id(idcurso)
     return jsonify(resultado)
@@ -280,6 +285,11 @@ def modificar_docente_route():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+@app.route('/get_docente/<int:idpersona>', methods=['GET'])
+def get_docente(idpersona):
+    resultado = controlador_docente.obtener_docente_por_id(idpersona)
+    return jsonify(resultado)
+
 
 #Gestionar Perfil
 #@app.route('/perfil', methods=["GET"])
@@ -320,6 +330,9 @@ def ambientes():
 def cursos():
     return render_template("dashboard/cursos.html")
 
+@app.route("/ambientesxcurso")
+def ambientesxcurso():
+    return render_template("dashboard/ambientesxcurso.html")
 
 @app.route("/rellenar_tabla/<string:escuela>")
 def rellenar_tabla(escuela):
