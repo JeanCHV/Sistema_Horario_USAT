@@ -46,3 +46,69 @@ def get_grupo():
     conexion.close()
     return grupo
 
+def obtener_grupos():
+    conexion = obtener_conexion()
+    grupos = []
+
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT G.id_grupo,G.nombre, G.vacantes, C.nombre as curso,S.descripcion FROM grupo G inner join semestre_academico S on S.idsemestre=G.idsemestre inner join curso C on C.idcurso = G.idcurso")
+        column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+        rows = cursor.fetchall()
+
+        for row in rows:
+            grupos_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
+            grupos.append(grupos_dict)
+
+    conexion.close()
+    return grupos
+
+def agregar_grupo(nombre, vacantes, idcurso, idsemestre):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("INSERT INTO grupo (nombre, vacantes, idcurso, idsemestre) VALUES (%s, %s, %s, %s)",
+                           (nombre, vacantes, idcurso, idsemestre))
+            conexion.commit()
+            return {"mensaje": "Grupo agregado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+
+def eliminar_grupo(id_grupo):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Grupo_Gestion', [4, id_grupo, None, None, None,None])
+            conexion.commit()
+            return {"mensaje": "Grupo eliminado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def dar_baja_grupo(id_grupo):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Grupo_Gestion', [3, id_grupo, None, None, None,None])
+            conexion.commit()
+            return {"mensaje": "Grupo dado de baja correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def modificar_grupo(id_grupo, nombre,vacantes, idcurso, idsemestre):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Grupo_Gestion', [2, id_grupo,nombre,vacantes,idcurso, idsemestre])
+            conexion.commit()
+            return {"mensaje": "Grupo modificado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+

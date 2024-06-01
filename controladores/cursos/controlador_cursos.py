@@ -178,3 +178,18 @@ def get_cursos():
 
     conexion.close()
     return cursos
+
+
+def obtener_cursosFiltro():
+    conexion = obtener_conexion()
+    cursos = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT idcurso, nombre FROM curso")
+            for plan in cursor.fetchall():
+                cursos.append({'idcurso': plan[0], 'nombre': plan[1]})
+    finally:
+        conexion.close()
+    return cursos
+
+

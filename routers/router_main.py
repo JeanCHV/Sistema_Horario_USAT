@@ -349,6 +349,10 @@ def ambientes():
 def cursos():
     return render_template("dashboard/cursos.html")
 
+@app.route("/grupos")
+def grupos():
+    return render_template("dashboard/grupos.html")
+
 @app.route("/ambientesxcurso")
 def ambientesxcurso():
     return render_template("dashboard/ambientesxcurso.html")
@@ -478,3 +482,74 @@ def upload_foto():
     else:
         return jsonify({"error": "Error al subir el archivo"}), 500
 
+
+
+@app.route("/get_grupos", methods=["GET"])
+def get_grupos():
+    grupos = controlador_grupo.obtener_grupos()
+    return jsonify(grupos)
+
+@app.route("/obtener_cursos", methods=["GET"])
+def obtener_curso():
+    cursos = controlador_cursos.obtener_cursosFiltro()
+    return jsonify(cursos)
+
+@app.route("/obtener_semestres", methods=["GET"])
+def obtener_semestres():
+    semestres = controlador_semestre.obtener_semestreCombo()
+    return jsonify(semestres)
+
+#AGREGAR GRUPO
+@app.route("/agregar_grupo", methods=["POST"])
+def agregar_grupo():
+    try:
+        nombre = request.json.get('nombre')
+        vacantes = request.json.get('vacantes')
+        curso = request.json.get('idcurso')
+        idsemestre = request.json.get('idsemestre')
+
+
+        # Llama al controlador para agregar el grupo
+        resultado = controlador_grupo.agregar_grupo(nombre, vacantes,curso, idsemestre)
+
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    
+@app.route("/eliminar_grupo", methods=["POST"])
+def eliminar_grupo():
+    try:
+        data = request.json
+        idgrupo = data.get('id_grupo')  # Correctly receive id_grupo
+        resultado = controlador_grupo.eliminar_grupo(idgrupo)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    
+#DAR DE BAJA GRUPO 
+
+@app.route("/dar_baja_grupo", methods=["POST"])
+def dar_baja_grupo():
+    try:
+        data = request.json
+        idgrupo = data.get('id_grupo')
+        resultado = controlador_grupo.dar_baja_grupo(idgrupo)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    
+#MODIFICAR GRUPO 
+
+@app.route("/modificar_grupo", methods=["POST"])
+def modificar_grupo():
+    try:
+        data = request.json
+        idgrupo = data.get('id')
+        nombre = data.get('nombre')
+        vacantes = data.get('vacantes')
+        idcurso = data.get('idcurso')
+        idsemestre = data.get('idsemestre')
+        resultado = controlador_grupo.modificar_grupo(idgrupo, nombre, vacantes, idcurso, idsemestre)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})

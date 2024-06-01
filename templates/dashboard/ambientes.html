@@ -9,10 +9,10 @@
 </nav>
 
 <div class="container">
-  
+
 </div>
 
-<!-- <div id="mensajeResultado" style="display: none;"></div> -->
+<div id="mensajeResultado" style="display: none;"></div>
 
 <div class="card mx-2" id="card_ambientes">
     <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
@@ -58,7 +58,8 @@
     <a href="#" id="btn_agregar_ambiente" class="btn btn-success">Agregar Nuevo Ambiente</a>
 
     <!-- Modal para agregar un ambiente -->
-    <div class="modal fade" id="modalAgregarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalAgregarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -95,7 +96,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="idambientetipoAgregar" class="form-label">Tipo de Ambiente:</label>
-                            <select class="form-control" id="idambientetipoAgregar" name="idambientetipoAgregar" required>
+                            <select class="form-control" id="idambientetipoAgregar" name="idambientetipoAgregar"
+                                required>
                                 <option value="">Seleccione</option>
                                 <option value="1">Aula</option>
                                 <option value="2">Laboratorio</option>
@@ -109,7 +111,8 @@
     </div>
 
     <!-- Modal para modificar un ambiente -->
-    <div class="modal fade" id="modalModificarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalModificarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -121,11 +124,13 @@
                         <input type="hidden" id="idAmbienteModificar">
                         <div class="mb-3">
                             <label for="nombreModificar" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="nombreModificar" name="nombreModificar" required>
+                            <input type="text" class="form-control" id="nombreModificar" name="nombreModificar"
+                                required>
                         </div>
                         <div class="mb-3">
                             <label for="aforoModificar" class="form-label">Aforo:</label>
-                            <input type="number" class="form-control" id="aforoModificar" name="aforoModificar" required>
+                            <input type="number" class="form-control" id="aforoModificar" name="aforoModificar"
+                                required>
                         </div>
                         <div class="mb-3">
                             <label for="estadoModificar" class="form-label">Estado:</label>
@@ -147,7 +152,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="idambientetipoModificar" class="form-label">Tipo de Ambiente:</label>
-                            <select class="form-control" id="idambientetipoModificar" name="idambientetipoModificar" required>
+                            <select class="form-control" id="idambientetipoModificar" name="idambientetipoModificar"
+                                required>
                                 <option value="">Seleccione</option>
                                 <option value="1">Aula</option>
                                 <option value="2">Laboratorio</option>
@@ -162,7 +168,7 @@
 
 </div>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         var ambientes = [];
         var edificios = {
             1: "EDIFICIO ANTIGUO",
@@ -170,7 +176,7 @@
             3: "EDIFICIO DE IDIOMAS",
             4: "EDIFICIO DE AULAS DECANAS"
         };
-    
+
         var table = $('#tabla-ambiente').DataTable({
             "paging": true,
             "info": true,
@@ -181,13 +187,13 @@
                 { "data": "estado" },
                 {
                     "data": "idedificio",
-                    "render": function(data, type, row) {
+                    "render": function (data, type, row) {
                         return edificios[data] || data;
                     }
                 },
                 {
                     "data": null,
-                    "render": function(data, type, row) {
+                    "render": function (data, type, row) {
                         return `
                             <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}">Modificar</button>
                             <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}">Eliminar</button>
@@ -200,38 +206,38 @@
                 "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
             }
         });
-    
+
         function cargarAmbientes() {
             $.ajax({
                 url: '/get_ambientes',
                 type: 'GET',
                 contentType: 'application/json',
-                success: function(response) {
+                success: function (response) {
                     ambientes = response;
                     table.clear().rows.add(ambientes).draw();
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.log(error);
                 }
             });
         }
-    
+
         cargarAmbientes();
-    
+
         $('#collapseOne').collapse('show');
-    
-        $('#filtro_edificio').on('change', function() {
+
+        $('#filtro_edificio').on('change', function () {
             var filtro = $(this).val();
             table.column(3).search(filtro).draw();
         });
-    
-        $('#btn_agregar_ambiente').click(function(e) {
+
+        $('#btn_agregar_ambiente').click(function (e) {
             e.preventDefault();
             $('#modalAgregarAmbiente').modal('show');
             $('#formAgregarAmbiente')[0].reset();
         });
-    
-        $('#formAgregarAmbiente').submit(function(e) {
+
+        $('#formAgregarAmbiente').submit(function (e) {
             e.preventDefault();
             var data = {
                 nombre: $('#nombreAgregar').val(),
@@ -240,13 +246,13 @@
                 idedificio: $('#idedificioAgregar').val(),
                 idambientetipo: $('#idambientetipoAgregar').val()
             };
-    
+
             $.ajax({
                 url: '/agregar_ambiente',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
-                success: function(response) {
+                success: function (response) {
                     $('#mensajeResultado').removeClass().empty();
                     if (response.error) {
                         $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
@@ -257,15 +263,15 @@
                     }
                     $('#mensajeResultado').show();
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.log(error);
                 }
             });
         });
-    
 
 
-        $('#tabla-ambiente tbody').on('click', '.btnModificar', function() {
+
+        $('#tabla-ambiente tbody').on('click', '.btnModificar', function () {
             var id = $(this).data('id');
             $.ajax({
                 url: '/get_ambiente/' + id,
@@ -287,8 +293,8 @@
             });
         });
 
-    
-        $('#formModificarAmbiente').submit(function(e) {
+
+        $('#formModificarAmbiente').submit(function (e) {
             e.preventDefault();
             var data = {
                 idambiente: $('#idAmbienteModificar').val(),
@@ -298,13 +304,13 @@
                 idedificio: $('#idedificioModificar').val(),
                 idambientetipo: $('#idambientetipoModificar').val()
             };
-    
+
             $.ajax({
                 url: '/modificar_ambiente',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
-                success: function(response) {
+                success: function (response) {
                     $('#mensajeResultado').removeClass().empty();
                     if (response.error) {
                         $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
@@ -315,22 +321,22 @@
                     }
                     $('#mensajeResultado').show();
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.log(error);
                 }
             });
         });
-    
 
 
-        $('#tabla-ambiente tbody').on('click', '.btnEliminar', function() {
+
+        $('#tabla-ambiente tbody').on('click', '.btnEliminar', function () {
             var id = $(this).data('id');
             $.ajax({
                 url: '/eliminar_ambiente',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ idambiente: id }),
-                success: function(response) {
+                success: function (response) {
                     $('#mensajeResultado').removeClass().empty();
                     if (response.error) {
                         $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
@@ -340,20 +346,20 @@
                     }
                     $('#mensajeResultado').show();
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.log(error);
                 }
             });
         });
-    
-        $('#tabla-ambiente tbody').on('click', '.btnDarDeBaja', function() {
+
+        $('#tabla-ambiente tbody').on('click', '.btnDarDeBaja', function () {
             var id = $(this).data('id');
             $.ajax({
                 url: '/dar_baja_ambiente',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ idambiente: id }),
-                success: function(response) {
+                success: function (response) {
                     $('#mensajeResultado').removeClass().empty();
                     if (response.error) {
                         $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
@@ -363,12 +369,12 @@
                     }
                     $('#mensajeResultado').show();
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.log(error);
                 }
             });
         });
     });
-    
+
 </script>
 {% endblock %}
