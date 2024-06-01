@@ -134,6 +134,8 @@
             success: function (response) {
                 grupos = response;
                 table.clear().rows.add(grupos).draw();
+                $('#filtro_cursos').val('').change(); // Reiniciar el filtro
+
             },
             error: function (xhr, status, error) {
                 console.log(error);
@@ -171,7 +173,7 @@
     $('#filtro_cursos').on('change', function () {
         var filtro = $(this).val();
         if (filtro) {
-            table.column(2).search(filtro).draw();
+            table.column(2).search(cursos[filtro]).draw();
         } else {
             table.column(2).search('').draw();
         }
