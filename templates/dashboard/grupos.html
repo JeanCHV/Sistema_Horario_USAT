@@ -91,76 +91,147 @@
 </div>
 
 <script>
-   
-   $(document).ready(function () {
-    var grupos = [];
-    var cursos = [];
-    var table = $('#tabla-grupo').DataTable({
-        "paging": true,
-        "info": true,
-        "stateSave": true,
-        "columns": [
-            { "data": "nombre" },
-            { "data": "vacantes" },
-            {
-                "data": "curso",
-                "render": function (data, type, row) {
-                    return cursos[data] || data; // Muestra el nombre del curso en lugar del ID
+    $(document).ready(function () {
+        var grupos = [];
+        var cursos = [];
+        var table = $('#tabla-grupo').DataTable({
+            "paging": true,
+            "info": true,
+            "stateSave": true,
+            "columns": [
+                { "data": "nombre" },
+                { "data": "vacantes" },
+                {
+                    "data": "curso",
+                    "render": function (data, type, row) {
+                        return cursos[data] || data; // Muestra el nombre del curso en lugar del ID
+                    }
+                },
+                { "data": "descripcion" }, // Asegúrate de ajustar según la respuesta del servidor
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return `
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-warning btn-sm btnModificar" data-id_grupo="${row.id_grupo}">Modificar</button>
+                                <button class="btn btn-danger btn-sm btnEliminar" data-id_grupo="${row.id_grupo}">Eliminar</button>
+                            </div>
+                        `;
+                    }
                 }
-            },
-            { "data": "descripcion" }, // Asegúrate de ajustar según la respuesta del servidor
-            {
-                "data": null,
-                "render": function (data, type, row) {
-                    return `
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-warning btn-sm btnModificar" data-id_grupo="${row.id_grupo}">Modificar</button>
-                        <button class="btn btn-danger btn-sm btnEliminar" data-id_grupo="${row.id_grupo}">Eliminar</button>
-                    </div>
-                `;
-                }
-            }
-        ],
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-        }
-    });
-
-    function cargarGrupos() {
-        $.ajax({
-            url: '/get_grupos',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                grupos = response;
-                table.clear().rows.add(grupos).draw();
-                $('#filtro_cursos').val('').change(); // Reiniciar el filtro
-
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
+            ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
             }
         });
-    }
-    cargarGrupos();
 
-    $('#collapseOne').collapse('show');
+        function cargarGrupos() {
+            $.ajax({
+                url: '/get_grupos',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    grupos = response;
+                    table.clear().rows.add(grupos).draw();
+                    $('#filtro_cursos').val('').change(); // Reiniciar el filtro
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+        cargarGrupos();
 
-    function cargarCursosEnFiltro() {
-        $.ajax({
-            url: '/obtener_cursos',
+        $('#collapseOne').collapse('show');
+
+        function cargarCursosEnFiltro() {
+            $.ajax({
+                url: '/obtener_cursos',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var select = $('#filtro_cursos');
+                    select.empty();
+                    select.append($('<option>', { value: '', text: 'Todos los cursos' }));
+                    response.forEach(function (curso) {
+                        select.append($('<option>', {
+                            value: curso.idcurso,
+                            text: curso.nombre
+                        }));
+                        cursos[curso.idcurso] = curso.nombre;
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error al cargar los cursos:', error);
+                }
+            });
+        }
+        cargarCursosEnFiltro();
+
+        $('#filtro_cursos').on('change', function () {
+            var filtro = $(this).val();
+            if (filtro) {
+                table.column(2).search(cursos[filtro]).draw();
+            } else {
+                table.column(2).search('').draw();
+            }
+        });
+
+        $('#btn_agregar_grupo').click(function (e) {
+            e.preventDefault();
+            $('#modalAgregarGrupo').modal('show');
+            $('#formAgregarGrupo')[0].reset();
+            cargarSemestres();
+            cargarCursos(); // Cargar semestres al abrir el modal
+        });
+
+        $('#formAgregarGrupo').submit(function (e) {
+            e.preventDefault();
+            var data = {
+                nombre: $('#nombreGrupo').val(),
+                vacantes: $('#vacantesGrupo').val(),
+                idcurso: $('#cursos1').val(),
+                idsemestre: $('#semestres').val()  // Asegúrate de ajustar según cómo obtengas los datos
+            };
+
+            $.ajax({
+                url: '/agregar_grupo',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    console.log(response);
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Curso agregado correctamente');
+                        $('#modalAgregarGrupo').modal('hide');
+                        cargarGrupos();
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        function cargarCursos() {
+        return $.ajax({
+            url: '/obtener_cursos',  // Asegúrate de que esta URL es correcta
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
-                var select = $('#filtro_cursos');
-                select.empty();
-                select.append($('<option>', { value: '', text: 'Todos los cursos' }));
+                var select = $('#cursos1');
+                select.empty();  // Limpiar opciones existentes
+                select.append($('<option>', { value: '', text: 'Seleccione un Curso' }));
                 response.forEach(function (curso) {
                     select.append($('<option>', {
                         value: curso.idcurso,
                         text: curso.nombre
                     }));
-                    cursos[curso.idcurso] = curso.nombre;
+                    cursos[curso.idcurso] = curso.nombre; // Asigna el nombre del curso al arreglo de cursos
                 });
             },
             error: function (xhr, status, error) {
@@ -168,119 +239,47 @@
             }
         });
     }
-    cargarCursosEnFiltro();
 
-    $('#filtro_cursos').on('change', function () {
-        var filtro = $(this).val();
-        if (filtro) {
-            table.column(2).search(cursos[filtro]).draw();
-        } else {
-            table.column(2).search('').draw();
-        }
-    });
 
-    $('#btn_agregar_grupo').click(function (e) {
-        e.preventDefault();
-        $('#modalAgregarGrupo').modal('show');
-        $('#formAgregarGrupo')[0].reset();
-        cargarSemestres();
-        cargarCursos(); // Cargar semestres al abrir el modal
-    });
 
-    $('#formAgregarGrupo').submit(function (e) {
-        e.preventDefault();
-        var data = {
-            nombre: $('#nombreGrupo').val(),
-            vacantes: $('#vacantesGrupo').val(),
-            idcurso: $('#cursos1').val(),
-            idsemestre: $('#semestres').val()  // Asegúrate de ajustar según cómo obtengas los datos
-        };
-
-        $.ajax({
-            url: '/agregar_grupo',
-            type: 'POST',
+function cargarSemestres() {
+        return $.ajax({
+            url: '/obtener_semestres',  // Asegúrate de que esta URL es correcta
+            type: 'GET',
             contentType: 'application/json',
-            data: JSON.stringify(data),
             success: function (response) {
-                console.log(response);
-                $('#mensajeResultado').removeClass().empty();
-                if (response.error) {
-                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Curso agregado correctamente');
-                    $('#modalAgregarGrupo').modal('hide');
-                    cargarGrupos();
-                }
-                $('#mensajeResultado').show();
+                var select = $('#semestres');
+                select.empty();  // Limpiar opciones existentes
+                select.append($('<option>', { value: '', text: 'Seleccione un Semestre Academico' }));
+                response.forEach(function (plan) {
+                    select.append($('<option>', {
+                        value: plan.idsemestre,
+                        text: plan.descripcion
+                    }));
+                });
             },
             error: function (xhr, status, error) {
-                console.log(error);
+                console.log('Error al cargar los semestres:', error);
             }
         });
-    });
+    }
 
-    $('#tabla-grupo tbody').on('click', '.btnEliminar', function () {
-    var id = $(this).data('id_grupo');
-    $.ajax({
-        url: '/eliminar_grupo',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ id_grupo: id }),  // Correctly send id_grupo
-        success: function (response) {
-            console.log(response);
-            $('#mensajeResultado').removeClass().empty();
-            if (response.error) {
-                $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-            } else {
-                $('#mensajeResultado').addClass('alert alert-success').text('Grupo eliminado correctamente');
-                cargarGrupos();
-            }
-            $('#mensajeResultado').show();
-        },
-        error: function (xhr, status, error) {
-            console.log(error);
-        }
-    });
-});
-
-    $('#tabla-grupo tbody').on('click', '.btnModificar', function () {
-        var id = $(this).data('id_grupo');
-        var grupo = grupos.find(a => a.id_grupo == id);
-        if (grupo) {
-            $('#nombreGrupo').val(grupo.nombre);
-            $('#vacantesGrupo').val(grupo.vacantes);
-
-            // Cargar cursos y semestres antes de mostrar el modal
-            $.when(cargarCursos(), cargarSemestres()).done(function () {
-                $('#cursos1').val(grupo.idcurso);
-                $('#semestres').val(grupo.idsemestre);
-                $('#modalAgregarGrupo').modal('show');
-            });
-
-            $('#formAgregarGrupo').off('submit').on('submit', function (e) {
-                e.preventDefault();
-                var data = {
-                    id_grupo: id,
-                    nombre: $('#nombreGrupo').val(),
-                    vacantes: $('#vacantesGrupo').val(),
-                    idcurso: $('#cursos1').val(),
-                    idsemestre: $('#semestres').val()
-                };
-
+        $('#tabla-grupo tbody').on('click', '.btnEliminar', function () {
+            var id = $(this).data('id_grupo');
+            if (confirm('¿Estás seguro de que deseas eliminar este grupo?')) {
                 $.ajax({
-                    url: '/modificar_grupo',
+                    url: '/eliminar_grupo',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify(data),
+                    data: JSON.stringify({ id_grupo: id }),  // Correctly send id_grupo
                     success: function (response) {
                         console.log(response);
                         $('#mensajeResultado').removeClass().empty();
                         if (response.error) {
                             $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
                         } else {
-                            $('#mensajeResultado').addClass('alert alert-success').text('Grupo modificado correctamente');
+                            $('#mensajeResultado').addClass('alert alert-success').text('Grupo eliminado correctamente');
                             cargarGrupos();
-                            $('#modalAgregarGrupo').modal('hide');
                         }
                         $('#mensajeResultado').show();
                     },
@@ -288,10 +287,58 @@
                         console.log(error);
                     }
                 });
-            });
-        }
+            }
+        });
+
+        $('#tabla-grupo tbody').on('click', '.btnModificar', function () {
+            var id = $(this).data('id_grupo');
+            var grupo = grupos.find(a => a.id_grupo == id);
+            if (grupo) {
+                $('#nombreGrupo').val(grupo.nombre);
+                $('#vacantesGrupo').val(grupo.vacantes);
+
+                // Cargar cursos y semestres antes de mostrar el modal
+                $.when(cargarCursos(), cargarSemestres()).done(function () {
+                    $('#cursos1').val(grupo.idcurso);
+                    $('#semestres').val(grupo.idsemestre);
+                    $('#modalAgregarGrupo').modal('show');
+                });
+
+                $('#formAgregarGrupo').off('submit').on('submit', function (e) {
+                    e.preventDefault();
+                    var data = {
+                        id_grupo: id,
+                        nombre: $('#nombreGrupo').val(),
+                        vacantes: $('#vacantesGrupo').val(),
+                        idcurso: $('#cursos1').val(),
+                        idsemestre: $('#semestres').val()
+                    };
+
+                    $.ajax({
+                        url: '/modificar_grupo',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function (response) {
+                            console.log(response);
+                            $('#mensajeResultado').removeClass().empty();
+                            if (response.error) {
+                                $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                            } else {
+                                $('#mensajeResultado').addClass('alert alert-success').text('Grupo modificado correctamente');
+                                cargarGrupos();
+                                $('#modalAgregarGrupo').modal('hide');
+                            }
+                            $('#mensajeResultado').show();
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(error);
+                        }
+                    });
+                });
+            }
+        });
     });
-});
 </script>
 
 {% endblock %}
