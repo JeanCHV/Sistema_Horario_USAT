@@ -62,13 +62,12 @@
 </div>
 <style>
     #semestre,#escuela{
-        width: min(100%,280px);
+        width: min(100%,320px);
         margin: 0 1rem 0 0;
     }
 
-    #card_cursos{
-        width: 100%;
-        margin: 0;
+    #card_cursos ::-webkit-scrollbar{
+        display: none;
     }
 
     #contenedor-botones{
@@ -78,7 +77,7 @@
         justify-content: end;
 
         & button{
-            width: min(100%,13rem);
+            width: min(100%,11rem);
             height: 3rem;
             margin-inline: 5px;
         }
@@ -87,10 +86,6 @@
     #miTabla{
         overflow-x: scroll;
 
-    }
-
-    #miTabla ::-webkit-scrollbar{
-        display: none;
     }
 
     @media (max-width:763px){
@@ -111,6 +106,8 @@
         var table = $('#tabla-cursos').DataTable({
             "paging": true,
             "info": true,
+            "scroller":true,
+            "scrollY": '200px',
             "columns": [
                 { "data": "idcurso", "className": "text-center id" }, 
                 { "data": "nombre"},
