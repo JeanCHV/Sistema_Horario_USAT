@@ -184,22 +184,6 @@
                 <div class="card-body show">
                     <div class="row mt-3">
                         <div class="col-md-12" id="espacio_tabla">
-                            <table class="table table-bordered text-center" id="tabla_inicial">
-                                <thead class="border border-warning bg-blue-horario-usat">
-                                  <tr>
-                                    <th scope="col" class="border border-warning text-light">Hora</th>
-                                    <th scope="col" class="border border-warning text-light">Lunes</th>
-                                    <th scope="col" class="border border-warning text-light">Martes</th>
-                                    <th scope="col" class="border border-warning text-light">Miércoles</th>
-                                    <th scope="col" class="border border-warning text-light">Jueves</th>
-                                    <th scope="col" class="border border-warning text-light">Viernes</th>
-                                    <th scope="col" class="border border-warning text-light">Sábado</th>
-                                    <th scope="col" class="border border-warning text-light">Domingo</th>
-                                  </tr>
-                                </thead>
-                                <tbody class="" style="background-color: #EEEEEE;">
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -212,24 +196,12 @@
 
 
 <script>
-    const tabla_horarios = document.querySelector("#tabla_inicial");
-    const tabla_filas =  tabla_horarios.querySelector("tbody");
+    const espacio_tabla = document.querySelector("#espacio_tabla");
     const columna_horas=[];
-    for (let i = 7; i < 22; i++) {
-        var hora_inicio = "";
-        var hora_fin ="";
-        if(i<9){
-            hora_inicio = "0"+i.toString();
-            hora_fin    = ("0"+(i+1).toString());
-        }else if(i===9){
-            hora_inicio = "0"+i.toString();
-            hora_fin    = (i+1).toString();
-        }else{
-            hora_inicio = i.toString();
-            hora_fin    = (i+1).toString();
+    for (let i = 7; i <= 22; i++) {
+            columna_horas.push(`${i.toString().padStart(2, '0')}:00`);
         }
-        columna_horas.push(hora_inicio+"-"+hora_fin);
-    }
+
     const columna_dias=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
     let bmos_lista_datos = [];
 
@@ -415,56 +387,28 @@
                             ,[2,'AMBIENTE 002','DISEÑO DE SOFTWARE','LUNES','13:00:00','15:00:00',3,3,'B']
                             ,[3,'AMBIENTE 003','INVESTIGACIÓN DE INGENIERÍA','MIERCOLES','18:00:00','20:00:00',4,1,'C']];
 
-                            function mostrarHorarios(horarios_docente) {
-    let filas = "";
-    
-    // Días de la semana
-    const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-    
-    // Horas
-    const horas = [];
-    for (let i = 7; i <= 21; i++) {
-        horas.push(`${i.toString().padStart(2, '0')}:00`);
-    }
-    
-    // Crear celdas vacías para todas las horas y días
-    const celdasVacias = Array.from({ length: horas.length }, () => Array.from({ length: diasSemana.length }, () => ""));
-    
-    // Llenar las celdas con los horarios
-    horarios_docente.forEach(horario => {
-        const diaIndex = diasSemana.indexOf(horario[3]);
-        const horaInicio = horario[4].substring(0, 5);
-        const horaFin = horario[5].substring(0, 5);
-        
-        for (let i = 0; i < horas.length; i++) {
-            if (horas[i] >= horaInicio && horas[i] < horaFin) {
-                celdasVacias[i][diaIndex] = `${horario[1]}<br>${horario[2]}`;
-            }
-        }
-    });
-    
-    // Construir filas de la tabla
-    for (let i = 0; i < horas.length; i++) {
-        filas += "<tr>";
-        filas += `<td>${horas[i]}-${horas[i + 1]}</td>`; // Mostrar el rango de horas en la primera columna
-        for (let j = 0; j < diasSemana.length; j++) {
-            if (celdasVacias[i][j] !== "") {
-                let rowspan = 1;
-                // Verificar si se deben fusionar celdas
-                while (i + rowspan < horas.length && celdasVacias[i + rowspan][j] === "") {
-                    rowspan++;
-                }
-                filas += `<td rowspan="${rowspan}">${celdasVacias[i][j]}</td>`;
-                i += rowspan - 1; // Saltar filas fusionadas
-            } else {
-                filas += "<td></td>";
-            }
-        }
-        filas += "</tr>";
-    }
+    function mostrarHorarios(horarios_docente) {
+        let estructura_tabla = 
+        `
+        <table class="table table-bordered text-center" id="tabla_inicial">
+            <thead class="border border-warning bg-blue-horario-usat">
+            </thead>
+            <tbody class="" style="background-color: #EEEEEE;">
+            </tbody>
+        </table>
+        `;
 
-    tabla_filas.innerHTML = filas;
-}
+        let filas = "";
+        tabla_columnas.innerHTML += `<tr>
+            <th scope="col" class="border border-warning text-light">Hora</th>
+            </tr>`;
+
+        if (!horarios_docente.length){
+
+        }else{
+        }
+        tabla_filas.innerHTML = filas;
+    }   
 
 // Ejemplo de uso con tus datos de prueba
 mostrarHorarios(horarios_prueba);

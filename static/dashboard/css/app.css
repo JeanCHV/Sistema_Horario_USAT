@@ -353,7 +353,12 @@ svg {
 
 table {
     border-collapse: collapse;
-    caption-side: bottom
+    caption-side: bottom;
+    text-align: left
+
+}
+.centered-cell {
+    text-align: center;
 }
 
 caption {
