@@ -16,7 +16,7 @@
 <div class="card mx-2" id="card_grupos">
     <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
         data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-        Grupos  
+        Grupos
     </div>
     <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
@@ -36,9 +36,9 @@
                 <table id="tabla-grupo" class="table table-striped" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Vacantes</th>
-                            <th>Curso</th>
+                            <th style="width: 15%;">Nombre</th>
+                            <th style="width: 10%;">Vacantes</th>
+                            <th style="width: 30%;">Curso</th>
                             <th>Semestre</th>
                             <th>Opciones</th>
                         </tr>
@@ -112,10 +112,12 @@
                     "data": null,
                     "render": function (data, type, row) {
                         return `
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-warning btn-sm btnModificar" data-id_grupo="${row.id_grupo}">Modificar</button>
-                                <button class="btn btn-danger btn-sm btnEliminar" data-id_grupo="${row.id_grupo}">Eliminar</button>
-                            </div>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-warning btn-sm btnModificar me-2" data-id_grupo="${row.id_grupo}">Modificar</button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id_grupo="${row.id_grupo}">Eliminar</button>
+                        </div>
+
+
                         `;
                     }
                 }
@@ -218,51 +220,51 @@
         });
 
         function cargarCursos() {
-        return $.ajax({
-            url: '/obtener_cursos',  // Asegúrate de que esta URL es correcta
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                var select = $('#cursos1');
-                select.empty();  // Limpiar opciones existentes
-                select.append($('<option>', { value: '', text: 'Seleccione un Curso' }));
-                response.forEach(function (curso) {
-                    select.append($('<option>', {
-                        value: curso.idcurso,
-                        text: curso.nombre
-                    }));
-                    cursos[curso.idcurso] = curso.nombre; // Asigna el nombre del curso al arreglo de cursos
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log('Error al cargar los cursos:', error);
-            }
-        });
-    }
+            return $.ajax({
+                url: '/obtener_cursos',  // Asegúrate de que esta URL es correcta
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var select = $('#cursos1');
+                    select.empty();  // Limpiar opciones existentes
+                    select.append($('<option>', { value: '', text: 'Seleccione un Curso' }));
+                    response.forEach(function (curso) {
+                        select.append($('<option>', {
+                            value: curso.idcurso,
+                            text: curso.nombre
+                        }));
+                        cursos[curso.idcurso] = curso.nombre; // Asigna el nombre del curso al arreglo de cursos
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error al cargar los cursos:', error);
+                }
+            });
+        }
 
 
 
-function cargarSemestres() {
-        return $.ajax({
-            url: '/obtener_semestres',  // Asegúrate de que esta URL es correcta
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                var select = $('#semestres');
-                select.empty();  // Limpiar opciones existentes
-                select.append($('<option>', { value: '', text: 'Seleccione un Semestre Academico' }));
-                response.forEach(function (plan) {
-                    select.append($('<option>', {
-                        value: plan.idsemestre,
-                        text: plan.descripcion
-                    }));
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log('Error al cargar los semestres:', error);
-            }
-        });
-    }
+        function cargarSemestres() {
+            return $.ajax({
+                url: '/obtener_semestres',  // Asegúrate de que esta URL es correcta
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var select = $('#semestres');
+                    select.empty();  // Limpiar opciones existentes
+                    select.append($('<option>', { value: '', text: 'Seleccione un Semestre Academico' }));
+                    response.forEach(function (plan) {
+                        select.append($('<option>', {
+                            value: plan.idsemestre,
+                            text: plan.descripcion
+                        }));
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error al cargar los semestres:', error);
+                }
+            });
+        }
 
         $('#tabla-grupo tbody').on('click', '.btnEliminar', function () {
             var id = $(this).data('id_grupo');
