@@ -3,6 +3,95 @@
 {% block contenido %}
 <script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
 <style>
+    /*INICIO ESTILOS DEL BUSCADOR*/
+    #buscador-multiopcion-sugerencias{
+        position: relative;
+        margin: 0;
+        padding: 0;
+        /*background-color: black;*/
+    }
+
+    #buscador-multiopcion-sugerencias #bmos-barra-busqueda {
+        width: 100%;
+        /* background-color: red; */
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        padding-inline: 10px;
+        border: 1px #DEE2E6 solid;
+        border-radius: 4px;
+        outline: none;
+        overflow-y: hidden;
+        cursor: text;
+
+        &:active{
+            border: 1px #9DBEEE solid;
+            outline: 4px #CEDEF6 solid;
+        }
+    }
+
+    #buscador-multiopcion-sugerencias #bmos-barra-busqueda p {
+        order: 2;
+        pointer-events: fill;
+        width: 100%;
+        margin: 5px 0;
+        white-space: nowrap;
+        overflow-x: hidden;
+        flex: 1 0 min(100%, 20%);
+
+        &:focus-within {
+            outline: none;
+        }
+    }
+
+    #buscador-multiopcion-sugerencias #bmos-barra-busqueda .bmos-etiqueta {
+        background-color: rgb(217, 217, 217);
+        padding: 6px;
+        border-radius: 8px;
+        margin: 3px;
+        order: 1;
+        flex: 0 1 auto;
+
+        &:hover {
+            background-color: rgb(185, 185, 185);
+        }
+
+        button {
+            font-size: 20px;
+            border: none;
+            margin-left: 5px;
+            margin-right: 0px;
+            background-color: transparent;
+            color: rgb(62, 62, 62);
+        }
+    }
+
+    #buscador-multiopcion-sugerencias.active #bmos-lista-sugerencias {
+        display: block;
+    }
+
+    #buscador-multiopcion-sugerencias #bmos-lista-sugerencias {
+        background-color: rgb(217, 217, 217);
+        list-style: none;
+        margin-top: 8px;
+        border-radius: 10px;
+        padding: 0px;
+        overflow-y: hidden;
+        display: none;
+        position: absolute;
+    }
+
+    #buscador-multiopcion-sugerencias #bmos-lista-sugerencias .bmos-sugerencia {
+        padding: 11px;
+        padding-left: 10px;
+
+        &:hover {
+            background-color: rgb(185, 185, 185);
+        }
+    }
+    /*FIN ESTILOS DEL BUSCADOR*/
+
     .texto-label{
         color: #70767F;
         text-transform: uppercase;
@@ -76,7 +165,13 @@
                             <label for="search_bar" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
                                 <!-- Buscador con autocompletado de sugerencias -->
-                                <div id="search_bar"></div>
+                                <div id="buscador-multiopcion-sugerencias" class="">
+                                    <div id="bmos-barra-busqueda" contenteditable="false">
+                                        <p contenteditable="true"></p>
+                                    </div>
+                                    <ul id="bmos-lista-sugerencias">
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -89,32 +184,6 @@
                 <div class="card-body show">
                     <div class="row mt-3">
                         <div class="col-md-12" id="espacio_tabla">
-                            <table class="table table-bordered text-center" id="tabla_inicial">
-                                <thead class="border border-warning bg-blue-horario-usat">
-                                  <tr>
-                                    <th scope="col" class="border border-warning text-light">Hora</th>
-                                    <th scope="col" class="border border-warning text-light">Lunes</th>
-                                    <th scope="col" class="border border-warning text-light">Martes</th>
-                                    <th scope="col" class="border border-warning text-light">Miércoles</th>
-                                    <th scope="col" class="border border-warning text-light">Jueves</th>
-                                    <th scope="col" class="border border-warning text-light">Viernes</th>
-                                    <th scope="col" class="border border-warning text-light">Sábado</th>
-                                    <th scope="col" class="border border-warning text-light">Domingo</th>
-                                  </tr>
-                                </thead>
-                                <tbody class="" style="background-color: #EEEEEE;">
-                                    <tr>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -127,6 +196,15 @@
 
 
 <script>
+    const espacio_tabla = document.querySelector("#espacio_tabla");
+    const columna_horas=[];
+    for (let i = 7; i <= 22; i++) {
+            columna_horas.push(`${i.toString().padStart(2, '0')}:00`);
+        }
+
+    const columna_dias=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+    let bmos_lista_datos = [];
+
         function mostrarAlerta(icon, title, text) {
             Swal.fire({
                 icon: icon,
@@ -151,213 +229,194 @@
             };
         }
 
+        function obtener_docentes() {
+            fetch('/get_personas_activas', {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            })
+            .then(response => response.json())
+            .then(data => {
+                bmos_lista_datos = data;
+                
+            })
+            .catch(error => {
+                mostrarAlerta("error", "No se pudo obtener los horarios", error.responseText);
+            });
+        } 
 
     $(document).ready(function(){
-        let listaDocentes = [];
-
-        function obtenerDatosDocentes() {
-            fetch('/get_personas_activas')
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(element => {
-                        listaDocentes.push(element[2] + ' ' + element[1])
-                    });
-                    var widget = new AutoComplete('search_bar', listaDocentes);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-        obtenerDatosDocentes();
-        var inputEl = document.getElementById('tuInputId'); // Obtén el elemento input por su ID
-
+        obtener_docentes();
         $('#collapseOne').collapse('show');
     });
     
+    
+
+    /*INICIO SCRIPT BUSCADOR*/
+
+    const bmos_contenedor = document.querySelector("#buscador-multiopcion-sugerencias");
+    const bmos_barra_busqueda = document.querySelector("#bmos-barra-busqueda");
+    const bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta");
+    const bmos_input = bmos_barra_busqueda.querySelector("p");
+    const bmos_lista_sugerencias = document.querySelector("#bmos-lista-sugerencias");
+    
+
+    bmos_input.onkeyup = (event) => {
+        let datos_entrada = bmos_input.textContent;
+        let datos_salida = [];
+
+        if(datos_entrada.length){
+            bmos_contenedor.classList.add("active");
+            datos_salida = bmos_generar_sugerencias(datos_entrada);
+            datos_filtrados = bmos_filtrar_sugerencias(datos_salida);
+            bmos_mostrar_sugerencias(datos_filtrados);
+
+        }else{
+            bmos_contenedor.classList.remove("active");
+        }
+    };
+
+    function bmos_generar_sugerencias(dato) {
+    let datos_salida = [];
+    bmos_lista_datos.forEach(element => {
+        var nombre = element[2] + " " + element[1];
+        var id = element[0];
+
+        if (nombre.toLowerCase().trim().includes(dato.toLowerCase().trim())) {
+            datos_salida.push([id, nombre]);
+        }
+    });
+    return datos_salida;
+}
 
 
+    function bmos_mostrar_sugerencias(lista){
+        bmos_lista_sugerencias.innerHTML = "";
+        lista.forEach(element => {
+            bmos_lista_sugerencias.innerHTML += 
+            `<li class="bmos-sugerencia" onclick="bmos_insertar_etiqueta(this);"
+             id="${element[0]}">${element[1]}</li>`;
+        });
+    }
+
+    function bmos_insertar_etiqueta(element){
+        if(element.id != -1){
+            bmos_input.textContent = "";
+            bmos_contenedor.classList.remove("active");
+            var nuevoSpan = document.createElement("span");
+            nuevoSpan.className = "bmos-etiqueta";
+            nuevoSpan.setAttribute("contenteditable", "false");
+            nuevoSpan.setAttribute("id",`${element.id}`);
+            nuevoSpan.innerHTML = `${element.textContent}<button onclick="bmos_eliminarEtiqueta(this);">X</button>`;       
+            bmos_barra_busqueda.appendChild(nuevoSpan);
+            bmos_input.focus();
+        }
+    }
+
+    function bmos_eliminarEtiqueta(element){
+        element.parentNode.remove();
+    }
+    
+    function bmos_filtrar_sugerencias(lista_sugerencias){
+        if(lista_sugerencias.length){
+            let lista_sugerencias_2 = lista_sugerencias.map(function(elements){
+                return elements[1];
+            });
+            bmos_barra_busqueda.querySelectorAll('.bmos-etiqueta').forEach(etiqueta =>{
+                var sugerencia = (etiqueta.textContent).slice(0,-1);
+
+                indice = lista_sugerencias_2.indexOf(sugerencia);
+                if(indice!=-1){
+                    lista_sugerencias.splice(indice,1);
+                }
+            });
+        }else{
+            lista_sugerencias.push([-1,"No hay resultados"]);
+        }
+        return lista_sugerencias;
+    }
+
+    bmos_barra_busqueda.addEventListener("click",()=>{
+        bmos_input.focus();
+    });
 
 
-    function obtenerHorarios(lista_nombres_docentes,semestre) {
-        lista_nombres_docentes.forEach(nombre_docente => {
-            fetch('/get_horarios_docentesNombres_semestre', {
+    bmos_barra_busqueda.addEventListener("keydown",function(event){
+        if(event.key === "Enter"){
+            event.preventDefault();
+        }
+    });
+
+    document.addEventListener("click", (event) => {
+        const buscadorMultiopcion = document.querySelector("#buscador-multiopcion-sugerencias");
+        if (!buscadorMultiopcion.contains(event.target)) {
+            buscadorMultiopcion.classList.remove("active");
+        }
+    });
+    /*FIN SCRIPT BUSCADOR*/
+
+    /*INICIO SCRIPT MOSTRAR TABLAS*/
+
+    function obtenerHorariosDocente(id_docente,semestre){
+        return fetch('/get_horarios_docentesId_semestre', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                nombre_docente : nombre_docente,
-                semestre : semestre,
+                id_docente: id_docente,
+                semestre: semestre
             })
             })
             .then(response => response.json())
-            .then(data => {
-                mostrarHorariosEnTabla(nombre_docente,data);
-            })
+
             .catch(error => {
-            console.error('Error:', error);
-            }); 
-        });
-        }
-
-        function mostrarHorariosEnTabla(nomb_docente,data){
-            nombreX_docente = nomb_docente.toUpperCase().replace(/ /g, "_");
-            nombre_docente = nombreX_docente.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            if(!document.querySelector(`#fila-propietario-tabla-${nombre_docente}`)){
-                const dias_semana = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
-                const lista_horarios = [
-                '7:00 a.m. - 8:00 a.m.',
-                '8:00 a.m. - 9:00 a.m.',
-                '9:00 a.m. - 10:00 a.m.',
-                '10:00 a.m. - 11:00 a.m.',
-                '11:00 a.m. - 12:00 p.m.',
-                '12:00 p.m. - 13:00 p.m.',
-                '13:00 p.m. - 14:00 p.m.',
-                '14:00 p.m. - 15:00 p.m.',
-                '15:00 p.m. - 16:00 p.m.',
-                '16:00 p.m. - 17:00 p.m.',
-                '17:00 p.m. - 18:00 p.m.',
-                '18:00 p.m. - 19:00 p.m.',
-                '19:00 p.m. - 20:00 p.m.',
-                '20:00 p.m. - 21:00 p.m.',
-                '21:00 p.m. - 22:00 p.m.'
-                ];
-                
-                document.getElementById("espacio_tabla").innerHTML+=
-                `
-                    <table class="table table-bordered text-center" id="fila-propietario-tabla-${nombre_docente}">
-                        <div class="border border-warning bg-blue-horario-usat" 
-                        style="display: flex;align-items:center;justify-content: center;color: white;font-weight: bold;height: 45px;">
-                            ${nomb_docente}
-                        </div>
-                        <thead class="border border-warning bg-blue-horario-usat">
-                            <tr class="fila-dias-tabla-${nombre_docente}">
-                            </tr>
-                        </thead>
-                        <tbody class="" style="background-color: #EEEEEE;">
-                            <tr class="fila-horas-tabla-${nombre_docente}">
-                            </tr>
-                        </tbody>
-                    </table>
-                `;
-                for (let i = 0; i < dias_semana.length; i++) {
-                    if(i==0){
-                        document.querySelector(`.fila-dias-tabla-${nombre_docente}`).innerHTML+=
-                        `
-                            <th scope="col" class="border border-warning text-light">Hora</th>
-                            <th scope="col" class="border border-warning text-light">${dias_semana[i]}</th>
-                        `;
-                    }else{
-                        document.querySelector(`.fila-dias-tabla-${nombre_docente}`).innerHTML+=
-                        `
-                            <th scope="col" class="border border-warning text-light">${dias_semana[i]}</th>
-                        `;
-                    }     
-                }
-
-                for (let i = 0; i < dias_semana.length+1; i++) {
-                    document.querySelector(`.fila-horas-tabla-${nombre_docente}`).innerHTML+=
-                    `
-                        <th scope="row">X</th>
-                    `;
-                }
-            }
-        }
-
-    var docentes_seleccionados = []
-    // Función para configurar el observador de mutaciones
-    function setupMutationObserver() {
-    // Seleccionar el elemento con la clase "tokens-6a7a0"
-    var tokensContainer = document.querySelector('.tokens-6a7a0');
-    // Verificar si el elemento está presente en el documento
-    if (tokensContainer) {
-        // Crear un observer para observar cambios en el contenido del elemento
-        var observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            // Verificar si se insertó un nodo
-            if (mutation.type === 'childList') {
-            // Recorrer los nodos insertados
-            mutation.addedNodes.forEach(function(node) {
-                // Verificar si el nodo insertado tiene la clase "token-group-c7334"
-                if (node.classList && node.classList.contains('token-group-c7334')) {
-                // Encontrar el span con la clase "token-75233" dentro del nodo insertado
-                var tokenSpan = node.querySelector('.token-75233');
-                    // Ejecutar acciones al encontrar el span
-                    if (tokenSpan){                       
-                        docentes_seleccionados.push(tokenSpan.textContent);
-                    }
-                }
-                
+                console.error('Error al obtener horarios:', error);
             });
-            // Verificar si se eliminó un nodo
-            mutation.removedNodes.forEach(function(node) {
-            // Verificar si el nodo eliminado tenía la clase "token-group-c7334"
-                if (node.classList && node.classList.contains('token-group-c7334')) {
-                    // Aquí puedes ejecutar acciones cuando se elimina un elemento con la clase "token-group-c7334"                   
-                    var tokenSpan = node.querySelector('.token-75233');
-                    if (tokenSpan) {                        
-                        // Eliminar el texto del span de la lista
-                        var index = docentes_seleccionados.indexOf(tokenSpan.textContent);
-                        if (index !== -1) {
-                        docentes_seleccionados.splice(index, 1);
-                        }                      
-                    }
-                }
-            });
-
-            }
-        });
-        semestre = document.getElementById('combo_semestre').value;
-        docentes_seleccionados_sin_repeticiones = docentes_seleccionados.filter((elemento,index)=>{
-            return docentes_seleccionados.indexOf(elemento) === index;
-        });
-        if(semestre!='[-- SELECCIONE --]'){
-            if(docentes_seleccionados_sin_repeticiones.length==0){
-                document.getElementById("tabla_inicial").style.visibility = "visible";
-                
-            }else if(docentes_seleccionados_sin_repeticiones.length>1){
-                obtenerHorarios(docentes_seleccionados_sin_repeticiones,semestre);
-                document.getElementById("tabla_inicial").style.visibility ="collapse";
-
-            }else if (docentes_seleccionados_sin_repeticiones.length==1) {
-                obtenerHorarios(docentes_seleccionados_sin_repeticiones,semestre);
-                document.getElementById("tabla_inicial").style.visibility ="collapse";  
-
-            }
-        }
-
-        if(docentes_seleccionados_sin_repeticiones.length>1){
-        mostrarFoto("USUARIOS");
-
-        }else if (docentes_seleccionados_sin_repeticiones.length==1) {
-            mostrarFoto(docentes_seleccionados[0]);
-
-        } else {
-            mostrarFoto("USUARIO");
-        }
-        });
-    
-        // Configurar las opciones del observer para observar cambios en el contenido y la estructura del elemento
-        var observerConfig = { childList: true, subtree: true };
-    
-        // Comenzar a observar el elemento
-        observer.observe(tokensContainer, observerConfig);
-    } else {
-        // El elemento aún no está presente, esperar y volver a intentarlo
-        setTimeout(setupMutationObserver, 500); // Intentar nuevamente después de 500 milisegundos
-
-        
-    }
     }
 
-    // Llamar a la función de configuración del observador de mutaciones
-    setupMutationObserver();
+    // let horarios = obtenerHorariosDocente(element.id, '2024-I')
+    //             .then(horarios => {
+    //                 mostrarHorarios(horarios);
+    //             })
+    //             .catch(error => {
+    //                 console.error('Error al obtener horarios:', error);
+    //             });
+    //         }
+    let horarios_prueba = [[1,'AMBIENTE 001','CALIDAD Y DESARROLLO DE SOFTWARE','LUNES','07:00:00','09:00:00',2,3,'A']
+                            ,[2,'AMBIENTE 002','DISEÑO DE SOFTWARE','LUNES','13:00:00','15:00:00',3,3,'B']
+                            ,[3,'AMBIENTE 003','INVESTIGACIÓN DE INGENIERÍA','MIERCOLES','18:00:00','20:00:00',4,1,'C']];
 
-    document.getElementById("combo_semestre").addEventListener("change", function() {
-        var semestre = this.value;
-        obtenerHorarios(docentes_seleccionados_sin_repeticiones,semestre);
-    });
+    function mostrarHorarios(horarios_docente) {
+        let estructura_tabla = 
+        `
+        <table class="table table-bordered text-center" id="tabla_inicial">
+            <thead class="border border-warning bg-blue-horario-usat">
+            </thead>
+            <tbody class="" style="background-color: #EEEEEE;">
+            </tbody>
+        </table>
+        `;
 
+        let filas = "";
+        tabla_columnas.innerHTML += `<tr>
+            <th scope="col" class="border border-warning text-light">Hora</th>
+            </tr>`;
+
+        if (!horarios_docente.length){
+
+        }else{
+        }
+        tabla_filas.innerHTML = filas;
+    }   
+
+// Ejemplo de uso con tus datos de prueba
+mostrarHorarios(horarios_prueba);
+
+
+
+
+    /*FIN SCRIPT MOSTRAR TABLAS*/
 
 </script>
 

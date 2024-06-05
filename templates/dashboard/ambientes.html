@@ -5,334 +5,379 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
         <li class="breadcrumb-item active"><a href="{{url_for('ambientes')}}">Ambientes</a></li>
-
     </ol>
 </nav>
-<script>
-    // $(".breadcrumb-item").on("click", function (e) {
-    //     var tmphref = $(this).attr("data-href");
-    //     if (tmphref) {
-    //         $("#container-body").load("/Pages/" + tmphref, function () { });
-    //     }
-    //     else {
-    //         window.location.reload();
-    //     }
-    // });
-</script>
-<div class="container">
-    <!-- Contenedor para mostrar mensajes de resultado -->
-    <div id="mensajeResultado" style="display: none;"></div>
 
-    <div class="card" id="card_ambientes">
-        <div class="card-header  bg-red-usat  text-white" id="headingOne" data-bs-toggle="collapse"
-            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            Ambientes
-        </div>
-        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
-            <div class="card-body">
-                <div class="search-box">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <select id="filtro_edificio" class="form-control">
-                                    <option value="">Todos los edificios</option>
-                                    <option value="EDIFICIO ANTIGUO">Edificio antiguo</option>
-                                    <option value="EDIFICIO JUAN PABLO II">Edificio Juan Pablo II</option>
-                                    <option value="EDIFICIO DE IDIOMAS">Edificio de idiomas</option>
-                                    <option value="EDIFICIO DE AULAS DECANAS">Edificio de aulas decanas</option>
-                                </select>
-                            </div>
+<div class="container">
+
+</div>
+
+<div id="mensajeResultado" style="display: none;"></div>
+
+<div class="card mx-2" id="card_ambientes">
+    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
+        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Ambientes
+    </div>
+    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+        <div class="card-body">
+            <div class="search-box">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <select id="filtro_edificio" class="form-control">
+                                <option value="">Todos los edificios</option>
+                                <option value="1">Edificio antiguo</option>
+                                <option value="2">Edificio Juan Pablo II</option>
+                                <option value="3">Edificio de idiomas</option>
+                                <option value="4">Edificio de aulas decanas</option>
+                            </select>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="card-body show">
-                    <!-- Tabla para mostrar los cursos -->
-                    <table id="tabla-ambiente" class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Aforo</th>
-                                <th>Estado</th>
-                                <th>Edificio</th>
-                                <th>Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card-body show">
+                <table id="tabla-ambiente" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%; text-align: left;">Nombre</th>
+                            <th style="width: 3%; text-align: center;">Aforo</th>
+                            <th style="width: 3%; text-align: center;">Estado</th>
+                            <th style="width: 10%; text-align: left;">Edificio</th>
+                            <th style="width: 10%; text-align: center;">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
+                    </tbody>
+                </table>
             </div>
         </div>
-        <a href="#" id="btn_agregar_ambiente" data-href="ambiente_agregar.html" class="btn btn-success">Agregar Nuevo
-            Ambiente</a>
-        <!-- Modal para agregar o modificar un ambiente -->
-        <div class="modal fade" id="modalAgregarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Agregar/Modificar Ambiente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formAgregarAmbiente">
-                            <div class="mb-3">
-                                <label for="nombreAmbiente" class="form-label">Nombre:</label>
-                                <input type="text" class="form-control" id="nombreAmbiente" name="nombreAmbiente" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="aforoAmbiente" class="form-label">Aforo:</label>
-                                <input type="number" class="form-control" id="aforoAmbiente" name="aforoAmbiente" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="estadoAmbiente" class="form-label">Estado:</label>
-                                <select class="form-control" id="estadoAmbiente" name="estadoAmbiente" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="A">Activo</option>
-                                    <option value="I">Inactivo</option>
-                                </select>
-                                </div>
-                            <div class="mb-3">
-                                <label for="idedificio" class="form-label">Edificio:</label>
-                                <select class="form-control" id="idedificio" name="idedificio" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="1">Edificio Antiguo</option>
-                                    <option value="2">Edificio Juan Pablo II</option>
-                                    <option value="3">Edificio de Idiomas</option>
-                                    <option value="4">Edificio de Aulas Decanas</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="idambientetipo" class="form-label">Tipo de Ambiente:</label>
-                                <select class="form-control" id="idambientetipo" name="idambientetipo" required>
-                                    <option value="">Seleccione</option>
-                                    <option value="1">Aula</option>
-                                    <option value="2">Laboratorio</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </form>
-                    </div>
+    </div>
+    <a href="#" id="btn_agregar_ambiente" class="btn btn-success">Agregar Nuevo Ambiente</a>
+
+    <!-- Modal para agregar un ambiente -->
+    <div class="modal fade" id="modalAgregarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Ambiente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarAmbiente">
+                        <div class="mb-3">
+                            <label for="nombreAgregar" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreAgregar" name="nombreAgregar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="aforoAgregar" class="form-label">Aforo:</label>
+                            <input type="number" class="form-control" id="aforoAgregar" name="aforoAgregar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoAgregar" class="form-label">Estado:</label>
+                            <select class="form-control" id="estadoAgregar" name="estadoAgregar" required>
+                                <option value="">Seleccione</option>
+                                <option value="A">Activo</option>
+                                <option value="I">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idedificioAgregar" class="form-label">Edificio:</label>
+                            <select class="form-control" id="idedificioAgregar" name="idedificioAgregar" required>
+                                <option value="">Seleccione</option>
+                                <option value="1">Edificio Antiguo</option>
+                                <option value="2">Edificio Juan Pablo II</option>
+                                <option value="3">Edificio de Idiomas</option>
+                                <option value="4">Edificio de Aulas Decanas</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idambientetipoAgregar" class="form-label">Tipo de Ambiente:</label>
+                            <select class="form-control" id="idambientetipoAgregar" name="idambientetipoAgregar"
+                                required>
+                                <option value="">Seleccione</option>
+                                <option value="1">Aula</option>
+                                <option value="2">Laboratorio</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal para modificar un ambiente -->
+    <div class="modal fade" id="modalModificarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modificar Ambiente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formModificarAmbiente">
+                        <input type="hidden" id="idAmbienteModificar">
+                        <div class="mb-3">
+                            <label for="nombreModificar" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreModificar" name="nombreModificar"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="aforoModificar" class="form-label">Aforo:</label>
+                            <input type="number" class="form-control" id="aforoModificar" name="aforoModificar"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoModificar" class="form-label">Estado:</label>
+                            <select class="form-control" id="estadoModificar" name="estadoModificar" required>
+                                <option value="">Seleccione</option>
+                                <option value="A">Activo</option>
+                                <option value="I">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idedificioModificar" class="form-label">Edificio:</label>
+                            <select class="form-control" id="idedificioModificar" name="idedificioModificar" required>
+                                <option value="">Seleccione</option>
+                                <option value="1">Edificio Antiguo</option>
+                                <option value="2">Edificio Juan Pablo II</option>
+                                <option value="3">Edificio de Idiomas</option>
+                                <option value="4">Edificio de Aulas Decanas</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idambientetipoModificar" class="form-label">Tipo de Ambiente:</label>
+                            <select class="form-control" id="idambientetipoModificar" name="idambientetipoModificar"
+                                required>
+                                <option value="">Seleccione</option>
+                                <option value="1">Aula</option>
+                                <option value="2">Laboratorio</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
-
-
-<!-- Script para inicializar el DataTable y realizar la búsqueda -->
 <script>
- $(document).ready(function() {
-    var ambientes = [];
-    var edificios = {
-        1: "EDIFICIO ANTIGUO",
-        2: "EDIFICIO JUAN PABLO II",
-        3: "EDIFICIO DE IDIOMAS",
-        4: "EDIFICIO DE AULAS DECANAS"
-    };
-
-    var table = $('#tabla-ambiente').DataTable({
-        "paging": true,
-        "info": true,
-        "stateSave": true,
-        "columns": [
-            { "data": "nombre" },
-            { "data": "aforo" },
-            { "data": "estado" },
-            {
-                "data": "idedificio",
-                "render": function(data, type, row) {
-                    return edificios[data] || data;
-                }
-            },
-            {
-                "data": null,
-                "render": function(data, type, row) {
-                    return `
-                        <button class="btn btn-warning btn-sm btnModificar" data-id="${row.id}">Modificar</button>
-                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id}">Eliminar</button>
-                        <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.id}">Dar de Baja</button>
-                    `;
-                }
-            }
-        ],
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-        }
-    });
-
-    function cargarAmbientes() {
-        $.ajax({
-            url: '/get_ambientes',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function(response) {
-                ambientes = response;
-                table.clear().rows.add(ambientes).draw();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    }
-
-    cargarAmbientes();
-
-    $('#collapseOne').collapse('show');
-
-    $('#filtro_edificio').on('change', function() {
-        var filtro = $(this).val();
-        table.column(3).search(filtro).draw();
-    });
-
-    $('#btn_agregar_ambiente').click(function(e) {
-        e.preventDefault();
-        $('#modalAgregarAmbiente').modal('show');
-        $('#formAgregarAmbiente')[0].reset();
-    });
-
-    $('#formAgregarAmbiente').submit(function(e) {
-        e.preventDefault();
-        var data = {
-            nombre: $('#nombreAmbiente').val(),
-            aforo: $('#aforoAmbiente').val(),
-            estado: $('#estadoAmbiente').val(),
-            idedificio: $('#idedificio').val(),
-            idambientetipo: $('#idambientetipo').val()
+    $(document).ready(function () {
+        var ambientes = [];
+        var edificios = {
+            1: "EDIFICIO ANTIGUO",
+            2: "EDIFICIO JUAN PABLO II",
+            3: "EDIFICIO DE IDIOMAS",
+            4: "EDIFICIO DE AULAS DECANAS"
         };
 
-        $.ajax({
-            url: '/agregar_ambiente',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function(response) {
-                console.log(response);
-                $('#mensajeResultado').removeClass().empty();
-                if (response.error) {
-                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Ambiente agregado correctamente');
-                    cargarAmbientes();
-                    $('#modalAgregarAmbiente').modal('hide');
-                }
-                $('#mensajeResultado').show();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $('#tabla-ambiente tbody').on('click', '.btnModificar', function() {
-        var id = $(this).data('id');
-        var ambiente = ambientes.find(a => a.id == id);
-        if (ambiente) {
-            $('#nombreAmbiente').val(ambiente.nombre);
-            $('#aforoAmbiente').val(ambiente.aforo);
-            $('#estadoAmbiente').val(ambiente.estado);
-            $('#idedificio').val(ambiente.idedificio);
-            $('#idambientetipo').val(ambiente.idambientetipo);
-            $('#modalAgregarAmbiente').modal('show');
-        }
-    });
-
-    $('#tabla-ambiente tbody').on('click', '.btnEliminar', function() {
-        var id = $(this).data('id');
-        $.ajax({
-            url: '/eliminar_ambiente',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ id: id }),
-            success: function(response) {
-                console.log(response);
-                $('#mensajeResultado').removeClass().empty();
-                if (response.error) {
-                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Ambiente eliminado correctamente');
-                    cargarAmbientes();
-                }
-                $('#mensajeResultado').show();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $('#tabla-ambiente tbody').on('click', '.btnDarDeBaja', function() {
-        var id = $(this).data('id');
-        $.ajax({
-            url: '/dar_baja_ambiente',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ id: id }),
-            success: function(response) {
-                console.log(response);
-                $('#mensajeResultado').removeClass().empty();
-                if (response.error) {
-                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Ambiente dado de baja correctamente');
-                    cargarAmbientes();
-                }
-                $('#mensajeResultado').show();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $('#tabla-ambiente tbody').on('click', '.btnModificar', function() {
-        var id = $(this).data('id');
-        var ambiente = ambientes.find(a => a.id == id);
-        if (ambiente) {
-            $('#nombreAmbiente').val(ambiente.nombre);
-            $('#aforoAmbiente').val(ambiente.aforo);
-            $('#estadoAmbiente').val(ambiente.estado);
-            $('#idedificio').val(ambiente.idedificio);
-            $('#idambientetipo').val(ambiente.idambientetipo);
-            $('#modalAgregarAmbiente').modal('show');
-
-            $('#formModificarAmbiente').off('submit').on('submit', function(e) {
-                e.preventDefault();
-                var data = {
-                    id: id,
-                    nombre: $('#nombreAmbiente').val(),
-                    aforo: $('#aforoAmbiente').val(),
-                    estado: $('#estadoAmbiente').val(),
-                    idedificio: $('#idedificio').val(),
-                    idambientetipo: $('#idambientetipo').val()
-                };
-
-                $.ajax({
-                    url: '/modificar_ambiente',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function(response) {
-                        console.log(response);
-                        $('#mensajeResultado').removeClass().empty();
-                        if (response.error) {
-                            $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                        } else {
-                            $('#mensajeResultado').addClass('alert alert-success').text('Ambiente modificado correctamente');
-                            cargarAmbientes();
-                            $('#modalAgregarAmbiente').modal('hide');
-                        }
-                        $('#mensajeResultado').show();
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(error);
+        var table = $('#tabla-ambiente').DataTable({
+            "paging": true,
+            "info": true,
+            "stateSave": true,
+            "columns": [
+                { "data": "nombre" , "className": 'dt-body-left' },
+                { "data": "aforo" ,"className": 'dt-body-center' },
+                { "data": "estado" },
+                {
+                    "data": "idedificio",
+                    "render": function (data, type, row) {
+                        return edificios[data] || data;
                     }
-                });
+                },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return `
+                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}">Modificar</button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}">Eliminar</button>
+                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.idambiente}">Dar de Baja</button>
+                        `;
+                    }
+                }
+            ],
+            "columnDefs": [
+            { targets: '_all', className: 'dt-center' }
+      ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            }
+        });
+
+        function cargarAmbientes() {
+            $.ajax({
+                url: '/get_ambientes',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    ambientes = response;
+                    table.clear().rows.add(ambientes).draw();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
             });
         }
+
+        cargarAmbientes();
+
+        $('#collapseOne').collapse('show');
+
+        $('#filtro_edificio').on('change', function () {
+            var filtro = $(this).val();
+            table.column(3).search(filtro).draw();
+        });
+
+        $('#btn_agregar_ambiente').click(function (e) {
+            e.preventDefault();
+            $('#modalAgregarAmbiente').modal('show');
+            $('#formAgregarAmbiente')[0].reset();
+        });
+
+        $('#formAgregarAmbiente').submit(function (e) {
+            e.preventDefault();
+            var data = {
+                nombre: $('#nombreAgregar').val(),
+                aforo: $('#aforoAgregar').val(),
+                estado: $('#estadoAgregar').val(),
+                idedificio: $('#idedificioAgregar').val(),
+                idambientetipo: $('#idambientetipoAgregar').val()
+            };
+
+            $.ajax({
+                url: '/agregar_ambiente',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Ambiente agregado correctamente');
+                        cargarAmbientes();
+                        $('#modalAgregarAmbiente').modal('hide');
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+
+
+        $('#tabla-ambiente tbody').on('click', '.btnModificar', function () {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '/get_ambiente/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var ambiente = response;
+                    $('#idAmbienteModificar').val(ambiente.idambiente);
+                    $('#nombreModificar').val(ambiente.nombre);
+                    $('#aforoModificar').val(ambiente.aforo);
+                    $('#estadoModificar').val(ambiente.estado);
+                    $('#idedificioModificar').val(ambiente.idedificio);
+                    $('#idambientetipoModificar').val(ambiente.idambientetipo);
+                    $('#modalModificarAmbiente').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+
+        $('#formModificarAmbiente').submit(function (e) {
+            e.preventDefault();
+            var data = {
+                idambiente: $('#idAmbienteModificar').val(),
+                nombre: $('#nombreModificar').val(),
+                aforo: $('#aforoModificar').val(),
+                estado: $('#estadoModificar').val(),
+                idedificio: $('#idedificioModificar').val(),
+                idambientetipo: $('#idambientetipoModificar').val()
+            };
+
+            $.ajax({
+                url: '/modificar_ambiente',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Ambiente modificado correctamente');
+                        cargarAmbientes();
+                        $('#modalModificarAmbiente').modal('hide');
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+
+
+        $('#tabla-ambiente tbody').on('click', '.btnEliminar', function () {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '/eliminar_ambiente',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ idambiente: id }),
+                success: function (response) {
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Ambiente eliminado correctamente');
+                        cargarAmbientes();
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#tabla-ambiente tbody').on('click', '.btnDarDeBaja', function () {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '/dar_baja_ambiente',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ idambiente: id }),
+                success: function (response) {
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Ambiente dado de baja correctamente');
+                        cargarAmbientes();
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
     });
-});
 
 </script>
 {% endblock %}

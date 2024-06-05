@@ -1,174 +1,427 @@
 {% extends "dashboard/index.html" %}
-
 {% block titulo %} Cursos {% endblock %}
-
 {% block contenido %}
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
-        <li class="breadcrumb-item active"><a href="{{url_for('cursos')}}">Cursos</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('cursos') }}">Cursos</a></li>
     </ol>
 </nav>
-<div class="container">
-    <div class="card mt-3" id="card_cursos">
-        <div class="card-header  bg-red-usat   text-white" id="headingOne" data-bs-toggle="collapse"
-            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-            Cursos 
+
+<div class="container-fluid my-4">
+    <div class="card w-100">
+        <div class="card-header bg-red-usat text-white">
+            Cursos
         </div>
-        <div class="ms-4 mt-3  ">
-            <!-- Semestre -->
-            <div class="d-flex mb-3 mt-3">
-                <label for="" class="mb-2  me-4  mt-2">Semestre:</label>
-                <select class="form-select w-25 me-3  " aria-label="Default select example" id="semestre" onchange="hola()">
-                    <option selected disabled>  -----Seleccione un semestre-----</option>
-                    {% for semestre in semestres %}
-                    <option>{{ semestre[0] }} </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <!-- Escuelas -->
-            <div class="d-flex mb-3 mt-3">
-                <label for="" class="mb-2 mt-2" >Escuela :</label>
-                <select class="form-select w-25 me-3 " aria-label="Default select example" id="escuela" style="margin-left:33px" onchange="hola()">
-                    <option selected disabled>-----Seleccione una escuela-----</option>
-                    {% for escuela in escuelas %}
-                    <option>{{ escuela[0] }} </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <!-- CURSOS -->
-
-            <div class="d-flex">
-                <label for="" class="mb-2 mt-2 form-label me-4">Cursos:</label>
-                <input type="text" class="form-control  w-25  danger"  placeholder="Buscar Cursos" onkeypress="filtrado()"  id="curso" style="margin-left:18px" >
-            </div>
-
-        </div>
-        <hr class="border-black">
-        <div class="me-5 ms-5 " id="miTabla">
-            <table class="table">   
-                <thead>       
-                    <tr>
-                        <th>
-                            Código
-                        </th>
-                        <th>
-                            Nombre del curso
-                        </th>
-                        <th>
-                            Ciclo
-                        </th>
-                        <th>
-                            N° Grupos
-                        </th>
-                        <th>
-                            <input type="checkbox" class="form-check-input   me-3 border border-dark" onclick="seleccionar_toda()" id="est"> 
-                        </th>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tabla-curso" class="table table-striped table-bordered tabla-cursos" style="width:100% ">
+                    <thead>
+                        <tr>
+                            <th style="width:30%; text-align:left;">Nombre</th>
+                            <th style="width:30%; text-align:left;">Código</th>
+                            <th style="width:10%; text-align:left;">Ciclo</th>
+                            <th style="width:30%; text-align:left;">Tipo Curso</th>
+                            <th style="width:30%; text-align:left;">Estado</th>
+                            <th style="width:30%; text-align:left;">Plan de Estudio</th>
+                            <th style="width:30%; text-align:left;">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         
-                    </tr>
-                </thead>
-                <tbody id="cuerpo_tabla">
-
-                </tbody>
-
-            </table>
-            <div class="text-end mb-2">
-                <button class="btn  btn-success bg_green_button me-2">Guardar</button>
-                <button class="btn btn-danger me-5">Cancelar</button>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <a href="#" id="btn_agregar_curso" class="btn btn-success">Agregar Nuevo Curso</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Script para inicializar el DataTable y realizar la búsqueda -->
+<!-- MODAL VER CURSOS -->
+<div class="modal fade" id="modalVerCurso" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- LOS DATOS SE CARGAN DINAMICAMENTE -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL AGREGAR CURSO -->
+<div class="modal fade" id="modalAgregarCurso" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAgregarCurso">
+                    <div class="mb-3">
+                        <label for="nombreCurso" class="form-label">Nombre:</label>
+                        <input type="text" class="form-control" id="nombreCurso" name="nombreCurso" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="codigoCurso" class="form-label">Código:</label>
+                        <input type="text" class="form-control" id="codigoCurso" name="codigoCurso" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="creditosCurso" class="form-label">Créditos:</label>
+                        <input type="number" class="form-control" id="creditosCurso" name="creditosCurso" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="horasTeoriaCurso" class="form-label">Horas Teoría:</label>
+                        <input type="number" class="form-control" id="horasTeoriaCurso" name="horasTeoriaCurso" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="horasPracticaCurso" class="form-label">Horas Práctica:</label>
+                        <input type="number" class="form-control" id="horasPracticaCurso" name="horasPracticaCurso" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cicloCurso" class="form-label">Ciclo:</label>
+                        <input type="text" class="form-control" id="cicloCurso" name="cicloCurso" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tipoCurso" class="form-label">Tipo de Curso:</label>
+                        <select class="form-control" id="tipoCurso" name="tipoCurso" required>
+                            <option value="0">Presencial</option>
+                            <option value="1">Virtual</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="estadoCurso" class="form-label">Estado:</label>
+                        <select class="form-control" id="estadoCurso" name="estadoCurso" required>
+                            <option value="A">Activo</option>
+                            <option value="I">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="planEstudioCurso" class="form-label">Plan de Estudio:</label>
+                        <select class="form-control" id="planEstudioCurso" name="planEstudioCurso" required>
+                            <!-- Opciones de planes de estudio cargadas dinámicamente -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MODIFICAR CURSO -->
+<div class="modal fade" id="modalModificarCurso" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modificar Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formModificarCurso">
+                    <div class="mb-3">
+                        <label for="nombreCursoMod" class="form-label">Nombre:</label>
+                        <input type="text" class="form-control" id="nombreCursoMod" name="nombreCursoMod" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="codigoCursoMod" class="form-label">Código:</label>
+                        <input type="text" class="form-control" id="codigoCursoMod" name="codigoCursoMod" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="creditosCursoMod" class="form-label">Créditos:</label>
+                        <input type="number" class="form-control" id="creditosCursoMod" name="creditosCursoMod" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="horasTeoriaCursoMod" class="form-label">Horas Teoría:</label>
+                        <input type="number" class="form-control" id="horasTeoriaCursoMod" name="horasTeoriaCursoMod" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="horasPracticaCursoMod" class="form-label">Horas Práctica:</label>
+                        <input type="number" class="form-control" id="horasPracticaCursoMod" name="horasPracticaCursoMod" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cicloCursoMod" class="form-label">Ciclo:</label>
+                        <input type="text" class="form-control" id="cicloCursoMod" name="cicloCursoMod" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tipoCursoMod" class="form-label">Tipo de Curso:</label>
+                        <select class="form-control" id="tipoCursoMod" name="tipoCursoMod" required>
+                            <option value="0">Presencial</option>
+                            <option value="1">Virtual</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="estadoCursoMod" class="form-label">Estado:</label>
+                        <select class="form-control" name="estadoCursoMod" id="estadoCursoMod">
+                            <option value="A">ACTIVO</option>
+                            <option value="I">INACTIVO</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="planEstudioCursoMod" class="form-label">Plan de Estudio:</label>
+                        <select class="form-control" id="planEstudioCursoMod" name="planEstudioCursoMod" required>
+                            <!-- Opciones de planes de estudio cargadas dinámicamente -->
+                        </select>
+                    </div>
+                    <input type="hidden" id="idCursoMod" name="idCursoMod">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-
-    function seleccionar_toda() {
-        var checkbox = document.getElementById('est');
-        var isChecked = checkbox.checked; 
-        var input_check = document.querySelectorAll('input[type="checkbox"]');
-    
-        for (var i = 0; i < input_check.length; i++) {
-            input_check[i].checked = isChecked; 
-        }
-    }
-    
-    function validar() {
-        var semestre = document.getElementById('semestre');
-        var escuela = document.getElementById('escuela');
-        
-        if (semestre.selectedIndex > 0 && escuela.selectedIndex > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function filtrado() {
-        // Validar el estado y obtener el valor del campo de curso
-        const estado = validar();
-        const curso = document.getElementById('curso').value;
-    
-        // Verificar si el estado es verdadero y si el campo de curso tiene contenido
-        if (estado && curso.length > 0) {
-            const filtro = curso.toUpperCase();
-            const filas = document.getElementById('cuerpo_tabla').getElementsByTagName('tr');
-    
-            // Iterar sobre las filas de la tabla y ocultar aquellas que no coincidan con el curso
-            for (let i = 0; i < filas.length; i++) {
-                const nombreCurso = filas[i].getElementsByTagName('td')[1];
-                if (nombreCurso) {
-                    const textoCurso = nombreCurso.textContent || nombreCurso.innerText;
-                    if (textoCurso.toUpperCase().includes(filtro)) {
-                        filas[i].style.display = '';
-                    } else {
-                        filas[i].style.display = 'none';
+    $(document).ready(function () {
+        var cursos = [];
+        var table = $('#tabla-curso').DataTable({
+            "paging": true,
+            "info": true,
+            "columns": [
+                { "data": "nombre" },
+                { "data": "cod_curso" },
+                { "data": "ciclo" },
+                { "data": "tipo_curso" },
+                { "data": "estado" },
+                { "data": "nombre_plan_estudio" },
+                {
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return `
+                            <button class="btn btn-primary btn-sm btnVer" data-id="${row.idcurso}"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idcurso}"><i class="fas fa-cog"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idcurso}" data-nombre="${row.nombre}"><i class="fas fa-times"></i></button>
+                        `;
                     }
-                }       
+                }
+            ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
             }
-        } else {
-            // Si el estado no es verdadero o el campo de curso está vacío, mostrar un mensaje de error o realizar otra acción
-            console.log("Error: El estado no es válido o el campo de curso está vacío.");
-        }
-    }
-    
-    function hola() {
-        var estado = validar();
-        console.log(estado);
-        if (estado == true) {    
-            console.log(document.getElementById('semestre').value);
-        } else {
-            console.log('bays');
-        }
-    }
-    function rellenarTabla(escuela) {
-        fetch(`/rellenar_tabla/${escuela}`)
-          .then(response => response.json())
-          .then(data => {
-            const cuerpoTabla = document.getElementById('cuerpo_tabla');
-            // Limpiar contenido previo de la tabla
-            cuerpoTabla.innerHTML = '';
-    
-            data.forEach(curso => {
-              const fila = document.createElement('tr');
-              fila.innerHTML = `
-                <td>${curso.idcurso}</td>
-                <td>${curso.nombre}</td>
-                <td>${curso.ciclo}</td>
-                <td class="" style="width:90px">
-                    <input type="number" id="miCampoNumerico" class="form-control bg-white text-black">
-                </td>
-                <td>
-                    <input type="checkbox" class="form-check-input me-3 border border-dark">
-                </td>
-              `;
-              cuerpoTabla.appendChild(fila);
+        });
+
+        function cargarCursos() {
+            $.ajax({
+                url: '/get_cursos',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    cursos = response;
+                    table.clear().rows.add(cursos).draw();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
             });
-          })
-          .catch(error => {
-            console.error('Error al obtener los datos de la tabla:', error);
-          });
-    }
+        }
+
+        cargarCursos();
+
+        $('#tabla-curso tbody').on('click', '.btnVer', function () {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '/ver_cursos/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    if (response.error) {
+                        alert(response.error);
+                    } else {
+                        $('#modalVerCurso .modal-body').html(`
+                            <table class="table table-striped table-bordered">
+                                <tr><th>Nombre</th><td>${response.nombre}</td></tr>
+                                <tr><th>Código</th><td>${response.cod_curso}</td></tr>
+                                <tr><th>Créditos</th><td>${response.creditos}</td></tr>
+                                <tr><th>Horas Teoría</th><td>${response.horas_teoria}</td></tr>
+                                <tr><th>Horas Práctica</th><td>${response.horas_practica}</td></tr>
+                                <tr><th>Ciclo</th><td>${response.ciclo}</td></tr>
+                                <tr><th>Tipo</th><td>${response.tipo_curso}</td></tr>
+                                <tr><th>Estado</th><td>${response.estado}</td></tr>
+                                <tr><th>Plan de Estudio</th><td>${response.nombre_plan_estudio}</td></tr>
+                            </table>
+                        `);
+                        $('#modalVerCurso').modal('show');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        function cargarPlanesDeEstudio(selectElementId, selectedValue = null) {
+            $.ajax({
+                url: '/obtener_planes_estudio',
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var select = $(selectElementId);
+                    select.empty();
+                    select.append($('<option>', { value: '', text: 'Seleccione un plan de estudio' }));
+                    response.forEach(function (plan) {
+                        select.append($('<option>', {
+                            value: plan.id_plan_estudio,
+                            text: plan.nombre
+                        }));
+                    });
+
+                    if (selectedValue) {
+                        select.val(selectedValue); 
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error al cargar los planes de estudio:', error);
+                }
+            });
+        }
+
+        $('#btn_agregar_curso').click(function (e) {
+            e.preventDefault();
+            $('#modalAgregarCurso').modal('show');
+            $('#formAgregarCurso')[0].reset();
+            cargarPlanesDeEstudio('#planEstudioCurso');
+        });
+
+        $('#formAgregarCurso').submit(function (e) {
+            e.preventDefault();
+            var data = {
+                nombre: $('#nombreCurso').val(),
+                cod_curso: $('#codigoCurso').val(),
+                creditos: $('#creditosCurso').val(),
+                horas_teoria: $('#horasTeoriaCurso').val(),
+                horas_practica: $('#horasPracticaCurso').val(),
+                ciclo: $('#cicloCurso').val(),
+                tipo_curso: $('#tipoCurso').val(),
+                estado: $('#estadoCurso').val(),
+                id_plan_estudio: $('#planEstudioCurso').val()
+            };
+
+            $.ajax({
+                url: '/agregar_curso',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    console.log(response);
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Curso agregado correctamente');
+                        cargarCursos();
+                        $('#modalAgregarCurso').modal('hide');
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#tabla-curso tbody').on('click', '.btnEliminar', function () {
+            var id = $(this).data('id');
+            var nombre = $(this).data('nombre');
+            if (confirm(`¿Seguro que quieres eliminar el curso: ${nombre}?`)) {
+                if (id) {
+                    $.ajax({
+                        url: '/eliminar_curso',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ idcurso: id }),
+                        success: function (response) {
+                            console.log(response);
+                            $('#mensajeResultado').removeClass().empty();
+                            if (response.error) {
+                                $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                            } else {
+                                $('#mensajeResultado').addClass('alert alert-success').text('Curso eliminado correctamente');
+                                cargarCursos();
+                            }
+                            $('#mensajeResultado').show();
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(error);
+                        }
+                    });
+                } else {
+                    console.log('ID no definido');
+                }
+            }
+        });
+
+        $('#tabla-curso tbody').on('click', '.btnModificar', function () {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '/obtener_curso/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var curso = response;
+                    $('#idCursoMod').val(curso.idcurso);
+                    $('#nombreCursoMod').val(curso.nombre);
+                    $('#codigoCursoMod').val(curso.cod_curso);
+                    $('#creditosCursoMod').val(curso.creditos);
+                    $('#horasTeoriaCursoMod').val(curso.horas_teoria);
+                    $('#horasPracticaCursoMod').val(curso.horas_practica);
+                    $('#cicloCursoMod').val(curso.ciclo);
+                    $('#tipoCursoMod').val(curso.tipo_curso);
+                    $('#estadoCursoMod').val(curso.estado);
+                    cargarPlanesDeEstudio('#planEstudioCursoMod', curso.id_plan_estudio);
+                    $('#modalModificarCurso').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#formModificarCurso').submit(function (e) {
+            e.preventDefault();
+            var data = {
+                idcurso: $('#idCursoMod').val(),
+                nombre: $('#nombreCursoMod').val(),
+                cod_curso: $('#codigoCursoMod').val(),
+                creditos: $('#creditosCursoMod').val(),
+                horas_teoria: $('#horasTeoriaCursoMod').val(),
+                horas_practica: $('#horasPracticaCursoMod').val(),
+                ciclo: $('#cicloCursoMod').val(),
+                tipo_curso: $('#tipoCursoMod').val(),
+                estado: $('#estadoCursoMod').val(),
+                id_plan_estudio: $('#planEstudioCursoMod').val()
+            };
+
+            $.ajax({
+                url: '/modificar_curso',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    console.log(response);
+                    $('#mensajeResultado').removeClass().empty();
+                    if (response.error) {
+                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                    } else {
+                        $('#mensajeResultado').addClass('alert alert-success').text('Curso modificado correctamente');
+                        cargarCursos();
+                        $('#modalModificarCurso').modal('hide');
+                    }
+                    $('#mensajeResultado').show();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
 </script>
 {% endblock %}

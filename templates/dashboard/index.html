@@ -13,7 +13,7 @@
 		integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 		<script src="/static/js/javascript.js"></script>
 	<title>USAT - {% block titulo %}{% endblock %}</title>
-
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 	<link href="{{ url_for('static', filename='dashboard/css/app.css') }}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
@@ -77,7 +77,7 @@
 			<nav id="sidebar" class="sidebar js-sidebar">
 				<div class="sidebar-content js-simplebar">
 
-					<a class="sidebar-brand" href="{{url_for('index')}}">
+					<a class="sidebar-brand" href="{{url_for('perfil')}}">
 						<img src="{{ url_for('static', filename='login/images/usat_logo_blank.png') }}"
 							alt="logoescuela" style="max-width: 110px; display: flex;">
 					</a>
@@ -106,28 +106,59 @@
 
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{{url_for('ambientes')}}">
-								<i class="align-middle" data-feather="square"></i> <span
+								<img data-image="" src="https://img.icons8.com/glyph-neue/64/000000/school.png" alt="school"/> <span
 									class="align-middle">Ambientes</span>
 							</a>
 						</li>
 
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{{url_for('cursos')}}">
-								<i class="align-middle" data-feather="check-square"></i> <span
+								<img data-image="" src="https://img.icons8.com/ios-glyphs/30/000000/knowledge-sharing.png" alt="knowledge-sharing"/> <span
 									class="align-middle">Cursos</span>
 							</a>
 						</li>
 
 						<li class="sidebar-item">
+							<a class="sidebar-link" href="{{url_for('grupos')}}">
+								<img data-image="" src="https://img.icons8.com/ios-filled/50/000000/groups.png" alt="groups"/> <span
+									class="align-middle">Grupos</span>
+							</a>
+						</li>
+
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{{url_for('cursosxescuela')}}">
+								<i class="align-middle" data-feather="check-square"></i> <span
+									class="align-middle">Grupos por Curso</span>
+							</a>
+						</li>
+
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{{url_for('ambientesxCursos')}}">
+								<i class="align-middle" data-feather="check-square"></i> <span
+									class="align-middle">Ambientes por Curso</span>
+							</a>
+						</li>
+
+						
+
+
+						<li class="sidebar-item">
 							<a class="sidebar-link" href="{{url_for('docentes')}}">
-								<i class="align-middle" data-feather="grid"></i> <span
+								<img data-image="" src="https://img.icons8.com/ios-glyphs/30/000000/administrator-male.png" alt="administrator-male"/> <span
 									class="align-middle">Docentes</span>
+							</a>
+						</li>
+						
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{{url_for('docentesxcursos')}}">
+								<i class="align-middle" data-feather="grid"></i> <span
+									class="align-middle">Docentes por curso</span>
 							</a>
 						</li>
 
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{{url_for('horarios')}}">
-								<i class="align-middle" data-feather="align-left"></i> <span
+								<img data-image="" src="https://img.icons8.com/glyph-neue/64/000000/calendar.png" alt="calendar"/> <span
 									class="align-middle">Horarios</span>
 							</a>
 						</li>
@@ -138,35 +169,29 @@
 									class="align-middle">Horarios por docente</span>
 							</a>
 						</li>
+						<!-- aca -->
 						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('ReporteAmbiente')}}">
-								<i class="align-middle" data-feather="align-left"></i> <span
-									class="align-middle">Reporte Ambientes</span>
-							</a>
+							<span class="sidebar-link a d-flex align-items-center" >
+								<i class="align-middle" data-feather="align-left"></i>
+								<span class="align-middle">Reporte Ambientes</span>
+								<span class="ml-auto">
+									<span class="btn btn-sm ms-2 " onclick="mostrar(this)">
+										<i class="fa fa-caret-down text-end"></i>
+									</span>
+								</span>
+							</span>
+							<!-- aca -->
+							<ul class="list-unstyled  px-3" >
+								<li class="sidebar-item a" hidden>
+									<a class="sidebar-link " href="{{url_for('ReporteAmbiente')}}">
+										<i class="align-middle" data-feather="align-left"></i> <span class="align-middle">Reporte Ambientes</span>
+									</a>
+								</li>
+							</ul>
+							<!-- aca -->
 						</li>
-
-						<!-- <li class="sidebar-item">				
-							<div class="accordion accordion-flush" id="accordionFlushExample">
-								<div class="accordion-item">
-									<h2 class="accordion-header">
-									  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-										Horarios
-									  </button>
-									</h2>
-									<div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-									  <div class="accordion-body">
-										<ul class="list-group">
-											<li class="list-group-item list-group-item-action">Horarios por docente</li>
-											<li class="list-group-item list-group-item-action">Horarios por curso</li>
-										  </ul>
-									  </div>
-									</div>
-								  </div>
-							</div>
-						</li> -->
+						
 					</ul>
-
-
 				</div>
 			</nav>
 			<div class="main bg-grey-usat">
@@ -217,7 +242,7 @@
 									<span id="usernamenav" class="text-dark">{{usuario}}</span>
 								</a>
 								<div class="dropdown-menu dropdown-menu-end">
-									<a class="dropdown-item" href="usuario.html"><i class="align-middle me-1"
+									<a class="dropdown-item" href="{{url_for('perfil')}}"><i class="align-middle me-1"
 											data-feather="user"></i> Perfil</a>
 									<div class="dropdown-divider"></div>
 									<a class="dropdown-item" id="btnCerrarSesion" onclick="cerrarSesion()">Cerrar Sesión</a>
@@ -311,7 +336,7 @@
 		}
 
 		// Selecciona todos los elementos con la clase 'sidebar-link'
-		var sidebarLinks = document.querySelectorAll(".sidebar-link");
+		//var sidebarLinks = document.querySelectorAll(".sidebar-link");
 
 		// Agrega un evento 'click' a cada elemento 'sidebar-link'
 		sidebarLinks.forEach(function (link) {
@@ -322,6 +347,27 @@
 		});
 		
 	});
+	
+	function mostrar(element) {
+		var hijo = element.children[0];
+		var padre = element.parentNode.parentNode.parentNode;
+		var uls = padre.querySelectorAll("ul");
+		var ul = uls[0];
+		var lis = ul.querySelectorAll('li');
+		var li = lis[0];
+		if (li.hidden == true) {
+			li.hidden = false;
+			hijo.classList.remove("fa-caret-down");
+			hijo.classList.add("fa-caret-up");
+		} else {
+			li.hidden = true;
+			hijo.classList.remove("fa-caret-up");
+			hijo.classList.add("fa-caret-down");
+		}
+	}
+	
+	
+	
 
 	function mostrarAlerta(icon, title, text) {
             Swal.fire({
