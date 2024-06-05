@@ -603,7 +603,7 @@ def modificar_grupo():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
-<<<<<<< Updated upstream
+
     
     ###################################
 @app.route("/obtener_docentes_activos", methods=["GET"])
