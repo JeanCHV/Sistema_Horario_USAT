@@ -649,7 +649,7 @@ def eliminar_cursoAmbiente():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)}) """
-=======
+
 
 
 #ALGORITHM
@@ -660,4 +660,4 @@ def obtener_horarios():
         return jsonify(horario)
     except Exception as e:
         return jsonify({"error": str(e)})
->>>>>>> Stashed changes
+
