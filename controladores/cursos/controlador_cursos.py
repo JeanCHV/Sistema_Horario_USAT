@@ -29,13 +29,11 @@ def obtener_cursoxescuela(escuela):
         ''', (escuela))
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
-
-         for row in rows:
-             curso_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
-             cursos.append(curso_dict)
-
-     conexion.close()
-     return cursos
+        for row in rows:
+            curso_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
+            cursos.append(curso_dict)
+        conexion.close()
+        return cursos
 
 
 
