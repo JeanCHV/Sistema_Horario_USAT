@@ -27,6 +27,9 @@ import controladores.curso_docente.controlador_curso_docente as controlador_curs
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
+#Algorithm 
+import algorithm.algorithm as algoritmo
+
 
 @app.route("/")
 @app.route("/login", methods=["GET", "POST"])
@@ -600,6 +603,7 @@ def modificar_grupo():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+<<<<<<< Updated upstream
     
     ###################################
 @app.route("/obtener_docentes_activos", methods=["GET"])
@@ -645,3 +649,15 @@ def eliminar_cursoAmbiente():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)}) """
+=======
+
+
+#ALGORITHM
+@app.route('/generarHorario', methods=['GET'])
+def obtener_horarios():
+    try:
+        horario = algoritmo.algoritmo_genetico()
+        return jsonify(horario)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+>>>>>>> Stashed changes
