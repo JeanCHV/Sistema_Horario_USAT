@@ -39,12 +39,17 @@ def obtener_cursoxescuela(escuela):
 #Query Algoritmo Genetico
 def get_grupo():
     conexion = obtener_conexion()
-    grupo = []
+    grupos = []
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT grupo.id_grupo,grupo.nombre,grupo.vacantes,grupo.idcurso FROM grupo")
-        grupo = cursor.fetchall()
+        cursor.execute("SELECT id_grupo, nombre, vacantes, idcurso FROM grupo")
+        column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+        rows = cursor.fetchall()
+        for row in rows:
+            grupo_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
+            grupos.append(grupo_dict)
     conexion.close()
-    return grupo
+    return grupos
+
 
 def obtener_grupos():
     conexion = obtener_conexion()
