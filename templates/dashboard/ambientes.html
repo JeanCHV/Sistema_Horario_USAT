@@ -41,10 +41,10 @@
                 <table id="tabla-ambiente" class="table table-striped" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width: 10%; text-align: left;">Nombre</th>
+                            <th style="width: 10%; text-align: center;">Nombre</th>
                             <th style="width: 3%; text-align: center;">Aforo</th>
                             <th style="width: 3%; text-align: center;">Estado</th>
-                            <th style="width: 10%; text-align: left;">Edificio</th>
+                            <th style="width: 10%; text-align: center;">Edificio</th>
                             <th style="width: 10%; text-align: center;">Opciones</th>
                         </tr>
                     </thead>
@@ -192,12 +192,12 @@
                     }
                 },
                 {
-                    "data": null,
+                    "data": null, "className": 'dt-body-center',
                     "render": function (data, type, row) {
                         return `
-                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}">Modificar</button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}">Eliminar</button>
-                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.idambiente}">Dar de Baja</button>
+                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}" title="Modificar"><i class="fas fa-cog"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}" title="Eliminar"><i class="fas fa-times"></i></button>
+                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.idambiente}" title="Dar de Baja"><i class="fas fa-arrow-down"></i></button>
                         `;
                     }
                 }
