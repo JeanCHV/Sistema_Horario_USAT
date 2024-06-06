@@ -383,41 +383,61 @@
     //                 console.error('Error al obtener horarios:', error);
     //             });
     //         }
-    let horarios_prueba = [[1,'AMBIENTE 001','CALIDAD Y DESARROLLO DE SOFTWARE','LUNES','07:00:00','09:00:00',2,3,'A']
-                            ,[2,'AMBIENTE 002','DISEÑO DE SOFTWARE','LUNES','13:00:00','15:00:00',3,3,'B']
-                            ,[3,'AMBIENTE 003','INVESTIGACIÓN DE INGENIERÍA','MIERCOLES','18:00:00','20:00:00',4,1,'C']];
+function createTable() {
+    var table = document.getElementById('horario-table');
+    var encabezado= document.getElementById('encabezado');
+    var cuerpo= document.getElementById('cuerpo');
+    var dias = ["Horario","Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+    var hours = [ "7:00-8:00", "8:00-9:00", "9:00-10:00", "10:00-11:00", "11:00-12:00","12:00-13:00", "13:00-14:00", "14:00-15:00", "15:00-16:00", "16:00-17:00","17:00-18:00", "18:00-19:00", "19:00-20:00", "20:00-21:00", "21:00-22:00", "22:00-23:00" ];
+    var horas = [];
+    for( k = 0; k< hours.length; k++){
+        horas.push(parseInt(hours[k].split(':')[0]));
+    }
+    var informacion = ['7:00', '10:00','Lunes', 'Introducción a la Ingeniería']
+    
+    var inicio = parseInt(informacion[0])
+    var fin = parseInt(informacion[1])
+    var dia =  informacion[2]
+    var nombre = informacion[3]
 
-    function mostrarHorarios(horarios_docente) {
-        let estructura_tabla = 
-        `
-        <table class="table table-bordered text-center" id="tabla_inicial">
-            <thead class="border border-warning bg-blue-horario-usat">
-            </thead>
-            <tbody class="" style="background-color: #EEEEEE;">
-            </tbody>
-        </table>
-        `;
+    var rango = (fin-inicio)
+    var indice_dia = dias.indexOf(dia) //columna
+    var indice_hora = horas.indexOf(inicio)+1 //fila
 
-        let filas = "";
-        tabla_columnas.innerHTML += `<tr>
-            <th scope="col" class="border border-warning text-light">Hora</th>
-            </tr>`;
+    console.log(rango, indice_dia, indice_hora)
 
-        if (!horarios_docente.length){
-
-        }else{
+    //datos para las tablas
+    tr = document.createElement('tr') //fila
+    td = document.createElement('td')//col
+    th = document.createElement('th')//col
+    for (var i = 0; i < hours.length+1; i++) { //filas
+        tr = document.createElement('tr') //fila
+        for (var j = 0; j < dias.length; j++) {//columnas
+            td = document.createElement('td')//col
+            if (i==0){
+                //encabezado filas
+                td.textContent = dias[j];
+                td.style.color = "#522ADA"; 
+            }
+            if (j==0 && i>0){
+                td.textContent = hours[i-1];
+                td.style.color = "#522ADA"; 
+            }
+            var div = document.createElement('div');
+            
+            tr.append(td)
         }
-        tabla_filas.innerHTML = filas;
-    }   
+        cuerpo.append(tr)
+    }
 
-// Ejemplo de uso con tus datos de prueba
-mostrarHorarios(horarios_prueba);
-
-
-
-
-    /*FIN SCRIPT MOSTRAR TABLAS*/
-
+    for (var m = 0 ; m< rango; m++){
+        var celda = table.rows[indice_hora+m].cells[indice_dia];
+        celda.textContent = nombre;
+        celda.style.color = "#522ADA"
+        celda.style.background = "#D3BE0B"
+    }
+}
+createTable();
 </script>
 
 {% endblock %}
