@@ -20,11 +20,11 @@
             <table id="tabla-docente" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nombres</th>
-                        <th>Correo</th>
-                        <th>Teléfono</th>
-                        <th>Opciones</th>
+                        <th style="text-align:center">ID</th>
+                        <th style="text-align:center">Nombres</th>
+                        <th style="text-align:center">Correo</th>
+                        <th style="text-align:center">Teléfono</th>
+                        <th style="text-align:center">Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,12 +148,12 @@
         "paging": true,
         "info": true,
         "columns": [
-            { "data": "idpersona" },
+            { "data": "idpersona" ,"className": 'dt-body-center' },
             { "data": "nombre" },  
             { "data": "correo" },
-            { "data": "telefono" },
+            { "data": "telefono","className": 'dt-body-center' },
             {
-                "data": null,
+                "data": null,"className": 'dt-body-center',
                 "render": function(data, type, row) {
                     return `
                         <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}">Modificar</button>
