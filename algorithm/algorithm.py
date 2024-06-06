@@ -15,22 +15,22 @@ import controladores.curso_ambiente.controlador_curso_ambiente as controlador_cu
 docentes1 = controlador_docente.get_docentes()
 ambientes1 = controlador_ambiente.get_ambientes()
 cursos1 = controlador_cursos.get_cursos()
-grupo= controlador_grupo.get_grupo()
-disponibilidad=controlador_docente_disponibilidad.get_disponibilidad()
+grupos = controlador_grupo.get_grupo()
+disponibilidad = controlador_docente_disponibilidad.get_disponibilidad()
 curso_ambiente = controlador_curso_ambiente.get_curso_ambiente()
 
-DOCENTES=docentes1
-AMBIENTES=ambientes1
-CURSOS=cursos1
-GRUPOS_HORARIO =grupo
-DISPONIBILIDAD_DOCENTES=disponibilidad
+DOCENTES = docentes1
+AMBIENTES = ambientes1
+CURSOS = cursos1
+GRUPOS = grupos
+DISPONIBILIDAD_DOCENTES = disponibilidad
 CURSO_AMBIENTE = curso_ambiente
 
 NUM_PROFESORES = len(docentes1)
 NUM_CURSOS = len(cursos1)
 NUM_AULAS = len(ambientes1)
 HORAS = [f"{h}:00" for h in range(7, 23)]
-DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"]
+DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 
 def generar_poblacion(tamano):
     poblacion = []
@@ -39,12 +39,17 @@ def generar_poblacion(tamano):
         for curso in range(NUM_CURSOS):
             profesor = random.randint(0, NUM_PROFESORES - 1)
             dia = random.choice(DIAS)
-            hora = random.choice(HORAS)
+            hora_inicio = random.choice(HORAS)
+            duracion = CURSOS[curso]["horas_teoria"] + CURSOS[curso]["horas_practica"]
+            hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
             if any(ca['idcurso'] == curso for ca in CURSO_AMBIENTE):
                 ambiente = next(ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == curso)
             else:
                 ambiente = random.randint(0, NUM_AULAS - 1)
-            horario.append((profesor, curso, ambiente, dia, hora))
+            if ambiente >= len(AMBIENTES):
+                ambiente = random.randint(0, len(AMBIENTES) - 1)
+            grupo = next((g for g in GRUPOS if g["idcurso"] == curso), None)
+            horario.append((profesor, curso, ambiente, dia, hora_inicio, hora_fin, grupo))
         poblacion.append(horario)
     return poblacion
 
@@ -53,12 +58,12 @@ def calcular_fitness(horario):
     
     for dia in DIAS:
         horas_ocupadas = {profesor: [] for profesor in range(NUM_PROFESORES)}
-        for (profesor, curso, aula, d, hora) in horario:
+        for (profesor, curso, aula, d, hora_inicio, hora_fin, grupo) in horario:
             if d == dia:
-                if hora in horas_ocupadas[profesor] or hora not in obtener_horas_disponibles(profesor, d):
+                if hora_inicio in horas_ocupadas[profesor] or hora_inicio not in obtener_horas_disponibles(profesor, d):
                     fitness -= 1
                 else:
-                    horas_ocupadas[profesor].append(hora)
+                    horas_ocupadas[profesor].append(hora_inicio)
                     
                 horas_ocupadas_total = sum([CURSOS[curso]["horas_teoria"], CURSOS[curso]["horas_practica"]])
                 if len(horas_ocupadas[profesor]) != horas_ocupadas_total:
@@ -87,20 +92,24 @@ def seleccion(poblacion):
 def cruce(padre1, padre2):
     punto_cruce = random.randint(1, NUM_CURSOS - 1)
     hijo1 = padre1[:punto_cruce] + padre2[punto_cruce:]
-    hijo2 = padre2[:punto_cruce] + padre1[punto_cruce:]
+    hijo2 = padre2[:punto_cruce] + padre1[:punto_cruce:]
     return hijo1, hijo2
 
 def mutacion(individuo):
-    if random.random() < 0.1:
-        i = random.randint(0, NUM_CURSOS - 1)
+    if individuo:  # Verificar si la lista individuo no está vacía
+        i = random.randint(0, len(individuo) - 1)
         profesor = random.randint(0, NUM_PROFESORES - 1)
         dia = random.choice(DIAS)
-        hora = random.choice(HORAS)
-        if any(ca['idcurso'] == individuo[i][1] for ca in CURSO_AMBIENTE):
-            ambiente = next(ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == individuo[i][1])
+        hora_inicio = random.choice(HORAS)
+        curso = individuo[i][1]  # Obtener el curso actual en la posición i
+        duracion = CURSOS[curso]["horas_teoria"] + CURSOS[curso]["horas_practica"]
+        hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
+        if any(ca['idcurso'] == curso for ca in CURSO_AMBIENTE):
+            ambiente = next(ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == curso)
         else:
             ambiente = random.randint(0, NUM_AULAS - 1)
-        individuo[i] = (profesor, individuo[i][1], ambiente, dia, hora)
+        grupo = next((g for g in GRUPOS if g["idcurso"] == curso), None)
+        individuo[i] = (profesor, curso, ambiente, dia, hora_inicio, hora_fin, grupo)
 
 def algoritmo_genetico():
     poblacion = generar_poblacion(10)
@@ -118,14 +127,63 @@ def algoritmo_genetico():
             nueva_poblacion.extend([hijo1, hijo2])
         
         poblacion = nueva_poblacion
-        
-        mejor_individuo = max(poblacion, key=calcular_fitness)
-        print(f"Generación {generacion}: Mejor fitness: {calcular_fitness(mejor_individuo)}")
-        for (profesor, curso, aula, dia, hora) in mejor_individuo:
-            nombre_curso = CURSOS[curso]["nombre"]
-            nombre_docente = DOCENTES[profesor]["nombres"]
-            apellidos_docente = DOCENTES[profesor]["apellidos"]
+    
+    mejor_individuo = max(poblacion, key=calcular_fitness)
+    
+    resultado = {
+        "Generacion": 99,
+        "Mejor_fitness": calcular_fitness(mejor_individuo),
+        "Horario": []
+    }
+    
+    for curso in range(NUM_CURSOS):
+        encontrado = False
+        for (profesor, curso_id, aula, dia, hora_inicio, hora_fin, grupo) in mejor_individuo:
+            if curso_id == curso:
+                nombre_curso = CURSOS[curso]["nombre"]
+                nombre_docente = DOCENTES[profesor]["nombres"]
+                apellidos_docente = DOCENTES[profesor]["apellidos"]
+                if aula < len(AMBIENTES):
+                    nombre_aula = AMBIENTES[aula]["nombre"]
+                else:
+                    nombre_aula = "Aula desconocida"
+                resultado["Horario"].append({
+                    "Docente": f"{nombre_docente} {apellidos_docente}",
+                    "Curso": nombre_curso,
+                    "Aula": nombre_aula,
+                    "Dia": dia,
+                    "Hora_inicio": hora_inicio,
+                    "Hora_fin": hora_fin,
+                    "Grupo": grupo["nombre"] if grupo else "Desconocido"
+                })
+                encontrado = True
+                break
+        if not encontrado:
+            # Asignar al menos día, hora y aula para cursos no asignados
+            dia = random.choice(DIAS)
+            hora_inicio = random.choice(HORAS)
+            duracion = CURSOS[curso]["horas_teoria"] + CURSOS[curso]["horas_practica"]
+            hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
+            aula = random.randint(0, len(AMBIENTES) - 1)
             nombre_aula = AMBIENTES[aula]["nombre"]
-            print(f"Docente {nombre_docente} {apellidos_docente} - Curso: {nombre_curso} - Aula: {nombre_aula} - Día: {dia} - Hora: {hora}")
+            grupo = next((g for g in GRUPOS if g["idcurso"] == curso), None)
+            resultado["Horario"].append({
+                "Docente": "Desconocido",
+                "Curso": CURSOS[curso]["nombre"],
+                "Aula": nombre_aula,
+                "Dia": dia,
+                "Hora_inicio": hora_inicio,
+                "Hora_fin": hora_fin,
+                "Grupo": 
+                
+                
+                
+                
+                ["nombre"] if grupo else "Desconocido"
+            })
+    
+    return resultado
 
-algoritmo_genetico()
+# Ejecutar el algoritmo y obtener la mejor generación en formato JSON
+# mejor_horario = algoritmo_genetico()
+# print(json.dumps(mejor_horario, indent=4, ensure_ascii=False))
