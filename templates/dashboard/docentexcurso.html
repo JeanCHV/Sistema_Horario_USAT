@@ -60,7 +60,7 @@
                     <table id="tabla-cursos" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
+                                <th style="width:35%; text-align:center;">Nombre</th>
                                 <th>Código</th>
                                 <th>Ciclo</th>
                                 <th>Plan de Estudio</th>
@@ -93,10 +93,10 @@
                     <table id="tabla-docente" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
-                                <th>Correo</th>
-                                <th>Teléfono</th>
-                                <th>Seleccionar</th>
+                                <th style="width:40%; text-align:center;">Nombre</th>
+                                <th style="width:30%; text-align:center;">Correo</th>
+                                <th style="width:10%; text-align:center;">Teléfono</th>
+                                <th style="width:5%; text-align:center;">Seleccionar</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -162,10 +162,10 @@
             "columns": [
                 { "data": "nombre" },
                 { "data": "codigoCurso" },
-                { "data": "ciclo" },
-                { "data": "nombre_plan_estudio" },
+                { "data": "ciclo", "className": 'dt-body-center' },
+                { "data": "nombre_plan_estudio","className": 'dt-body-center' },
                 {
-                    "data": null,
+                    "data": null,"className": 'dt-body-center',
                     "render": function (data, type, row) {
                         return `<button class="btn btn-primary seleccionar-curso" data-id="${row.idcurso}" data-nombre="${row.nombre}" data-bs-dismiss="modal">Seleccionar</button>`;
                     }
@@ -206,10 +206,11 @@
             "info": true,
             "columns": [
                 { "data": "nombre" },
-                { "data": "correo" },
-                { "data": "telefono" },
+                { "data": "correo","className": 'dt-body-center' },
+                { "data": "telefono","className": 'dt-body-center' },
                 {
-                    "data": null,
+                    "data": null, "className": 'dt-body-center, ',
+
                     "render": function (data, type, row) {
                         return `<input type="checkbox" class="form-check-input seleccionar-docente" value="${row.idpersona}">`;
                     }
@@ -240,7 +241,7 @@
             });
         });
 
-        // Manejar la selección y el guardado de ambientes
+        // Manejar la selección y el guardado de docentes
         $('#guardarDocentes').on('click', function () {
             var selectedDocentes = [];
             $('#tabla-docente input[type="checkbox"]:checked').each(function () {
@@ -250,21 +251,21 @@
             var cursoSeleccionado = $('#cursoIdSeleccionado').val();
 
             if (!cursoSeleccionado) {
-                alert("Por favor seleccione un curso antes de asignar ambientes.");
+                alert("Por favor seleccione un curso antes de asignar docentes.");
                 return;
             }
 
             $.ajax({
-                url: '/guardar_ambientes_curso',
+                url: '/guardar_docentes_curso',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
                     curso: cursoSeleccionado,
-                    ambientes: selectedAmbientes
+                    docentes: selectedDocentes
                 }),
                 success: function (response) {
-                    $('#modalAmbientes').modal('hide');
-                    cargarCursosAmbientes();
+                    $('#modalDocentes').modal('hide');
+                    cargarCursosDocentes();
                 },
                 error: function (xhr, status, error) {
                     console.log(error);
@@ -273,19 +274,19 @@
         });
 
         // Manejar la eliminación de un curso y ambiente
-        $('#tabla-cursoxambientes tbody').on('click', '.btnEliminar', function () {
+        $('#tabla-cursoxdocentes tbody').on('click', '.btnEliminar', function () {
             var idcurso = $(this).data('idcurso');
-            var idambiente = $(this).data('idambiente');
+            var idpersona = $(this).data('idpersona');
             var nombreCurso = $(this).data('nombrecurso');
-            var nombreAmbiente = $(this).data('nombreambiente');
+            var nombreDocente = $(this).data('nombredocente');
 
-            if (confirm(`¿Seguro que quieres eliminar la asignación del curso: ${nombreCurso} con el ambiente: ${nombreAmbiente}?`)) {
-                if (idcurso && idambiente) {
+            if (confirm(`¿Seguro que quieres eliminar la asignación del curso: ${nombreCurso} con el docente: ${nombreDocente}?`)) {
+                if (idcurso && idpersona) {
                     $.ajax({
-                        url: '/eliminar_cursoAmbiente',
+                        url: '/eliminar_cursoDocente',
                         type: 'POST',
                         contentType: 'application/json',
-                        data: JSON.stringify({ idcurso: idcurso, idambiente: idambiente }),
+                        data: JSON.stringify({ idcurso: idcurso, idpersona: idpersona }),
                         success: function (response) {
                             console.log(response);
                             $('#mensajeResultado').removeClass().empty();
@@ -293,7 +294,7 @@
                                 $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
                             } else {
                                 $('#mensajeResultado').addClass('alert alert-success').text('Asignación eliminada correctamente');
-                                cargarCursosAmbientes();
+                                cargarCursosDocentes();
                             }
                             $('#mensajeResultado').show();
                         },
@@ -302,7 +303,7 @@
                         }
                     });
                 } else {
-                    console.log('ID de curso o ambiente no definido');
+                    console.log('ID de curso o docente no definido');
                 }
             }
         });

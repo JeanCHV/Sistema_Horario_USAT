@@ -17,6 +17,7 @@ def get_curso_docente():
 
     conexion.close()
     return cursos_docente
+
 ## DATOS CURSOS DOCENTES (NOMBRES)
 def datos_cursos_docentes():
     conexion = obtener_conexion()
@@ -66,17 +67,17 @@ def obtener_docentes():
     docentes = []
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT idpersona, CONCAT(nombres, ' ', apellidos) AS nombre, correo, telefono FROM persona WHERE tipopersona = 'D'")
+            cursor.execute("""SELECT idpersona, CONCAT(nombres, ' ', apellidos) AS nombre, correo, telefono 
+                           FROM persona WHERE tipopersona = 'D'""")
             column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
             rows = cursor.fetchall()
 
             for row in rows:
                 curso_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
                 docentes.append(curso_dict)
-    except Exception as e:
-        return {"error": str(e)}
     finally:
         conexion.close()
+    return docentes
 
 
 def guardar_docentes_curso(curso_id, docentes):
@@ -85,9 +86,9 @@ def guardar_docentes_curso(curso_id, docentes):
         with conexion.cursor() as cursor:
             for docente_id in docentes:
                 cursor.execute("""
-                    INSERT INTO curso_ambiente (idcurso, idpersona) 
+                    INSERT INTO curso_docente(idcurso, idpersona) 
                     VALUES (%s, %s) AS new 
-                    ON DUPLICATE KEY UPDATE idambiente = new.idambiente
+                    ON DUPLICATE KEY UPDATE idpersona = new.idpersona
                 """, (curso_id, docente_id))
         
         conexion.commit()
@@ -99,11 +100,11 @@ def guardar_docentes_curso(curso_id, docentes):
         conexion.close()
     
 
-def eliminar_cursoxambiente(idcurso, idambiente):
+def eliminar_cursoxambiente(idcurso, idpersona):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.callproc('sp_CursosAmbiente_Gestion', [3, idcurso, idambiente])
+            cursor.callproc('sp_CursosDocente_Gestion', [3, idcurso, idpersona])
             conexion.commit()
             return {"mensaje": "Ambiente por Curso eliminado correctamente"}
     except Exception as e:

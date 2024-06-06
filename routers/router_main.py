@@ -613,7 +613,7 @@ def obtener_docentes():
 
 @app.route("/obtener_cursos_docentes", methods=["GET"])
 def get_curso_docente():
-    curso_docentes = controlador_curso_ambiente.datos_cursos_docentes()
+    curso_docentes = controlador_curso_docente.datos_cursos_docentes()
     return jsonify(curso_docentes)
 
 
@@ -623,33 +623,31 @@ def curso_prensencial():
     return jsonify(curso_prensencial)
 
 
-
-""" @app.route("/guardar_ambientes_curso", methods=["POST"])
-def api_guardar_ambientes_curso():
+@app.route("/guardar_docentes_curso", methods=["POST"])
+def api_guardar_docentes_curso():
     data = request.get_json()
     curso_id = data.get('curso')
-    ambientes = data.get('ambientes')
+    docentes = data.get('docentes')
 
-    if not curso_id or not ambientes:
-        return jsonify({'status': 'error', 'message': 'Curso y ambientes son requeridos'}), 400
+    if not curso_id or not docentes:
+        return jsonify({'status': 'error', 'message': 'Curso y docentes son requeridos'}), 400
 
-    result = controlador_curso_ambiente.guardar_ambientes_curso(curso_id, ambientes)
+    result = controlador_curso_docente.guardar_docentes_curso(curso_id, docentes)
     if result['status'] == 'success':
         return jsonify(result), 200
     else:
         return jsonify(result), 500
     
-@app.route("/eliminar_cursoAmbiente", methods=["POST"])
-def eliminar_cursoAmbiente():
+@app.route("/eliminar_cursoDocente", methods=["POST"])
+def eliminar_cursoDocente():
     try:
         data = request.json
         idcurso = data.get('idcurso')
-        idambiente = data.get('idambiente')
-        resultado = controlador_curso_ambiente.eliminar_cursoxambiente(idcurso,idambiente)
+        idpersona = data.get('idpersona')
+        resultado = controlador_curso_ambiente.eliminar_cursoxambiente(idcurso,idpersona)
         return jsonify(resultado)
     except Exception as e:
-        return jsonify({"error": str(e)}) """
-
+        return jsonify({"error": str(e)})
 
 
 #ALGORITHM
