@@ -38,8 +38,8 @@
                         <tr>
                             <th style="width: 15%; text-align: center">Nombre</th>
                             <th style="width: 10%; text-align: center">Vacantes</th>
-                            <th style="width: 30%; text-align: center">Curso</th>
-                            <th style="width: 30%; text-align: center">Semestre</th>
+                            <th style="width: 60%; text-align: center">Curso</th>
+                            <th style="width: 5%; text-align: center">Semestre</th>
                             <th style="width: 30%; text-align: center">Opciones</th>
                         </tr>
                     </thead>
@@ -102,12 +102,12 @@
                 { "data": "nombre", "className": 'dt-body-center' },
                 { "data": "vacantes", "className": 'dt-body-center' },
                 {
-                    "data": "curso",
+                    "data": "curso", 
                     "render": function (data, type, row) {
                         return cursos[data] || data; // Muestra el nombre del curso en lugar del ID
                     }
                 },
-                { "data": "descripcion" }, // Asegúrate de ajustar según la respuesta del servidor
+                { "data": "descripcion","className": 'dt-body-center' }, // Asegúrate de ajustar según la respuesta del servidor
                 {
                     "data": null,
                     "render": function (data, type, row) {
