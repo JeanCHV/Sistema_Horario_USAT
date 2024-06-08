@@ -386,23 +386,25 @@
         element.parentNode.remove();
     }
     
-    function bmos_filtrar_sugerencias(lista_sugerencias){
-        if(lista_sugerencias.length){
-            let lista_sugerencias_2 = lista_sugerencias.map(function(elements){
-                return elements[1];
-            });
-            bmos_barra_busqueda.querySelectorAll('.bmos-etiqueta').forEach(etiqueta =>{
-                var sugerencia = (etiqueta.textContent).slice(0,-1);
+    function bmos_filtrar_sugerencias(lista_sugerencias) {
+        let sugerencias_filtadas = lista_sugerencias.slice();
+        if (sugerencias_filtadas.length > 0) {
+            let nombres_sugerencias = sugerencias_filtadas.map(element => element[1].toLowerCase().trim());
 
-                indice = lista_sugerencias_2.indexOf(sugerencia);
-                if(indice!=-1){
-                    lista_sugerencias.splice(indice,1);
-                }
+            let nombres_seleccionados = [];
+            bmos_barra_busqueda.querySelectorAll('.bmos-etiqueta').forEach(etiqueta => {
+                let nombre = etiqueta.textContent.trim().slice(0, -1).toLowerCase();
+                nombres_seleccionados.push(nombre);
             });
-        }else{
-            lista_sugerencias.push([-1,"No hay resultados"]);
+
+            sugerencias_filtadas = sugerencias_filtadas.filter(sugerencia => {
+                let nombre_sugerencia = sugerencia[1].toLowerCase().trim();
+                return !nombres_seleccionados.includes(nombre_sugerencia);
+            });
+        } else {
+            sugerencias_filtadas.push([-1, "No hay resultados"]);
         }
-        return lista_sugerencias;
+        return sugerencias_filtadas;
     }
 
     bmos_barra_busqueda.addEventListener("click",()=>{
