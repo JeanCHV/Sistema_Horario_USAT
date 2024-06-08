@@ -3,11 +3,12 @@ from datetime import timedelta
 
 def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
     conexion = obtener_conexion()
-    Horarios = None
+    Horarios = []
     with conexion.cursor() as cursor:
         cursor.execute(
         """
-        SELECT idhorario AS codigo, amb.nombre AS ambiente,cur.nombre AS curso,dia AS  dia,horainicio,horafin,h_virtual,h_presencial,
+        SELECT idhorario AS codigo, amb.nombre AS ambiente,cur.nombre AS curso,dia AS dia,CAST(horainicio AS CHAR) AS horainicio,
+        CAST(horafin AS CHAR) AS horafin,h_virtual,h_presencial,
         CASE 
         WHEN cur.tipo_curso = 0 THEN 'Presencial'
         WHEN cur.tipo_curso = 1 THEN 'Virtual'
@@ -23,7 +24,7 @@ def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
                     INNER JOIN escuela esc ON esc.id_escuela = pla.id_escuela
                     WHERE per.tipopersona = 'D' AND 
                     per.idpersona = %s AND sem.descripcion = %s""",(id_docente,semestre))
-        Horarios = cursor.fetchone()
+        Horarios = cursor.fetchall()
     conexion.close()
     return Horarios
 

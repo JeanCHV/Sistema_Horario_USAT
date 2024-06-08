@@ -12,6 +12,7 @@ import random
 from main import app
 import os
 from werkzeug.utils import secure_filename
+from datetime import time
 from bd import obtener_conexion
 
 import controladores.controlador_usuario as controlador_usuario

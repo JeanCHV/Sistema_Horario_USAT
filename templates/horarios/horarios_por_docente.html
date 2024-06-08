@@ -379,6 +379,15 @@
             nuevoSpan.innerHTML = `${element.textContent}<button onclick="bmos_eliminarEtiqueta(this);">X</button>`;       
             bmos_barra_busqueda.appendChild(nuevoSpan);
             bmos_input.focus();
+            let horarios = obtenerHorariosDocente(element.id, document.querySelector("#combo_semestre").value)
+                .then(horarios => {
+                    alert(element.id + document.querySelector("#combo_semestre").value);
+                    console.log(horarios);
+                    crearTablaHorario(element.id,element.textContent,horarios);
+                })
+                .catch(error => {
+                    console.error('Error al obtener horarios:', error);
+                });
         }
     }
 
@@ -446,22 +455,12 @@
             });
     }
 
-    // let horarios = obtenerHorariosDocente(element.id, '2024-I')
-    //             .then(horarios => {
-    //                 mostrarHorarios(horarios);
-    //             })
-    //             .catch(error => {
-    //                 console.error('Error al obtener horarios:', error);
-    //             });
-    //         }
-    let horarios_prueba = [[1,'Aula 101','CALIDAD Y DESARROLLO DE SOFTWARE','LUNES','07:00:00','09:00:00',2,3,'Presencial','A',7,'SIS']
-                            ,[2,'Aula 305','DISEÑO DE SOFTWARE','LUNES','13:00:00','15:00:00',3,3,'Virtual','B',5,'SIS']
-                            ,[3,'Aula 200','INVESTIGACIÓN DE INGENIERÍA','MIERCOLES','18:00:00','20:00:00',4,1,'Virtual','C',7,'SIS']
-                            ,[4,'Laboratorio 119','SISTEMAS DISTRIBUIDOS','MARTES','08:00:00','11:00:00',4,1,'Presencial','A',6,'SIS']
-                            ,[5,'Laboratorio 119','SISTEMAS DISTRIBUIDOS','VIERNES','10:00:00','12:00:00',4,1,'Presencial','A',6,'SIS']];
-
-    function crearTablaHorario(id_docente,horarios_docente){
-        espacio_tabla.innerHTML += `<table id="horario_${id_docente}"><thead><tr><th colspan="8">DOCENTE</th></tr>
+    function crearTablaHorario(id_docente,nombre_docente,horarios_docente){
+        var tabla_existente = document.querySelector(`#horario_${id_docente}`);
+        if(tabla_existente !== null){
+            tabla_existente.remove();
+        }
+        espacio_tabla.innerHTML += `<table id="horario_${id_docente}"><thead><tr><th colspan="8">${nombre_docente}</th></tr>
             <tr><th>Horas</th></tr></thead><tbody></tbody></table>`;
         var thead_tabla = document.querySelector(`#horario_${id_docente} thead tr:nth-child(2)`);
         var tbody_tabla = document.querySelector(`#horario_${id_docente} tbody`);
@@ -501,7 +500,6 @@
             }
         }
     }
-    crearTablaHorario(1,horarios_prueba);
 
     /*FIN SCRIPT MOSTRAR TABLAS*/
 </script>
