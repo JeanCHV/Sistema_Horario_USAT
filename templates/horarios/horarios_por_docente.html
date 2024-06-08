@@ -96,9 +96,15 @@
     #espacio_tabla table{
         border: 1px solid grey;
         border-collapse: collapse;
+        width: 100%;
 
         :is(th,td){
             border: 1px solid grey;
+            width: 500px;
+        }
+
+        & td{
+            max-height: 20px;
         }
 
         & th{
@@ -110,17 +116,18 @@
             text-align: center;
             font-weight: bold;
             color: rgb(0, 0, 226);
-            width: 500px;
         }
 
         & td:nth-child(n+2):not(:empty){
-            background-color: #d3c124;
+            background-color: #efd915;
+            color: black;
             text-align: center;
             padding: 0.8rem 3px 1.5rem 3px;
 
             & span{
                 width: 100%;
                 display: block;
+                margin: 3px 0;
             }
 
             :nth-child(4){
@@ -128,11 +135,18 @@
                 font-weight: bold;
                 padding: 1px 0;
                 margin: 0.8rem 0 1.5rem 0;
-                background-color: #4F21FF;
+            }
+
+            :nth-child(4)[data-tipo="Presencial"] {
+                background-color: #4214fa;
+            }
+
+            :nth-child(4)[data-tipo="Virtual"] {
+                background-color: red;
             }
 
             :nth-child(5){
-                color: #4F21FF;
+                color: #4214fa;
                 font-weight: bold;
             }
         }
@@ -253,7 +267,7 @@
 <script>
     const espacio_tabla = document.querySelector("#espacio_tabla");
     const columna_horas=[];
-    for (let i = 7; i < 22; i++) {
+    for (let i = 7; i < 23; i++) {
             columna_horas.push(`${i.toString().padStart(2, '0')}:00 - ${(i+1).toString().padStart(2, '0')}:00`);
         }
 
