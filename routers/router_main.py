@@ -23,10 +23,14 @@ import controladores.controlador_horario as controlador_horario
 import controladores.docente.controlador_docente as controlador_docente
 import controladores.grupo.controlador_grupo as controlador_grupo
 import controladores.curso_ambiente.controlador_curso_ambiente as controlador_curso_ambiente
+import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
 import controladores.controlador_edificio as controlador_edificio
 
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
+
+#Algorithm 
+import algorithm.algorithm as algoritmo
 
 
 @app.route("/")
@@ -381,6 +385,10 @@ def docentes():
         return render_template('dashboard/docentes.html', personas=persona)
     except Exception as e:
         return str(e), 500
+    
+@app.route("/docentesxcursos")
+def docentesxcursos():
+    return render_template("dashboard/docentexcurso.html")
 
 @app.route("/horarios")
 def horarios():
@@ -395,10 +403,10 @@ def horarios_por_docente():
     semestres = controlador_semestre.obtener_semestres()
     return render_template("horarios/horarios_por_docente.html",semestres=semestres)
 
-@app.route("/get_personas_activas", methods=["GET"])
-def get_personas_activas():
-    personas_activas = controlador_persona.obtener_personas_activas()
-    return jsonify(personas_activas)
+@app.route("/get_personas_docentes_activas", methods=["GET"])
+def get_personas_docentes_activas():
+    personas_docentes_activas = controlador_persona.obtener_personas_docentes_activas()
+    return jsonify(personas_docentes_activas)
 
 @app.route("/get_horarios_docentesId_semestre", methods=["POST"])
 def get_horarios_docentesNombres_semestre():
@@ -597,28 +605,3 @@ def modificar_grupo():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
-    
-
-    ####Horario por Ambiente
-
-
-@app.route("/horarios_por_ambiente")
-def horarios_por_ambiente():
-    semestres = controlador_semestre.obtener_semestres()
-    edificios = controlador_edificio.obtener_edificios()  
-    return render_template("horarios/horarios_por_ambiente.html", semestres=semestres, edificios=edificios)
-
-
-
-@app.route("/ambientes_por_edificio/<idedificio>", methods=["GET"])
-def ambientes_por_edificio_route(idedificio):
-    try:
-        ambientes = controlador_ambientes.ambientes_por_edificio(idedificio)
-        response = jsonify(ambientes)
-        response.status_code = 200 if ambientes else 204  # 204 No Content si la lista está vacía
-    except Exception as e:
-        print(f"Error al obtener los ambientes: {e}")
-        response = jsonify({"error": "No se pudieron obtener los ambientes"})
-        response.status_code = 500
-    return response
-

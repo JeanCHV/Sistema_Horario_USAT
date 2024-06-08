@@ -31,6 +31,7 @@
                                 <option value="2">Edificio Juan Pablo II</option>
                                 <option value="3">Edificio de idiomas</option>
                                 <option value="4">Edificio de aulas decanas</option>
+                                <option value="4">Centro Especializado en Formación Odontológica</option>
                             </select>
                         </div>
                     </div>
@@ -41,21 +42,23 @@
                 <table id="tabla-ambiente" class="table table-striped" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Aforo</th>
-                            <th>Estado</th>
-                            <th>Edificio</th>
-                            <th>Opciones</th>
+                            <th style="width: 20%; text-align: center;">Nombre</th>
+                            <th style="width: 3%; text-align: center;">Aforo</th>
+                            <th style="width: 3%; text-align: center;">Estado</th>
+                            <th style="width: 30%; text-align: center;">Edificio</th>
+                            <th style="width: 3%; text-align: center;">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
                     </tbody>
                 </table>
-            </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <a href="#" id="btn_agregar_ambiente" class="btn btn-success">Agregar Nuevo Ambiente</a>
+                </div>
+            </div>   
         </div>
     </div>
-    <a href="#" id="btn_agregar_ambiente" class="btn btn-success">Agregar Nuevo Ambiente</a>
 
     <!-- Modal para agregar un ambiente -->
     <div class="modal fade" id="modalAgregarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -148,6 +151,7 @@
                                 <option value="2">Edificio Juan Pablo II</option>
                                 <option value="3">Edificio de Idiomas</option>
                                 <option value="4">Edificio de Aulas Decanas</option>
+                                <option value="5">Centro Especializado en Formación Odontológica</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -174,7 +178,8 @@
             1: "EDIFICIO ANTIGUO",
             2: "EDIFICIO JUAN PABLO II",
             3: "EDIFICIO DE IDIOMAS",
-            4: "EDIFICIO DE AULAS DECANAS"
+            4: "EDIFICIO DE AULAS DECANAS",
+            5: "CENTRO ESPECIALIZADO EN FORMACIÓN ODONTOLÓGICA"
         };
 
         var table = $('#tabla-ambiente').DataTable({
@@ -182,26 +187,29 @@
             "info": true,
             "stateSave": true,
             "columns": [
-                { "data": "nombre" },
-                { "data": "aforo" },
+                { "data": "nombre" , "className": 'dt-body-left' },
+                { "data": "aforo" ,"className": 'dt-body-center' },
                 { "data": "estado" },
                 {
-                    "data": "idedificio",
+                    "data": "idedificio", "className":'dt-body-left',
                     "render": function (data, type, row) {
                         return edificios[data] || data;
                     }
                 },
                 {
-                    "data": null,
+                    "data": null, "className": 'dt-body-center',
                     "render": function (data, type, row) {
                         return `
-                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}">Modificar</button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}">Eliminar</button>
-                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.idambiente}">Dar de Baja</button>
+                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}" title="Modificar"><i class="fas fa-cog"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}" title="Eliminar"><i class="fas fa-times"></i></button>
+                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.idambiente}" title="Dar de Baja"><i class="fas fa-arrow-down"></i></button>
                         `;
                     }
                 }
             ],
+            "columnDefs": [
+            { targets: '_all', className: 'dt-center' }
+      ],
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
             }

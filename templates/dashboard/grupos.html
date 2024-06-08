@@ -36,21 +36,23 @@
                 <table id="tabla-grupo" class="table table-striped" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width: 10%;">Nombre</th>
-                            <th style="width: 10%;">Vacantes</th>
-                            <th style="width: 40%;">Curso</th>
-                            <th>Semestre</th>
-                            <th>Opciones</th>
+                            <th style="width: 15%; text-align: center">Nombre</th>
+                            <th style="width: 10%; text-align: center">Vacantes</th>
+                            <th style="width: 60%; text-align: center">Curso</th>
+                            <th style="width: 5%; text-align: center">Semestre</th>
+                            <th style="width: 30%; text-align: center">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Los datos de los grupos se cargarán dinámicamente aquí -->
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-end mt-3">
+                    <a href="#" id="btn_agregar_grupo" data-href="grupo_agregar.html" class="btn btn-success">Agregar Nuevo Grupo</a>
+                </div>
             </div>
         </div>
     </div>
-    <a href="#" id="btn_agregar_grupo" data-href="grupo_agregar.html" class="btn btn-success">Agregar Nuevo Grupo</a>
     <!-- Modal para agregar o modificar un Grupo -->
     <div class="modal fade" id="modalAgregarGrupo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -99,22 +101,22 @@
             "info": true,
             "stateSave": true,
             "columns": [
-                { "data": "nombre" },
-                { "data": "vacantes" },
+                { "data": "nombre", "className": 'dt-body-center' },
+                { "data": "vacantes", "className": 'dt-body-center' },
                 {
-                    "data": "curso",
+                    "data": "curso", 
                     "render": function (data, type, row) {
                         return cursos[data] || data; // Muestra el nombre del curso en lugar del ID
                     }
                 },
-                { "data": "descripcion" }, // Asegúrate de ajustar según la respuesta del servidor
+                { "data": "descripcion","className": 'dt-body-center' }, // Asegúrate de ajustar según la respuesta del servidor
                 {
                     "data": null,
                     "render": function (data, type, row) {
                         return `
                         <div class="btn-group" role="group">
-                            <button class="btn btn-warning btn-sm btnModificar me-2" data-id_grupo="${row.id_grupo}">Modificar</button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id_grupo="${row.id_grupo}">Eliminar</button>
+                            <button class="btn btn-warning btn-sm btnModificar me-2" data-id_grupo="${row.id_grupo}" title="Modificar"><i class="fas fa-cog"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id_grupo="${row.id_grupo}" title="Eliminar"><i class="fas fa-times"></i></button>
                         </div>
 
 
