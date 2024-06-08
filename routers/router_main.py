@@ -605,3 +605,14 @@ def modificar_grupo():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+@app.route("/horarios_por_ambiente")
+def horarios_por_ambiente():
+    semestres = controlador_semestre.obtener_semestres()
+    edificios = controlador_edificio.obtener_edificios()  
+    return render_template("horarios/horarios_por_ambiente.html", semestres=semestres, edificios=edificios)
+
+@app.route("/ambientes_por_edificio/<idedificio>", methods=["GET"])
+def ambientes_por_edificio(idedificio):
+    ambientes = controlador_ambientes.ambientes_por_edificio(idedificio)
+    return jsonify(ambientes)
