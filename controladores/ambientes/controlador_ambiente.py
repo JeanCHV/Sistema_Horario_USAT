@@ -108,17 +108,9 @@ def ambientes_por_edificio(idedificio):
     ambientes = []
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT * FROM ambiente WHERE idedificio = %s AND estado = 'A'", (idedificio,))
-            rows = cursor.fetchall()
-            if rows:
-                columnas = [desc[0] for desc in cursor.description]
-                for row in rows:
-                    ambiente_dict = dict(zip(columnas, row))
-                    ambientes.append(ambiente_dict)
-    except Exception as e:
-        print(f"Error al obtener los ambientes: {e}")  # Log del error para depuración
+            cursor.execute("SELECT idambiente,nombre  FROM ambiente WHERE idedificio = %s AND estado = 'A'", (idedificio,))
+            for ambiente in cursor.fetchall():
+                ambientes.append({'idambiente': ambiente[0], 'nombre': ambiente[1]})
     finally:
         conexion.close()
     return ambientes
-
-
