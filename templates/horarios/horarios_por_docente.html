@@ -438,11 +438,11 @@
     //                 console.error('Error al obtener horarios:', error);
     //             });
     //         }
-    let horarios_prueba = [[1,'Aula 101','CALIDAD Y DESARROLLO DE SOFTWARE','LUNES','07:00:00','09:00:00',2,3,'Presencial','A',7,'Ingeniería de Sistemas y Computación']
-                            ,[2,'Aula 305','DISEÑO DE SOFTWARE','LUNES','13:00:00','15:00:00',3,3,'Virtual','B',5,'Ingeniería de Sistemas y Computación']
-                            ,[3,'Aula 200','INVESTIGACIÓN DE INGENIERÍA','MIERCOLES','18:00:00','20:00:00',4,1,'Virtual','C',7,'Ingeniería de Sistemas y Computación']
-                            ,[4,'Laboratorio 119','SISTEMAS DISTRIBUIDOS','MARTES','08:00:00','11:00:00',4,1,'Presencial','A',6,'Ingeniería de Sistemas de Computación']
-                            ,[5,'Laboratorio 119','SISTEMAS DISTRIBUIDOS','VIERNES','10:00:00','12:00:00',4,1,'Presencial','A',6,'Ingeniería de Sistemas y Computación']];
+    let horarios_prueba = [[1,'Aula 101','CALIDAD Y DESARROLLO DE SOFTWARE','LUNES','07:00:00','09:00:00',2,3,'Presencial','A',7,'SIS']
+                            ,[2,'Aula 305','DISEÑO DE SOFTWARE','LUNES','13:00:00','15:00:00',3,3,'Virtual','B',5,'SIS']
+                            ,[3,'Aula 200','INVESTIGACIÓN DE INGENIERÍA','MIERCOLES','18:00:00','20:00:00',4,1,'Virtual','C',7,'SIS']
+                            ,[4,'Laboratorio 119','SISTEMAS DISTRIBUIDOS','MARTES','08:00:00','11:00:00',4,1,'Presencial','A',6,'SIS']
+                            ,[5,'Laboratorio 119','SISTEMAS DISTRIBUIDOS','VIERNES','10:00:00','12:00:00',4,1,'Presencial','A',6,'SIS']];
 
     function crearTablaHorario(id_docente,horarios_docente){
         espacio_tabla.innerHTML += `<table id="horario_${id_docente}"><thead><tr><th colspan="8">DOCENTE</th></tr>

@@ -11,7 +11,7 @@ def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
         WHEN cur.tipo_curso = 0 THEN 'Presencial'
         WHEN cur.tipo_curso = 1 THEN 'Virtual'
         END AS tipo
-        ,gru.nombre AS grupo,cur.ciclo AS ciclo,esc.nombre AS escuela 
+        ,gru.nombre AS grupo,cur.ciclo AS ciclo,esc.abreviatura AS escuela 
         FROM horario hor 
                     INNER JOIN ambiente amb ON amb.idambiente = hor.idambiente
                     INNER JOIN persona per ON hor.idpersona = per.idpersona
