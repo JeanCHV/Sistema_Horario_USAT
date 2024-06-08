@@ -401,10 +401,10 @@ def horarios_por_docente():
     semestres = controlador_semestre.obtener_semestres()
     return render_template("horarios/horarios_por_docente.html",semestres=semestres)
 
-@app.route("/get_personas_activas", methods=["GET"])
-def get_personas_activas():
-    personas_activas = controlador_persona.obtener_personas_activas()
-    return jsonify(personas_activas)
+@app.route("/get_personas_docentes_activas", methods=["GET"])
+def get_personas_docentes_activas():
+    personas_docentes_activas = controlador_persona.obtener_personas_docentes_activas()
+    return jsonify(personas_docentes_activas)
 
 @app.route("/get_horarios_docentesId_semestre", methods=["POST"])
 def get_horarios_docentesNombres_semestre():
