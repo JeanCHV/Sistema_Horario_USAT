@@ -1,4 +1,5 @@
 from bd import obtener_conexion
+from datetime import timedelta
 
 def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
     conexion = obtener_conexion()
@@ -55,3 +56,42 @@ def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
 #         Horarios = cursor.fetchone()
 #     conexion.close()
 #     return Horarios
+
+
+
+
+
+
+
+######HORARIO POR AMBIENTE
+
+def obtener_horarios_por_ambiente(idambiente):
+    conexion = obtener_conexion()
+    horarios = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT idhorario, dia, horainicio, horafin, h_virtual, h_presencial, idpersona, id_grupo FROM horario
+                WHERE idambiente = %s
+            """, (idambiente,))
+            rows = cursor.fetchall()
+            if rows:
+                columnas = [desc[0] for desc in cursor.description]
+                for row in rows:
+                    horario_dict = dict(zip(columnas, row))
+                    # Convertir los campos de tiempo a cadenas de texto
+                    horario_dict['horainicio'] = str(horario_dict['horainicio'])
+                    horario_dict['horafin'] = str(horario_dict['horafin'])
+                    horarios.append(horario_dict)
+                print("Horarios obtenidos:", horarios)  # Depuración
+                return horarios
+            else:
+                return []
+    except Exception as e:
+        print(f"Error al obtener los horarios: {e}")
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+
+

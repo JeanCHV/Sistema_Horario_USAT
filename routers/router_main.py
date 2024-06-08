@@ -606,6 +606,9 @@ def modificar_grupo():
     except Exception as e:
         return jsonify({"error": str(e)})
     
+
+###HORARIO POR AMBIENTE
+
 @app.route("/horarios_por_ambiente")
 def horarios_por_ambiente():
     semestres = controlador_semestre.obtener_semestres()
@@ -616,3 +619,17 @@ def horarios_por_ambiente():
 def ambientes_por_edificio(idedificio):
     ambientes = controlador_ambientes.ambientes_por_edificio(idedificio)
     return jsonify(ambientes)
+
+
+@app.route("/horarios_por_ambiente/<idambiente>", methods=["GET"])
+def horarios_por_ambiente_route(idambiente):
+    try:
+        horarios =controlador_horario.obtener_horarios_por_ambiente(idambiente)
+        print("Datos enviados:", horarios)  # Depuración
+        response = jsonify(horarios)
+        response.status_code = 200 if horarios else 204
+    except Exception as e:
+        print(f"Error al obtener los horarios: {e}")
+        response = jsonify({"error": "No se pudieron obtener los horarios"})
+        response.status_code = 500
+    return response
