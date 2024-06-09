@@ -1,3 +1,4 @@
+const span_mensaje_error = document.querySelector("span[data-mensaje-error]");
 const espacio_tabla = document.querySelector("#espacio_tabla");
 const columna_horas=[];
 for (let i = 7; i < 23; i++) {
@@ -98,7 +99,18 @@ const bmos_barra_busqueda = document.querySelector("#bmos-barra-busqueda");
 const bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta");
 const bmos_input = bmos_barra_busqueda.querySelector("p");
 const bmos_lista_sugerencias = document.querySelector("#bmos-lista-sugerencias");
+const combo_semestre = document.querySelector("#combo_semestre");
 
+combo_semestre.addEventListener('change',()=>{
+    if(combo_semestre.value === "-1"){
+        bmos_input.contentEditable = false;
+        span_mensaje_error.textContent = "Debe seleccionar un semestre para escribir";
+    }else{
+        bmos_input.contentEditable = true;
+        span_mensaje_error.textContent = "";
+        bmos_input.focus();
+    }
+});
 
 bmos_input.onkeyup = (event) => {
     let datos_entrada = bmos_input.textContent;
@@ -150,19 +162,24 @@ function bmos_insertar_etiqueta(element){
         bmos_barra_busqueda.appendChild(nuevoSpan);
         bmos_input.focus();
         mostrarFoto(element.textContent);
-        let horarios = obtenerHorariosDocente(element.id, document.querySelector("#combo_semestre").value)
-            .then(horarios => {
-                crearTablaHorario(element.id,element.textContent,horarios);
-            })
-            .catch(error => {
-                console.error('Error al obtener horarios:', error);
-            });
+        var combo_semestre = document.querySelector("#combo_semestre");
+        let horarios = obtenerHorariosDocente(element.id, combo_semestre.value)
+        .then(horarios => {
+            crearTablaHorario(element.id,element.textContent,horarios);
+        })
+        .catch(error => {
+            console.error('Error al obtener horarios:', error);
+        });
+        
     }
 }
 
 function bmos_eliminarEtiqueta(element){
     var id_docente = element.getAttribute("data-etiqueta");
-    document.querySelector(`#horario_${id_docente}`).remove();
+    var tabla_horario_docente = document.querySelector(`#horario_${id_docente}`);
+    if(tabla_horario_docente!==null){
+        tabla_horario_docente.remove();
+    }
     element.parentNode.remove();
     mostrarFoto("");
 }
