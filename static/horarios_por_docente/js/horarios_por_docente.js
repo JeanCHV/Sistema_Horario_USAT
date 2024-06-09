@@ -90,6 +90,7 @@ function obtener_docentes() {
 $(document).ready(function(){
     obtener_docentes();
     $('#collapseOne').collapse('show');
+    combo_semestre.focus();
 });
 
 
@@ -263,15 +264,18 @@ function crearTablaHorario(id_docente,nombre_docente,horarios_docente){
     if(tabla_existente !== null){
         tabla_existente.remove();
     }
-    espacio_tabla.innerHTML += `<table id="horario_${id_docente}"><thead><tr><th colspan="8">${nombre_docente}</th></tr>
-        <tr><th>Horas</th></tr></thead><tbody></tbody></table>`;
-    var thead_tabla = document.querySelector(`#horario_${id_docente} thead tr:nth-child(2)`);
+    espacio_tabla.innerHTML += `<table id="horario_${id_docente}"><thead><tr><th data-horario="nombre_docente" colspan="8">${nombre_docente}</th></tr>
+    </thead><tbody></tbody></table>`;
+    var thead_tabla = document.querySelector(`#horario_${id_docente} thead`);
     var tbody_tabla = document.querySelector(`#horario_${id_docente} tbody`);
-    thead_tabla.innerHTML += columna_dias.map(dia => `<th>${dia}</th>`).join('');
 
     if(!horarios_docente.length){
-        tbody_tabla.innerHTML +=`<tr><td colspan="8">No hay horarios registrados</td></tr>`;
+        tbody_tabla.innerHTML +=`<tr><td colspan="8" data-horario="Sin horarios">No hay horarios registrados</td></tr>`;
     }else{
+        var columna_hora_dia = '<tr><th>Horas</th>';
+        columna_hora_dia += columna_dias.map(dia => `<th>${dia}</th>`).join('');
+        columna_hora_dia += '</tr>';
+        thead_tabla.innerHTML += columna_hora_dia;
         for(let i=0; i<columna_horas.length; i++){
             var fila = `<tr><td>${columna_horas[i]}</td>`;
             var h_inicio_tabla = parseInt(columna_horas[i].substring(0,2));
