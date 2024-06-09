@@ -1,3 +1,31 @@
+/*INICIO ESTILOS LOADING*/
+#loading{
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    display: none;
+
+    & div{
+        position: absolute;
+        top: 40%;
+        right: 50%;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 8px solid white;
+        border-top-color: transparent;
+        animation: spin 1.2s linear infinite;
+    }
+}
+
+@keyframes spin{
+    to{
+        transform: rotate(360deg);
+    }
+}
+/*FIN ESTILOS LOADING*/
+
 /*INICIO ESTILOS DEL BUSCADOR*/
 #buscador-multiopcion-sugerencias{
     position: relative;
@@ -73,6 +101,7 @@
     overflow-y: hidden;
     display: none;
     position: absolute;
+    z-index: 999;
 }
 
 #buscador-multiopcion-sugerencias #bmos-lista-sugerencias .bmos-sugerencia {
@@ -86,6 +115,11 @@
 /*FIN ESTILOS DEL BUSCADOR*/
 
 /*INICIO ESTILOS HORARIO*/
+.card-body.show{
+    padding: 20px 0 0 0;
+    position: relative;
+}
+
 #espacio_tabla table{
     border: 1px solid grey;
     border-collapse: collapse;

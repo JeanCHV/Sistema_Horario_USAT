@@ -1,4 +1,5 @@
 const span_mensaje_error = document.querySelector("span[data-mensaje-error]");
+const div_loading = document.querySelector('#loading');
 const espacio_tabla = document.querySelector("#espacio_tabla");
 const columna_horas=[];
 for (let i = 7; i < 23; i++) {
@@ -115,13 +116,16 @@ combo_semestre.addEventListener('change',()=>{
         
         var bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta")
         if(bmos_etiquetas_busqueda.length>0){
+            div_loading.style.display = "block";
             bmos_etiquetas_busqueda.forEach(etiqueta =>{
                 let horarios = obtenerHorariosDocente(etiqueta.id, combo_semestre.value)
                 .then(horarios => {
                     crearTablaHorario(etiqueta.id, etiqueta.textContent.slice(0,-1), horarios);
+                    div_loading.style.display = "none";
                 })
                 .catch(error => {
                     console.error('Error al obtener horarios:', error);
+                    div_loading.style.display = "none";
                 });
             });
         }
@@ -177,21 +181,25 @@ function bmos_insertar_etiqueta(element){
         nuevoSpan.innerHTML = `${element.textContent}<button data-etiqueta="${element.id}" onclick="bmos_eliminarEtiqueta(this);">X</button>`;       
         
         var combo_semestre = document.querySelector("#combo_semestre");
+        div_loading.style.display = "block";
         let horarios = obtenerHorariosDocente(element.id, combo_semestre.value)
-        .then(horarios => {
+        .then(horarios => {            
             crearTablaHorario(element.id,element.textContent,horarios);
             bmos_barra_busqueda.appendChild(nuevoSpan);
             bmos_input.focus();
             mostrarFoto(element.textContent);
+            div_loading.style.display = "none";
         })
         .catch(error => {
             console.error('Error al obtener horarios:', error);
+            div_loading.style.display = "none";
         });
         
     }
 }
 
 function bmos_eliminarEtiqueta(element){
+    div_loading.style.display = "block";
     var id_docente = element.getAttribute("data-etiqueta");
     var tabla_horario_docente = document.querySelector(`#horario_${id_docente}`);
     if(tabla_horario_docente!==null){
@@ -199,6 +207,7 @@ function bmos_eliminarEtiqueta(element){
     }
     element.parentNode.remove();
     mostrarFoto("");
+    div_loading.style.display = "none";
 }
 
 function bmos_filtrar_sugerencias(lista_sugerencias) {
