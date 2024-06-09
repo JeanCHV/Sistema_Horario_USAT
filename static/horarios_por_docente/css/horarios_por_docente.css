@@ -3,12 +3,10 @@
     position: relative;
     margin: 0;
     padding: 0;
-    /*background-color: black;*/
 }
 
 #buscador-multiopcion-sugerencias #bmos-barra-busqueda {
     width: 100%;
-    /* background-color: red; */
     height: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -20,7 +18,7 @@
     overflow-y: hidden;
     cursor: text;
 
-    &:active{
+    &:focus-within{
         border: 1px #9DBEEE solid;
         outline: 4px #CEDEF6 solid;
     }

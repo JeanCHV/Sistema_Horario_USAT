@@ -7,45 +7,82 @@ for (let i = 7; i < 23; i++) {
 const columna_dias=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 let bmos_lista_datos = [];
 
-    function mostrarAlerta(icon, title, text) {
-        Swal.fire({
-            icon: icon,
-            title: title,
-            text: text
-        });
-    }
+function mostrarAlerta(icon, title, text) {
+    Swal.fire({
+        icon: icon,
+        title: title,
+        text: text
+    });
+}
 
-    function mostrarFoto(nombre_foto) {
-        nombre_foto = nombre_foto.toUpperCase().replace(/ /g, "_");
-        nombre_formateado = nombre_foto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-        var img = new Image();
-        img.src = "/static/img/" + nombre_formateado + ".jpg";
-
-        img.onload = function() {
-            document.getElementById("foto_perfil").src = img.src;
-        };
-        
-        img.onerror = function() {
-            document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
-        };
-    }
-
-    function obtener_docentes() {
-        fetch('/get_personas_docentes_activas', {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        })
-        .then(response => response.json())
-        .then(data => {
-            bmos_lista_datos = data;
+function mostrarFoto(nombre_foto) {
+    cantidad_personas = document.querySelectorAll('#bmos-barra-busqueda .bmos-etiqueta');
+    if(cantidad_personas.length===0){
+        document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg"; 
+    }else if(cantidad_personas.length>1){
+        document.getElementById("foto_perfil").src = "/static/img/USUARIOS.jpg"; 
+    }else{
+        if(nombre_foto===""){
+            nombre_foto = document.querySelector('.bmos-etiqueta').textContent.slice(0,-1);
+            nombre_foto = nombre_foto.toUpperCase().replace(/ /g, "_");
+            nombre_formateado = nombre_foto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            var img = new Image();
+            img.src = "/static/img/" + nombre_formateado + ".jpg";
+            img.onload = function(){
+                document.getElementById("foto_perfil").src = img.src;
+            }
+            img.onerror = function(){
+                document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
+            }
+        }else{
+            nombre_foto = nombre_foto.toUpperCase().replace(/ /g, "_");
+            nombre_formateado = nombre_foto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            var img = new Image();
+            img.src = "/static/img/" + nombre_formateado + ".jpg";
+            img.onload = function(){
+                document.getElementById("foto_perfil").src = img.src;
+            }
+            img.onerror = function(){
+                span = document.querySelector('.bmos-etiqueta');
+                fetch(`/obtener_docente_por_id/${span.id}`)
+                .then(response => {
+                    if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if(data.foto === null){
+                        document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
+                    }else{
+                        img.src = "/static/img/" + data.foto;
+                        document.getElementById("foto_perfil").src = img.src;
+                    }         
+                })
+                .catch(error => {
+                    document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
+                });
+            }
             
-        })
-        .catch(error => {
-            mostrarAlerta("error", "No se pudo obtener los horarios", error.responseText);
-        });
-    } 
+        }
+    }
+}
+
+function obtener_docentes() {
+    fetch('/get_personas_docentes_activas', {
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    })
+    .then(response => response.json())
+    .then(data => {
+        bmos_lista_datos = data;
+        
+    })
+    .catch(error => {
+        mostrarAlerta("error", "No se pudo obtener los horarios", error.responseText);
+    });
+} 
 
 $(document).ready(function(){
     obtener_docentes();
@@ -112,6 +149,7 @@ function bmos_insertar_etiqueta(element){
         nuevoSpan.innerHTML = `${element.textContent}<button data-etiqueta="${element.id}" onclick="bmos_eliminarEtiqueta(this);">X</button>`;       
         bmos_barra_busqueda.appendChild(nuevoSpan);
         bmos_input.focus();
+        mostrarFoto(element.textContent);
         let horarios = obtenerHorariosDocente(element.id, document.querySelector("#combo_semestre").value)
             .then(horarios => {
                 crearTablaHorario(element.id,element.textContent,horarios);
@@ -126,12 +164,12 @@ function bmos_eliminarEtiqueta(element){
     var id_docente = element.getAttribute("data-etiqueta");
     document.querySelector(`#horario_${id_docente}`).remove();
     element.parentNode.remove();
+    mostrarFoto("");
 }
 
 function bmos_filtrar_sugerencias(lista_sugerencias) {
     let sugerencias_filtadas = lista_sugerencias.slice();
     if (sugerencias_filtadas.length > 0) {
-        let nombres_sugerencias = sugerencias_filtadas.map(element => element[1].toLowerCase().trim());
 
         let nombres_seleccionados = [];
         bmos_barra_busqueda.querySelectorAll('.bmos-etiqueta').forEach(etiqueta => {
