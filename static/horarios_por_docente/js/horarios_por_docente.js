@@ -17,11 +17,13 @@ function mostrarAlerta(icon, title, text) {
 }
 
 function mostrarFoto(nombre_foto) {
-    cantidad_personas = document.querySelectorAll('#bmos-barra-busqueda .bmos-etiqueta');
-    if(cantidad_personas.length===0){
-        document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg"; 
-    }else if(cantidad_personas.length>1){
-        document.getElementById("foto_perfil").src = "/static/img/USUARIOS.jpg"; 
+    var bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta");
+    if(bmos_etiquetas_busqueda.length===0){
+        document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
+
+    }else if(bmos_etiquetas_busqueda.length>1){
+        document.getElementById("foto_perfil").src = "/static/img/USUARIOS.jpg";
+         
     }else{
         if(nombre_foto===""){
             nombre_foto = document.querySelector('.bmos-etiqueta').textContent.slice(0,-1);
@@ -96,7 +98,7 @@ $(document).ready(function(){
 
 const bmos_contenedor = document.querySelector("#buscador-multiopcion-sugerencias");
 const bmos_barra_busqueda = document.querySelector("#bmos-barra-busqueda");
-const bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta");
+//var bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta");
 const bmos_input = bmos_barra_busqueda.querySelector("p");
 const bmos_lista_sugerencias = document.querySelector("#bmos-lista-sugerencias");
 const combo_semestre = document.querySelector("#combo_semestre");
@@ -109,6 +111,19 @@ combo_semestre.addEventListener('change',()=>{
         bmos_input.contentEditable = true;
         span_mensaje_error.textContent = "";
         bmos_input.focus();
+        
+        var bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta")
+        if(bmos_etiquetas_busqueda.length>0){
+            bmos_etiquetas_busqueda.forEach(etiqueta =>{
+                let horarios = obtenerHorariosDocente(etiqueta.id, combo_semestre.value)
+                .then(horarios => {
+                    crearTablaHorario(etiqueta.id, etiqueta.textContent.slice(0,-1), horarios);
+                })
+                .catch(error => {
+                    console.error('Error al obtener horarios:', error);
+                });
+            });
+        }
     }
 });
 
