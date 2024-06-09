@@ -175,13 +175,14 @@ function bmos_insertar_etiqueta(element){
         nuevoSpan.setAttribute("contenteditable", "false");
         nuevoSpan.setAttribute("id",`${element.id}`);
         nuevoSpan.innerHTML = `${element.textContent}<button data-etiqueta="${element.id}" onclick="bmos_eliminarEtiqueta(this);">X</button>`;       
-        bmos_barra_busqueda.appendChild(nuevoSpan);
-        bmos_input.focus();
-        mostrarFoto(element.textContent);
+        
         var combo_semestre = document.querySelector("#combo_semestre");
         let horarios = obtenerHorariosDocente(element.id, combo_semestre.value)
         .then(horarios => {
             crearTablaHorario(element.id,element.textContent,horarios);
+            bmos_barra_busqueda.appendChild(nuevoSpan);
+            bmos_input.focus();
+            mostrarFoto(element.textContent);
         })
         .catch(error => {
             console.error('Error al obtener horarios:', error);
