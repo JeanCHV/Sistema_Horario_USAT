@@ -1,0 +1,183 @@
+/*INICIO ESTILOS DEL BUSCADOR*/
+#buscador-multiopcion-sugerencias{
+    position: relative;
+    margin: 0;
+    padding: 0;
+    /*background-color: black;*/
+}
+
+#buscador-multiopcion-sugerencias #bmos-barra-busqueda {
+    width: 100%;
+    /* background-color: red; */
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-inline: 10px;
+    border: 1px #DEE2E6 solid;
+    border-radius: 4px;
+    outline: none;
+    overflow-y: hidden;
+    cursor: text;
+
+    &:active{
+        border: 1px #9DBEEE solid;
+        outline: 4px #CEDEF6 solid;
+    }
+}
+
+#buscador-multiopcion-sugerencias #bmos-barra-busqueda p {
+    order: 2;
+    pointer-events: fill;
+    width: 100%;
+    margin: 5px 0;
+    white-space: nowrap;
+    overflow-x: hidden;
+    flex: 1 0 min(100%, 20%);
+
+    &:focus-within {
+        outline: none;
+    }
+}
+
+#buscador-multiopcion-sugerencias #bmos-barra-busqueda .bmos-etiqueta {
+    background-color: rgb(217, 217, 217);
+    padding: 6px;
+    border-radius: 8px;
+    margin: 3px;
+    order: 1;
+    flex: 0 1 auto;
+
+    &:hover {
+        background-color: rgb(185, 185, 185);
+    }
+
+    button {
+        font-size: 20px;
+        border: none;
+        margin-left: 5px;
+        margin-right: 0px;
+        background-color: transparent;
+        color: rgb(62, 62, 62);
+    }
+}
+
+#buscador-multiopcion-sugerencias.active #bmos-lista-sugerencias {
+    display: block;
+}
+
+#buscador-multiopcion-sugerencias #bmos-lista-sugerencias {
+    background-color: rgb(217, 217, 217);
+    list-style: none;
+    margin-top: 8px;
+    border-radius: 10px;
+    padding: 0px;
+    overflow-y: hidden;
+    display: none;
+    position: absolute;
+}
+
+#buscador-multiopcion-sugerencias #bmos-lista-sugerencias .bmos-sugerencia {
+    padding: 11px;
+    padding-left: 10px;
+
+    &:hover {
+        background-color: rgb(185, 185, 185);
+    }
+}
+/*FIN ESTILOS DEL BUSCADOR*/
+
+/*INICIO ESTILOS HORARIO*/
+#espacio_tabla table{
+    border: 1px solid grey;
+    border-collapse: collapse;
+    width: 100%;
+
+    :is(th,td){
+        border: 1px solid grey;
+        width: 500px;
+    }
+
+    & td{
+        max-height: 20px;
+    }
+
+    & th{
+        padding: 0.5rem 0;
+    }
+
+    :is(th, td:first-child){
+        background-color: rgb(228, 228, 228);
+        text-align: center;
+        font-weight: bold;
+        color: rgb(0, 0, 226);
+    }
+
+    & td:nth-child(n+2):not(:empty){
+        background-color: #efd915;
+        color: black;
+        text-align: center;
+        padding: 0.8rem 3px 1.5rem 3px;
+
+        & span{
+            width: 100%;
+            display: block;
+            margin: 3px 0;
+        }
+
+        :nth-child(4){
+            color: white;
+            font-weight: bold;
+            padding: 1px 0;
+            margin: 0.8rem 0 1.5rem 0;
+        }
+
+        :nth-child(4)[data-tipo="Presencial"] {
+            background-color: #4214fa;
+        }
+
+        :nth-child(4)[data-tipo="Virtual"] {
+            background-color: red;
+        }
+
+        :nth-child(5){
+            color: #4214fa;
+            font-weight: bold;
+        }
+    }
+}
+/*FIN ESTILOS HORARIO*/
+.texto-label{
+    color: #70767F;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.texto-input{
+    color: black;
+}
+
+.foot{
+    background-color: black;
+    border-color: black;
+}
+
+.foot:hover{
+    background-color: black;
+    border-color: black;
+}
+
+.foot:active{
+    background-color: black;
+    border-color: black;
+}
+
+@media (max-width: 570px) {
+#foto_perfil {
+    display: none;
+}
+}
+
+#foto_perfil{
+    max-height: 100px;
+}
