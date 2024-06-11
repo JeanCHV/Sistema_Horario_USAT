@@ -669,7 +669,7 @@ def obtener_horarios():
 
 @app.route("/horarios_por_ambiente")
 def horarios_por_ambiente():
-    semestres = controlador_semestre.obtener_semestres()
+    semestres = controlador_semestre.obtener_semestreCombo()
     edificios = controlador_edificio.obtener_edificios()  
     return render_template("horarios/horarios_por_ambiente.html", semestres=semestres, edificios=edificios)
 
@@ -678,11 +678,10 @@ def ambientes_por_edificio(idedificio):
     ambientes = controlador_ambientes.ambientes_por_edificio(idedificio)
     return jsonify(ambientes)
 
-
-@app.route("/horarios_por_ambiente/<idambiente>", methods=["GET"])
-def horarios_por_ambiente_route(idambiente):
+@app.route("/horarios_por_ambiente/<idambiente>/<idsemestre>", methods=["GET"])
+def horarios_por_ambiente_route(idambiente, idsemestre):
     try:
-        horarios =controlador_horario.obtener_horarios_por_ambiente(idambiente)
+        horarios = controlador_horario.obtener_horarios_por_ambiente(idambiente, idsemestre)
         print("Datos enviados:", horarios)  # Depuración
         response = jsonify(horarios)
         response.status_code = 200 if horarios else 204

@@ -63,18 +63,17 @@ def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
 
 
 
-
 ######HORARIO POR AMBIENTE
 
-def obtener_horarios_por_ambiente(idambiente):
+def obtener_horarios_por_ambiente(idambiente,idsemestre):
     conexion = obtener_conexion()
     horarios = []
     try:
         with conexion.cursor() as cursor:
             cursor.execute("""
-                SELECT idhorario, dia, horainicio, horafin, h_virtual, h_presencial, idpersona, id_grupo FROM horario
-                WHERE idambiente = %s
-            """, (idambiente,))
+                SELECT h.idhorario, h.dia, h.horainicio, h.horafin, h.h_virtual, h.h_presencial, h.idpersona, h.id_grupo, g.idsemestre, CONCAT(c.nombre, ' - ', g.nombre) AS 
+                           nombre_curso FROM horario h INNER JOIN grupo g ON g.id_grupo = h.id_grupo INNER JOIN curso c ON c.idcurso = g.idcurso WHERE h.idambiente = %s and g.idsemestre= %s
+            """, (idambiente,idsemestre))
             rows = cursor.fetchall()
             if rows:
                 columnas = [desc[0] for desc in cursor.description]
@@ -93,6 +92,3 @@ def obtener_horarios_por_ambiente(idambiente):
         return {"error": str(e)}
     finally:
         conexion.close()
-
-
-
