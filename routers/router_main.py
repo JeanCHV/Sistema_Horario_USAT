@@ -12,7 +12,6 @@ import random
 from main import app
 import os
 from werkzeug.utils import secure_filename
-from datetime import time
 from bd import obtener_conexion
 
 import controladores.controlador_usuario as controlador_usuario
@@ -25,8 +24,6 @@ import controladores.docente.controlador_docente as controlador_docente
 import controladores.grupo.controlador_grupo as controlador_grupo
 import controladores.curso_ambiente.controlador_curso_ambiente as controlador_curso_ambiente
 import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
-import controladores.controlador_edificio as controlador_edificio
-
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
@@ -404,10 +401,10 @@ def horarios_por_docente():
     semestres = controlador_semestre.obtener_semestres()
     return render_template("horarios/horarios_por_docente.html",semestres=semestres)
 
-@app.route("/get_personas_docentes_activas", methods=["GET"])
-def get_personas_docentes_activas():
-    personas_docentes_activas = controlador_persona.obtener_personas_docentes_activas()
-    return jsonify(personas_docentes_activas)
+@app.route("/get_personas_activas", methods=["GET"])
+def get_personas_activas():
+    personas_activas = controlador_persona.obtener_personas_activas()
+    return jsonify(personas_activas)
 
 @app.route("/get_horarios_docentesId_semestre", methods=["POST"])
 def get_horarios_docentesNombres_semestre():
@@ -606,31 +603,61 @@ def modificar_grupo():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+
     
+    ###################################
+@app.route("/obtener_docentes_activos", methods=["GET"])
+def obtener_docentes():
+    docentes_activos = controlador_curso_docente.obtener_docentes()
+    return jsonify(docentes_activos)
 
-###HORARIO POR AMBIENTE
-
-@app.route("/horarios_por_ambiente")
-def horarios_por_ambiente():
-    semestres = controlador_semestre.obtener_semestres()
-    edificios = controlador_edificio.obtener_edificios()  
-    return render_template("horarios/horarios_por_ambiente.html", semestres=semestres, edificios=edificios)
-
-@app.route("/ambientes_por_edificio/<idedificio>", methods=["GET"])
-def ambientes_por_edificio(idedificio):
-    ambientes = controlador_ambientes.ambientes_por_edificio(idedificio)
-    return jsonify(ambientes)
+@app.route("/obtener_cursos_docentes", methods=["GET"])
+def get_curso_docente():
+    curso_docentes = controlador_curso_ambiente.datos_cursos_docentes()
+    return jsonify(curso_docentes)
 
 
-@app.route("/horarios_por_ambiente/<idambiente>", methods=["GET"])
-def horarios_por_ambiente_route(idambiente):
+@app.route("/obtener_cursos_presenciales", methods=["GET"])
+def curso_prensencial():
+    curso_prensencial = controlador_curso_docente.obtener_cursos_presenciales()
+    return jsonify(curso_prensencial)
+
+
+
+""" @app.route("/guardar_ambientes_curso", methods=["POST"])
+def api_guardar_ambientes_curso():
+    data = request.get_json()
+    curso_id = data.get('curso')
+    ambientes = data.get('ambientes')
+
+    if not curso_id or not ambientes:
+        return jsonify({'status': 'error', 'message': 'Curso y ambientes son requeridos'}), 400
+
+    result = controlador_curso_ambiente.guardar_ambientes_curso(curso_id, ambientes)
+    if result['status'] == 'success':
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 500
+    
+@app.route("/eliminar_cursoAmbiente", methods=["POST"])
+def eliminar_cursoAmbiente():
     try:
-        horarios =controlador_horario.obtener_horarios_por_ambiente(idambiente)
-        print("Datos enviados:", horarios)  # Depuración
-        response = jsonify(horarios)
-        response.status_code = 200 if horarios else 204
+        data = request.json
+        idcurso = data.get('idcurso')
+        idambiente = data.get('idambiente')
+        resultado = controlador_curso_ambiente.eliminar_cursoxambiente(idcurso,idambiente)
+        return jsonify(resultado)
     except Exception as e:
-        print(f"Error al obtener los horarios: {e}")
-        response = jsonify({"error": "No se pudieron obtener los horarios"})
-        response.status_code = 500
-    return response
+        return jsonify({"error": str(e)}) """
+
+
+
+#ALGORITHM
+@app.route('/generarHorario', methods=['GET'])
+def obtener_horarios():
+    try:
+        horario = algoritmo.algoritmo_genetico()
+        return jsonify(horario)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
