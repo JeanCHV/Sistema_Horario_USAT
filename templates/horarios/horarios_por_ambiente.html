@@ -127,6 +127,10 @@
 
 <script>
     $(document).ready(function () {
+        function clearTable() {
+            $('.horario-celda').removeClass('horario-asignado').text('');
+        }
+
         $('#combo_edificio').change(function () {
             var edificioId = $(this).val();
             console.log("ID de Edificio Seleccionado:", edificioId);
@@ -165,12 +169,10 @@
 
             $.ajax({
                 url: '/horarios_por_ambiente/' + encodeURIComponent(ambienteId) + '/' + encodeURIComponent($("#combo_semestre").val()),
-
                 type: 'GET',
                 success: function (data) {
                     console.log("Horarios recibidos:", data);
-                    // Reiniciar las clases de las celdas
-                    $('.horario-celda').removeClass('horario-asignado');
+                    clearTable(); // Clear the table before updating
 
                     // Iterar sobre los horarios y resaltar las celdas correspondientes
                     $.each(data, function (index, horario) {
@@ -212,9 +214,9 @@
                 }
             });
         });
-
     });
 </script>
+
 
 
 
