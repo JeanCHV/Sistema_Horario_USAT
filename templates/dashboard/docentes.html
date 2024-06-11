@@ -20,19 +20,22 @@
             <table id="tabla-docente" class="table table-striped" style="width:100%">
                 <thead>
                     <tr>
-                        <th style="text-align:center">ID</th>
-                        <th style="text-align:center">Nombres</th>
-                        <th style="text-align:center">Correo</th>
-                        <th style="text-align:center">Teléfono</th>
-                        <th style="text-align:center">Opciones</th>
+                        <th style="width: 4%; text-align:center">ID</th>
+                        <th style="width: 30%; text-align:center">Nombres</th>
+                        <th style="width: 15%; text-align:center">Correo</th>
+                        <th style="width: 15%; text-align:center">Teléfono</th>
+                        <th style="width: 5%; text-align:center">Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Los datos de los docentes se cargarán dinámicamente aquí -->
                 </tbody>
             </table>
+            <div class="d-flex justify-content-end mt-3">
+                <a href="#" id="btn_agregar_docente" class="btn btn-primary">Agregar Nuevo Docente</a>
+            </div>        
         </div>
-        <a href="#" id="btn_agregar_docente" class="btn btn-success">Agregar Nuevo Docente</a>
+        
 
         <!-- MODAL AGREGAR DOCENTE -->
         <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-hidden="true">
@@ -156,8 +159,8 @@
                 "data": null,"className": 'dt-body-center',
                 "render": function(data, type, row) {
                     return `
-                        <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}">Modificar</button>
-                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}" data-nombre="${row.nombre}">Eliminar</button>
+                        <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}" title="Modificar"><i class="fas fa-cog"></i></button>
+                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
                     `;
                 }
             }

@@ -19,7 +19,7 @@
         <div class="ms-4 mt-3">
             <!-- Semestre -->
             <div class="d-flex mb-3 mt-3">
-                <label for="" class="mb-2 me-4 mt-2">Semestre:</label>
+                <label for="" class="mb-2 mt-2" style="width: 8%;">Semestre:</label>
                 <select class="form-select" aria-label="Default select example" id="semestre" onchange="validar()">
                     <option selected disabled>-----Seleccione un semestre-----</option>
                     {% for semestre in semestres %}
@@ -28,9 +28,9 @@
                 </select>
             </div>
             <!-- Escuelas -->
-            <div class="d-flex mb-3 mt-3">
-                <label for="" class="mb-2 mt-2">Escuela:</label>
-                <select class="form-select" aria-label="Default select example" id="escuela" style="margin-left:33px" onchange="validar()">
+            <div class="d-flex mb-3 me-4 mt-3">
+                <label for="" class="mb-2 mt-2" style="width: 8%;">Escuela:</label>
+                <select class="form-select" aria-label="Default select example" id="escuela" onchange="validar()">
                     <option selected disabled>-----Seleccione una escuela-----</option>
                     {% for escuela in escuelas %}
                     <option>{{ escuela[0] }}</option>
@@ -38,7 +38,7 @@
                 </select>
             </div>
         </div>
-        <hr class="border-black">
+        <hr class="border-black" style="margin-bottom: 0%;">
         <div class="card-body">
             <div class="table-responsive" id="miTabla">
                 <table class="table table-striped table-bordered tabla-cursos" style="width:100% " id="tabla-cursos">
