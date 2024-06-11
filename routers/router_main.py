@@ -343,7 +343,8 @@ def get_datos_usuario():
 
 @app.route("/index")
 def index():
-    return render_template("dashboard/home.html")   
+    return render_template("dashboard/home.html")
+    
 
 
 @app.route("/ambientes")
@@ -401,10 +402,6 @@ def ReporteAmbiente():
 def horarios_por_docente():
     semestres = controlador_semestre.obtener_semestres()
     return render_template("horarios/horarios_por_docente.html",semestres=semestres)
-
-@app.route("/horarios_por_ambiente")
-def horarios_por_ambiente():
-    return render_template("horarios/horarios_por_ambiente.html")
 
 @app.route("/get_personas_activas", methods=["GET"])
 def get_personas_activas():
