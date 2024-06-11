@@ -25,8 +25,9 @@ def datos_cursos_docentes():
 
     with conexion.cursor() as cursor:
         cursor.execute("""
-    SELECT CD.idcurso, C.nombre as nombreCurso, CD.idpersona, P.nombres as nombreDocente FROM curso_docente CD inner join curso C on C.idcurso = CD.idcurso 
-    inner join persona P on CD.idpersona = P.idpersona;
+    SELECT CD.idcurso, C.nombre AS nombreCurso, CD.idpersona, CONCAT(P.nombres, ' ', P.apellidos) AS 
+    nombreDocente FROM curso_docente CD INNER JOIN curso C ON C.idcurso = CD.idcurso INNER JOIN 
+    persona P ON CD.idpersona = P.idpersona;
     """)
         column_names = [desc[0] for desc in cursor.description]  
         rows = cursor.fetchall()
