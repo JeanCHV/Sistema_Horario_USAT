@@ -156,5 +156,5 @@ def algoritmo_genetico():
     
     return resultado
 
-resultado_json = algoritmo_genetico()
-print(json.dumps(resultado_json, ensure_ascii=False, indent=4))
+# resultado_json = algoritmo_genetico()
+# print(json.dumps(resultado_json, ensure_ascii=False, indent=4))
