@@ -215,5 +215,5 @@ def algoritmo_genetico():
     return resultado
 
 # Ejecutar el algoritmo y obtener la mejor generación en formato JSON
-mejor_horario = algoritmo_genetico()
-print(json.dumps(mejor_horario, indent=4, ensure_ascii=False))
+#mejor_horario = algoritmo_genetico()
+#print(json.dumps(mejor_horario, indent=4, ensure_ascii=False))
