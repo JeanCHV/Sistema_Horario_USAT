@@ -217,10 +217,10 @@
     border-color: black;
 }
 
-@media (max-width: 570px) {
-#foto_perfil {
-    display: none;
-}
+@media (max-width: 576px) {
+    #foto_perfil {
+        display: none;
+    }
 }
 
 #foto_perfil{

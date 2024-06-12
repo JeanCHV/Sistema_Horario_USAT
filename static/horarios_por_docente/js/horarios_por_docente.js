@@ -6,7 +6,7 @@ for (let i = 7; i < 23; i++) {
         columna_horas.push(`${i.toString().padStart(2, '0')}:00 - ${(i+1).toString().padStart(2, '0')}:00`);
     }
 
-const columna_dias=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const columna_dias=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Duolingo'];
 let bmos_lista_datos = [];
 
 function mostrarAlerta(icon, title, text) {
@@ -319,3 +319,19 @@ function crearTablaHorario(id_docente,nombre_docente,horarios_docente){
 }
 
 /*FIN SCRIPT MOSTRAR TABLAS*/
+
+bmos_lista_sugerencias.addEventListener('mouseover',function(event){
+    var sugerenciasXX = document.querySelectorAll('.bmos-sugerencia');
+    for (var i = 0; i < sugerenciasXX.length; i++) {
+        var rect = sugerenciasXX[i].getBoundingClientRect(); // Obtener dimensiones y posición del elemento
+        if (
+            event.clientX >= rect.left &&
+            event.clientX <= rect.right &&
+            event.clientY >= rect.top &&
+            event.clientY <= rect.bottom
+        ){
+            // El cursor está sobre este elemento
+                alert('GAA');   
+        }
+    }
+});
