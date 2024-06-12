@@ -104,8 +104,10 @@ const bmos_barra_busqueda = document.querySelector("#bmos-barra-busqueda");
 const bmos_input = bmos_barra_busqueda.querySelector("p");
 const bmos_lista_sugerencias = document.querySelector("#bmos-lista-sugerencias");
 const combo_semestre = document.querySelector("#combo_semestre");
+let index = -1;
 
 combo_semestre.addEventListener('change',()=>{
+    index = -1;
     if(combo_semestre.value === "-1"){
         bmos_input.contentEditable = false;
         span_mensaje_error.textContent = "Debe seleccionar un semestre para escribir";
@@ -320,18 +322,45 @@ function crearTablaHorario(id_docente,nombre_docente,horarios_docente){
 
 /*FIN SCRIPT MOSTRAR TABLAS*/
 
-bmos_lista_sugerencias.addEventListener('mouseover',function(event){
-    var sugerenciasXX = document.querySelectorAll('.bmos-sugerencia');
-    for (var i = 0; i < sugerenciasXX.length; i++) {
-        var rect = sugerenciasXX[i].getBoundingClientRect(); // Obtener dimensiones y posición del elemento
-        if (
-            event.clientX >= rect.left &&
-            event.clientX <= rect.right &&
-            event.clientY >= rect.top &&
-            event.clientY <= rect.bottom
-        ){
-            // El cursor está sobre este elemento
-                alert('GAA');   
+// bmos_lista_sugerencias.addEventListener('mouseover',function(event){
+//     var sugerenciasXX = document.querySelectorAll('.bmos-sugerencia');
+//     for (var i = 0; i < sugerenciasXX.length; i++) {
+//         var rect = sugerenciasXX[i].getBoundingClientRect(); // Obtener dimensiones y posición del elemento
+//         if (
+//             event.clientX >= rect.left &&
+//             event.clientX <= rect.right &&
+//             event.clientY >= rect.top &&
+//             event.clientY <= rect.bottom
+//         ){
+//             // El cursor está sobre este elemento
+//         }
+//     }
+// });
+
+bmos_input.addEventListener('keyup',(event)=>{
+    if(bmos_input.textContent.length>0){
+        bmos_input.focus();
+        if(document.activeElement===bmos_input && event.key === 'ArrowDown'){
+            let sugerencias = document.querySelectorAll('#bmos-lista-sugerencias .bmos-sugerencia');
+            event.preventDefault();    
+            index = Math.min(index + 1, sugerencias.length-1);
+            sugerencias[index].classList.add('seleccionado');
+            sugerencias[index-1].classList.remove('seleccionado');
+            
+        }else if(document.activeElement===bmos_input && event.key === "ArrowUp"){
+            let sugerencias = document.querySelectorAll('#bmos-lista-sugerencias .bmos-sugerencia');
+            event.preventDefault();   
+            index = Math.max(index -1, 0);
+            sugerencias[index].focus();
+            sugerencias[index].classList.add('seleccionado');
+            sugerencias[index+1].classList.remove('seleccionado');
+        }
+    
+        if(document.activeElement===bmos_input && event.key==='Enter' && index!==-1){
+            let sugerencias = document.querySelectorAll('#bmos-lista-sugerencias .bmos-sugerencia');
+            event.preventDefault();
+            sugerencias[index].click();
+            index=-1;
         }
     }
 });

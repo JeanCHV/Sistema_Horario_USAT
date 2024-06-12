@@ -111,7 +111,15 @@
     &:hover {
         background-color: rgb(185, 185, 185);
     }
+
+    
 }
+
+#buscador-multiopcion-sugerencias #bmos-lista-sugerencias .bmos-sugerencia.seleccionado{
+    background-color: grey;
+    color: white;
+}
+
 /*FIN ESTILOS DEL BUSCADOR*/
 
 /*INICIO ESTILOS HORARIO*/
