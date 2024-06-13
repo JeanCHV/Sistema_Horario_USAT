@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="table-responsive">
-                <table id="tabla-cursoxdocentes" class="table table-striped table-bordered tabla-cursoxdocentes" style="width:100%">
+                <table id="tabla-cursoxdocentes" class="table table-striped tabla-cursoxdocentes" style="width:100%">
                     <thead>
                         <tr>
                             <th style ="width:40%; text-align: center">Curso</th>
@@ -126,7 +126,7 @@
                     "data": null, "className": 'dt-body-center',
                     "render": function (data, type, row) {
                         return `
-                    <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idcurso}" title="Modificar"><i class="fas fa-cog"></i></button>
+                    <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idcurso}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
                     <button class="btn btn-danger btn-sm btnEliminar" data-iddocente="${row.idpersona}" data-idcurso="${row.idcurso}" data-nombreAmbiente="${row.nombreAmbiente}" data-nombreCurso="${row.nombreCurso}" title="Eliminar"><i class="fas fa-times"></i></button>
                 `;
                     }
