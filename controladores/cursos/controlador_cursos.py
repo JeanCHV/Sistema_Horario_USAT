@@ -56,7 +56,7 @@ def obtener_escuelas():
     return escuelas
 
 ## OBTENER LOS CURSOS CON SUS DATOS EN LA TABLA GENERAL
-def obtener_cursos():
+def obtener_datos_cursos():
     conexion = obtener_conexion()
     cursos = []
 
@@ -183,7 +183,7 @@ def get_cursos():
     cursos = []
 
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT curso.idcurso,curso.nombre,curso.horas_teoria,curso.horas_practica,curso.tipo_curso FROM curso WHERE curso.estado='A'")
+        cursor.execute("SELECT curso.idcurso,curso.nombre,curso.horas_teoria,curso.horas_practica,curso.tipo_curso,curso.ciclo FROM curso WHERE curso.estado='A'")
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
 
@@ -206,5 +206,15 @@ def obtener_cursosFiltro():
     finally:
         conexion.close()
     return cursos
+
+#FILTRAR LOS CICLOS
+def obtener_ciclos():
+    conexion = obtener_conexion()
+    ciclos = []
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT DISTINCT ciclo FROM curso")
+        ciclos = cursor.fetchall()
+    conexion.close()
+    return ciclos
 
 
