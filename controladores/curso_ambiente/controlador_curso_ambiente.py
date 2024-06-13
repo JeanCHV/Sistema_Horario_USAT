@@ -48,7 +48,7 @@ def obtener_cursos_presenciales():
                 SELECT C.idcurso, C.nombre, C.cod_curso as codigoCurso, C.ciclo, PE.nombre AS nombre_plan_estudio
                 FROM curso C
                 INNER JOIN plan_estudio PE ON PE.id_plan_estudio = C.id_plan_estudio
-                WHERE C.estado = 'A' AND C.tipo_curso = 0
+                WHERE C.estado = 'A' 
             """)
             column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()

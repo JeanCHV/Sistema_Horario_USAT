@@ -183,7 +183,6 @@ def algoritmo_genetico():
             continue  # Ignorar esta entrada si el profesor no es válido
         
         nombre_curso = CURSOS[idcurso]["nombre"]
-        tipo_curso = CURSOS[idcurso]["tipo_curso"]
         nombre_docente = "No definido" if profesor == "No definido" else DOCENTES[profesor]["nombres"]
         apellidos_docente = "" if profesor == "No definido" else DOCENTES[profesor]["apellidos"]
         
@@ -207,7 +206,6 @@ def algoritmo_genetico():
                 "dia": dia,
                 "hora_inicio": hora_inicio,
                 "hora_fin": hora_fin,
-                "tipo_curso": tipo_curso
             })
     
     return resultado
