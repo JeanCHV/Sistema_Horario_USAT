@@ -14,19 +14,18 @@
             Asignar Ambientes por Cursos
         </div>
         <div class="card-body">
-            <div class="ms-4 mt-3">
+            <div class="ms-4 mt-3 row">
                 <!-- Cursos -->
-                <div class="d-flex mb-3 mt-3">
-                    <label for="curso" class="mb-2 me-4 mt-2" style="width: 7%;">Curso:</label>
-                    <label id="cursoSeleccionado" class="mb-2 me-4 mt-2" style="width: 10%;">Elija un curso</label>
+                <div class="d-flex mb-3 mt-3 col" style="width: 100%;">
+                    <label for="curso" class="mb-2 me-4 mt-2" style="width: auto;">Elija un Curso:</label>
+                    <label id="cursoSeleccionado" class="mb-2 me-4 mt-2" style="width: auto;">--------------------------------------</label>
                     <input type="hidden" id="cursoIdSeleccionado">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCursos" style="width: 8%;">Añadir</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCursos" style="width: auto;">Añadir</button>
                 </div>
                 <!-- Ambientes -->
-                <div class="d-flex mb-3 mt-3">
-                    <label for="ambiente" class="mb-2 me-4 mt-2" style="width: 7%;">Ambiente:</label>
-                    <label id="ambienteSeleccionado" class="mb-2 me-4 mt-2" style="width: 10%;">Elija un ambiente</label>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAmbientes" style="width: 8%;">Asignar</button>
+                <div class="d-flex mb-3 mt-3 col" style="width: auto">
+                    <label for="ambiente" class="mb-2 me-4 mt-2" style="width: auto;">Elija un Ambiente:</label>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAmbientes" style="width: auto;">Asignar</button>
                 </div>
             </div>
             <div class="table-responsive">
