@@ -14,18 +14,17 @@
             Asignar Docentes por Cursos
         </div>
         <div class="card-body">
-            <div class="ms-4 mt-3">
+            <div class="ms-4 mt-3 row">
                 <!-- Cursos -->
-                <div class="d-flex flex-wrap mb-3 mt-3">
-                    <label for="curso" class="mb-2 me-4 mt-2">Curso:</label>
-                    <label id="cursoSeleccionado" class="mb-2 me-4 mt-2">Elija un curso</label>
+                <div class="d-flex flex-wrap mb-3 mt-3 col" style="width: 100%;">
+                    <label for="curso" class="mb-2 me-4 mt-2" style="width: auto;">Elija un Curso:</label>
+                    <label id="cursoSeleccionado" class="mb-2 me-4 mt-2" style="width: auto;">--------------------------------------</label>
                     <input type="hidden" id="cursoIdSeleccionado">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCursos">Añadir</button>
                 </div>
                 <!-- Docentes -->
-                <div class="d-flex flex-wrap mb-3 mt-3">
-                    <label for="docente" class="mb-2 me-4 mt-2">Docente:</label>
-                    <label id="docenteSeleccionado" class="mb-2 me-4 mt-2">Elija un docente</label>
+                <div class="d-flex flex-wrap mb-3 mt-3 col" style="width: auto;">
+                    <label for="docente" class="mb-2 me-4 mt-2" style="width: auto;">Elija un Docente:</label>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDocentes">Asignar</button>
                 </div>
             </div>
