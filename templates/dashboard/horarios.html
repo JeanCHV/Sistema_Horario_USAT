@@ -16,105 +16,107 @@
     </div>
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
-            <div class="container">
-                <!-- Div superior -->
-                <div class="row align-items-end my-3">
-                    <div class="col-md-10 order-md-1 order-sm-2">
-                        <!-- Primer input y label -->
-                        <div class="form-group row mb-3 d-flex justify-content-center">
-                            <label for="combo_semestre" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Semestre académico:</label>
-                            <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                                <select class="form-select" aria-label="Default select example" id="combo_semestre">
-                                    <option selected>SEMESTRE ACTUAL</option>
-                                    {% for semestre in semestres %}
-                                        <option value="{{semestre[1]}}">{{semestre[1]}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <!-- Segundo input y label -->
-                        <div class="form-group row mb-3 d-flex justify-content-center">
-                            <label for="combo_ambiente" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Ambiente:</label>
-                            <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                                <select class="form-select" aria-label="Default select example" id="combo_ambiente">
-                                    <option selected>[-- SELECCIONE --]</option>
-                                    {% for ambiente in ambientes %}
-                                        <option value="{{ambiente[1]}}">{{ambiente[1]}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <!-- Tercer input y label -->
-                        <div class="form-group row mb-3 d-flex justify-content-center">
-                            <label for="combo_grupo" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Grupo:</label>
-                            <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                                <select class="form-select" aria-label="Default select example" id="combo_grupo">
-                                    <option selected>[-- SELECCIONE --]</option>
-                                    {% for grupo in grupos %}
-                                        <option value="{{grupo[1]}}">{{grupo[1]}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <!-- Cuarto input y label -->
-                        <div class="form-group row d-flex justify-content-center" style="align-items: center;">
-                            <label for="combo_docente" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
-                            <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                                <select class="form-select" aria-label="Default select example" id="combo_docente">
-                                    <option selected>DOCENTE FALTANTE</option>
-                                    {% for docente in docentes %}
-                                        <option value="{{docente[1]}}">{{docente[1]}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+
+            <div class="row align-items-end my-3">
+                <div class="col-md-10 order-md-1 order-sm-2">
+                    <!-- Primer input y label -->
+                    <div class="form-group row mb-3 d-flex justify-content-center">
+                        <label for="combo_semestre" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Semestre académico:</label>
+                        <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                            <select class="form-select" aria-label="Default select example" id="combo_semestre">
+                                <option selected>SEMESTRE ACTUAL</option>
+                                {% for semestre in semestres %}
+                                    <option value="{{semestre[1]}}">{{semestre[1]}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
-                    <div class="col-md-2 order-md-2 order-sm-1 d-flex justify-content-center align-items-center">
-                        <!-- Foto -->
-                        <img src="/static/img/USUARIO.jpg" class="img-fluid" alt="Foto" id="foto_perfil">
+                    <!-- Segundo input y label -->
+                    <div class="form-group row mb-3 d-flex justify-content-center">
+                        <label for="combo_ambiente" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Ambiente:</label>
+                        <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                            <select class="form-select" aria-label="Default select example" id="combo_ambiente">
+                                <option selected>[-- SELECCIONE --]</option>
+                                {% for ambiente in ambientes %}
+                                    <option value="{{ambiente[1]}}">{{ambiente[1]}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <!-- Tabla inferior -->
-                <div class="card-body show">
-                    <div class="row mt-3">
-                        <div class="col-md-12" id="espacio_tabla">
-                            <table class="table table-bordered text-center" id="tabla_inicial">
-                                <thead class="border border-white bg-red-usat -horario-usat">
-                                  <tr>
-                                    <th scope="col" class="border border-white text-light">Hora</th>
-                                    <th scope="col" class="border border-white text-light">Lunes</th>
-                                    <th scope="col" class="border border-white text-light">Martes</th>
-                                    <th scope="col" class="border border-white text-light">Miércoles</th>
-                                    <th scope="col" class="border border-white text-light">Jueves</th>
-                                    <th scope="col" class="border border-white text-light">Viernes</th>
-                                    <th scope="col" class="border border-white text-light">Sábado</th>
-                                    <th scope="col" class="border border-white text-light">Domingo</th>
-                                  </tr>
-                                </thead>
-                                <tbody style="background-color: #EEEEEE;">
-                                    <tr>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                        <th scope="row">X</th>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <!-- Tercer input y label -->
+                    <div class="form-group row mb-3 d-flex justify-content-center">
+                        <label for="combo_grupo" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Grupo:</label>
+                        <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                            <select class="form-select" aria-label="Default select example" id="combo_grupo">
+                                <option selected>[-- SELECCIONE --]</option>
+                                {% for grupo in grupos %}
+                                    <option value="{{grupo[1]}}">{{grupo[1]}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Cuarto input y label -->
+                    <div class="form-group row d-flex justify-content-center" style="align-items: center;">
+                        <label for="combo_docente" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
+                        <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                            <select class="form-select" aria-label="Default select example" id="combo_docente">
+                                <option selected>DOCENTE FALTANTE</option>
+                                {% for docente in docentes %}
+                                    <option value="{{docente[1]}}">{{docente[1]}}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                 </div>
-                <!-- Espacio y botón verde -->
-                <!-- Espacio y botón verde -->
-                <div class="d-flex justify-content-center mt-3"> <!-- Cambio en el margen superior -->
-                    <button class="btn btn-success btn-lg" onclick="generarHorario()">Generar Horario</button> <!-- Cambio en el tamaño -->
+                <div class="col-md-2 order-md-2 order-sm-1 d-flex justify-content-center align-items-center">
+                    <!-- Foto -->
+                    <img src="/static/img/USUARIO.jpg" class="img-fluid" alt="Foto" id="foto_perfil">
                 </div>
+            </div>
+            <!-- Tabla inferior -->
+            <div class="card-body show">
+                <div class="row mt-3">
+                    <div class="col-md-12" id="espacio_tabla">
+                        <table class="table table-bordered text-center" id="tabla_horarios">
+                            <thead class="border border-white bg-red-usat -horario-usat">
+                              <tr>
+                                <th scope="col" class="border border-white text-light">Horas</th>
+                                <th scope="col" class="border border-white text-light">Lunes</th>
+                                <th scope="col" class="border border-white text-light">Martes</th>
+                                <th scope="col" class="border border-white text-light">Miércoles</th>
+                                <th scope="col" class="border border-white text-light">Jueves</th>
+                                <th scope="col" class="border border-white text-light">Viernes</th>
+                                <th scope="col" class="border border-white text-light">Sábado</th>
+                                <th scope="col" class="border border-white text-light">Domingo</th>
+                              </tr>
+                            </thead>
+                            <tbody style="background-color: #EEEEEE;">
+                                <!-- Las filas se llenarán dinámicamente con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Espacio y botón verde -->
+            <div class="d-flex justify-content-center mt-3"> <!-- Cambio en el margen superior -->
+                <button class="btn btn-success btn-lg" onclick="generarHorario()">Generar Horario</button> <!-- Cambio en el tamaño -->
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal de Carga -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3">Generando Horario, por favor espere...</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
@@ -130,9 +132,74 @@
             },
         });
     });
+
+    function generarHorario(){
+        // Mostrar el modal de carga
+        $('#loadingModal').modal('show');
+        $.ajax({
+            url: '/generarHorario',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function(response) {
+                console.log(response);
+                // Ocultar el modal de carga
+                $('#loadingModal').modal('hide');
+                // Procesar y mostrar los datos en la tabla
+                llenarTablaHorarios(response);
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+                // Ocultar el modal de carga
+                $('#loadingModal').modal('hide');
+            }
+        });
+    }
+
+    function llenarTablaHorarios(data) {
+        const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+        let horario = {};
+
+        // Inicializar el objeto horario con horas vacías para cada día
+        for (let dia of dias) {
+            horario[dia] = {};
+        }
+
+        // Procesar los datos recibidos
+        for (let curso in data) {
+            for (let grupo in data[curso]) {
+                for (let clase of data[curso][grupo]) {
+                    let dia = clase.dia;
+                    let hora_inicio = clase.hora_inicio;
+                    let hora_fin = clase.hora_fin;
+                    let aula = clase.aula;
+                    let docente = clase.docente;
+                    let detalle = `${curso}<br>${aula}<br>${docente}<br>${hora_inicio} - ${hora_fin}`;
+
+                    if (!horario[dia][hora_inicio]) {
+                        horario[dia][hora_inicio] = [];
+                    }
+                    horario[dia][hora_inicio].push(detalle);
+                }
+            }
+        }
+
+        // Crear las filas de la tabla
+        let tabla = $('#tabla_horarios tbody');
+        tabla.empty();
+
+        for (let i = 7; i <= 22; i++) {
+            let hora = `${i}:00 - ${i+1}:00`;
+            let fila = `<tr><th scope="row">${hora}</th>`;
+
+            for (let dia of dias) {
+                let clases = horario[dia][`${i}:00`] ? horario[dia][`${i}:00`].join('<br><br>') : '';
+                fila += `<td class="bg-warning text-center" style="vertical-align:middle;">${clases}</td>`;
+            }
+
+            fila += `</tr>`;
+            tabla.append(fila);
+        }
+    }
 </script>
 
 {% endblock %}
-
-
-

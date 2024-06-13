@@ -1,5 +1,5 @@
 from bd import obtener_conexion
-from datetime import timedelta
+from datetime import *
 
 def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
     conexion = obtener_conexion()
@@ -92,3 +92,34 @@ def obtener_horarios_por_ambiente(idambiente,idsemestre):
         return {"error": str(e)}
     finally:
         conexion.close()
+
+
+def insertar_horarios_ia(horarios):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            # Preparar la consulta de inserción
+            consulta_insert = """
+            INSERT INTO horario (idambiente, dia, horainicio, horafin, h_virtual, h_presencial, idpersona, id_grupo)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            # Insertar cada horario en la base de datos
+            for horario in horarios:
+                cursor.execute(consulta_insert, (
+                    horario['idambiente'],
+                    horario['dia'],
+                    datetime.strptime(horario['horainicio'], '%H:%M:%S').time(),
+                    datetime.strptime(horario['horafin'], '%H:%M:%S').time(),
+                    horario['h_virtual'],
+                    horario['h_presencial'],
+                    horario['idpersona'],
+                    horario['id_grupo']
+                ))
+        conexion.commit()  # Confirmar los cambios
+        return {"message": "Horarios insertados correctamente"}
+    except Exception as e:
+        conexion.rollback()  # Revertir los cambios en caso de error
+        print(f"Error al insertar los horarios: {e}")
+        return {"error": str(e)}
+    finally:
+        conexion.close()    
