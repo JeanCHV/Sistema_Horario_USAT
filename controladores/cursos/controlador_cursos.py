@@ -64,7 +64,7 @@ def obtener_cursos():
         cursor.execute("""
     SELECT c.nombre, c.cod_curso, c.creditos, c.horas_teoria, c.horas_practica, 
            CASE c.tipo_curso when 0 then 'PRESENCIAL' when 1 then 'VIRTUAL'
-           END as tipo_curso, c.ciclo, p.nombre AS nombre_plan_estudio
+           END as tipo_curso, c.ciclo, p.nombre AS nombre_plan_estudio, c.estado
     FROM curso c
     JOIN plan_estudio p ON c.id_plan_estudio = p.id_plan_estudio;
     """)
