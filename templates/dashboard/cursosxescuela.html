@@ -17,35 +17,35 @@
             Grupo por curso
         </div>
         <div class="ms-4 mt-3">
-            <!-- Semestre y Escuela -->
-            <div class="d-flex justify-content-center align-items-center mb-3 mt-3">
-                <div class="me-3 mb-3" style="width: 25%;">
-                    <label for="semestre" class="mb-2">Semestre:</label>
-                    <select class="form-select" aria-label="Default select example" id="semestre" onchange="validar()">
-                        <option selected disabled>-----Seleccione un semestre-----</option>
-                        {% for semestre in semestres %}
-                        <option>{{ semestre[0] }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="me-3 mb-3" style="width: 75%;">
-                    <label for="escuela" class="mb-2">Escuela:</label>
-                    <select class="form-select" aria-label="Default select example" id="escuela" onchange="validar()">
-                        <option selected disabled>-----Seleccione una escuela-----</option>
-                        {% for escuela in escuelas %}
-                        <option>{{ escuela[0] }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <!-- Semestre -->
+            <div class="d-flex mb-3 mt-3">
+                <label for="" class="mb-2 mt-2" style="width: 8%;">Semestre:</label>
+                <select class="form-select" aria-label="Default select example" id="semestre" onchange="validar()">
+                    <option selected disabled>-----Seleccione un semestre-----</option>
+                    {% for semestre in semestres %}
+                    <option>{{ semestre[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Escuelas -->
+            <div class="d-flex mb-3 me-4 mt-3">
+                <label for="" class="mb-2 mt-2" style="width: 8%;">Escuela:</label>
+                <select class="form-select" aria-label="Default select example" id="escuela" onchange="validar()">
+                    <option selected disabled>-----Seleccione una escuela-----</option>
+                    {% for escuela in escuelas %}
+                    <option>{{ escuela[0] }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
+        <hr class="border-black" style="margin-bottom: 0%;">
         <div class="card-body">
             <div class="table-responsive" id="miTabla">
-                <table class="table table-striped tabla-cursos" style="width:100% " id="tabla-cursos">
+                <table class="table table-striped table-bordered tabla-cursos" style="width:100% " id="tabla-cursos">
                     <thead>
                         <tr>
                             <th style="text-align:center">Código</th>
-                            <th style="text-align: center">Nombre del curso</th>
+                            <th style="width: 30%; text-align: center">Nombre del curso</th>
                             <th style="text-align:center">Ciclo</th>
                             <th style="text-align:center">N° Grupos</th>
                             <th><input type="checkbox" class="form-check-input me-3 border border-dark" onclick="seleccionar_toda()" id="est"></th>
@@ -62,13 +62,54 @@
         </div>
     </div>
 </div>
+<style>
+    #semestre,#escuela{
+        width: min(100%,320px);
+        margin: 0 1rem 0 0;
+    }
+
+    #card_cursos ::-webkit-scrollbar{
+        display: none;
+    }
+
+    #contenedor-botones{
+        position: sticky;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+
+        & button{
+            width: min(100%,11rem);
+            height: 3rem;
+            margin-inline: 5px;
+        }
+    }
+
+    #miTabla{
+        overflow-x: scroll;
+
+    }
+
+    @media (max-width:763px){
+        #contenedor-botones{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            & button{
+                width: 100%;
+            }
+        }
+    }
+</style>
 <!-- Script para inicializar el DataTable y realizar la búsqueda -->
 <script>
     $(document).ready(function() {
         var table = $('#tabla-cursos').DataTable({
             "paging": true,
             "info": true,
-            "scroller": true,
+            "scroller":true,
+            "scrollY": '200px',
             "columns": [
                 { "data": "idcurso", "className": "text-center id" }, 
                 { "data": "nombre"},
@@ -94,6 +135,7 @@
             }
         });
     
+        // Eliminamos el atributo "step" de los campos numéricos al inicializar la tabla
         table.on('draw.dt', function() {
             $('.numeric-input').removeAttr('step');
         });
@@ -120,22 +162,27 @@
             }
         };
 
-        window.dato_selecciondo = function() {
-            var input_check = document.querySelectorAll('input[type="checkbox"]');
+        window. dato_selecciondo = function() {
+            var input_check = document.querySelectorAll('td input[type="checkbox"]');
+            var semestre = document.getElementById('semestre').value;
+            var escuela = document.getElementById('escuela').value;
             for (var i = 0; i < input_check.length; i++) {
-                if (input_check[i].checked && i > 0) {
-                    var padre = input_check[i].parentElement.parentElement;
-                    var valor = padre.querySelectorAll('.grupos')[0];
-                    var ids = padre.querySelectorAll(".id")[0];
-                    var id_v = ids.textContent;
-                    console.log("id: " + id_v);
-                    console.log("valor: " + valor.value);     
-                    console.log("------");               
+                if (input_check[i].checked ) {
+                    padre = input_check[i].parentElement.parentElement;
+                    valor = padre.querySelectorAll('.grupos');
+                    ids = padre.querySelectorAll(".id");
+                    valor = valor[0]
+                    ids = ids[0]
+                    id_v = ids.textContent;
+                    console.log("id_curso: " + id_v);
+                    console.log("grupos: " + valor.value);               
                 }
             }
-        };
+            console.log(semestre,escuela)
+            
+        }
     
-        window.validar = function() {
+    window.validar = function() {
             var semestre = document.getElementById('semestre');
             var escuela = document.getElementById('escuela');
             if (semestre.selectedIndex > 0 && escuela.selectedIndex > 0) {
@@ -143,5 +190,8 @@
             }
         };
     });
+
+
+
 </script>
 {% endblock %}
