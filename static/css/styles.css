@@ -79,4 +79,44 @@
         width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
         margin: 0 auto;
     }
-}
+    #semestre {
+        width: 25%;
+    }
+    
+    #escuela {
+        width: 75%;
+    }
+    
+    #card_cursos ::-webkit-scrollbar {
+        display: none;
+    }
+    
+    #contenedor-botones {
+        position: sticky;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+    }
+    
+    #contenedor-botones button {
+        width: min(100%, 11rem);
+        height: 3rem;
+        margin-inline: 5px;
+    }
+    
+    #miTabla {
+        overflow-x: scroll;
+    }
+    
+    @media (max-width: 763px) {
+        #contenedor-botones {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        #contenedor-botones button {
+            width: 100%;
+        }
+    }
+}    
