@@ -49,21 +49,18 @@ def generar_poblacion(tamano):
             else:
                 profesor = "No definido"
             
-            dia = random.choice(DIAS)
-            hora_inicio = random.choice(HORAS)
-            duracion = random.choice(DURACIONES_CLASES)
-            hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
-            # Ajustar hora_fin si excede el límite de 23:00
-            if int(hora_fin.split(':')[0]) > 23:
-                continue
-            
-            if any(ca['idcurso'] == idcurso for ca in CURSO_AMBIENTE):
-                ambiente = next(ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso)
-            else:
-                ambiente = random.randint(0, NUM_AULAS - 1)
-            
-            grupo_curso = next((g for g in GRUPOS_HORARIO if g['idcurso'] == idcurso), None)
-            if grupo_curso:
+            grupo_cursos = [g for g in GRUPOS_HORARIO if g['idcurso'] == idcurso]
+            for grupo_curso in grupo_cursos:
+                dia = random.choice(DIAS)
+                hora_inicio = random.choice(HORAS)
+                duracion = random.choice(DURACIONES_CLASES)
+                hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
+                # Ajustar hora_fin si excede el límite de 23:00
+                if int(hora_fin.split(':')[0]) > 23:
+                    continue
+                
+                ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
+                
                 horario.append((profesor, idcurso, grupo_curso['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
         poblacion.append(horario)
     return poblacion
@@ -74,7 +71,7 @@ def calcular_fitness(horario):
     for dia in DIAS:
         horas_ocupadas = {profesor: [] for profesor in range(NUM_PROFESORES)}
         for (profesor, idcurso, idgrupo, aula, d, hora_inicio, hora_fin) in horario:
-            if d == dia and profesor != "No definido":
+            if d == dia and profesor != "No definido" and aula != "No definido":
                 if profesor not in horas_ocupadas:
                     continue  # Evitar KeyError si el profesor no está en horas_ocupadas
                 horas_profesor = horas_ocupadas[profesor]
@@ -144,10 +141,7 @@ def mutacion(individuo):
         # Ajustar hora_fin si excede el límite de 23:00
         if int(hora_fin.split(':')[0]) > 23:
             hora_fin = "23:00"
-        if any(ca['idcurso'] == idcurso for ca in CURSO_AMBIENTE):
-            ambiente = next(ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso)
-        else:
-            ambiente = random.randint(0, NUM_AULAS - 1)
+        ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
         individuo[i] = (profesor, idcurso, individuo[i][2], ambiente, dia, hora_inicio, hora_fin)
 
 def algoritmo_genetico():
@@ -180,10 +174,11 @@ def algoritmo_genetico():
         apellidos_docente = "" if profesor == "No definido" else DOCENTES[profesor]["apellidos"]
         
         # Validar índice de aula
-        if aula not in AMBIENTES:
-            continue  # Ignorar esta entrada si el aula no es válida
+        if aula == "No definido" or aula not in AMBIENTES:
+            nombre_aula = "No definido"
+        else:
+            nombre_aula = AMBIENTES[aula]["nombre"]
         
-        nombre_aula = AMBIENTES[aula]["nombre"]
         grupo = next((g for g in GRUPOS_HORARIO if g["id_grupo"] == idgrupo), None)
         
         if grupo:
