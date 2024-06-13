@@ -55,14 +55,14 @@ def obtener_escuelas():
     conexion.close()
     return escuelas
 
-
+## OBTENER LOS CURSOS CON SUS DATOS EN LA TABLA GENERAL
 def obtener_cursos():
     conexion = obtener_conexion()
     cursos = []
 
     with conexion.cursor() as cursor:
         cursor.execute("""
-    SELECT c.nombre, c.cod_curso, c.creditos, c.horas_teoria, c.horas_practica, 
+    SELECT c.idcurso,c.nombre, c.cod_curso, c.creditos, c.horas_teoria, c.horas_practica, 
            CASE c.tipo_curso when 0 then 'PRESENCIAL' when 1 then 'VIRTUAL'
            END as tipo_curso, c.ciclo, p.nombre AS nombre_plan_estudio, c.estado
     FROM curso c
@@ -78,13 +78,38 @@ def obtener_cursos():
     conexion.close()
     return cursos
 
+def ver_detalle_cursos(idcurso):
+   conexion = obtener_conexion()
+   curso = None
+   try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT c.idcurso, c.nombre, c.cod_curso, c.creditos, c.horas_teoria, c.horas_practica, c.ciclo,
+                       CASE c.tipo_curso WHEN 0 THEN 'PRESENCIAL' WHEN 1 THEN 'VIRTUAL' END as tipo_curso,
+                       CASE c.estado WHEN 'A' THEN 'ACTIVO' WHEN 'I' THEN 'INACTIVO' END as estado,
+                       p.nombre AS nombre_plan_estudio
+                FROM curso c
+                JOIN plan_estudio p ON c.id_plan_estudio = p.id_plan_estudio
+                WHERE c.idcurso = %s
+            """, (idcurso,))
+            curso = cursor.fetchone()
+            if curso:
+                columnas = [desc[0] for desc in cursor.description]  
+                curso_dict = dict(zip(columnas, curso)) 
+                return curso_dict
+            else:
+                return {"error": "Curso no encontrado"}
+   except Exception as e:
+        return {"error": str(e)}
+   finally:
+        conexion.close()
+
 ##MEJORAR
-def agregar_curso(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo):
+def agregar_curso(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("INSERT INTO curso (nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo) VALUES (%s, %s, %s, %s, %s, %s)",
-                           (nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo))
+            cursor.callproc('sp_Curso_Gestion', [1, None, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio])
             conexion.commit()
             return {"mensaje": "Curso agregado correctamente"}
     except Exception as e:
@@ -109,7 +134,7 @@ def eliminar_curso(idcurso):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.callproc('sp_Curso_Gestion', [4, idcurso, None, None, None, None, None, None])
+            cursor.callproc('sp_Curso_Gestion', [4, idcurso, None, None, None, None, None, None, None, None, None])
             conexion.commit()
             return {"mensaje": "Curso eliminado correctamente"}
     except Exception as e:
@@ -117,12 +142,11 @@ def eliminar_curso(idcurso):
     finally:
         conexion.close()
 
-##MEJORAR
-def modificar_curso(idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo):
+def modificar_curso(idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.callproc('sp_Curso_Gestion', [2, idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo])
+            cursor.callproc('sp_Curso_Gestion', [2, idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio])
             conexion.commit()
             return {"mensaje": "Curso modificado correctamente"}
     except Exception as e:

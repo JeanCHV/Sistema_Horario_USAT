@@ -226,7 +226,7 @@ def eliminar_curso():
 
 ##MODIFICAR CURSO
 @app.route("/modificar_curso", methods=["POST"])
-def modificar_curso_endpoint():
+def modificar_curso():
     try:
         data = request.json
         idcurso = data.get('idcurso')
@@ -247,7 +247,7 @@ def modificar_curso_endpoint():
 ##OBTENER CURSO POR ID
 
 @app.route('/obtener_curso/<int:idcurso>', methods=['GET'])
-def get_curso(idcurso):
+def obtener_curso_id(idcurso):
     resultado = controlador_cursos.obtener_curso_por_id(idcurso)
     return jsonify(resultado)
 
