@@ -51,17 +51,26 @@ def generar_poblacion(tamano):
             
             grupo_cursos = [g for g in GRUPOS_HORARIO if g['idcurso'] == idcurso]
             for grupo_curso in grupo_cursos:
-                dia = random.choice(DIAS)
-                hora_inicio = random.choice(HORAS)
-                duracion = random.choice(DURACIONES_CLASES)
-                hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
-                # Ajustar hora_fin si excede el límite de 23:00
-                if int(hora_fin.split(':')[0]) > 23:
-                    continue
-                
-                ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
-                
-                horario.append((profesor, idcurso, grupo_curso['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
+                # Generar horas totales (teoría + práctica)
+                horas_totales = curso['horas_teoria'] + curso['horas_practica']
+                while horas_totales > 0:
+                    dia = random.choice(DIAS)
+                    if horas_totales == 3:
+                        duracion = 3
+                    else:
+                        duracion = min(horas_totales, random.choice(DURACIONES_CLASES))
+                    
+                    hora_inicio = random.choice(HORAS)
+                    hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
+                    # Ajustar hora_fin si excede el límite de 23:00
+                    if int(hora_fin.split(':')[0]) > 23:
+                        continue
+
+                    ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
+                    
+                    horario.append((profesor, idcurso, grupo_curso['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
+                    horas_totales -= duracion
+
         poblacion.append(horario)
     return poblacion
 
@@ -81,9 +90,9 @@ def calcular_fitness(horario):
                 else:
                     horas_ocupadas[profesor].extend(rango_horas(hora_inicio, hora_fin))
                     
-                horas_teoria = CURSOS[idcurso].get("horas_teoria", 0)
+                horas_curso = CURSOS[idcurso]['horas_teoria'] + CURSOS[idcurso]['horas_practica']
                 
-                if horas_teoria != 0 and len(horas_ocupadas[profesor]) != horas_teoria:
+                if horas_curso != 0 and len(horas_ocupadas[profesor]) != horas_curso:
                     fitness -= 1
 
                 if any(ca['idcurso'] == idcurso for ca in CURSO_AMBIENTE):
@@ -135,8 +144,12 @@ def mutacion(individuo):
             profesor = "No definido"
         
         dia = random.choice(DIAS)
+        duracion = CURSOS[idcurso]['horas_teoria'] + CURSOS[idcurso]['horas_practica']
+        if duracion == 3:
+            duracion = 3
+        else:
+            duracion = random.choice(DURACIONES_CLASES)
         hora_inicio = random.choice(HORAS)
-        duracion = random.choice(DURACIONES_CLASES)
         hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
         # Ajustar hora_fin si excede el límite de 23:00
         if int(hora_fin.split(':')[0]) > 23:
@@ -192,7 +205,7 @@ def algoritmo_genetico():
                 "aula": nombre_aula,
                 "dia": dia,
                 "hora_inicio": hora_inicio,
-                "hora_fin": hora_fin if CURSOS[idcurso].get("horas_teoria", None) is not None else "No definidas"
+                "hora_fin": hora_fin
             })
     
     return resultado
