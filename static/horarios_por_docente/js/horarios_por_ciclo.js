@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         columna_horas.push(`${i.toString().padStart(2, '0')}:00 - ${(i+1).toString().padStart(2, '0')}:00`);
     }
 
-    const columna_dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Duolingo'];
+    const columna_dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
     combo_semestre.addEventListener('change', fetchHorarios);
     combo_ciclo.addEventListener('change', fetchHorarios);
