@@ -19,6 +19,14 @@ def obtener_docentes():
         conexion.close()
 
     return docentes
+def obtener_docentess():
+    conexion = obtener_conexion()
+    docentes = []
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT idpersona, CONCAT(nombres, ' ', apellidos) AS nombre, correo, telefono FROM persona WHERE tipopersona = 'D'")
+        docentes = cursor.fetchall()
+    conexion.close()
+    return docentes
 
 def agregar_docente(nombres, apellidos,n_documento, telefono, correo, cantHoras, tiempo_ref, estado):
     conexion = obtener_conexion()

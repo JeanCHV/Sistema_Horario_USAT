@@ -15,6 +15,30 @@ def obtener_ambientes():
 
     conexion.close()
     return ambientes
+def obtener_ambiente_semestre(nombre):
+    conexion = obtener_conexion()
+    ambientes = []
+
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT ambiente.nombre FROM semestre_academico INNER JOIN grupo ON semestre_academico.idsemestre=grupo.idsemestre INNER JOIN curso ON grupo.idcurso=curso.idcurso INNER JOIN ambiente INNER JOIN curso_ambiente ON ambiente.idambiente=curso_ambiente.idambiente AND curso.idcurso=curso_ambiente.idcurso WHERE semestre_academico.descripcion= %s", (nombre,))
+        column_names = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+
+        for row in rows:
+            ambiente_dict = dict(zip(column_names, row))
+            ambientes.append(ambiente_dict)
+
+    conexion.close()
+    return ambientes
+
+def obtener_ambientess():
+    conexion = obtener_conexion()
+    ambientes = []
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT * FROM ambiente")
+        ambientes = cursor.fetchall()
+    conexion.close()
+    return ambientes
 
 def agregar_ambiente(nombre, aforo, estado, idedificio, idambientetipo):
     conexion = obtener_conexion()

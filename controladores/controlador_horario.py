@@ -98,12 +98,10 @@ def insertar_horarios_ia(horarios):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            # Preparar la consulta de inserción
             consulta_insert = """
             INSERT INTO horario (idambiente, dia, horainicio, horafin, h_virtual, h_presencial, idpersona, id_grupo)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            # Insertar cada horario en la base de datos
             for horario in horarios:
                 cursor.execute(consulta_insert, (
                     horario['idambiente'],
@@ -115,11 +113,11 @@ def insertar_horarios_ia(horarios):
                     horario['idpersona'],
                     horario['id_grupo']
                 ))
-        conexion.commit()  # Confirmar los cambios
+        conexion.commit()
         return {"message": "Horarios insertados correctamente"}
     except Exception as e:
-        conexion.rollback()  # Revertir los cambios en caso de error
+        conexion.rollback()
         print(f"Error al insertar los horarios: {e}")
         return {"error": str(e)}
     finally:
-        conexion.close()    
+        conexion.close()

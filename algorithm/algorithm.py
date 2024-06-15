@@ -114,7 +114,7 @@ def obtener_horas_disponibles(profesor, dia):
 def todas_horas_disponibles(profesor, dia, hora_inicio, hora_fin):
     horas_disponibles = obtener_horas_disponibles(profesor, dia)
     for hora in rango_horas(hora_inicio, hora_fin):
-        if hora not in horas_disponibles:
+        if hora :
             return False
     return True
 
@@ -183,11 +183,12 @@ def algoritmo_genetico():
             continue  # Ignorar esta entrada si el profesor no es válido
         
         nombre_curso = CURSOS[idcurso]["nombre"]
+        tipo_curso = CURSOS[idcurso]["tipo_curso"]
         nombre_docente = "No definido" if profesor == "No definido" else DOCENTES[profesor]["nombres"]
         apellidos_docente = "" if profesor == "No definido" else DOCENTES[profesor]["apellidos"]
         
         # Validar índice de aula
-        if aula == "No definido" or aula not in AMBIENTES:
+        if aula == "No definido": #o aula no está en AMBIENTES:
             nombre_aula = "No definido"
         else:
             nombre_aula = AMBIENTES[aula]["nombre"]
@@ -205,7 +206,8 @@ def algoritmo_genetico():
                 "aula": nombre_aula,
                 "dia": dia,
                 "hora_inicio": hora_inicio,
-                "hora_fin": hora_fin
+                "hora_fin": hora_fin,
+                "tipo_curso": "Virtual" if tipo_curso == 0 else "Presencial"
             })
     
     return resultado

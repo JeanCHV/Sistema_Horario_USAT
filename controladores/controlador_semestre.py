@@ -20,3 +20,22 @@ def obtener_semestreCombo():
     finally:
         conexion.close()
     return semestre
+
+
+def get_semestre():
+    conexion = obtener_conexion()
+    semestre = []
+
+    with conexion.cursor() as cursor:
+        cursor.execute("""
+SELECT idsemestre,descripcion,estado FROM semestre_academico
+    """)
+        column_names = [desc[0] for desc in cursor.description]  
+        rows = cursor.fetchall()
+
+        for row in rows:
+            curso_dict = dict(zip(column_names, row)) 
+            semestre.append(curso_dict)
+
+    conexion.close()
+    return semestre

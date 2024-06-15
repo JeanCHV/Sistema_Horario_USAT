@@ -176,6 +176,27 @@ def get_cursos():
     cursos = controlador_cursos.obtener_cursos()
     return jsonify(cursos)
 
+@app.route("/get_semestre", methods=["GET"])
+def get_semestre():
+    semestre = controlador_semestre.get_semestre()
+    return jsonify(semestre)
+
+@app.route("/get_ambiente_semestre", methods=["POST"])
+def get_ambiente_semestre():
+    nombre = request.json.get('nombre')
+    semestre = controlador_ambientes.obtener_ambiente_semestre(nombre)
+    return jsonify(semestre)
+
+@app.route("/insertar_horarios_ia", methods=["POST"])
+def insertar_horarios_ia():
+    data = request.get_json()
+    horarios = data.get('horarios')
+    if not horarios:
+        return jsonify({"error": "No se proporcionaron horarios"}), 400
+    
+    resultado = controlador_horario.insertar_horarios_ia(horarios)
+    return jsonify(resultado)
+
 ##VER DETALLES CURSOS
 
 @app.route("/ver_cursos/<int:idcurso>", methods=["GET"])
@@ -393,7 +414,10 @@ def docentesxcursos():
 
 @app.route("/horarios")
 def horarios():
-    return render_template("dashboard/horarios.html")
+    persona = controlador_docente.obtener_docentes()
+    ambientes = controlador_ambientes.obtener_ambientess()
+    semestres = controlador_semestre.obtener_semestres()
+    return render_template("dashboard/horarios.html", docente=persona,ambiente=ambientes,semestre=semestres)
 
 @app.route("/ReporteAmbiente")
 def ReporteAmbiente():
