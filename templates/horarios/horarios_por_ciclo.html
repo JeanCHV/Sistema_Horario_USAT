@@ -1,0 +1,65 @@
+{% extends "dashboard/index.html" %}
+{% block titulo %} Horarios por Ciclo {% endblock %}
+{% block contenido %}
+<script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
+
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" href="Home"><a>Inicio</a></li>
+        <li class="breadcrumb-item active" data-href="#"><a>Horarios por Ciclo</a></li>
+    </ol>
+</nav>
+
+<div class="card mx-2" id="card_horarios">
+    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Horarios asignados por ciclo académico
+    </div>
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+        <div class="card-body">
+            <div class="container">
+                <!-- Div superior -->
+                <div class="row align-items-end my-3">
+                    <div class="col-md-10 order-md-1 order-sm-2">
+                        <!-- Primer input y label -->
+                        <div class="form-group row mb-3 d-flex justify-content-center">
+                            <label for="combo_semestre" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Semestre académico:</label>
+                            <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                                <select class="form-select" aria-label="Default select example" id="combo_semestre">
+                                    <option value="-1" selected>[-- SELECCIONE --]</option>
+                                    {% for semestre in semestres %}
+                                        <option value="{{ semestre[1] }}">{{ semestre[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Segundo input y label -->
+                        <div class="form-group row mb-3 d-flex justify-content-center">
+                            <label for="combo_ciclo" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Ciclo académico:</label>
+                            <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
+                                <select class="form-select" aria-label="Default select example" id="combo_ciclo">
+                                    <option value="-1" selected>[-- SELECCIONE --]</option>
+                                    {% for ciclo in ciclos %}
+                                        <option value="{{ ciclo[0] }}">{{ ciclo[0] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tabla inferior -->
+                <div class="card-body show">
+                    <div id="loading" style="display: none;"><div></div></div>
+                    <div class="row mt-3">
+                        <div class="col-md-12" id="espacio_tabla"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div href="#" id="" data-href="" class="btn btn-success foot" style="height: 20px;"></div>
+</div>
+
+<link rel="stylesheet" href="/static/horarios_por_docente/css/horarios_por_docente.css">
+<script src="/static/horarios_por_docente/js/horarios_por_ciclo.js"></script>
+
+{% endblock %}

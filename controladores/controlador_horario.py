@@ -93,6 +93,44 @@ def obtener_horarios_por_ambiente(idambiente,idsemestre):
     finally:
         conexion.close()
 
+def obtener_horarios_por_ciclo(ciclo,semestre):
+    conexion = obtener_conexion()
+    horarios = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT H.idhorario AS codigo, 
+                H.dia AS dia, CAST(H.horainicio AS CHAR) AS horainicio, CAST(H.horafin AS CHAR) AS horafin, H.h_virtual, H.h_presencial,
+                CASE WHEN C.tipo_curso = 0 then 'Presencial' WHEN C.tipo_curso = 1 then 'Virtual' END AS tipoCurso,
+                A.nombre as ambiente, CONCAT (P.nombres, ' ', P.apellidos) AS docente, G.nombre AS grupo, C.nombre AS curso, E.abreviatura AS escuela
+                FROM horario H INNER JOIN ambiente A ON A.idambiente= H.idambiente
+                INNER JOIN persona P ON P.idpersona = H.idpersona
+                INNER JOIN grupo G ON G.id_grupo = H.id_grupo
+                INNER JOIN curso C ON C.idcurso = G.idcurso
+                INNER JOIN semestre_academico SA ON G.idsemestre = SA.idsemestre
+                INNER JOIN plan_estudio PE ON PE.id_plan_estudio = C.id_plan_estudio
+                INNER JOIN escuela E ON E.id_escuela = PE.id_escuela
+                WHERE P.tipopersona = 'D' AND 
+                C.ciclo = %s AND SA.descripcion = %s
+            """, (ciclo,semestre))
+            rows = cursor.fetchall()
+            if rows:
+                columnas = [desc[0] for desc in cursor.description]
+                for row in rows:
+                    horario_dict = dict(zip(columnas, row))
+                    # Convertir los campos de tiempo a cadenas de texto
+                    horario_dict['horainicio'] = str(horario_dict['horainicio'])
+                    horario_dict['horafin'] = str(horario_dict['horafin'])
+                    horarios.append(horario_dict)
+                return horarios
+            else:
+                return []
+    except Exception as e:
+        print(f"Error al obtener los horarios: {e}")
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
 
 def insertar_horarios_ia(horarios):
     conexion = obtener_conexion()

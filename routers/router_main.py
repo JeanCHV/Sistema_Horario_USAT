@@ -756,3 +756,19 @@ def horarios_por_ambiente_route(idambiente, idsemestre):
         print(f"Error al obtener los horarios: {e}")
         response = jsonify({"error": "No se pudieron obtener los horarios"})
         response.status_code = 500
+    return response
+
+
+###HORARIOS POR CICLO 
+@app.route("/obtener_horarios_semestre_ciclo", methods=["POST"])
+def obtener_horarios_semestre_ciclo():
+    ciclo = request.json.get('ciclo')
+    semestre = request.json.get('semestre')
+    horarios = controlador_horario.obtener_horarios_por_ciclo(ciclo,semestre)
+    return jsonify(horarios) 
+
+@app.route("/horarios_por_ciclo")
+def horarios_por_ciclo():
+    semestres = controlador_semestre.obtener_semestres()
+    ciclos = controlador_cursos.obtener_ciclos()
+    return render_template("horarios/horarios_por_ciclo.html",semestres=semestres,ciclos=ciclos)
