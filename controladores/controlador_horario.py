@@ -102,7 +102,7 @@ def obtener_horarios_por_ciclo(ciclo,semestre):
                 SELECT H.idhorario AS codigo, 
                 H.dia AS dia, CAST(H.horainicio AS CHAR) AS horainicio, CAST(H.horafin AS CHAR) AS horafin, H.h_virtual, H.h_presencial,
                 CASE WHEN C.tipo_curso = 0 then 'Presencial' WHEN C.tipo_curso = 1 then 'Virtual' END AS tipoCurso,
-                A.nombre as ambiente, CONCAT (P.nombres, ' ', P.apellidos) AS docente, G.nombre AS grupo, C.nombre AS curso, E.abreviatura AS escuela
+                A.nombre as ambiente, UPPER(CONCAT (P.nombres, ' ', P.apellidos))  AS docente, G.nombre AS grupo, C.nombre AS curso, E.abreviatura AS escuela
                 FROM horario H INNER JOIN ambiente A ON A.idambiente= H.idambiente
                 INNER JOIN persona P ON P.idpersona = H.idpersona
                 INNER JOIN grupo G ON G.id_grupo = H.id_grupo

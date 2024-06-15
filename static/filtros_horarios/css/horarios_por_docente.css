@@ -197,8 +197,16 @@
             color: #4214fa;
             font-weight: bold;
         }
+
+        
+    }
+    .docente-nombre{
+            font-weight: bold;
+            color: white;
+            background-color: #4214fa;
     }
 }
+
 /*FIN ESTILOS HORARIO*/
 .texto-label{
     color: #70767F;

@@ -93,13 +93,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (horario) {
                     celda.innerHTML = `
-                        <span>${horario.curso} <br> ${horario.docente} </span>
-                        <span> Grupo ${horario.grupo}</span>
-                        <span>${horario.escuela}</span>
-                        <span data-tipo="${horario.tipoCurso}">${horario.tipoCurso}</span>
-                        <span>${horario.ambiente}</span>
-                        
-                    `;
+                    <span>${horario.curso} <br> <span class="docente-nombre">${horario.docente}</span> </span>
+                    <span> Grupo ${horario.grupo}</span>
+                    <span>${horario.escuela}</span>
+                    <span data-tipo="${horario.tipoCurso}">${horario.tipoCurso}</span>
+                    <span>${horario.ambiente}</span>
+                `;
                 }
 
                 fila.appendChild(celda);
