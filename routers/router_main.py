@@ -170,10 +170,10 @@ def get_ambiente(idambiente):
     return jsonify(resultado)
 
 
-##GESTIONAR CURSOS
-@app.route("/get_cursos", methods=["GET"])
-def get_cursos():
-    cursos = controlador_cursos.obtener_cursos()
+##DATOS CURSOS
+@app.route("/datos_cursos", methods=["GET"])
+def datos_cursos():
+    cursos = controlador_cursos.obtener_datos_cursos()
     return jsonify(cursos)
 
 @app.route("/get_semestre", methods=["GET"])
@@ -247,7 +247,7 @@ def eliminar_curso():
 
 ##MODIFICAR CURSO
 @app.route("/modificar_curso", methods=["POST"])
-def modificar_curso_endpoint():
+def modificar_curso():
     try:
         data = request.json
         idcurso = data.get('idcurso')
@@ -268,7 +268,7 @@ def modificar_curso_endpoint():
 ##OBTENER CURSO POR ID
 
 @app.route('/obtener_curso/<int:idcurso>', methods=['GET'])
-def get_curso(idcurso):
+def obtener_curso_id(idcurso):
     resultado = controlador_cursos.obtener_curso_por_id(idcurso)
     return jsonify(resultado)
 
@@ -738,6 +738,8 @@ def horarios_por_ambiente():
     edificios = controlador_edificio.obtener_edificios()  
     return render_template("horarios/horarios_por_ambiente.html", semestres=semestres, edificios=edificios)
 
+
+
 @app.route("/ambientes_por_edificio/<idedificio>", methods=["GET"])
 def ambientes_por_edificio(idedificio):
     ambientes = controlador_ambientes.ambientes_por_edificio(idedificio)
@@ -754,4 +756,3 @@ def horarios_por_ambiente_route(idambiente, idsemestre):
         print(f"Error al obtener los horarios: {e}")
         response = jsonify({"error": "No se pudieron obtener los horarios"})
         response.status_code = 500
-    return response
