@@ -152,6 +152,16 @@
                     console.error('Error al obtener los datos de la tablas:', error);
                 });
         };
+
+        function grupos(escuela, semestre, id_curso,n_grupos) {
+            fetch(`/mantenimiento_grupos/${escuela}/${semestre}/${id_curso}/${n_grupos}`)
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => {
+                    console.error('Error al obtener los datos de la tabla:', error);
+                });
+        }
+        
     
         window.seleccionar_toda = function() {
             var checkbox = document.getElementById('est');
@@ -174,12 +184,10 @@
                     valor = valor[0]
                     ids = ids[0]
                     id_v = ids.textContent;
-                    console.log("id_curso: " + id_v);
-                    console.log("grupos: " + valor.value);               
+                    console.log(valor.value)
+                    grupos(escuela,semestre,id_v,valor.value)     
                 }
-            }
-            console.log(semestre,escuela)
-            
+            }            
         }
     
     window.validar = function() {

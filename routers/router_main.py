@@ -401,15 +401,27 @@ def ambientesxCursos():
 @app.route("/rellenar_tabla/<string:escuela>/<string:semestre>")
 def rellenar_tabla(escuela,semestre):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
-    cursos = controlador_grupo.obtener_cursoxescuela(escuela,semestre)
+    cursos = controlador_grupo.obtener_cursoxescuela(escuela,id_semestre)
     return jsonify(cursos)
 
 
-@app.route("/mantenimiento_grupos/<string:escuela>/<string:semestre>/<int:id_curso>")
-def total_grupos(escuela,semestre, id_curso):
+@app.route("/mantenimiento_grupos/<string:escuela>/<string:semestre>/<string:id_curso>/<string:n_grupos>")
+def mantenimiento_grupos(escuela,semestre, id_curso,n_grupos):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
     total_group = controlador_grupo.obtener_total_grupo(escuela,id_semestre,id_curso)
-    print(total_group)
+    n_grupos = int(n_grupos)
+    if total_group < n_grupos:
+        iteracion = n_grupos-total_group
+        vacante = 15
+        for numeros in range(iteracion):
+            #n_grupos + iteracion 
+            grupo = chr(65+total_group+numeros) #estos son los grupos que se insetaran
+            #controlador_grupo.agregar_grupo(nombre,vacante,id_curso,id_semestre)
+            print(grupo)
+    elif total_group == n_grupos :
+        print("Iguales")
+    else:
+        print("eliminamos")
     return jsonify(total_group)
 
 

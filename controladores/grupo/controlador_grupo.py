@@ -26,6 +26,7 @@ def obtener_cursoxescuela(escuela, semestre):
         ''', (escuela,semestre))
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
+
         for row in rows:
             curso_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
             cursos.append(curso_dict)
@@ -69,7 +70,7 @@ def obtener_total_grupo(escuela,id_semestre, id_curso):
                 AND g.idsemestre = %s
                 AND c.idcurso = %s
             ''', (escuela,id_semestre,id_curso))
-            result = cursor.fetchone
+            result = cursor.fetchone()
             if result:
                 total_grupo = result[0]
     except Exception as e:
