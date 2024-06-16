@@ -400,10 +400,18 @@ def ambientesxCursos():
 
 @app.route("/rellenar_tabla/<string:escuela>/<string:semestre>")
 def rellenar_tabla(escuela,semestre):
-    semestre = controlador_grupo.obtener_idgrupo(semestre)
+    id_semestre = controlador_grupo.obtener_idsemestre(semestre)
     cursos = controlador_grupo.obtener_cursoxescuela(escuela,semestre)
-    print(cursos,semestre)
     return jsonify(cursos)
+
+
+@app.route("/mantenimiento_grupos/<string:escuela>/<string:semestre>/<int:id_curso>")
+def rellenar_tabla(escuela,semestre, id_curso):
+    id_semestre = controlador_grupo.obtener_idsemestre(semestre)
+    total_group = controlador_grupo.obtener_total_grupo(escuela,id_semestre,id_curso)
+    print(total_group)
+    return jsonify(total_group)
+
 
 @app.route("/cursosxescuela")
 def cursosxescuela():

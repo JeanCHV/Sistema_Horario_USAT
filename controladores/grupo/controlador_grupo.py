@@ -26,7 +26,6 @@ def obtener_cursoxescuela(escuela, semestre):
         ''', (escuela,semestre))
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
-
         for row in rows:
             curso_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
             cursos.append(curso_dict)
@@ -34,7 +33,7 @@ def obtener_cursoxescuela(escuela, semestre):
     conexion.close()
     return cursos
      
-def obtener_idgrupo(semestre):
+def obtener_idsemestre(semestre):
     conexion = obtener_conexion()
     id = None  # Inicializar id como None en lugar de una lista
     try:
@@ -49,7 +48,35 @@ def obtener_idgrupo(semestre):
         conexion.close()
     return id
 
-
+#obtener el total de los grupos
+def obtener_total_grupo(escuela,id_semestre, id_curso):
+    conexion = obtener_conexion()
+    total_grupo = None  
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute('''SELECT 
+                COUNT(g.id_grupo) AS total_grupos
+            FROM 
+                curso AS c
+            INNER JOIN 
+                plan_estudio AS pe ON c.id_plan_estudio = pe.id_plan_estudio
+            INNER JOIN 
+                escuela AS es ON pe.id_escuela = es.id_escuela
+            LEFT JOIN 
+                grupo AS g ON c.idcurso = g.idcurso
+            WHERE 
+                es.nombre = %s 
+                AND g.idsemestre = %s
+                AND c.idcurso = %s
+            ''', (escuela,id_semestre,id_curso))
+            result = cursor.fetchone
+            if result:
+                total_grupo = result[0]
+    except Exception as e:
+        print(f"Error al obtener idsemestre: {e}")
+    finally:
+        conexion.close()
+    return total_grupo
 
 #Query Algoritmo Genetico
 def get_grupo():
