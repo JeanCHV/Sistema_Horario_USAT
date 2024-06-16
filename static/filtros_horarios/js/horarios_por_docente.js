@@ -280,7 +280,7 @@ function agregarDocentePanel(id_docente, nombre_docente, horarios_docente, semes
     
     panel_docentes.appendChild(tab);
 
-    mostrarHorario(id_docente, nombre_docente, horarios_docente,semestre);
+    mostrarHorario(id_docente, nombre_docente, horarios_docente);
     
 }
 

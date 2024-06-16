@@ -46,6 +46,10 @@
                         </div>
                     </div>
                 </div>
+                <!-- Panel de ciclos -->
+                <div id="panel_ciclos" class="d-flex flex-wrap mt-3">
+                    <!-- Aquí se añadirán las etiquetas de los ciclos seleccionados -->
+                </div>
                 <!-- Tabla inferior -->
                 <div class="card-body show">
                     <div id="loading" style="display: none;"><div></div></div>
@@ -58,6 +62,32 @@
     </div>
     
 </div>
+
+<style>
+    .ciclo-tab {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.ciclo-tab.active {
+    background-color: #d9534f;
+    color: white;
+}
+
+.ciclo-tab button {
+    background: none;
+    border: none;
+    color: inherit;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+</style>
 
 <link rel="stylesheet" href="/static/filtros_horarios/css/horarios_por_docente.css">
 <script src="/static/filtros_horarios/js/horarios_por_ciclo.js"></script>
