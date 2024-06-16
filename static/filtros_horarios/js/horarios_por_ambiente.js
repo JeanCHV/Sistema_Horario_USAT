@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
     combo_ambiente.addEventListener('change', fetchHorarios);
     combo_semestre.addEventListener('change', fetchHorarios);
 
+    let ambientesMap = {};
+
     function fetchAmbientes() {
         const edificioId = combo_edificio.value;
         console.log("ID de Edificio Seleccionado:", edificioId);
@@ -26,9 +28,11 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 console.log("Datos recibidos:", data);
                 combo_ambiente.innerHTML = '<option value="-1" selected>[-- SELECCIONE --]</option>';
+                ambientesMap = {};
                 if (data.length > 0) {
                     data.forEach(ambiente => {
                         combo_ambiente.innerHTML += `<option value="${ambiente.idambiente}">${ambiente.nombre}</option>`;
+                        ambientesMap[ambiente.idambiente] = ambiente.nombre;
                     });
                 } else {
                     combo_ambiente.innerHTML += '<option>No hay ambientes disponibles</option>';
@@ -48,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function fetchHorarios() {
         const semestre = combo_semestre.value;
         const ambiente = combo_ambiente.value;
+        const nombreAmbiente = ambientesMap[ambiente];
 
         if (semestre !== "-1" && ambiente !== "-1") {
             div_loading.style.display = "block";
@@ -55,8 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
             obtenerHorariosxAmbiente(ambiente, semestre)
                 .then(horarios => {
                     div_loading.style.display = "none";
-                    console.log('Horarios obtenidos:', horarios);
-                    agregarAmbientePanel(ambiente, semestre, horarios);
+                    agregarAmbientePanel(ambiente,nombreAmbiente,semestre, horarios);
                     resetCombos();
                 })
                 .catch(error => {
@@ -84,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function agregarAmbientePanel(ambiente, semestre, horarios) {
+    function agregarAmbientePanel(ambiente,nombreAmbiente, semestre, horarios) {
         const ambienteId = `${ambiente.replace(/\s+/g, '_')}_${semestre.replace(/\s+/g, '_')}`;
         const existente = document.querySelector(`#ambiente_${ambienteId}`);
         
@@ -95,11 +99,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const ambienteTab = document.createElement("div");
         ambienteTab.className = "ambientes-tab";
         ambienteTab.id = `ambiente_${ambienteId}`;
-        ambienteTab.innerHTML = `Ambiente: ${ambiente} - Semestre: ${semestre} <button class="eliminar-btn">&times;</button>`;
+        ambienteTab.innerHTML = `${nombreAmbiente} - Semestre: ${semestre} <button class="eliminar-btn">&times;</button>`;
         ambienteTab.onclick = () => {
             document.querySelectorAll('.ambientes-tab').forEach(t => t.classList.remove('active'));
             ambienteTab.classList.add('active');
-            crearTablaHorario(horarios, ambiente, semestre);
+            crearTablaHorario(horarios, nombreAmbiente, semestre);
         };
 
         const eliminarBtn = ambienteTab.querySelector('.eliminar-btn');
@@ -126,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
         combo_edificio.value = '-1';
     }
 
-    function crearTablaHorario(horarios_ambiente, ambiente, semestre) {
+    function crearTablaHorario(horarios_ambiente, nombreAmbiente, semestre) {
         espacio_tabla.innerHTML = ''; // Limpiar la tabla existente
 
         if (horarios_ambiente.length === 0) {
@@ -143,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
         tabla.appendChild(tbody);
 
         const fila_ambiente = document.createElement('tr');
-        fila_ambiente.innerHTML = `<th data-horario="nombre_docente" colspan="8">Ambiente ${ambiente} - Semestre: ${semestre}</th>`;
+        fila_ambiente.innerHTML = `<th data-horario="nombre_docente" colspan="8">${nombreAmbiente} - Semestre: ${semestre}</th>`;
         thead.appendChild(fila_ambiente);
 
         // Crear encabezado de la tabla
