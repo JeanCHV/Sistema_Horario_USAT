@@ -140,8 +140,8 @@
             $('.numeric-input').removeAttr('step');
         });
     
-        window.rellenarTabla = function(escuela) {
-            fetch(`/rellenar_tabla/${escuela}`)
+        window.rellenarTabla = function(escuela,semestre) {
+            fetch(`/rellenar_tabla/${escuela}/${semestre}`)
                 .then(response => response.json())
                 .then(data => {
                     table.clear();
@@ -186,7 +186,7 @@
             var semestre = document.getElementById('semestre');
             var escuela = document.getElementById('escuela');
             if (semestre.selectedIndex > 0 && escuela.selectedIndex > 0) {
-                rellenarTabla(escuela.value);
+                rellenarTabla(escuela.value,semestre.value);
             }
         };
     });

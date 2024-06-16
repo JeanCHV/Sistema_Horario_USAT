@@ -1,7 +1,7 @@
 from bd import obtener_conexion
 
 #
-def obtener_cursoxescuela(escuela):
+def obtener_cursoxescuela(escuela, semestre):
     conexion = obtener_conexion()
     cursos = []
     with conexion.cursor() as cursor:
@@ -19,11 +19,11 @@ def obtener_cursoxescuela(escuela):
                                     LEFT JOIN 
                                         grupo AS g ON c.idcurso = g.idcurso
                                     WHERE 
-                                        es.nombre = %s
+                                        es.nombre = %s and g.idsemestre = %s
                                     GROUP BY 
                                         c.idcurso, c.nombre, c.ciclo;
                                     ;
-        ''', (escuela))
+        ''', (escuela,semestre))
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
 
@@ -34,6 +34,21 @@ def obtener_cursoxescuela(escuela):
     conexion.close()
     return cursos
      
+def obtener_idgrupo(semestre):
+    conexion = obtener_conexion()
+    id = None  # Inicializar id como None en lugar de una lista
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT idsemestre FROM semestre_academico WHERE descripcion = %s", (semestre,))
+            result = cursor.fetchone()
+            if result:
+                id = result[0]
+    except Exception as e:
+        print(f"Error al obtener idsemestre: {e}")
+    finally:
+        conexion.close()
+    return id
+
 
 
 #Query Algoritmo Genetico

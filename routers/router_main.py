@@ -385,9 +385,11 @@ def grupos():
 def ambientesxCursos():
     return render_template("dashboard/ambientesxcurso.html")
 
-@app.route("/rellenar_tabla/<string:escuela>")
-def rellenar_tabla(escuela):
-    cursos = controlador_grupo.obtener_cursoxescuela(escuela)
+@app.route("/rellenar_tabla/<string:escuela>/<string:semestre>")
+def rellenar_tabla(escuela,semestre):
+    semestre = controlador_grupo.obtener_idgrupo(semestre)
+    cursos = controlador_grupo.obtener_cursoxescuela(escuela,semestre)
+    print(cursos,semestre)
     return jsonify(cursos)
 
 @app.route("/cursosxescuela")
