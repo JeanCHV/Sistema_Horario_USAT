@@ -405,25 +405,14 @@ def rellenar_tabla(escuela,semestre):
     return jsonify(cursos)
 
 
-@app.route("/mantenimiento_grupos/<string:escuela>/<string:semestre>/<string:id_curso>/<string:n_grupos>")
-def mantenimiento_grupos(escuela,semestre, id_curso,n_grupos):
-    id_semestre = controlador_grupo.obtener_idsemestre(semestre)
-    total_group = controlador_grupo.obtener_total_grupo(escuela,id_semestre,id_curso)
-    n_grupos = int(n_grupos)
-    if total_group < n_grupos:
-        iteracion = n_grupos-total_group
-        vacante = 15
-        for numeros in range(iteracion):
-            #n_grupos + iteracion 
-            grupo = chr(65+total_group+numeros) #estos son los grupos que se insetaran
-            #controlador_grupo.agregar_grupo(nombre,vacante,id_curso,id_semestre)
-            print(grupo)
-    elif total_group == n_grupos :
-        print("Iguales")
+@app.route('/mantenimiento_grupos', methods=['POST'])
+def mantenimiento_grupos():
+    datos = request.json
+    mensaje = controlador_grupo.manejo_grupos(datos)
+    if mensaje == "fallo":
+        return jsonify({"mensaje": "Error al agregar grupos"})
     else:
-        print("eliminamos")
-    return jsonify(total_group)
-
+        return jsonify({"mensaje": "Grupos modificados correctamente"})
 
 @app.route("/cursosxescuela")
 def cursosxescuela():
