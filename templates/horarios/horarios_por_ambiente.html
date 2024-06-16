@@ -87,14 +87,33 @@
                     </div>
                 </div>
                 <!-- Tabla inferior -->
-                <!-- Tabla inferior -->
-                <div class="card-body show">
-                    <div id="loading"><div></div></div>
-                    <div class="row mt-3">
-                        <div class="col-md-12" id="espacio_tabla">
-                        </div>
-                    </div>
-                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <table class="horario-table table-bordered text-center" id="horario-table">
+                            <thead class="border border-warning bg-blue-horario-usat">
+                                <tr>
+                                    <th scope="col" class="border border-warning text-dark"></th>
+                                    <th scope="col" class="border border-warning text-light">Lunes</th>
+                                    <th scope="col" class="border border-warning text-light">Martes</th>
+                                    <th scope="col" class="border border-warning text-light">Miércoles</th>
+                                    <th scope="col" class="border border-warning text-light">Jueves</th>
+                                    <th scope="col" class="border border-warning text-light">Viernes</th>
+                                </tr>
+                            </thead>
+                            <tbody class="" style="background-color: #EEEEEE;">
+                                {% for hora in range(7, 22) %}
+                                <tr>
+                                    <th scope="row" class="border border-warning text-dark">{{ hora }}:00 - {{ hora + 1
+                                        }}:00</th>
+                                    <td class="border border-warning horario-celda"></td>
+                                    <td class="border border-warning horario-celda"></td>
+                                    <td class="border border-warning horario-celda"></td>
+                                    <td class="border border-warning horario-celda"></td>
+                                    <td class="border border-warning horario-celda"></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
             </div>
 
         </div>
