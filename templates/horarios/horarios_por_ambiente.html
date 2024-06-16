@@ -51,9 +51,9 @@
                                 académico:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
                                 <select class="form-select" aria-label="Default select example" id="combo_semestre">
-                                    <option selected>[-- SELECCIONE --]</option>
+                                    <option value="-1" selected>[-- SELECCIONE --]</option>
                                     {% for semestre in semestres %}
-                                    <option value="{{ semestre.idsemestre }}">{{ semestre.descripcion }}</option>
+                                        <option value="{{ semestre[1] }}">{{ semestre[1] }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -64,7 +64,7 @@
                                 class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Edificio:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
                                 <select class="form-select" aria-label="Default select example" id="combo_edificio">
-                                    <option selected>[-- SELECCIONE --]</option>
+                                    <option value="-1" selected>[-- SELECCIONE --]</option>
                                     {% for edificio in edificios %}
                                     <option value="{{ edificio.idedificio }}">{{ edificio.nombre }}</option>
                                     {% endfor %}
@@ -77,142 +77,60 @@
                                 class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Ambiente:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
                                 <select class="form-select" aria-label="Default select example" id="combo_ambiente">
-                                    <option selected>[-- SELECCIONE --]</option>
+                                    <option value="-1" selected>[-- SELECCIONE --]</option>
                                     {% for ambiente in ambientes %}
-                                    <option value="{{ ambiente[1] }}">{{ ambiente[1] }}</option>
+                                    <option value="{{ ambiente[0] }}">{{ ambiente[1] }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- Panel de Ambientes -->
+                <div id="panel_ambientes" class="d-flex flex-wrap mt-3">
+                    <!-- Aquí se añadirán las etiquetas de los ambientes seleccionados -->
+                </div>
                 <!-- Tabla inferior -->
-                <div class="row mt-3">
-                    <div class="col-md-12">
-                        <table class="horario-table table-bordered text-center" id="horario-table">
-                            <thead class="border border-warning bg-blue-horario-usat">
-                                <tr>
-                                    <th scope="col" class="border border-warning text-dark"></th>
-                                    <th scope="col" class="border border-warning text-light">Lunes</th>
-                                    <th scope="col" class="border border-warning text-light">Martes</th>
-                                    <th scope="col" class="border border-warning text-light">Miércoles</th>
-                                    <th scope="col" class="border border-warning text-light">Jueves</th>
-                                    <th scope="col" class="border border-warning text-light">Viernes</th>
-                                </tr>
-                            </thead>
-                            <tbody class="" style="background-color: #EEEEEE;">
-                                {% for hora in range(7, 22) %}
-                                <tr>
-                                    <th scope="row" class="border border-warning text-dark">{{ hora }}:00 - {{ hora + 1
-                                        }}:00</th>
-                                    <td class="border border-warning horario-celda"></td>
-                                    <td class="border border-warning horario-celda"></td>
-                                    <td class="border border-warning horario-celda"></td>
-                                    <td class="border border-warning horario-celda"></td>
-                                    <td class="border border-warning horario-celda"></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                <div class="card-body show">
+                    <div id="loading" style="display: none;"><div></div></div>
+                    <div class="row mt-3">
+                        <div class="col-md-12" id="espacio_tabla"></div>
+                    </div>
+                </div>
+                
             </div>
 
         </div>
     </div>
 </div>
 
-<script>
-    $(document).ready(function () {
-        function clearTable() {
-            $('.horario-celda').removeClass('horario-asignado').text('');
-        }
+<style>
+    .ambientes-tab {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
 
-        $('#combo_edificio').change(function () {
-            var edificioId = $(this).val();
-            console.log("ID de Edificio Seleccionado:", edificioId);
+.ambientes-tab.active {
+    background-color: #d9534f;
+    color: white;
+}
 
-            $.ajax({
-                url: '/ambientes_por_edificio/' + encodeURIComponent(edificioId),
-                type: 'GET',
-                success: function (data) {
-                    console.log("Datos recibidos:", data);
-                    var $comboAmbiente = $('#combo_ambiente');
-                    $comboAmbiente.empty();
-                    $comboAmbiente.append('<option selected>[-- SELECCIONE --]</option>');
-                    if (data.length > 0) {
-                        $.each(data, function (index, ambiente) {
-                            $comboAmbiente.append('<option value="' + ambiente.idambiente + '">' + ambiente.nombre + '</option>');
-                        });
-                    } else {
-                        $comboAmbiente.append('<option>No hay ambientes disponibles</option>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'No se pudieron obtener los ambientes. Por favor, intente nuevamente.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        });
+.ambientes-tab button {
+    background: none;
+    border: none;
+    color: inherit;
+    margin-left: 10px;
+    cursor: pointer;
+}
 
-        $('#combo_ambiente').change(function () {
-            var ambienteId = $(this).val();
-            console.log("ID de Ambiente Seleccionado:", ambienteId);
+</style>
 
-            $.ajax({
-                url: '/horarios_por_ambiente/' + encodeURIComponent(ambienteId) + '/' + encodeURIComponent($("#combo_semestre").val()),
-                type: 'GET',
-                success: function (data) {
-                    console.log("Horarios recibidos:", data);
-                    clearTable(); // Clear the table before updating
-
-                    // Iterar sobre los horarios y resaltar las celdas correspondientes
-                    $.each(data, function (index, horario) {
-                        var diaMap = {
-                            'Lunes': 0,
-                            'Martes': 1,
-                            'Miércoles': 2,
-                            'Jueves': 3,
-                            'Viernes': 4
-                        };
-
-                        var diaIndex = diaMap[horario.dia];
-                        var horaInicio = parseInt(horario.horainicio.split(':')[0]);
-                        var horaFin = parseInt(horario.horafin.split(':')[0]);
-
-                        console.log("Dia Index:", diaIndex);
-                        console.log("Hora Inicio:", horaInicio);
-                        console.log("Hora Fin:", horaFin);
-
-                        if (diaIndex !== undefined && horaInicio >= 7 && horaFin <= 22) {
-                            for (var hora = horaInicio; hora < horaFin; hora++) {
-                                var horaIndex = hora - 7;
-                                var $celda = $('.horario-table tbody tr').eq(horaIndex).find('td').eq(diaIndex);
-                                console.log("Celda seleccionada para el horario:", $celda);
-                                $celda.addClass('horario-asignado');
-                                $celda.text(horario.nombre_curso); // Agregar el nombre del curso a la celda
-                            }
-                        }
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error:", error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'No se pudieron obtener los horarios del ambiente. Por favor, intente nuevamente.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        });
-    });
-</script>
-
-
-
+<link rel="stylesheet" href="/static/filtros_horarios/css/horarios_por_docente.css">
+<script src="/static/filtros_horarios/js/horarios_por_ambiente.js"></script>
 
 {% endblock %}

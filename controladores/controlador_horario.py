@@ -65,15 +65,26 @@ def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
 
 ######HORARIO POR AMBIENTE
 
-def obtener_horarios_por_ambiente(idambiente,idsemestre):
+def obtener_horarios_por_ambiente(idambiente,semestre):
     conexion = obtener_conexion()
     horarios = []
     try:
         with conexion.cursor() as cursor:
             cursor.execute("""
-                SELECT h.idhorario, h.dia, h.horainicio, h.horafin, h.h_virtual, h.h_presencial, h.idpersona, h.id_grupo, g.idsemestre, CONCAT(c.nombre, ' - ', g.nombre) AS 
-                           nombre_curso FROM horario h INNER JOIN grupo g ON g.id_grupo = h.id_grupo INNER JOIN curso c ON c.idcurso = g.idcurso WHERE h.idambiente = %s and g.idsemestre= %s
-            """, (idambiente,idsemestre))
+                SELECT H.idhorario AS codigo, 
+                H.dia AS dia, CAST(H.horainicio AS CHAR) AS horainicio, CAST(H.horafin AS CHAR) AS horafin, H.h_virtual, H.h_presencial,
+                CASE WHEN C.tipo_curso = 0 then 'Presencial' WHEN C.tipo_curso = 1 then 'VIRTUAL' END AS tipoCurso,
+                ED.nombre AS edificio, UPPER(CONCAT (P.nombres, ' ', P.apellidos))  AS docente, G.nombre AS grupo, C.nombre AS curso, E.abreviatura AS escuela,C.ciclo AS ciclo
+                FROM horario H INNER JOIN ambiente A ON A.idambiente= H.idambiente
+                INNER JOIN edificio ED ON ED.idedificio = A.idedificio
+                INNER JOIN persona P ON P.idpersona = H.idpersona
+                INNER JOIN grupo G ON G.id_grupo = H.id_grupo
+                INNER JOIN curso C ON C.idcurso = G.idcurso
+                INNER JOIN semestre_academico SA ON G.idsemestre = SA.idsemestre
+                INNER JOIN plan_estudio PE ON PE.id_plan_estudio = C.id_plan_estudio
+                INNER JOIN escuela E ON E.id_escuela = PE.id_escuela
+                WHERE A.idambiente = %s and SA.descripcion= %s
+            """, (idambiente,semestre))
             rows = cursor.fetchall()
             if rows:
                 columnas = [desc[0] for desc in cursor.description]
@@ -83,7 +94,6 @@ def obtener_horarios_por_ambiente(idambiente,idsemestre):
                     horario_dict['horainicio'] = str(horario_dict['horainicio'])
                     horario_dict['horafin'] = str(horario_dict['horafin'])
                     horarios.append(horario_dict)
-                print("Horarios obtenidos:", horarios)  # Depuración
                 return horarios
             else:
                 return []

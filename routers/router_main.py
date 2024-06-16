@@ -734,7 +734,7 @@ def obtener_horariosJenkz():
 
 @app.route("/horarios_por_ambiente")
 def horarios_por_ambiente():
-    semestres = controlador_semestre.obtener_semestreCombo()
+    semestres = controlador_semestre.obtener_semestres()
     edificios = controlador_edificio.obtener_edificios()  
     return render_template("horarios/horarios_por_ambiente.html", semestres=semestres, edificios=edificios)
 
@@ -745,18 +745,13 @@ def ambientes_por_edificio(idedificio):
     ambientes = controlador_ambientes.ambientes_por_edificio(idedificio)
     return jsonify(ambientes)
 
-@app.route("/horarios_por_ambiente/<idambiente>/<idsemestre>", methods=["GET"])
-def horarios_por_ambiente_route(idambiente, idsemestre):
-    try:
-        horarios = controlador_horario.obtener_horarios_por_ambiente(idambiente, idsemestre)
-        print("Datos enviados:", horarios)  # Depuración
-        response = jsonify(horarios)
-        response.status_code = 200 if horarios else 204
-    except Exception as e:
-        print(f"Error al obtener los horarios: {e}")
-        response = jsonify({"error": "No se pudieron obtener los horarios"})
-        response.status_code = 500
-    return response
+###HORARIOS POR AMBIENTE 
+@app.route("/obtener_horarios_por_ambiente", methods=["POST"])
+def obtener_horarios_por_ambiente():
+    idambiente = request.json.get('idambiente')
+    semestre = request.json.get('semestre')
+    horarios = controlador_horario.obtener_horarios_por_ambiente(idambiente,semestre)
+    return jsonify(horarios) 
 
 
 ###HORARIOS POR CICLO 
