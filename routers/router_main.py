@@ -406,7 +406,7 @@ def rellenar_tabla(escuela,semestre):
 
 
 @app.route("/mantenimiento_grupos/<string:escuela>/<string:semestre>/<int:id_curso>")
-def rellenar_tabla(escuela,semestre, id_curso):
+def total_grupos(escuela,semestre, id_curso):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
     total_group = controlador_grupo.obtener_total_grupo(escuela,id_semestre,id_curso)
     print(total_group)
