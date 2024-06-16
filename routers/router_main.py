@@ -26,6 +26,8 @@ import controladores.curso_ambiente.controlador_curso_ambiente as controlador_cu
 import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
 import controladores.controlador_edificio as controlador_edificio
 
+##Para la validacion 3 intentos
+import time
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
@@ -33,6 +35,7 @@ import clases.persona as clase_persona
 import algorithm.algorithm as algoritmo
 import algorithm.algorithm_pruebaJenkz as algoritmoJenkz
 
+login_attempts = {}
 
 @app.route("/")
 @app.route("/login", methods=["GET", "POST"])
@@ -69,6 +72,14 @@ def procesar_login():
         password = request.json.get('password')
         usuario = controlador_usuario.obtener_usuario_con_tipopersona_por_username(username)
 
+        # Inicializar el diccionario de intentos para el usuario si no existe
+        if username not in login_attempts:
+            login_attempts[username] = {'attempts': 0, 'last_attempt_time': 0}
+
+        # Verificar si el usuario está bloqueado
+        if login_attempts[username]['attempts'] >= 3 and (time.time() - login_attempts[username]['last_attempt_time']) < 300:
+            return jsonify({'mensaje': 'Cuenta bloqueada. Intente de nuevo más tarde.', 'logeo': False})
+        
         if usuario == None:
             return jsonify({'mensaje':'El usuario no existe', 'logeo':False})
         
@@ -97,8 +108,10 @@ def procesar_login():
                 # Almacenar el ID del usuario en la sesión
                 session['user_id'] = usuario[0]
                 return jsonify({'logeo': True, 'token': token, 'foto':foto, 'nombre':nombre})
-
-            return jsonify({'mensaje':'La contraseña es incorrecta', 'logeo':False})
+            else:
+                login_attempts[username]['attempts'] += 1
+                login_attempts[username]['last_attempt_time'] = time.time()
+                return jsonify({'mensaje': 'La contraseña es incorrecta', 'logeo': False})
     except NameError:
         return jsonify({'mensaje':'Error al procesar el login'+NameError, 'logeo':False})
     
