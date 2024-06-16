@@ -59,8 +59,9 @@
                 <div class="card-body show">
                     <div id="loading"><div></div></div>
                     <div class="row mt-3">
-                        <div class="col-md-12" id="espacio_tabla">
-                        </div>
+                        <div class="col-md-12" id="panel_docentes"></div>
+                        <div class="col-md-12" id="espacio_tabla"></div>
+                        
                     </div>
                 </div>
             </div>
@@ -74,5 +75,30 @@
 <link rel="stylesheet" href="/static/filtros_horarios/css/horarios_por_docente.css">
 <script src="/static/filtros_horarios/js/horarios_por_docente.js"></script>
 
+<style>
 
+#panel_docentes {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.docente-tab {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.docente-tab.active {
+    background-color: #3e8e41;
+}
+
+.docente-tab:hover {
+    background-color: #45a049;
+}
+</style>
 {% endblock %}
