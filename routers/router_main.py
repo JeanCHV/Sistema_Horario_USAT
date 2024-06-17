@@ -405,10 +405,19 @@ def ambientesxCursos():
 
 @app.route("/rellenar_tabla/<string:escuela>/<string:semestre>")
 def rellenar_tabla(escuela,semestre):
-    semestre = controlador_grupo.obtener_idgrupo(semestre)
-    cursos = controlador_grupo.obtener_cursoxescuela(escuela,semestre)
-    print(cursos,semestre)
+    id_semestre = controlador_grupo.obtener_idsemestre(semestre)
+    cursos = controlador_grupo.obtener_cursoxescuela(escuela,id_semestre)
     return jsonify(cursos)
+
+
+@app.route('/mantenimiento_grupos', methods=['POST'])
+def mantenimiento_grupos():
+    datos = request.json
+    mensaje = controlador_grupo.manejo_grupos(datos)
+    if mensaje == "fallo":
+        return jsonify({"mensaje": "Error al agregar grupos"})
+    else:
+        return jsonify({"mensaje": "Grupos modificados correctamente"})
 
 @app.route("/cursosxescuela")
 def cursosxescuela():

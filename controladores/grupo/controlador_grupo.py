@@ -34,7 +34,7 @@ def obtener_cursoxescuela(escuela, semestre):
     conexion.close()
     return cursos
      
-def obtener_idgrupo(semestre):
+def obtener_idsemestre(semestre):
     conexion = obtener_conexion()
     id = None  # Inicializar id como None en lugar de una lista
     try:
@@ -49,7 +49,70 @@ def obtener_idgrupo(semestre):
         conexion.close()
     return id
 
+#obtener el total de los grupos
+def obtener_total_grupo(escuela,id_semestre, id_curso):
+    conexion = obtener_conexion()
+    total_grupo = None  
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute('''SELECT 
+                COUNT(g.id_grupo) AS total_grupos
+            FROM 
+                curso AS c
+            INNER JOIN 
+                plan_estudio AS pe ON c.id_plan_estudio = pe.id_plan_estudio
+            INNER JOIN 
+                escuela AS es ON pe.id_escuela = es.id_escuela
+            LEFT JOIN 
+                grupo AS g ON c.idcurso = g.idcurso
+            WHERE 
+                es.nombre = %s 
+                AND g.idsemestre = %s
+                AND c.idcurso = %s
+            ''', (escuela,id_semestre,id_curso))
+            result = cursor.fetchone()
+            if result:
+                total_grupo = result[0]
+    except Exception as e:
+        print(f"Error al obtener idsemestre: {e}")
+    finally:
+        conexion.close()
+    return total_grupo
 
+##retorna ids a borrar
+def ids_eliminar(escuela, id_semestre, id_curso, restante):
+    conexion = obtener_conexion()
+    total_grupo = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute('''
+                SELECT 
+                    g.id_grupo,
+                    COUNT(g.id_grupo) AS total_grupos
+                FROM 
+                    curso AS c
+                INNER JOIN 
+                    plan_estudio AS pe ON c.id_plan_estudio = pe.id_plan_estudio
+                INNER JOIN 
+                    escuela AS es ON pe.id_escuela = es.id_escuela
+                LEFT JOIN 
+                    grupo AS g ON c.idcurso = g.idcurso
+                WHERE 
+                    es.nombre = %s 
+                    AND g.idsemestre = %s 
+                    AND c.idcurso = %s
+                GROUP BY 
+                    c.idcurso, c.nombre, c.ciclo, g.id_grupo, g.nombre
+                LIMIT 18446744073709551615 OFFSET %s;
+            ''', (escuela, id_semestre, id_curso, restante))
+            total_grupo = cursor.fetchall()
+
+    except Exception as e:
+        print(f"Error al obtener ids a eliminar : {e}")
+    finally:
+        conexion.close()
+    
+    return total_grupo
 
 #Query Algoritmo Genetico
 def get_grupo():
@@ -65,6 +128,48 @@ def get_grupo():
     conexion.close()
     return grupos
 
+
+def manejo_grupos(datos):
+    conexion = obtener_conexion()  # Obtener conexión a la base de datos
+    semestre = datos.get('semestre')
+    escuela = datos.get('escuela')
+    mensaje = "correcto"
+    try:
+        with conexion.cursor() as cursor:
+            for data in datos['valores']:
+                id_curso = data.get('id')
+                n_grupos = int(data.get('valor'))
+                id_semestre = obtener_idsemestre(semestre)       
+                total_group = obtener_total_grupo(escuela, id_semestre, id_curso)
+                if total_group < n_grupos:
+                    iteracion = n_grupos - total_group
+                    vacante = 15
+                    for numeros in range(iteracion):
+                        grupo = chr(65 + total_group + numeros)
+                        # Aquí podrías llamar a la función para agregar grupo
+                        agregar_grupo(grupo, vacante, id_curso, id_semestre)
+                        #print(f"Agregando grupo: {grupo}")
+               
+                elif total_group == n_grupos:
+                    faltante = n_grupos
+                else:
+                    faltante = n_grupos
+                    idss_eliminar = ids_eliminar(escuela, id_semestre, id_curso, faltante)
+                    print(f"IDs a eliminar: {idss_eliminar}")       
+                    for id_eliminar in idss_eliminar:
+                        id_grupo = id_eliminar[0]
+                        eliminar_grupo(id_grupo)
+                        #print(f"Eliminando grupo con ID: {id_grupo}")     
+                    #print("Eliminamos")
+            conexion.commit()
+           # print("Transacción completada correctamente.")  
+    except Exception as e:
+        conexion.rollback() 
+        mensaje = "fallo"
+        #print(f"Error en manejo de grupos: {e}")
+    finally:
+        conexion.close()
+    return mensaje
 
 def obtener_grupos():
     conexion = obtener_conexion()

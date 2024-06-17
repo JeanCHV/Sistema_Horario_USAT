@@ -152,7 +152,24 @@
                     console.error('Error al obtener los datos de la tablas:', error);
                 });
         };
-    
+
+        function grupos(datos) {
+            fetch('/mantenimiento_grupos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos) 
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.mensaje);
+                       
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos de la tabla:', error);
+            });
+        }        
         window.seleccionar_toda = function() {
             var checkbox = document.getElementById('est');
             var isChecked = checkbox.checked;
@@ -161,26 +178,31 @@
                 input_check[i].checked = isChecked;
             }
         };
-
-        window. dato_selecciondo = function() {
+        window.dato_selecciondo = function() {
             var input_check = document.querySelectorAll('td input[type="checkbox"]');
             var semestre = document.getElementById('semestre').value;
             var escuela = document.getElementById('escuela').value;
+            var datos = {
+                "escuela": escuela,
+                "semestre": semestre,
+                "valores": []
+            };
             for (var i = 0; i < input_check.length; i++) {
-                if (input_check[i].checked ) {
-                    padre = input_check[i].parentElement.parentElement;
-                    valor = padre.querySelectorAll('.grupos');
-                    ids = padre.querySelectorAll(".id");
-                    valor = valor[0]
-                    ids = ids[0]
-                    id_v = ids.textContent;
-                    console.log("id_curso: " + id_v);
-                    console.log("grupos: " + valor.value);               
+                if (input_check[i].checked) {
+                    var padre = input_check[i].parentElement.parentElement;
+                    var valor = padre.querySelector('.grupos').value;
+                    var id_v = padre.querySelector('.id').textContent;
+                    datos.valores.push({
+                        "id": id_v,
+                        "valor": valor
+                    });
                 }
             }
-            console.log(semestre,escuela)
-            
+            grupos(datos, function(data) {
+                rellenarTabla(escuela, semestre); 
+            });
         }
+        
     
     window.validar = function() {
             var semestre = document.getElementById('semestre');
