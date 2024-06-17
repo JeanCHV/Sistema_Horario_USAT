@@ -414,6 +414,25 @@ def mantenimiento_grupos():
     else:
         return jsonify({"mensaje": "Grupos modificados correctamente"})
 
+@app.route('/reportegrupo_docente')
+def reportegrupo_docente():
+    return render_template('dashboard/reporte_gruposdocente.html')
+
+@app.route('/get_registrodocente_grupo_horario')
+def get_registrodocente_grupo_horario():
+    try:
+        grupos = controlador_grupo.retornar_grupos()
+        docente = controlador_grupo.retornar_docentes()
+        return jsonify({
+            "docentes_con_disponibilidad": grupos[1],
+            "docentes_sin_disponibilidad": grupos[2], 
+            "grupos_con_horario": docente[2],    
+            "grupos_sin_horario": docente[3]  
+        })
+    except Exception as e:
+        print(f"Error en la consulta: {str(e)}")
+        return jsonify({"error": "Error al obtener registros"}), 500
+
 @app.route("/cursosxescuela")
 def cursosxescuela():
     semestres = controlador_cursos.obtener_semestres()
