@@ -9,7 +9,6 @@
 </nav>
 
 <div class="container">
-
 </div>
 
 <div id="mensajeResultado" style="display: none;"></div>
@@ -19,26 +18,9 @@
         data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
         Ambientes
     </div>
-    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
-            <div class="search-box">
-                <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <select id="filtro_edificio" class="form-control">
-                                <option value="">Todos los edificios</option>
-                                <option value="1">Edificio antiguo</option>
-                                <option value="2">Edificio Juan Pablo II</option>
-                                <option value="3">Edificio de idiomas</option>
-                                <option value="4">Edificio de aulas decanas</option>
-                                <option value="4">Centro Especializado en Formación Odontológica</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-body show">
+            <div class="table-responsive mt-3">
                 <table id="tabla-ambiente" class="table table-striped" style="width:100%">
                     <thead>
                         <tr>
@@ -53,54 +35,46 @@
                         <!-- Los datos de los ambientes se cargarán dinámicamente aquí -->
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end mt-3">
-                    <a href="#" id="btn_agregar_ambiente" class="btn btn-primary">Agregar Nuevo Ambiente</a>
-                </div>
-            </div>   
+            </div>
+
         </div>
     </div>
 
-    <!-- Modal para agregar un ambiente -->
-    <div class="modal fade" id="modalAgregarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <!-- Modal para agregar o modificar un ambiente -->
+    <div class="modal fade" id="modalAmbiente" tabindex="-1" aria-labelledby="modalAmbienteLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Agregar Ambiente</h5>
+                    <h5 class="modal-title" id="modalAmbienteLabel">Agregar Ambiente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formAgregarAmbiente">
+                    <form id="formAmbiente">
+                        <input type="hidden" id="idAmbiente">
                         <div class="mb-3">
-                            <label for="nombreAgregar" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="nombreAgregar" name="nombreAgregar" required>
+                            <label for="nombre" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
                         </div>
                         <div class="mb-3">
-                            <label for="aforoAgregar" class="form-label">Aforo:</label>
-                            <input type="number" class="form-control" id="aforoAgregar" name="aforoAgregar" required>
+                            <label for="aforo" class="form-label">Aforo:</label>
+                            <input type="number" class="form-control" id="aforo" name="aforo" required>
                         </div>
                         <div class="mb-3">
-                            <label for="estadoAgregar" class="form-label">Estado:</label>
-                            <select class="form-control" id="estadoAgregar" name="estadoAgregar" required>
+                            <label for="estado" class="form-label">Estado:</label>
+                            <select class="form-control" id="estado" name="estado" required>
                                 <option value="">Seleccione</option>
                                 <option value="A">Activo</option>
                                 <option value="I">Inactivo</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="idedificioAgregar" class="form-label">Edificio:</label>
-                            <select class="form-control" id="idedificioAgregar" name="idedificioAgregar" required>
-                                <option value="">Seleccione</option>
-                                <option value="1">Edificio Antiguo</option>
-                                <option value="2">Edificio Juan Pablo II</option>
-                                <option value="3">Edificio de Idiomas</option>
-                                <option value="4">Edificio de Aulas Decanas</option>
+                            <label for="idedificio" class="form-label">Edificio:</label>
+                            <select class="form-control" id="idedificio" name="idedificio" required>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="idambientetipoAgregar" class="form-label">Tipo de Ambiente:</label>
-                            <select class="form-control" id="idambientetipoAgregar" name="idambientetipoAgregar"
-                                required>
+                            <label for="idambientetipo" class="form-label">Tipo de Ambiente:</label>
+                            <select class="form-control" id="idambientetipo" name="idambientetipo" required>
                                 <option value="">Seleccione</option>
                                 <option value="1">Aula</option>
                                 <option value="2">Laboratorio</option>
@@ -112,172 +86,325 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal para modificar un ambiente -->
-    <div class="modal fade" id="modalModificarAmbiente" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modificar Ambiente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formModificarAmbiente">
-                        <input type="hidden" id="idAmbienteModificar">
-                        <div class="mb-3">
-                            <label for="nombreModificar" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="nombreModificar" name="nombreModificar"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="aforoModificar" class="form-label">Aforo:</label>
-                            <input type="number" class="form-control" id="aforoModificar" name="aforoModificar"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="estadoModificar" class="form-label">Estado:</label>
-                            <select class="form-control" id="estadoModificar" name="estadoModificar" required>
-                                <option value="">Seleccione</option>
-                                <option value="A">Activo</option>
-                                <option value="I">Inactivo</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="idedificioModificar" class="form-label">Edificio:</label>
-                            <select class="form-control" id="idedificioModificar" name="idedificioModificar" required>
-                                <option value="">Seleccione</option>
-                                <option value="1">Edificio Antiguo</option>
-                                <option value="2">Edificio Juan Pablo II</option>
-                                <option value="3">Edificio de Idiomas</option>
-                                <option value="4">Edificio de Aulas Decanas</option>
-                                <option value="5">Centro Especializado en Formación Odontológica</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="idambientetipoModificar" class="form-label">Tipo de Ambiente:</label>
-                            <select class="form-control" id="idambientetipoModificar" name="idambientetipoModificar"
-                                required>
-                                <option value="">Seleccione</option>
-                                <option value="1">Aula</option>
-                                <option value="2">Laboratorio</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
+
+<!-- Modal para la subida masiva de datos -->
+<div class="modal fade" id="modalSubidaMasiva" tabindex="-1" aria-labelledby="modalSubidaMasivaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSubidaMasivaLabel">Subida Masiva de Datos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSubidaMasiva" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="archivo" class="form-label">Seleccionar archivo (Excel):</label>
+                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".xls,.xlsx"
+                            required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Subir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function descargarPlantilla() {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Plantilla');
+
+        // Añadir el título
+        const titleRow = worksheet.addRow(['USAT - Ambientes']);
+        worksheet.mergeCells('A1', 'D1');
+        titleRow.font = { bold: true, size: 14 };
+        titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.getRow(1).height = 20;
+
+        // Añadir las cabeceras
+        const headerRow = worksheet.addRow(['Nombre', 'Aforo', 'Tipo Ambiente', 'Edificio']);
+        headerRow.font = { bold: false };
+        headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Ajustar el ancho de las columnas
+        worksheet.columns = [
+            { key: 'nombre', width: 20 },
+            { key: 'aforo', width: 10 },
+            { key: 'tipo_ambiente', width: 15 },
+            { key: 'edificio', width: 20 }
+        ];
+
+        // Generar y guardar el archivo
+        workbook.xlsx.writeBuffer().then(function (buffer) {
+            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'USAT_Ambientes_Plantilla.xlsx');
+        });
+    }
+</script>
+
 <script>
     $(document).ready(function () {
         var ambientes = [];
-        var edificios = {
-            1: "EDIFICIO ANTIGUO",
-            2: "EDIFICIO JUAN PABLO II",
-            3: "EDIFICIO DE IDIOMAS",
-            4: "EDIFICIO DE AULAS DECANAS",
-            5: "CENTRO ESPECIALIZADO EN FORMACIÓN ODONTOLÓGICA"
-        };
+        var edificios = {};
 
-        var table = $('#tabla-ambiente').DataTable({
-            "paging": true,
-            "info": true,
-            "stateSave": true,
-            "columns": [
-                { "data": "nombre" , "className": 'dt-body-left' },
-                { "data": "aforo" ,"className": 'dt-body-center' },
-                { "data": "estado" },
-                {
-                    "data": "idedificio", "className":'dt-body-left',
-                    "render": function (data, type, row) {
-                        return edificios[data] || data;
-                    }
-                },
-                {
-                    "data": null, "className": 'dt-body-center',
-                    "render": function (data, type, row) {
-                        return `
-                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}" title="Eliminar"><i class="fas fa-times"></i></button>
-                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.idambiente}" title="Dar de Baja"><i class="fas fa-arrow-down"></i></button>
-                        `;
-                    }
-                }
-            ],
-            "columnDefs": [
-            { targets: '_all', className: 'dt-center' }
-      ],
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-            }
-        });
-
-        function cargarAmbientes() {
+        function cargarEdificios() {
             $.ajax({
-                url: '/get_ambientes',
+                url: '/get_edificios',
                 type: 'GET',
-                contentType: 'application/json',
+                dataType: 'json',
                 success: function (response) {
-                    ambientes = response;
-                    table.clear().rows.add(ambientes).draw();
+                    edificios = response.reduce((acc, edificio) => {
+                        acc[edificio.idedificio] = edificio.nombre;
+                        return acc;
+                    }, {});
+                    $('#idedificio').append(response.map(function (edificio) {
+                        return `<option value="${edificio.idedificio}">${edificio.nombre}</option>`;
+                    }));
                 },
                 error: function (xhr, status, error) {
-                    console.log(error);
+                    console.error('Error al cargar edificios:', error);
                 }
             });
         }
 
-        cargarAmbientes();
+        function initializeDataTable() {
+            var table = $('#tabla-ambiente').DataTable({
+                paging: false,
+                info: false,
+                responsive: true,
+                autoWidth: true,
+                searching: true,
+                scrollY: "510px",
+                order: [], 
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'collection',
+                        text: '<i class="fas fa-file-import"></i> Importar',
+                        className: 'btn btn-secondary',
+                        buttons: [
+                            {
+                                text: '<i class="fas fa-upload"></i> Subir Archivo',
+                                className: 'dropdown-item',
+                                action: function (e) {
+                                    e.preventDefault();
+                                    $('#modalSubidaMasiva').modal('show');
+                                }
+                            },
+                            {
+                                text: '<i class="fas fa-download"></i> Descargar Plantilla',
+                                className: 'dropdown-item',
+                                action: function (e) {
+                                    e.preventDefault();
+                                    descargarPlantilla();
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        extend: 'collection',
+                        text: '<i class="fas fa-file-export"></i> Exportar/Imprimir',
+                        className: 'btn btn-secondary',
+                        buttons: [
+                            {
+                                extend: 'copy',
+                                text: '<i class="fas fa-copy"></i> Copiar',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'csv',
+                                text: '<i class="fas fa-file-csv"></i> CSV',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'excel',
+                                text: '<i class="fas fa-file-excel"></i> Excel',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'pdf',
+                                text: '<i class="fas fa-file-pdf"></i> PDF',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'print',
+                                text: '<i class="fas fa-print"></i> Imprimir',
+                                className: 'dropdown-item'
+                            }
+                        ]
+                    },
+                    {
+                        text: '<i class="fas fa-plus"></i> Agregar Nuevo Ambiente',
+                        className: 'btn_agregar_ambiente',
+                        action: function (e) {
+                            e.preventDefault();
+                            $('#modalAmbienteLabel').text('Agregar Ambiente');
+                            $('#formAmbiente')[0].reset();
+                            $('#idAmbiente').val('');
+                            $('#modalAmbiente').modal('show');
+                        }
+                    }
+                ],
 
-        $('#collapseOne').collapse('show');
+                "ajax": {
+                    "url": "/get_ambientes",
+                    "type": "GET",
+                    "dataSrc": ""
+                },
+                "processing": true,
+                "serverSide": false, // Desactiva la recarga automática al ordenar
+                "columns": [
+                    { "data": "nombre", "className": 'dt-body-left' },
+                    { "data": "aforo", "className": 'dt-body-center' },
+                    { "data": "estado" },
+                    {
+                        "data": "idedificio", "className": 'dt-body-left',
+                        "render": function (data, type, row) {
+                            return edificios[data] || data;
+                        }
+                    },
+                    {
+                        "data": null, "className": 'dt-body-center',
+                        "render": function (data, type, row) {
+                            return `
+                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}" title="Eliminar"><i class="fas fa-times"></i></button>
+                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.idambiente}" title="Dar de Baja"><i class="fas fa-arrow-down"></i></button>
+                        `;
+                        }
+                    }
+                ],
+                "columnDefs": [
+                    { targets: '_all', className: 'dt-center', orderable: true } // Asegura que todas las columnas sean ordenables
+                ],
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                }
+            });
 
-        $('#filtro_edificio').on('change', function () {
-            var filtro = $(this).val();
-            table.column(3).search(filtro).draw();
-        });
+            $('#search_box').on('keyup', function () {
+                table.search(this.value).draw();
+            });
 
-        $('#btn_agregar_ambiente').click(function (e) {
-            e.preventDefault();
-            $('#modalAgregarAmbiente').modal('show');
-            $('#formAgregarAmbiente')[0].reset();
-        });
+            return table;
+        }
 
-        $('#formAgregarAmbiente').submit(function (e) {
+        var table;
+        if ($.fn.DataTable.isDataTable('#tabla-ambiente')) {
+            table = $('#tabla-ambiente').DataTable();
+            table.ajax.reload();
+        } else {
+            table = initializeDataTable();
+        }
+
+        cargarEdificios();
+
+        function mostrarAlerta(tipo, titulo, mensaje) {
+            Swal.fire({
+                icon: tipo,
+                title: titulo,
+                html: mensaje,
+                showConfirmButton: true,
+                timer: 5000
+            });
+        }
+
+        $('#formAmbiente').submit(function (e) {
             e.preventDefault();
             var data = {
-                nombre: $('#nombreAgregar').val(),
-                aforo: $('#aforoAgregar').val(),
-                estado: $('#estadoAgregar').val(),
-                idedificio: $('#idedificioAgregar').val(),
-                idambientetipo: $('#idambientetipoAgregar').val()
+                nombre: $('#nombre').val(),
+                aforo: $('#aforo').val(),
+                estado: $('#estado').val(),
+                idedificio: $('#idedificio').val(),
+                idambientetipo: $('#idambientetipo').val()
             };
 
+            var idAmbiente = $('#idAmbiente').val();
+            var url = idAmbiente ? '/modificar_ambiente' : '/agregar_ambiente';
+            if (idAmbiente) data.idambiente = idAmbiente;
+
             $.ajax({
-                url: '/agregar_ambiente',
+                url: url,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function (response) {
-                    $('#mensajeResultado').removeClass().empty();
                     if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                        mostrarAlerta('error', 'Error', response.error);
                     } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Ambiente agregado correctamente');
-                        cargarAmbientes();
-                        $('#modalAgregarAmbiente').modal('hide');
+                        var mensajeExito = idAmbiente ? 'La operación se realizó correctamente.' : 'La operación se realizó correctamente.';
+                        mostrarAlerta('success', 'Éxito', mensajeExito);
+                        table.ajax.reload();
+                        $('#modalAmbiente').modal('hide');
                     }
-                    $('#mensajeResultado').show();
                 },
                 error: function (xhr, status, error) {
-                    console.log(error);
+                    mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
                 }
             });
         });
 
+        $('#formSubidaMasiva').submit(function (e) {
+            e.preventDefault();
+            var fileInput = document.getElementById('archivo');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
 
+            reader.onload = function (e) {
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                var headers = jsonData[1];  
+                var rows = jsonData.slice(2); 
+
+                var formattedData = rows.map((row, index) => {
+                    return {
+                        aforo: row[headers.indexOf("Aforo")],
+                        estado: "A", // Asumiendo que todos están en estado "A"
+                        idambiente: index + 1, // Generando un ID secuencial
+                        idambientetipo: row[headers.indexOf("Tipo Ambiente")] === 'Laboratorio' ? 2 : 1,
+                        idedificio: getEdificioId(row[headers.indexOf("Edificio")]),
+                        nombre: row[headers.indexOf("Nombre")]
+                    };
+                });
+
+                console.log(JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
+
+                // $.ajax({
+                //     url: '/agrega_ambiente_excel',
+                //     type: 'POST',
+                //     contentType: 'application/json',
+                //     data: JSON.stringify(formattedData),
+                //     success: function (response) {
+                //         if (response.error) {
+                //             mostrarAlerta('error', 'Error', response.error);
+                //         } else {
+                //             mostrarAlerta('success', 'Éxito', 'La subida masiva se realizó correctamente.');
+                //             table.ajax.reload();
+                //             $('#modalSubidaMasiva').modal('hide');
+                //         }
+                //     },
+                //     error: function (xhr, status, error) {
+                //         mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+                //     }
+                // });
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+
+        function getEdificioId(nombreEdificio) {
+            switch (nombreEdificio) {
+                case 'CEFO': return 5;
+                case 'DECANAS': return 4;
+                case 'EDIFICIO ANTIGUO': return 1;
+                default: return 0;
+            }
+        }
 
         $('#tabla-ambiente tbody').on('click', '.btnModificar', function () {
             var id = $(this).data('id');
@@ -287,102 +414,89 @@
                 contentType: 'application/json',
                 success: function (response) {
                     var ambiente = response;
-                    $('#idAmbienteModificar').val(ambiente.idambiente);
-                    $('#nombreModificar').val(ambiente.nombre);
-                    $('#aforoModificar').val(ambiente.aforo);
-                    $('#estadoModificar').val(ambiente.estado);
-                    $('#idedificioModificar').val(ambiente.idedificio);
-                    $('#idambientetipoModificar').val(ambiente.idambientetipo);
-                    $('#modalModificarAmbiente').modal('show');
+                    console.log(ambiente);
+                    $('#idAmbiente').val(ambiente.idambiente);
+                    $('#nombre').val(ambiente.nombre);
+                    $('#aforo').val(ambiente.aforo);
+                    $('#estado').val(ambiente.estado);
+                    $('#idedificio').val(ambiente.idedificio);
+                    $('#idambientetipo').val(ambiente.idambientetipo);
+                    $('#modalAmbienteLabel').text('Modificar Ambiente');
+                    $('#modalAmbiente').modal('show');
                 },
                 error: function (xhr, status, error) {
-                    console.log(error);
+                    mostrarAlerta('error', 'Error', 'Hubo un error al obtener los datos del ambiente.');
                 }
             });
         });
-
-
-        $('#formModificarAmbiente').submit(function (e) {
-            e.preventDefault();
-            var data = {
-                idambiente: $('#idAmbienteModificar').val(),
-                nombre: $('#nombreModificar').val(),
-                aforo: $('#aforoModificar').val(),
-                estado: $('#estadoModificar').val(),
-                idedificio: $('#idedificioModificar').val(),
-                idambientetipo: $('#idambientetipoModificar').val()
-            };
-
-            $.ajax({
-                url: '/modificar_ambiente',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function (response) {
-                    $('#mensajeResultado').removeClass().empty();
-                    if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                    } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Ambiente modificado correctamente');
-                        cargarAmbientes();
-                        $('#modalModificarAmbiente').modal('hide');
-                    }
-                    $('#mensajeResultado').show();
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        });
-
-
 
         $('#tabla-ambiente tbody').on('click', '.btnEliminar', function () {
             var id = $(this).data('id');
-            $.ajax({
-                url: '/eliminar_ambiente',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ idambiente: id }),
-                success: function (response) {
-                    $('#mensajeResultado').removeClass().empty();
-                    if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                    } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Ambiente eliminado correctamente');
-                        cargarAmbientes();
-                    }
-                    $('#mensajeResultado').show();
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esta acción.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminarlo!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/eliminar_ambiente',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ idambiente: id }),
+                        success: function (response) {
+                            if (response.error) {
+                                var errorMsg = response.error; 
+                                mostrarAlerta('error', 'Error', errorMsg);
+                            } else {
+                                mostrarAlerta('success', 'Éxito', 'La operación se realizó correctamente.');
+                                table.ajax.reload();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+                        }
+                    });
                 }
             });
         });
 
         $('#tabla-ambiente tbody').on('click', '.btnDarDeBaja', function () {
             var id = $(this).data('id');
-            $.ajax({
-                url: '/dar_baja_ambiente',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ idambiente: id }),
-                success: function (response) {
-                    $('#mensajeResultado').removeClass().empty();
-                    if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                    } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Ambiente dado de baja correctamente');
-                        cargarAmbientes();
-                    }
-                    $('#mensajeResultado').show();
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esta acción.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, dar de baja!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/dar_baja_ambiente',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ idambiente: id }),
+                        success: function (response) {
+                            if (response.error) {
+                                var errorMsg = response.error; 
+                                mostrarAlerta('error', 'Error', errorMsg);
+                            } else {
+                                mostrarAlerta('success', 'Éxito', 'La operación se realizó correctamente.');
+                                table.ajax.reload();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+                        }
+                    });
                 }
             });
         });
     });
-
 </script>
 {% endblock %}

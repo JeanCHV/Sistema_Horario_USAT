@@ -201,13 +201,17 @@ def algoritmo_genetico():
                 resultado[nombre_curso] = {}
             if grupo_nombre not in resultado[nombre_curso]:
                 resultado[nombre_curso][grupo_nombre] = []
+
+                # Imprimir el valor de tipo_curso para depuración
+            print(f"tipo_curso: {tipo_curso}")
+            tipo_curso_str = "Presencial" if tipo_curso == 0 else "Virtual"
             resultado[nombre_curso][grupo_nombre].append({
                 "docente": f"{nombre_docente} {apellidos_docente}",
                 "aula": nombre_aula,
                 "dia": dia,
                 "hora_inicio": hora_inicio,
                 "hora_fin": hora_fin,
-                "tipo_curso": "Virtual" if tipo_curso == 0 else "Presencial"
+                "tipo_curso": tipo_curso_str
             })
     
     return resultado

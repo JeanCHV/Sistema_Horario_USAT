@@ -120,6 +120,11 @@ def procesar_login():
 def get_ambientes():
     ambientes = controlador_ambientes.obtener_ambientes()
     return jsonify(ambientes)
+
+@app.route("/get_edificios", methods=["GET"])
+def get_edificios():
+    edificio = controlador_edificio.obtener_edificios()
+    return jsonify(edificio)
 #AGREGAR AMBIENTE
 @app.route("/agregar_ambiente", methods=["POST"])
 def agregar_ambiente():
