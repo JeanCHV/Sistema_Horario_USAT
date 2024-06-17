@@ -3,6 +3,7 @@
 {% block titulo %} Cursos {% endblock %}
 
 {% block contenido %}
+
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
@@ -163,8 +164,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                alert(data.mensaje);
-                       
+                alert(data.mensaje); 
             })
             .catch(error => {
                 console.error('Error al obtener los datos de la tabla:', error);
@@ -198,8 +198,33 @@
                     });
                 }
             }
-            grupos(datos, function(data) {
-                rellenarTabla(escuela, semestre); 
+            Swal.fire({
+                title: '¿Seguro de querer modificar grupos?',
+                text: "No podrás revertir esta acción.",
+                icon: 'warning',
+                showCancelButton: true,
+                buttonsStyling: false,
+                confirmButtonText: 'Sí, modificar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    confirmButton: 'btn btn-primary me-2',
+                    cancelButton: 'btn btn-danger'
+                },
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return new Promise((resolve) => {
+                        grupos(datos, function(data) {
+                            resolve();
+                        });
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    rellenarTabla(escuela, semestre);
+                } else {
+                    console.log("Acción cancelada por el usuario.");
+                }
             });
         }
         
