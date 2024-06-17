@@ -7,10 +7,8 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item" href="Home"><a>Inicio</a></li>
         <li class="breadcrumb-item active" data-href="#"><a>Horarios por docente</a></li>
-
     </ol>
 </nav>
-
 
 <div class="card mx-2" id="card_horarios">
     <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
@@ -39,18 +37,17 @@
                             <label for="search_bar" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
                                 <!-- Buscador con autocompletado de sugerencias -->
-                                <div id="buscador-multiopcion-sugerencias" class="">
+                                <div id="buscador-multiopcion-sugerencias">
                                     <div id="bmos-barra-busqueda" contenteditable="false">
                                         <p contenteditable="false"></p>
                                     </div>
-                                    <ul id="bmos-lista-sugerencias">
-                                    </ul>
+                                    <ul id="bmos-lista-sugerencias"></ul>
                                     <span data-mensaje-error="" style="color: red; text-align: center;"></span>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-2 order-md-2 order-sm-1  d-flex justify-content-center align-items-center">
+                    <div class="col-md-2 order-md-2 order-sm-1 d-flex justify-content-center align-items-center">
                         <!-- Foto -->
                         <img src="/static/img/USUARIO.jpg" class="img-fluid" alt="Foto" id="foto_perfil">
                     </div>
@@ -61,22 +58,17 @@
                     <div class="row mt-3">
                         <div class="col-md-12" id="panel_docentes"></div>
                         <div class="col-md-12" id="espacio_tabla"></div>
-                        
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
-    
 </div>
 
 <link rel="stylesheet" href="/static/filtros_horarios/css/horarios_por_docente.css">
 <script src="/static/filtros_horarios/js/horarios_por_docente.js"></script>
 
 <style>
-
 #panel_docentes {
     display: flex;
     flex-wrap: wrap;

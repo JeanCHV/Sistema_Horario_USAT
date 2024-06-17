@@ -252,6 +252,8 @@ def agregar_curso():
     except Exception as e:
         return jsonify({"error": str(e)})
     
+
+    
 @app.route("/obtener_idcurso_por_nombre", methods=["POST"])
 def obtener_idcurso_por_nombre():
     try:
@@ -265,6 +267,31 @@ def obtener_idcurso_por_nombre():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+@app.route("/asignar_curso_docentes_excel", methods=["POST"])
+def asignar_curso_docentes_excel():
+    try:
+        asignaciones = request.json
+        if not asignaciones:
+            return jsonify({"error": "No se proporcionaron asignaciones"}), 400
+
+        resultados = []
+        for asignacion in asignaciones:
+            idcurso = asignacion.get('idcurso')
+            iddocente = asignacion.get('iddocente')
+
+            if not idcurso or not iddocente:
+                return jsonify({"error": "Todos los campos son obligatorios"}), 400
+
+            resultado = controlador_curso_docente.asignar_curso_docentes_excel(idcurso, iddocente)
+            resultados.append(resultado)
+
+        return jsonify(resultados)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    
+    
 
 ##ELIMINAR CURSO
 @app.route("/eliminar_curso", methods=["POST"])

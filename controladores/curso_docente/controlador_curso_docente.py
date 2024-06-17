@@ -112,3 +112,19 @@ def eliminar_cursoxambiente(idcurso, idpersona):
         return {"error": str(e)}
     finally:
         conexion.close()
+
+
+def asignar_curso_docentes_excel(idcurso, iddocente):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_CursosDocente_Gestion', [1, idcurso, iddocente])
+            conexion.commit()
+            return {"mensaje": f"Curso {idcurso} asignado a docente {iddocente} correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+
+
