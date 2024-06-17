@@ -403,6 +403,10 @@ def grupos():
 def ambientesxCursos():
     return render_template("dashboard/ambientesxcurso.html")
 
+@app.route("/disponibilidad")
+def disponibilidad():
+    return render_template("dashboard/disponibilidad.html")
+
 @app.route("/rellenar_tabla/<string:escuela>/<string:semestre>")
 def rellenar_tabla(escuela,semestre):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
