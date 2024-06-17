@@ -6,14 +6,6 @@ def obtener_conexion():
                                 user='root',
                                 password='yXKcAWFqWCnIzFousjWLLBGabdGqOVyt',
                                 db='db_calidad')
-#Desarrollo
-# def obtener_conexion():
-#     return pymysql.connect(host='roundhouse.proxy.rlwy.net',
-#                                 port=54363,
-#                                 user='root',
-#                                 password='UAumJRVIMWnTGqRdkZNDqvocCpHjzHKl',
-#                                 db='db_calidad')
-
 
 # def obtener_conexion():
 #     return pymysql.connect(host='bkvjs2sg6xirjg6gaoca-mysql.services.clever-cloud.com',
