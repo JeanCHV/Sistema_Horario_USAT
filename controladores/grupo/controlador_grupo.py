@@ -155,7 +155,7 @@ def manejo_grupos(datos):
                 else:
                     faltante = n_grupos
                     idss_eliminar = ids_eliminar(escuela, id_semestre, id_curso, faltante)
-                    print(f"IDs a eliminar: {idss_eliminar}")       
+                    #print(f"IDs a eliminar: {idss_eliminar}")       
                     for id_eliminar in idss_eliminar:
                         id_grupo = id_eliminar[0]
                         eliminar_grupo(id_grupo)
@@ -236,4 +236,45 @@ def modificar_grupo(id_grupo, nombre,vacantes, idcurso, idsemestre):
         return {"error": str(e)}
     finally:
         conexion.close()
+
+
+
+def retornar_grupos():
+    conexion = obtener_conexion()
+    with conexion.cursor() as cursor:
+        cursor.execute('''
+            SELECT COUNT(DISTINCT p.idpersona) AS total_docentes, COUNT(DISTINCT CASE WHEN dd.idpersona IS NOT NULL THEN 
+                       p.idpersona END) AS docentes_con_disponibilidad, COUNT(DISTINCT CASE WHEN dd.idpersona IS NULL THEN p.idpersona END)
+                        AS docentes_sin_disponibilidad FROM persona p LEFT JOIN docente_disponibilidad dd ON p.idpersona = dd.idpersona WHERE p.tipopersona = 'D';
+                       ''')
+        rows = cursor.fetchone()
+    conexion.close()
+    return rows
+
+def retornar_docentes():
+    conexion = obtener_conexion()
+    with conexion.cursor() as cursor:
+        cursor.execute('''
+                SELECT 
+                    COUNT(DISTINCT c.idcurso) AS total_cursos,
+                    COUNT(DISTINCT g.id_grupo) AS total_grupos,
+                    COUNT(DISTINCT CASE WHEN h.idhorario IS NOT NULL THEN g.id_grupo END) AS grupos_con_horario,
+                    COUNT(DISTINCT CASE WHEN h.idhorario IS NULL THEN g.id_grupo END) AS grupos_sin_horario
+                FROM 
+                    curso c
+                LEFT JOIN 
+                    grupo g ON c.idcurso = g.idcurso
+                LEFT JOIN 
+                    horario h ON g.id_grupo = h.id_grupo
+                INNER JOIN 
+                    semestre_academico se ON se.idsemestre = g.idsemestre
+                WHERE 
+                    se.descripcion = '2024-I';
+
+                       ''')
+        rows = cursor.fetchone()
+    conexion.close()
+    return rows
+
+
 

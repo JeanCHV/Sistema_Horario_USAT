@@ -25,6 +25,7 @@ import controladores.grupo.controlador_grupo as controlador_grupo
 import controladores.curso_ambiente.controlador_curso_ambiente as controlador_curso_ambiente
 import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
 import controladores.controlador_edificio as controlador_edificio
+import controladores.disponibilidad.controlador_disponibilidad as controlador_disponibilidad
 
 ##Para la validacion 3 intentos
 import time
@@ -473,6 +474,25 @@ def mantenimiento_grupos():
     else:
         return jsonify({"mensaje": "Grupos modificados correctamente"})
 
+@app.route('/reportegrupo_docente')
+def reportegrupo_docente():
+    return render_template('dashboard/reporte_gruposdocente.html')
+
+@app.route('/get_registrodocente_grupo_horario')
+def get_registrodocente_grupo_horario():
+    try:
+        grupos = controlador_grupo.retornar_grupos()
+        docente = controlador_grupo.retornar_docentes()
+        return jsonify({
+            "docentes_con_disponibilidad": grupos[1],
+            "docentes_sin_disponibilidad": grupos[2], 
+            "grupos_con_horario": docente[2],    
+            "grupos_sin_horario": docente[3]  
+        })
+    except Exception as e:
+        print(f"Error en la consulta: {str(e)}")
+        return jsonify({"error": "Error al obtener registros"}), 500
+
 @app.route("/cursosxescuela")
 def cursosxescuela():
     semestres = controlador_cursos.obtener_semestres()
@@ -850,3 +870,9 @@ def horarios_por_ciclo():
     semestres = controlador_semestre.obtener_semestres()
     ciclos = controlador_cursos.obtener_ciclos()
     return render_template("horarios/horarios_por_ciclo.html",semestres=semestres,ciclos=ciclos)
+
+#DISPONIBILIDAD
+@app.route("/get_disponibilidad", methods=["GET"])
+def get_disponibilidad():
+    disponibilidad = controlador_disponibilidad.get_disponibilidad()
+    return jsonify(disponibilidad)

@@ -2,6 +2,7 @@ const span_mensaje_error = document.querySelector("span[data-mensaje-error]");
 const div_loading = document.querySelector('#loading');
 const espacio_tabla = document.querySelector("#espacio_tabla");
 const panel_docentes = document.querySelector("#panel_docentes");
+const etiquetas_docentes_seleccionados = document.querySelector("#etiquetas_docentes_seleccionados");
 const columna_horas = [];
 for (let i = 7; i < 23; i++) {
     columna_horas.push(`${i.toString().padStart(2, '0')}:00 - ${(i + 1).toString().padStart(2, '0')}:00`);
@@ -18,57 +19,35 @@ function mostrarAlerta(icon, title, text) {
     });
 }
 
-function mostrarFoto(nombre_foto) {
-    var bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta");
-    if (bmos_etiquetas_busqueda.length === 0) {
-        document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
-    } else if (bmos_etiquetas_busqueda.length > 1) {
-        document.getElementById("foto_perfil").src = "/static/img/USUARIOS.jpg";
-    } else {
-        if (nombre_foto === "") {
-            nombre_foto = document.querySelector('.bmos-etiqueta').textContent.slice(0, -1);
-            nombre_foto = nombre_foto.toUpperCase().replace(/ /g, "_");
-            nombre_formateado = nombre_foto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            var img = new Image();
-            img.src = "/static/img/" + nombre_formateado + ".jpg";
-            img.onload = function () {
-                document.getElementById("foto_perfil").src = img.src;
+function mostrarFotoDocente(idpersona) {
+    fetch(`/obtener_docente_por_id/${idpersona}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            img.onerror = function () {
+            return response.json();
+        })
+        .then(data => {
+            if (data.foto === null) {
                 document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
-            }
-        } else {
-            nombre_foto = nombre_foto.toUpperCase().replace(/ /g, "_");
-            nombre_formateado = nombre_foto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            var img = new Image();
-            img.src = "/static/img/" + nombre_formateado + ".jpg";
-            img.onload = function () {
-                document.getElementById("foto_perfil").src = img.src;
-            }
-            img.onerror = function () {
-                span = document.querySelector('.bmos-etiqueta');
-                fetch(`/obtener_docente_por_id/${span.id}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.foto === null) {
-                            document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
-                        } else {
-                            img.src = "/static/img/" + data.foto;
-                            document.getElementById("foto_perfil").src = img.src;
-                        }
-                    })
-                    .catch(error => {
-                        document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
-                    });
-            }
-        }
-    }
+            } else {
+                var img = new Image();
+                img.src = "/static/img/" + data.foto;
+                img.onload = function() {
+                    document.getElementById("foto_perfil").src = img.src;
+                }
+                img.onerror = function() {
+                    document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
+                }
+            }         
+        })
+        .catch(error => {
+            console.error('Error al obtener la foto del docente:', error);
+            document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg";
+        });
 }
+
+
 
 function obtener_docentes() {
     fetch('/get_personas_docentes_activas', {
@@ -169,8 +148,9 @@ function bmos_insertar_etiqueta(element) {
     if (element.id != -1) {
         bmos_input.textContent = "";
         bmos_contenedor.classList.remove("active");
+
         var nuevoSpan = document.createElement("span");
-        nuevoSpan.className = "bmos-etiqueta";
+        nuevoSpan.className = "bmos-etiqueta-seleccionada";
         nuevoSpan.setAttribute("contenteditable", "false");
         nuevoSpan.setAttribute("id", `${element.id}`);
         nuevoSpan.innerHTML = `${element.textContent}<button data-etiqueta="${element.id}" onclick="bmos_eliminarEtiqueta(this);">X</button>`;
@@ -180,7 +160,7 @@ function bmos_insertar_etiqueta(element) {
         let horarios = obtenerHorariosDocente(element.id, combo_semestre.value)
             .then(horarios => {
                 agregarDocentePanel(element.id, element.textContent, horarios, combo_semestre.value);
-                bmos_barra_busqueda.appendChild(nuevoSpan);
+                etiquetas_docentes_seleccionados.appendChild(nuevoSpan);
                 bmos_input.focus();
                 mostrarFoto(element.textContent);
                 div_loading.style.display = "none";
@@ -189,7 +169,6 @@ function bmos_insertar_etiqueta(element) {
                 console.error('Error al obtener horarios:', error);
                 div_loading.style.display = "none";
             });
-
     }
 }
 
@@ -263,28 +242,52 @@ function obtenerHorariosDocente(id_docente, semestre) {
         });
 }
 
-function agregarDocentePanel(id_docente, nombre_docente, horarios_docente, semestre) {
-    var tabExistente = document.querySelector(`#tab_${id_docente}`);
+function agregarDocentePanel(idpersona, nombre_docente, horarios_docente, semestre) {
+    var tabExistente = document.querySelector(`#tab_${idpersona}`);
     if (tabExistente !== null) {
         tabExistente.remove();
     }
 
     let tab = document.createElement("div");
     tab.className = "docente-tab";
-    tab.id = `tab_${id_docente}`;
-    tab.innerText = `${nombre_docente}`;
-    tab.onclick = () => {
-        mostrarHorario(id_docente, nombre_docente, horarios_docente,semestre);
-       
-    };
+    tab.id = `tab_${idpersona}`;
+
+    // Añadir estilo para que el fondo y el texto sean de color rojo
+    tab.style.backgroundColor = "#d9534f";
+    tab.style.color = "white";
+
+    // Crear el contenido del div con el nombre del docente y el botón de eliminación
+    tab.innerHTML = `${nombre_docente} <span class="eliminar-docente" style="margin-left: 10px; cursor: pointer;">&times;</span>`;
     
+    // Añadir evento de click para eliminar el docente seleccionado
+    tab.querySelector(".eliminar-docente").addEventListener("click", (event) => {
+        event.stopPropagation(); // Evitar que el click en la "X" dispare el evento del tab
+        tab.remove();
+        // Limpiar la tabla de horarios si es la del docente eliminado
+        var tabla_existente = document.querySelector(`#horario_${idpersona}`);
+        if (tabla_existente !== null) {
+            tabla_existente.remove();
+        }
+        espacio_tabla.innerHTML = "";
+        mostrarFoto(""); // Restablecer la foto de perfil por defecto
+    });
+
+    tab.onclick = () => {
+        mostrarHorario(idpersona, nombre_docente, horarios_docente, semestre);
+        mostrarFotoDocente(idpersona); // Mostrar la foto del docente seleccionado
+    };
+
     panel_docentes.appendChild(tab);
 
-    mostrarHorario(id_docente, nombre_docente, horarios_docente);
-    
+    mostrarHorario(idpersona, nombre_docente, horarios_docente, semestre);
+    mostrarFotoDocente(idpersona); // Mostrar la foto del docente seleccionado al agregar el panel
 }
 
-function mostrarHorario(id_docente, nombre_docente, horarios_docente,semestre) {
+
+
+
+
+function mostrarHorario(id_docente, nombre_docente, horarios_docente, semestre) {
     var tabla_existente = document.querySelector(`#horario_${id_docente}`);
     if (tabla_existente !== null) {
         tabla_existente.remove();
@@ -331,7 +334,6 @@ function mostrarHorario(id_docente, nombre_docente, horarios_docente,semestre) {
             tbody_tabla.innerHTML += fila;
         }
     }
-   
 }
 
 /*FIN SCRIPT MOSTRAR MENUS*/
@@ -344,15 +346,19 @@ bmos_input.addEventListener('keyup', (event) => {
             event.preventDefault();
             index = Math.min(index + 1, sugerencias.length - 1);
             sugerencias[index].classList.add('seleccionado');
-            sugerencias[index - 1].classList.remove('seleccionado');
-
+            sugerencias[index].focus();
+            if (index > 0) {
+                sugerencias[index - 1].classList.remove('seleccionado');
+            }
         } else if (document.activeElement === bmos_input && event.key === "ArrowUp") {
             let sugerencias = document.querySelectorAll('#bmos-lista-sugerencias .bmos-sugerencia');
             event.preventDefault();
             index = Math.max(index - 1, 0);
             sugerencias[index].focus();
             sugerencias[index].classList.add('seleccionado');
-            sugerencias[index + 1].classList.remove('seleccionado');
+            if (index < sugerencias.length - 1) {
+                sugerencias[index + 1].classList.remove('seleccionado');
+            }
         }
 
         if (document.activeElement === bmos_input && event.key === 'Enter' && index !== -1) {

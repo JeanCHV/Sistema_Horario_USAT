@@ -94,6 +94,8 @@
 							</a>
 						</li>
 
+						
+
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{{url_for('perfil')}}">
 								<i class="align-middle" data-feather="user"></i> <span
@@ -104,95 +106,167 @@
 							Gestión
 						</li>
 
+						
 						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('ambientes')}}">
-								<img data-image="" src="https://img.icons8.com/glyph-neue/64/000000/school.png"
-									alt="school" /> <span class="align-middle">Ambientes</span>
-							</a>
+							<span class="sidebar-link a d-flex align-items-center">
+								<i class="align-middle" data-feather="align-left"></i>
+								<span class="align-middle">CURSOS</span>
+								<span class="ml-auto">
+									<span class="btn btn-sm ms-2 " onclick="mostrar(this)">
+										<i class="fa fa-caret-down text-end"></i>
+									</span>
+								</span>
+							</span>
+							<!-- aca -->
+							<ul class="list-unstyled  px-3">
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('cursos')}}">
+										<img data-image=""
+											src="https://img.icons8.com/ios-glyphs/30/000000/knowledge-sharing.png"
+											alt="knowledge-sharing" /> <span class="align-middle">Cursos</span>
+									</a>
+								</li>
+
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('grupos')}}">
+										<img data-image="" src="https://img.icons8.com/ios-filled/50/000000/groups.png"
+											alt="groups" /> <span class="align-middle">Grupos</span>
+									</a>
+								</li>
+
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('cursosxescuela')}}">
+										<i class="align-middle" data-feather="check-square"></i> <span
+											class="align-middle">Grupos por Curso</span>
+									</a>
+								</li>
+		
+
+							</ul>
+							<!-- aca -->
+
+
+						</li>
+						
+						<li class="sidebar-item">
+							<span class="sidebar-link a d-flex align-items-center">
+								<i class="align-middle" data-feather="align-left"></i>
+								<span class="align-middle">DOCENTES</span>
+								<span class="ml-auto">
+									<span class="btn btn-sm ms-2 " onclick="mostrar(this)">
+										<i class="fa fa-caret-down text-end"></i>
+									</span>
+								</span>
+							</span>
+							<!-- aca -->
+							<ul class="list-unstyled  px-3">
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('docentes')}}">
+										<img data-image=""
+											src="https://img.icons8.com/ios-glyphs/30/000000/administrator-male.png"
+											alt="administrator-male" /> <span class="align-middle">Docentes</span>
+									</a>
+								</li>
+
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('docentesxcursos')}}">
+										<img data-image="" src="https://img.icons8.com/metro/26/classroom.png"
+											alt="classroom" /> <span class="align-middle">Docentes por curso</span>
+									</a>
+								</li>
+
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('disponibilidad')}}">
+										<img data-image=""
+											src="https://img.icons8.com/ios-filled/50/planning-skill.png"
+											alt="planning-skill" /> <span class="align-middle">Disponibilidad</span>
+									</a>
+								</li>
+							</ul>
+							<!-- aca -->
 						</li>
 
 						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('cursos')}}">
-								<img data-image=""
-									src="https://img.icons8.com/ios-glyphs/30/000000/knowledge-sharing.png"
-									alt="knowledge-sharing" /> <span class="align-middle">Cursos</span>
-							</a>
+							<span class="sidebar-link a d-flex align-items-center">
+								<i class="align-middle" data-feather="align-left"></i>
+								<span class="align-middle">AMBIENTES</span>
+								<span class="ml-auto">
+									<span class="btn btn-sm ms-2 " onclick="mostrar(this)">
+										<i class="fa fa-caret-down text-end"></i>
+									</span>
+								</span>
+							</span>
+							<!-- aca -->
+							<ul class="list-unstyled  px-3">
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('ambientes')}}">
+										<img data-image="" src="https://img.icons8.com/glyph-neue/64/000000/school.png"
+											alt="school" /> <span class="align-middle">Ambientes</span>
+									</a>
+								</li>
+
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('ambientesxCursos')}}">
+										<img data-image="" src="https://img.icons8.com/ink/48/training--v1.png"
+											alt="training--v1" /> <span class="align-middle">Ambientes por Curso</span>
+									</a>
+								</li>
+		
+							</ul>
+							<!-- aca -->
 						</li>
+
+
 
 						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('grupos')}}">
-								<img data-image="" src="https://img.icons8.com/ios-filled/50/000000/groups.png"
-									alt="groups" /> <span class="align-middle">Grupos</span>
-							</a>
+							<span class="sidebar-link a d-flex align-items-center">
+								<i class="align-middle" data-feather="align-left"></i>
+								<span class="align-middle">HORARIOS</span>
+								<span class="ml-auto">
+									<span class="btn btn-sm ms-2 " onclick="mostrar(this)">
+										<i class="fa fa-caret-down text-end"></i>
+									</span>
+								</span>
+							</span>
+							<!-- aca -->
+							<ul class="list-unstyled  px-3">
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('horarios')}}">
+										<img data-image="" src="https://img.icons8.com/glyph-neue/64/000000/calendar.png"
+											alt="calendar" /> <span class="align-middle">Horarios</span>
+									</a>
+								</li>
+		
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('horarios_por_docente')}}">
+										<img data-image="" src="https://img.icons8.com/ios-filled/50/planning-skill.png"
+											alt="planning-skill" /> <span class="align-middle">Horarios por docente</span>
+									</a>
+								</li>
+		
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('horarios_por_ambiente')}}">
+										<i class="align-middle" data-feather="align-left"></i> <span
+											class="align-middle">Horarios por ambiente</span>
+									</a>
+								</li>
+		
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{url_for('horarios_por_ciclo')}}">
+										<img data-image=""
+											src="https://img.icons8.com/?size=100&id=Lx5iokyeqYUd&format=png&color=000000"
+											alt="planning-skill" /> <span class="align-middle">Horarios por Ciclo</span>
+									</a>
+								</li>
+
+
+
+
+							</ul>
+							<!-- aca -->
 						</li>
+						
 
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('cursosxescuela')}}">
-								<i class="align-middle" data-feather="check-square"></i> <span
-									class="align-middle">Grupos por Curso</span>
-							</a>
-						</li>
-
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('ambientesxCursos')}}">
-								<img data-image="" src="https://img.icons8.com/ink/48/training--v1.png"
-									alt="training--v1" /> <span class="align-middle">Ambientes por Curso</span>
-							</a>
-						</li>
-
-
-
-
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('docentes')}}">
-								<img data-image=""
-									src="https://img.icons8.com/ios-glyphs/30/000000/administrator-male.png"
-									alt="administrator-male" /> <span class="align-middle">Docentes</span>
-							</a>
-						</li>
-
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('docentesxcursos')}}">
-								<img data-image="" src="https://img.icons8.com/metro/26/classroom.png"
-									alt="classroom" /> <span class="align-middle">Docentes por curso</span>
-							</a>
-						</li>
-
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('horarios')}}">
-								<img data-image="" src="https://img.icons8.com/glyph-neue/64/000000/calendar.png"
-									alt="calendar" /> <span class="align-middle">Horarios</span>
-							</a>
-						</li>
-
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('horarios_por_docente')}}">
-								<img data-image="" src="https://img.icons8.com/ios-filled/50/planning-skill.png"
-									alt="planning-skill" /> <span class="align-middle">Horarios por docente</span>
-							</a>
-						</li>
-
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('horarios_por_ambiente')}}">
-								<i class="align-middle" data-feather="align-left"></i> <span
-									class="align-middle">Horarios por ambiente</span>
-							</a>
-						</li>
-
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('horarios_por_ciclo')}}">
-								<img data-image=""
-									src="https://img.icons8.com/?size=100&id=Lx5iokyeqYUd&format=png&color=000000"
-									alt="planning-skill" /> <span class="align-middle">Horarios por Ciclo</span>
-							</a>
-						</li>
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{{url_for('disponibilidad')}}">
-								<img data-image=""
-									src="https://img.icons8.com/ios-filled/50/planning-skill.png"
-									alt="planning-skill" /> <span class="align-middle">Disponibilidad</span>
-							</a>
-						</li>
 
 						<!-- aca -->
 						<li class="sidebar-item">
@@ -215,6 +289,14 @@
 								</li>
 							</ul>
 							<!-- aca -->
+							<ul class="list-unstyled px-3">
+								<li class="sidebar-item">
+									<a class="sidebar-link" href="{{ url_for('reportegrupo_docente') }}">
+										<i class="align-middle" data-feather="align-left"></i> <span class="align-middle">Reporte Grupos</span>
+									</a>
+								</li>
+							</ul>
+							
 						</li>
 
 
@@ -279,6 +361,7 @@
 						</ul>
 					</div>
 				</nav>
+
 				<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 					integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
 					crossorigin="anonymous"></script>
@@ -397,22 +480,30 @@
 	});
 
 	function mostrar(element) {
-		var hijo = element.children[0];
-		var padre = element.parentNode.parentNode.parentNode;
-		var uls = padre.querySelectorAll("ul");
-		var ul = uls[0];
-		var lis = ul.querySelectorAll('li');
-		var li = lis[0];
-		if (li.hidden == true) {
-			li.hidden = false;
-			hijo.classList.remove("fa-caret-down");
-			hijo.classList.add("fa-caret-up");
-		} else {
-			li.hidden = true;
-			hijo.classList.remove("fa-caret-up");
-			hijo.classList.add("fa-caret-down");
-		}
-	}
+    var hijo = element.children[0];
+    var padre = element.parentNode.parentNode.parentNode;
+    // Obtener el primer elemento <ul> dentro del abuelo
+    var ul = padre.querySelector("ul");
+    var lis = ul.querySelectorAll('li');
+
+    // Verificar si el primer li está oculto para aplicar la acción a todos
+    if (lis[0].hidden == true) {
+        // Mostrar todos los li
+        lis.forEach(function(li) {
+            li.hidden = false;
+        });
+        hijo.classList.remove("fa-caret-down");
+        hijo.classList.add("fa-caret-up");
+    } else {
+        // Ocultar todos los li
+        lis.forEach(function(li) {
+            li.hidden = true;
+        });
+        hijo.classList.remove("fa-caret-up");
+        hijo.classList.add("fa-caret-down");
+    }
+}
+
 
 
 

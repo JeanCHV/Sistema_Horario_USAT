@@ -1,0 +1,149 @@
+{% extends "dashboard/index.html" %}
+
+{% block titulo %}
+  Reportes por Ambiente y Docente
+{% endblock %}
+
+{% block contenido %}
+<script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .texto-label {
+        color:white;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .foot {
+        background-color: black;
+        border-color: black;
+    }
+
+    .foot:hover {
+        background-color: black;
+        border-color: black;
+    }
+
+    .foot:active {
+        background-color: black;
+        border-color: black;
+    }
+
+    @media (max-width: 570px) {
+        #foto_perfil {
+            display: none;
+        }
+    }
+
+    #foto_perfil {
+        max-height: 100px;
+    }
+
+    .bg-blue-horario-usat {
+        background-color: #1e3799; /* Example color, adjust as necessary */
+    }
+
+    .bg-red-usat{
+        background-color: #E33439;
+        color: white;
+    }
+
+    .card-title {
+        color: white; /* Agregado para hacer el texto dentro de los cards blanco */
+    }
+</style>
+
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Reportes</li>
+    </ol>
+</nav>
+
+<div class="container-fluid">
+    <!-- Pantalla de carga -->
+    <div id="loader" class="loader-wrapper">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Reportes (con gráficos circulares) -->
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card mb-4 w-100">
+                <div class="card-header bg-red-usat text-white">
+                    <h5 class="card-title text-white">Reporte por Docente</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartAmbiente"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-stretch">
+            <div class="card mb-4 w-100">
+                <div class="card-header bg-red-usat text-white">
+                    <h5 class="card-title text-white">Reporte de Grupos Horario</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="chartDocente"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Ocultar loader después de 2 segundos
+        setTimeout(function () {
+            document.getElementById('loader').style.display = 'none';
+        }, 2000);
+
+        // Obtener datos desde el servidor utilizando AJAX
+        fetch('/get_registrodocente_grupo_horario')  // Asegúrate de que esta ruta sea correcta
+            .then(response => response.json())
+            .then(data => {
+                const { docentes_con_disponibilidad, docentes_sin_disponibilidad, grupos_con_horario, grupos_sin_horario } = data;
+
+                // Datos para los gráficos
+                const dataAmbiente = {
+                    labels: ['Docentes con disponibilidad', 'Docentes sin disponibilidad'],
+                    datasets: [{
+                        label: 'Reporte por Docente',
+                        data: [docentes_con_disponibilidad, docentes_sin_disponibilidad],
+                        backgroundColor: ['#FF6384', '#36A2EB'],
+                    }]
+                };
+
+                const dataDocente = {
+                    labels: ['Grupos con horario', 'Grupos sin horario'],
+                    datasets: [{
+                        label: 'Reporte de Grupos',
+                        data: [grupos_con_horario, grupos_sin_horario],
+                        backgroundColor: ['#FF6384', '#36A2EB'],
+                    }]
+                };
+
+                // Configuración de los gráficos
+                const configAmbiente = {
+                    type: 'pie',
+                    data: dataAmbiente,
+                };
+
+                const configDocente = {
+                    type: 'pie',
+                    data: dataDocente,
+                };
+
+                // Inicializar los gráficos
+                new Chart(document.getElementById('chartAmbiente'), configAmbiente);
+                new Chart(document.getElementById('chartDocente'), configDocente);
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error);
+                document.getElementById('loader').style.display = 'none';  // En caso de error, ocultar loader
+            });
+    });
+</script>
+
+{% endblock %}
