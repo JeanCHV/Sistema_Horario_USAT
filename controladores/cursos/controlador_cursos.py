@@ -218,4 +218,21 @@ def obtener_ciclos():
     return ciclos
 
 
+def obtener_idcurso_por_nombre(nombre):
+    conexion = obtener_conexion()
+    curso = None
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT idcurso FROM curso WHERE nombre = %s", (nombre,))
+            curso = cursor.fetchone()
+            if curso:
+                columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas
+                curso_dict = dict(zip(columnas, curso))  # Convierte la tupla en un diccionario
+                return curso_dict
+            else:
+                return {"error": "Curso no encontrado"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
 

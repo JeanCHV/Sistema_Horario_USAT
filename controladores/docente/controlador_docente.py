@@ -103,3 +103,28 @@ def obtener_docente_por_id(idpersona):
         return {"error": str(e)}
     finally:
         conexion.close()
+
+def obtener_docente_por_nombre(nombres):
+    conexion = obtener_conexion()
+    persona = None
+    try:
+        with conexion.cursor() as cursor:
+            query = """
+            SELECT * FROM persona 
+            WHERE CONCAT(nombres, ' ', apellidos) = %s 
+            AND tipopersona = 'D'
+            """
+            cursor.execute(query, (nombres,))
+            persona = cursor.fetchone()
+            if persona:
+                columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas
+                persona_dict = dict(zip(columnas, persona))  # Convierte la tupla en un diccionario
+                return persona_dict
+            else:
+                return {"error": "Docente no encontrado"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+

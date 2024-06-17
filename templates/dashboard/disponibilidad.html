@@ -1,10 +1,10 @@
 {% extends "dashboard/index.html" %}
-{% block titulo %} Ambientes {% endblock %}
+{% block titulo %} Disponibilidad {% endblock %}
 {% block contenido %}
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
-        <li class="breadcrumb-item active"><a href="{{url_for('ambientes')}}">Ambientes</a></li>
+        <li class="breadcrumb-item active"><a href="{{url_for('disponibilidad')}}">Disponibilidad</a></li>
     </ol>
 </nav>
 
@@ -16,7 +16,7 @@
 <div class="card mx-2" id="card_ambientes">
     <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
         data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-        Ambientes
+        Disponibilidad
     </div>
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
@@ -24,11 +24,11 @@
                 <table id="tabla-ambiente" class="table table-striped" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width: 20%; text-align: center;">Nombre</th>
-                            <th style="width: 3%; text-align: center;">Aforo</th>
-                            <th style="width: 3%; text-align: center;">Estado</th>
-                            <th style="width: 30%; text-align: center;">Edificio</th>
-                            <th style="width: 3%; text-align: center;">Opciones</th>
+                            <th style="width: 20%; text-align: center;">Docente</th>
+                            <th style="width: 10%; text-align: center;">Dia</th>
+                            <th style="width: 15%; text-align: center;">Hora Inicio</th>
+                            <th style="width: 15%; text-align: center;">Hora Fin</th>
+                            <th style="width: 10%; text-align: center;">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,23 +117,23 @@
         const worksheet = workbook.addWorksheet('Plantilla');
 
         // Añadir el título
-        const titleRow = worksheet.addRow(['USAT - Ambientes']);
+        const titleRow = worksheet.addRow(['USAT - Disponibilidad']);
         worksheet.mergeCells('A1', 'D1');
         titleRow.font = { bold: true, size: 14 };
         titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
         worksheet.getRow(1).height = 20;
 
         // Añadir las cabeceras
-        const headerRow = worksheet.addRow(['Nombre', 'Aforo', 'Tipo Ambiente', 'Edificio']);
+        const headerRow = worksheet.addRow(['Docente', 'Dia', 'Hora Inicio', 'Hora Fin']);
         headerRow.font = { bold: false };
         headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
 
         // Ajustar el ancho de las columnas
         worksheet.columns = [
-            { key: 'nombre', width: 20 },
-            { key: 'aforo', width: 10 },
-            { key: 'tipo_ambiente', width: 15 },
-            { key: 'edificio', width: 20 }
+            { key: 'Docente', width: 20 },
+            { key: 'Dia', width: 10 },
+            { key: 'Hora Inicio', width: 15 },
+            { key: 'Hora Fin', width: 20 }
         ];
 
         // Generar y guardar el archivo
@@ -145,28 +145,7 @@
 
 <script>
     $(document).ready(function () {
-        var ambientes = [];
-        var edificios = {};
-
-        function cargarEdificios() {
-            $.ajax({
-                url: '/get_edificios',
-                type: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    edificios = response.reduce((acc, edificio) => {
-                        acc[edificio.idedificio] = edificio.nombre;
-                        return acc;
-                    }, {});
-                    $('#idedificio').append(response.map(function (edificio) {
-                        return `<option value="${edificio.idedificio}">${edificio.nombre}</option>`;
-                    }));
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error al cargar edificios:', error);
-                }
-            });
-        }
+        var disponibilidad = [];
 
         function initializeDataTable() {
             var table = $('#tabla-ambiente').DataTable({
@@ -248,22 +227,17 @@
                 ],
 
                 "ajax": {
-                    "url": "/get_ambientes",
+                    "url": "/get_disponibilidad",
                     "type": "GET",
                     "dataSrc": ""
                 },
                 "processing": true,
                 "serverSide": false, // Desactiva la recarga automática al ordenar
                 "columns": [
-                    { "data": "nombre", "className": 'dt-body-left' },
-                    { "data": "aforo", "className": 'dt-body-center' },
-                    { "data": "estado" },
-                    {
-                        "data": "idedificio", "className": 'dt-body-left',
-                        "render": function (data, type, row) {
-                            return edificios[data] || data;
-                        }
-                    },
+                    { "data": "nombre_completo", "className": 'dt-body-left' },
+                    { "data": "dia", "className": 'dt-body-left' },
+                    { "data": "hora_inicio" },
+                    { "data": "hora_fin" },
                     {
                         "data": null, "className": 'dt-body-center',
                         "render": function (data, type, row) {
@@ -297,8 +271,6 @@
         } else {
             table = initializeDataTable();
         }
-
-        cargarEdificios();
 
         function mostrarAlerta(tipo, titulo, mensaje) {
             Swal.fire({

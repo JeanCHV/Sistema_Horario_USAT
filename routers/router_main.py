@@ -25,6 +25,7 @@ import controladores.grupo.controlador_grupo as controlador_grupo
 import controladores.curso_ambiente.controlador_curso_ambiente as controlador_curso_ambiente
 import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
 import controladores.controlador_edificio as controlador_edificio
+import controladores.disponibilidad.controlador_disponibilidad as controlador_disponibilidad
 
 ##Para la validacion 3 intentos
 import time
@@ -120,6 +121,11 @@ def procesar_login():
 def get_ambientes():
     ambientes = controlador_ambientes.obtener_ambientes()
     return jsonify(ambientes)
+
+@app.route("/get_edificios", methods=["GET"])
+def get_edificios():
+    edificio = controlador_edificio.obtener_edificios()
+    return jsonify(edificio)
 #AGREGAR AMBIENTE
 @app.route("/agregar_ambiente", methods=["POST"])
 def agregar_ambiente():
@@ -245,6 +251,20 @@ def agregar_curso():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+@app.route("/obtener_idcurso_por_nombre", methods=["POST"])
+def obtener_idcurso_por_nombre():
+    try:
+        nombre = request.json.get('nombre')
+
+        # Verificar que todos los campos requeridos estén presentes
+        if not all([nombre]):
+            return jsonify({"error": "Todos los campos son obligatorios"}), 400
+        
+        resultado = controlador_cursos.obtener_idcurso_por_nombre(nombre)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 ##ELIMINAR CURSO
 @app.route("/eliminar_curso", methods=["POST"])
@@ -312,6 +332,15 @@ def agregar_docente():
         resultado = controlador_docente.agregar_docente(nombres, apellidos, n_documento, telefono, correo, cantHoras, tiempo_ref, estado)
 
 
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+@app.route("/obtener_docente_por_nombre", methods=["POST"])
+def obtener_docente_por_nombre():
+    try:
+        nombres = request.json.get('nombres')
+        # Llama al controlador para agregar el docente
+        resultado = controlador_docente.obtener_docente_por_nombre(nombres)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -397,6 +426,10 @@ def grupos():
 @app.route("/ambientesxCursos")
 def ambientesxCursos():
     return render_template("dashboard/ambientesxcurso.html")
+
+@app.route("/disponibilidad")
+def disponibilidad():
+    return render_template("dashboard/disponibilidad.html")
 
 @app.route("/rellenar_tabla/<string:escuela>/<string:semestre>")
 def rellenar_tabla(escuela,semestre):
@@ -810,3 +843,9 @@ def horarios_por_ciclo():
     semestres = controlador_semestre.obtener_semestres()
     ciclos = controlador_cursos.obtener_ciclos()
     return render_template("horarios/horarios_por_ciclo.html",semestres=semestres,ciclos=ciclos)
+
+#DISPONIBILIDAD
+@app.route("/get_disponibilidad", methods=["GET"])
+def get_disponibilidad():
+    disponibilidad = controlador_disponibilidad.get_disponibilidad()
+    return jsonify(disponibilidad)

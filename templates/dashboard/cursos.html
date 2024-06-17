@@ -10,21 +10,20 @@
 
 <div class="container-fluid my-4">
     <div class="card w-100">
-        <div class="card-header bg-red-usat text-white">
-            Cursos
-        </div>
+        <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
+        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Cursos
+    </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table id="tabla-curso" class="table table-striped tabla-cursos" style="width:100% ">
                     <thead>
                         <tr>
-                            <th style="width:30%; text-align:center;">Nombre</th>
-                            <th style="width:30%; text-align:center;">Código</th>
-                            <th style="width:10%; text-align:center;">Ciclo</th>
-                            <th style="width:30%; text-align:center;">Tipo Curso</th>
-                            <th style="width:30%; text-align:center;">Estado</th>
-                            <th style="width:30%; text-align:center;">Plan de Estudio</th>
-                            <th style="width:30%; text-align:center;">Opciones</th>
+                            <th style=" text-align:center;">Nombre Curso</th>
+                            <th style=" text-align:center;">Ciclo</th>
+                            <th style=" text-align:center;">Tipo Curso</th>
+                            <th style=" text-align:center;">Plan de Estudio</th>
+                            <th style=" text-align:center;">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,9 +31,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-end mt-3">
-                <a href="#" id="btn_agregar_curso" class="btn btn-primary">Agregar Nuevo Curso</a>
-            </div>
+            
         </div>
     </div>
 </div>
@@ -180,51 +177,233 @@
     </div>
 </div>
 
+<!-- Modal para la subida masiva de datos -->
+<div class="modal fade" id="modalSubidaMasiva" tabindex="-1" aria-labelledby="modalSubidaMasivaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSubidaMasivaLabel">Subida Masiva de Datos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSubidaMasiva" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="archivo" class="form-label">Seleccionar archivo (Excel):</label>
+                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".xls,.xlsx"
+                            required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Subir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function descargarPlantilla() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Plantilla');
+
+    // Añadir el título
+    const titleRow = worksheet.addRow(['USAT - Cursos']);
+    worksheet.mergeCells('A1', 'G1');
+    titleRow.font = { bold: true, size: 14 };
+    titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+    worksheet.getRow(1).height = 20;
+
+    // Añadir las cabeceras
+    const headerRow = worksheet.addRow(['Nombre', 'Código', 'Créditos', 'Horas Teoría', 'Horas Práctica', 'Ciclo', 'Tipo Curso', 'Plan de Estudio']);
+    headerRow.font = { bold: false };
+    headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+
+    // Ajustar el ancho de las columnas
+    worksheet.columns = [
+        { key: 'nombre', width: 20 },
+        { key: 'codigo', width: 10 },
+        { key: 'creditos', width: 10 },
+        { key: 'horas_teoria', width: 15 },
+        { key: 'horas_practica', width: 15 },
+        { key: 'ciclo', width: 10 },
+        { key: 'tipo_curso', width: 15 },
+        { key: 'plan_estudio', width: 15 }
+    ];
+
+    // Generar y guardar el archivo
+    workbook.xlsx.writeBuffer().then(function (buffer) {
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'USAT_Cursos_Plantilla.xlsx');
+    });
+}
+
+</script>
+
 <script>
     $(document).ready(function () {
         var cursos = [];
-        var table = $('#tabla-curso').DataTable({
-            "paging": true,
-            "info": true,
-            "columns": [
-                { "data": "nombre" },
-                { "data": "cod_curso" },
-                { "data": "ciclo", "className": 'dt-body-center'},
-                { "data": "tipo_curso" },
-                { "data": "estado", "className": 'dt-body-center'},
-                { "data": "nombre_plan_estudio", "className": 'dt-body-center'},
-                {
-                    "data": null,
-                    "render": function (data, type, row) {
-                        return `
-                            <button class="btn btn-primary btn-sm btnVer" data-id="${row.idcurso}" title="Ver"><i class="fas fa-eye"></i></button>
-                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idcurso}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idcurso}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
-                        `;
-                    }
-                }
-            ],
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-            }
-        });
+        var planEstudioMap = {}; 
 
-        function cargarCursos() {
+        function cargarPlanesDeEstudio(selectElementId, selectedValue = null) {
             $.ajax({
-                url: '/datos_cursos',
+                url: '/obtener_planes_estudio',
                 type: 'GET',
                 contentType: 'application/json',
                 success: function (response) {
-                    cursos = response;
-                    table.clear().rows.add(cursos).draw();
+                    var select = $(selectElementId);
+                    select.empty();
+                    select.append($('<option>', { value: '', text: 'Seleccione un plan de estudio' }));
+
+                    planEstudioMap = response.reduce((acc, plan) => {
+                        acc[plan.nombre] = plan.id_plan_estudio;
+                        select.append($('<option>', {
+                            value: plan.id_plan_estudio,
+                            text: plan.nombre
+                        }));
+                        return acc;
+                    }, {});
+
+
+                    if (selectedValue) {
+                        select.val(selectedValue);
+                    }
                 },
                 error: function (xhr, status, error) {
-                    console.log(error);
+                    console.log('Error al cargar los planes de estudio:', error);
                 }
             });
         }
 
-        cargarCursos();
+        function initializeDataTable(){
+            var table = $('#tabla-curso').DataTable({
+                paging: false,
+                info: false,
+                responsive: true,
+                autoWidth: true,
+                searching: true,
+                scrollY: "510px",
+                order: [], 
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'collection',
+                        text: '<i class="fas fa-file-import"></i> Importar',
+                        className: 'btn btn-secondary',
+                        buttons: [
+                            {
+                                text: '<i class="fas fa-upload"></i> Subir Archivo',
+                                className: 'dropdown-item',
+                                action: function (e) {
+                                    e.preventDefault();
+                                    $('#modalSubidaMasiva').modal('show');
+                                }
+                            },
+                            {
+                                text: '<i class="fas fa-download"></i> Descargar Plantilla',
+                                className: 'dropdown-item',
+                                action: function (e) {
+                                    e.preventDefault();
+                                    descargarPlantilla();
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        extend: 'collection',
+                        text: '<i class="fas fa-file-export"></i> Exportar/Imprimir',
+                        className: 'btn btn-secondary',
+                        buttons: [
+                            {
+                                extend: 'copy',
+                                text: '<i class="fas fa-copy"></i> Copiar',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'csv',
+                                text: '<i class="fas fa-file-csv"></i> CSV',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'excel',
+                                text: '<i class="fas fa-file-excel"></i> Excel',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'pdf',
+                                text: '<i class="fas fa-file-pdf"></i> PDF',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'print',
+                                text: '<i class="fas fa-print"></i> Imprimir',
+                                className: 'dropdown-item'
+                            }
+                        ]
+                    }, 
+                    {
+                        text: '<i class="fas fa-plus"></i> Agregar Nuevo Curso',
+                        className: 'btn_agregar_curso',
+                        action: function (e) {
+                            e.preventDefault();
+                            $('#formAgregarCurso')[0].reset();
+                            cargarPlanesDeEstudio('#planEstudioCurso');
+                            $('#modalAgregarCurso').modal('show');
+                        }
+                    }
+                ],
+                "ajax": {
+                    "url": "/datos_cursos", // Asegúrate de que esta URL es correcta
+                    "type": "GET",
+                    "dataSrc": "" // Ajusta esto según el formato de los datos devueltos por tu servidor
+                },
+                "processing": true,
+                "serverSide": false, // Desactiva la recarga automática al ordenar
+                "columns": [
+                    { "data": "nombre" },
+                    { "data": "ciclo", "className": 'dt-body-center' },
+                    { "data": "tipo_curso", "className": 'dt-body-center'},
+                    { "data": "nombre_plan_estudio", "className": 'dt-body-center' },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            return `
+                            <button class="btn btn-primary btn-sm btnVer" data-id="${row.idcurso}" title="Ver"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idcurso}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idcurso}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
+                        `;
+                        }
+                    }
+                ],
+                
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                }
+            });
+            $('#search_box').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+
+            return table;
+        }
+
+        var table;
+        if ($.fn.DataTable.isDataTable('#tabla-curso')) {
+            table = $('#tabla-curso').DataTable();
+            table.ajax.reload();
+        } else {
+            table = initializeDataTable();
+        }
+
+        cargarPlanesDeEstudio();
+
+        function mostrarAlerta(tipo, titulo, mensaje) {
+            Swal.fire({
+                icon: tipo,
+                title: titulo,
+                html: mensaje,
+                showConfirmButton: true,
+                timer: 5000
+            });
+        }
 
         $('#tabla-curso tbody').on('click', '.btnVer', function () {
             var id = $(this).data('id');
@@ -258,38 +437,67 @@
             });
         });
 
-        function cargarPlanesDeEstudio(selectElementId, selectedValue = null) {
-            $.ajax({
-                url: '/obtener_planes_estudio',
-                type: 'GET',
-                contentType: 'application/json',
-                success: function (response) {
-                    var select = $(selectElementId);
-                    select.empty();
-                    select.append($('<option>', { value: '', text: 'Seleccione un plan de estudio' }));
-                    response.forEach(function (plan) {
-                        select.append($('<option>', {
-                            value: plan.id_plan_estudio,
-                            text: plan.nombre
-                        }));
-                    });
+        $('#formSubidaMasiva').submit(function (e) {
+            e.preventDefault();
+            var fileInput = document.getElementById('archivo');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
 
-                    if (selectedValue) {
-                        select.val(selectedValue); 
+            reader.onload = function (e) {
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                var headers = jsonData[1];  
+                var rows = jsonData.slice(2); 
+
+                var formattedData = rows.map((row, index) => {
+                    var planEstudioNombre = row[headers.indexOf("Plan de Estudio")];
+                    var idPlanEstudio = planEstudioMap[planEstudioNombre] || null;
+                    return {
+                        nombre: row[headers.indexOf("Nombre")],
+                        codigo: row[headers.indexOf("Código")],
+                        creditos: row[headers.indexOf("Créditos")],
+                        horas_teoria: row[headers.indexOf("Horas Teoría")],
+                        horas_practica: row[headers.indexOf("Horas Práctica")],
+                        ciclo: row[headers.indexOf("Ciclo")],
+                        tipo_curso: row[headers.indexOf("Tipo Curso")] === 'Presencial' ? 0 : 1,
+                        estado: "A", // Asumiendo que todos están en estado "A"
+                        idcurso: index + 1, // Generando un ID secuencial
+                        id_plan_estudio: idPlanEstudio
+                        
+                        
+                    };
+                });
+
+                console.log(JSON.stringify(formattedData, null, 2));
+            };
+
+             
+             /* $.ajax({
+                url: '/agrega_curso_excel',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formattedData),
+                success: function (response) {
+                    if (response.error) {
+                        Swal.fire('Error', response.error, 'error');
+                    } else {
+                        Swal.fire('Éxito', 'La subida masiva se realizó correctamente.', 'success');
+                        table.ajax.reload();
+                        $('#modalSubidaMasiva').modal('hide');
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.log('Error al cargar los planes de estudio:', error);
+                    Swal.fire('Error', 'Hubo un error al realizar la operación.', 'error');
                 }
-            });
-        }
+            }); */
 
-        $('#btn_agregar_curso').click(function (e) {
-            e.preventDefault();
-            $('#modalAgregarCurso').modal('show');
-            $('#formAgregarCurso')[0].reset();
-            cargarPlanesDeEstudio('#planEstudioCurso');
+            reader.readAsArrayBuffer(file);
         });
+
 
         $('#formAgregarCurso').submit(function (e) {
             e.preventDefault();
@@ -311,19 +519,16 @@
                 contentType: 'application/json',
                 data: JSON.stringify(data),
                 success: function (response) {
-                    console.log(response);
-                    $('#mensajeResultado').removeClass().empty();
                     if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                        Swal.fire('Error', response.error, 'error');
                     } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Curso agregado correctamente');
-                        cargarCursos();
+                        Swal.fire('Éxito', 'Curso agregado correctamente', 'success');
+                        table.ajax.reload();
                         $('#modalAgregarCurso').modal('hide');
                     }
-                    $('#mensajeResultado').show();
                 },
                 error: function (xhr, status, error) {
-                    console.log(error);
+                    Swal.fire('Error', 'Hubo un error al agregar el curso', 'error');
                 }
             });
         });
@@ -331,8 +536,16 @@
         $('#tabla-curso tbody').on('click', '.btnEliminar', function () {
             var id = $(this).data('id');
             var nombre = $(this).data('nombre');
-            if (confirm(`¿Seguro que quieres eliminar el curso: ${nombre}?`)) {
-                if (id) {
+            Swal.fire({
+                title: `¿Seguro que quieres eliminar el curso: ${nombre}?`,
+                text: "No podrás revertir esta acción.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminarlo!'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     $.ajax({
                         url: '/eliminar_curso',
                         type: 'POST',
@@ -340,23 +553,19 @@
                         data: JSON.stringify({ idcurso: id }),
                         success: function (response) {
                             console.log(response);
-                            $('#mensajeResultado').removeClass().empty();
                             if (response.error) {
-                                $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                                Swal.fire('Error', response.error, 'error');
                             } else {
-                                $('#mensajeResultado').addClass('alert alert-success').text('Curso eliminado correctamente');
-                                cargarCursos();
+                                Swal.fire('Éxito', 'La operación se realizó correctamente.', 'success');
+                                table.ajax.reload();
                             }
-                            $('#mensajeResultado').show();
                         },
                         error: function (xhr, status, error) {
-                            console.log(error);
+                            Swal.fire('Error', 'Hubo un error al eliminar el curso', 'error');
                         }
                     });
-                } else {
-                    console.log('ID no definido');
                 }
-            }
+            });
         });
 
         $('#tabla-curso tbody').on('click', '.btnModificar', function () {
@@ -380,7 +589,7 @@
                     $('#modalModificarCurso').modal('show');
                 },
                 error: function (xhr, status, error) {
-                    console.log(error);
+                    Swal.fire('Error', 'Hubo un error al obtener los datos del curso', 'error');
                 }
             });
         });
@@ -407,18 +616,16 @@
                 data: JSON.stringify(data),
                 success: function (response) {
                     console.log(response);
-                    $('#mensajeResultado').removeClass().empty();
                     if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                        Swal.fire('Error', response.error, 'error');
                     } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Curso modificado correctamente');
-                        cargarCursos();
+                        Swal.fire('Éxito', 'Curso modificado correctamente', 'success');
+                        table.ajax.reload();
                         $('#modalModificarCurso').modal('hide');
                     }
-                    $('#mensajeResultado').show();
                 },
                 error: function (xhr, status, error) {
-                    console.log(error);
+                    Swal.fire('Error', 'Hubo un error al modificar el curso', 'error');
                 }
             });
         });
