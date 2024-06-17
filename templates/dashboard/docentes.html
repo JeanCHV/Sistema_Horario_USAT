@@ -12,38 +12,40 @@
 <div class="container">
 </div>-->
 
-    <div class="card">
-        <div class="card-header bg-red-usat text-white">
+    <div class="card  mx-2" id="card_docentes">
+        <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
+        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
             Docentes
         </div>
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
-            <table id="tabla-docente" class="table table-striped" style="width:100%">
-                <thead>
-                    <tr>
-                        <th style="width: 10%; text-align:center">ID</th>
-                        <th style="width: 40%; text-align:center">Nombres</th>
-                        <th style="width: 15%; text-align:center">Correo</th>
-                        <th style="width: 15%; text-align:center">Teléfono</th>
-                        <th style="width: 5%; text-align:center">Opciones</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="table-responsive mt-3">
+                 <table id="tabla-docente" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%; text-align:center">ID</th>
+                            <th style="width: 40%; text-align:center">Nombres</th>
+                            <th style="width: 15%; text-align:center">Correo</th>
+                            <th style="width: 15%; text-align:center">Teléfono</th>
+                            <th style="width: 5%; text-align:center">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                     <!-- Los datos de los docentes se cargarán dinámicamente aquí -->
-                </tbody>
-            </table>
-            <div class="d-flex justify-content-end mt-3">
-                <a href="#" id="btn_agregar_docente" class="btn btn-primary">Agregar Nuevo Docente</a>
-            </div>        
-        </div>
-        
+                    </tbody>
+                 </table>
+                </div>
+            </div>
+         </div>
+
 
         <!-- MODAL AGREGAR DOCENTE -->
-        <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-labelledby="modalDocenteLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Agregar Docente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form id="formAgregarDocente">
@@ -143,32 +145,63 @@
         </div>
     </div>
 
+<!-- Modal para la subida masiva de datos -->
+<div class="modal fade" id="modalSubidaMasiva" tabindex="-1" aria-labelledby="modalSubidaMasivaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSubidaMasivaLabel">Subida Masiva de Datos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSubidaMasiva" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="archivo" class="form-label">Seleccionar archivo (Excel):</label>
+                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".xls,.xlsx"
+                            required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Subir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script>
+    function descargarPlantilla() {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Plantilla');
+
+        // Añadir el título
+        const titleRow = worksheet.addRow(['USAT - Docentes']);
+        worksheet.mergeCells('A1', 'D1');
+        titleRow.font = { bold: true, size: 14 };
+        titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.getRow(1).height = 20;
+
+        // Añadir las cabeceras
+        const headerRow = worksheet.addRow(['IDPersona','Nombres', 'Correo', 'Teléfono']);
+        headerRow.font = { bold: false };
+        headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Ajustar el ancho de las columnas
+        worksheet.columns = [
+            { key: 'idpersona', width: 20 },
+            { key: 'nombre', width: 20 },
+            { key: 'correo', width: 10 },
+            { key: 'telefono', width: 20 }
+        ];
+
+        // Generar y guardar el archivo
+        workbook.xlsx.writeBuffer().then(function (buffer) {
+            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'USAT_Docentes_Plantilla.xlsx');
+        });
+    }
+</script>
 <script>
     $(document).ready(function() {
     var docentes = [];
-    var table = $('#tabla-docente').DataTable({
-        "paging": true,
-        "info": true,
-        "columns": [
-            { "data": "idpersona" ,"className": 'dt-body-center' },
-            { "data": "nombre" },  
-            { "data": "correo" },
-            { "data": "telefono","className": 'dt-body-center' },
-            {
-                "data": null,"className": 'dt-body-center',
-                "render": function(data, type, row) {
-                    return `
-                        <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
-                    `;
-                }
-            }
-        ],
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-        }
-    });
 
     function cargarDocentes() {
         $.ajax({
@@ -184,8 +217,168 @@
             }
         });
     }
+    
+    function initializeDataTable() {
+            var table = $('#tabla-docente').DataTable({
+                paging: true,
+                info: true,
+                responsive: true,
+                autoWidth: true,
+                searching: true,
+                scrollY: "510px",
+                order: [],
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'collection',
+                        text: '<i class="fas fa-file-import"></i> Importar',
+                        className: 'btn btn-secondary',
+                        buttons: [
+                            {
+                                text: '<i class="fas fa-upload"></i> Subir Archivo',
+                                className: 'dropdown-item',
+                                action: function (e) {
+                                    e.preventDefault();
+                                    $('#modalSubidaMasiva').modal('show');
+                                }
+                            },
+                            {
+                                text: '<i class="fas fa-download"></i> Descargar Plantilla',
+                                className: 'dropdown-item',
+                                action: function (e) {
+                                    e.preventDefault();
+                                    descargarPlantilla();
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        extend: 'collection',
+                        text: '<i class="fas fa-file-export"></i> Exportar/Imprimir',
+                        className: 'btn btn-secondary',
+                        buttons: [
+                            {
+                                extend: 'copy',
+                                text: '<i class="fas fa-copy"></i> Copiar',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'csv',
+                                text: '<i class="fas fa-file-csv"></i> CSV',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'excel',
+                                text: '<i class="fas fa-file-excel"></i> Excel',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'pdf',
+                                text: '<i class="fas fa-file-pdf"></i> PDF',
+                                className: 'dropdown-item'
+                            },
+                            {
+                                extend: 'print',
+                                text: '<i class="fas fa-print"></i> Imprimir',
+                                className: 'dropdown-item'
+                            }
+                        ]
+                    },
+                    {
+                        text: '<i class="fas fa-plus"></i> Agregar Nuevo Docente',
+                        className: 'btn_agregar_docente',
+                        action: function (e) {
+                            e.preventDefault();
+                            $('#formAgregarDocente')[0].reset();
+                            $('#modalAgregarDocente').modal('show');
+                        }
+                    }
+                ],
+                "ajax": {
+                    "url": "/get_docentes",
+                    "type": "GET",
+                    "dataSrc": ""
+                },
+                "processing": true,
+                "serverSide": false,
+                "columns": [
+                    { "data": "idpersona", "className": 'dt-body-center' },
+                    { "data": "nombre" },
+                    { "data": "correo" },
+                    { "data": "telefono", "className": 'dt-body-center' },
+                    {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            return `
+                                <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
+                                <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
+                            `;
+                        }
+                    }
+                ],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                }
+            });
 
-    cargarDocentes();
+            $('#search_box').on('keyup', function () {
+                table.search(this.value).draw();
+            });
+
+            return table;
+        }
+
+        var table;
+        if ($.fn.DataTable.isDataTable('#tabla-docente')) {
+            table = $('#tabla-docente').DataTable();
+            table.ajax.reload();
+        } else {
+            table = initializeDataTable();
+        }
+
+        cargarDocentes();
+
+        function mostrarAlerta(tipo, titulo, mensaje) {
+            Swal.fire({
+                icon: tipo,
+                title: titulo,
+                html: mensaje,
+                showConfirmButton: true,
+                timer: 5000
+            });
+        }
+
+        $('#formSubidaMasiva').submit(function (e) {
+            e.preventDefault();
+            var fileInput = document.getElementById('archivo');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                var headers = jsonData[1];
+                var rows = jsonData.slice(2);
+
+                var formattedData = rows.map((row, index) => {
+                    return {
+                        idpersona: row[headers.indexOf("IDPersona")],
+                        nombre: row[headers.indexOf("Nombres")],
+                        correo: row[headers.indexOf("Correo")],
+                        telefono: row[headers.indexOf("Teléfono")]
+                    };
+                });
+
+                console.log(JSON.stringify(formattedData, null, 2));
+            };
+            
+
+            reader.readAsArrayBuffer(file);
+        });
 
     $('#btn_agregar_docente').click(function(e) {
         e.preventDefault();
