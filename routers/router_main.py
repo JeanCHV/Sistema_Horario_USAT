@@ -250,6 +250,20 @@ def agregar_curso():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+@app.route("/obtener_idcurso_por_nombre", methods=["POST"])
+def obtener_idcurso_por_nombre():
+    try:
+        nombre = request.json.get('nombre')
+
+        # Verificar que todos los campos requeridos estén presentes
+        if not all([nombre]):
+            return jsonify({"error": "Todos los campos son obligatorios"}), 400
+        
+        resultado = controlador_cursos.obtener_idcurso_por_nombre(nombre)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 ##ELIMINAR CURSO
 @app.route("/eliminar_curso", methods=["POST"])
@@ -317,6 +331,15 @@ def agregar_docente():
         resultado = controlador_docente.agregar_docente(nombres, apellidos, n_documento, telefono, correo, cantHoras, tiempo_ref, estado)
 
 
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+@app.route("/obtener_docente_por_nombre", methods=["POST"])
+def obtener_docente_por_nombre():
+    try:
+        nombres = request.json.get('nombres')
+        # Llama al controlador para agregar el docente
+        resultado = controlador_docente.obtener_docente_por_nombre(nombres)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
