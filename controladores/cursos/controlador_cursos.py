@@ -18,6 +18,28 @@ def obtener_datos_cursos():
     conexion.close()
     return cursos
 
+
+def para_tabla_cursos():
+    conexion = obtener_conexion()
+    cursos = []
+
+    with conexion.cursor() as cursor:
+        cursor.execute("""
+            SELECT c.idcurso,c.nombre, c.cod_curso, c.creditos, c.horas_teoria, c.horas_practica, 
+                CASE c.tipo_curso when 0 then 'PRESENCIAL' when 1 then 'VIRTUAL'
+                END as tipo_curso, c.ciclo, p.nombre AS nombre_plan_estudio, c.estado
+            FROM curso c
+            JOIN plan_estudio p ON c.id_plan_estudio = p.id_plan_estudio;
+            """)
+        column_names = [desc[0] for desc in cursor.description]  
+        rows = cursor.fetchall()
+
+        for row in rows:
+            curso_dict = dict(zip(column_names, row)) 
+            cursos.append(curso_dict)
+    conexion.close()
+    return cursos   
+
 def agregar_curso(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
     conexion = obtener_conexion()
     try:

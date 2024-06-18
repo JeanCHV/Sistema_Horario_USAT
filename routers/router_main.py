@@ -178,7 +178,7 @@ def get_ambiente(idambiente):
 ##DATOS CURSOS
 @app.route("/datos_cursos", methods=["GET"])
 def datos_cursos():
-    cursos = controlador_cursos.obtener_datos_cursos()
+    cursos = controlador_cursos.para_tabla_cursos()
     return jsonify(cursos)
 
 @app.route("/get_semestre", methods=["GET"])
