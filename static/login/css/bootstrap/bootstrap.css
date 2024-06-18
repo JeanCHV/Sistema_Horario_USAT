@@ -4013,7 +4013,7 @@ input[type="button"].btn-block {
   display: block;
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
-  line-height: 1.25;
+  line-height: 5.25;
   color: #007bff;
   background-color: #fff;
   border: 1px solid #dee2e6; }

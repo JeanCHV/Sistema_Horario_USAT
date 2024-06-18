@@ -16,7 +16,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="tabla-curso" class="table table-striped tabla-cursos" style="width:100% ">
+                <table id="tabla-curso" class="table table-striped tabla-cursos" style="width:100%">
                     <thead>
                         <tr>
                             <th style=" text-align:center;">Nombre Curso</th>
@@ -375,7 +375,7 @@
                     { data: "tipo_curso", className: 'dt-body-center' },
                     { data: "nombre_plan_estudio", className: 'dt-body-center' },
                     {
-                        data: null,
+                        data: null, className: 'dt-body-center',
                         render: function (data, type, row) {
                             return `
                                 <button class="btn btn-primary btn-sm btnVer" data-id="${row.idcurso}" title="Ver"><i class="fas fa-eye"></i></button>
