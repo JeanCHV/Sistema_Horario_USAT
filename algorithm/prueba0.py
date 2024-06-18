@@ -14,47 +14,42 @@ cursos = [
     {"idcurso": 10, "horas_practica": 2, "horas_teoria": 3, "ciclo": 5},
     {"idcurso": 11, "horas_practica": 1, "horas_teoria": 4, "ciclo": 6},
     {"idcurso": 12, "horas_practica": 0, "horas_teoria": 3, "ciclo": 6},
-    # Añadir más cursos según sea necesario
 ]
 
 curso_docente = [
-    {"idcurso": 1, "idpersona": 1},
-    {"idcurso": 2, "idpersona": 2},
-    {"idcurso": 3, "idpersona": 3},
-    {"idcurso": 4, "idpersona": 4},
-    {"idcurso": 5, "idpersona": None},
-    {"idcurso": 6, "idpersona": 2},
-    {"idcurso": 7, "idpersona": 3},
-    {"idcurso": 8, "idpersona": None},
-    {"idcurso": 9, "idpersona": 1},
-    {"idcurso": 10, "idpersona": 2},
-    {"idcurso": 11, "idpersona": None},
-    {"idcurso": 12, "idpersona": 4},
-    # Añadir más asignaciones según sea necesario
+    {"idcurso": 1, "idpersona": [1, 4]},
+    {"idcurso": 2, "idpersona": [2, 5]},
+    {"idcurso": 3, "idpersona": [3, 6]},
+    {"idcurso": 4, "idpersona": [4, 7]},
+    {"idcurso": 5, "idpersona": [5, 8]},
+    {"idcurso": 6, "idpersona": [2, 6]},
+    {"idcurso": 7, "idpersona": [3, 9]},
+    {"idcurso": 8, "idpersona": [8]},
+    {"idcurso": 9, "idpersona": [1, 9]},
+    {"idcurso": 10, "idpersona": [2, 10]},
+    {"idcurso": 11, "idpersona": [6, 10]},
+    {"idcurso": 12, "idpersona": [4, 7, 5]},
 ]
 
 curso_ambiente = [
-    {"idcurso": 1, "idambiente": 1},
-    {"idcurso": 2, "idambiente": 2},
-    {"idcurso": 3, "idambiente": 3},
-    {"idcurso": 4, "idambiente": 4},
-    {"idcurso": 5, "idambiente": 1},
-    {"idcurso": 6, "idambiente": 2},
-    {"idcurso": 7, "idambiente": 4},
-    {"idcurso": 8, "idambiente": 4},
-    {"idcurso": 9, "idambiente": 3},
-    {"idcurso": 10, "idambiente": 2},
-    {"idcurso": 11, "idambiente": 3},
-    {"idcurso": 12, "idambiente": 1},
-    {"idcurso": 12, "idambiente": 4},
-    # Añadir más asignaciones según sea necesario
+    {"idcurso": 1, "idambiente": [1, 2]},
+    {"idcurso": 2, "idambiente": [2]},
+    {"idcurso": 3, "idambiente": [3]},
+    {"idcurso": 4, "idambiente": [4]},
+    {"idcurso": 5, "idambiente": [1]},
+    {"idcurso": 6, "idambiente": [2]},
+    {"idcurso": 7, "idambiente": [4]},
+    {"idcurso": 8, "idambiente": [4]},
+    {"idcurso": 9, "idambiente": [3]},
+    {"idcurso": 10, "idambiente": [2]},
+    {"idcurso": 11, "idambiente": [3]},
+    {"idcurso": 12, "idambiente": [1, 4]},
 ]
 
 grupos = [
     {"idcurso": 1, "nombre": "A"},
     {"idcurso": 1, "nombre": "B"},
     {"idcurso": 2, "nombre": "A"},
-    {"idcurso": 2, "nombre": "B"},
     {"idcurso": 3, "nombre": "A"},
     {"idcurso": 4, "nombre": "A"},
     {"idcurso": 5, "nombre": "A"},
@@ -66,7 +61,6 @@ grupos = [
     {"idcurso": 11, "nombre": "A"},
     {"idcurso": 12, "nombre": "A"},
     {"idcurso": 12, "nombre": "B"},
-    # Añadir más grupos según sea necesario
 ]
 
 docentes = [
@@ -74,7 +68,12 @@ docentes = [
     {"idpersona": 2, "nombre": "Docente 2"},
     {"idpersona": 3, "nombre": "Docente 3"},
     {"idpersona": 4, "nombre": "Docente 4"},
-    # Añadir más docentes según sea necesario
+    {"idpersona": 5, "nombre": "Docente 5"},
+    {"idpersona": 6, "nombre": "Docente 6"},
+    {"idpersona": 7, "nombre": "Docente 7"},
+    {"idpersona": 8, "nombre": "Docente 8"},
+    {"idpersona": 9, "nombre": "Docente 9"},
+    {"idpersona": 10, "nombre": "Docente 10"},
 ]
 
 ambientes = [
@@ -82,23 +81,58 @@ ambientes = [
     {"idambiente": 2, "nombre": "Ambiente 2"},
     {"idambiente": 3, "nombre": "Ambiente 3"},
     {"idambiente": 4, "nombre": "Ambiente 4"},
-    # Añadir más ambientes según sea necesario
 ]
 
 disponibilidad_docente = [
     {"idpersona": 1, "dia": "Lunes", "hora_inicio": 8, "hora_fin": 12},
     {"idpersona": 1, "dia": "Miércoles", "hora_inicio": 14, "hora_fin": 18},
-    {"idpersona": 1, "dia": "Jueves", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 1, "dia": "Sabado", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 1, "dia": "Viernes", "hora_inicio": 8, "hora_fin": 12},
+
     {"idpersona": 2, "dia": "Martes", "hora_inicio": 10, "hora_fin": 14},
     {"idpersona": 2, "dia": "Jueves", "hora_inicio": 9, "hora_fin": 13},
     {"idpersona": 2, "dia": "Viernes", "hora_inicio": 14, "hora_fin": 18},
+    {"idpersona": 2, "dia": "Miércoles", "hora_inicio": 14, "hora_fin": 18},
+
     {"idpersona": 3, "dia": "Miércoles", "hora_inicio": 8, "hora_fin": 12},
     {"idpersona": 3, "dia": "Jueves", "hora_inicio": 10, "hora_fin": 14},
     {"idpersona": 3, "dia": "Viernes", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 3, "dia": "Lunes", "hora_inicio": 10, "hora_fin": 14},
+
     {"idpersona": 4, "dia": "Jueves", "hora_inicio": 9, "hora_fin": 17},
-    {"idpersona": 4, "dia": "Viernes", "hora_inicio": 14, "hora_fin": 18},
-    {"idpersona": 4, "dia": "Miércoles", "hora_inicio": 10, "hora_fin": 20},
-    # Añadir más disponibilidad según sea necesario
+    {"idpersona": 4, "dia": "Sabado", "hora_inicio": 14, "hora_fin": 18},
+    {"idpersona": 4, "dia": "Miércoles", "hora_inicio": 10, "hora_fin": 14},
+    {"idpersona": 4, "dia": "Lunes", "hora_inicio": 9, "hora_fin": 13},
+
+    {"idpersona": 5, "dia": "Lunes", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 5, "dia": "Sabado", "hora_inicio": 14, "hora_fin": 18},
+    {"idpersona": 5, "dia": "Jueves", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 5, "dia": "Viernes", "hora_inicio": 8, "hora_fin": 12},
+
+    {"idpersona": 6, "dia": "Martes", "hora_inicio": 10, "hora_fin": 14},
+    {"idpersona": 6, "dia": "Jueves", "hora_inicio": 9, "hora_fin": 13},
+    {"idpersona": 6, "dia": "Viernes", "hora_inicio": 14, "hora_fin": 18},
+    {"idpersona": 6, "dia": "Miércoles", "hora_inicio": 14, "hora_fin": 18},
+
+    {"idpersona": 7, "dia": "Miércoles", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 7, "dia": "Jueves", "hora_inicio": 10, "hora_fin": 14},
+    {"idpersona": 7, "dia": "Viernes", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 7, "dia": "Lunes", "hora_inicio": 10, "hora_fin": 14},
+
+    {"idpersona": 8, "dia": "Sabado", "hora_inicio": 9, "hora_fin": 17},
+    {"idpersona": 8, "dia": "Viernes", "hora_inicio": 14, "hora_fin": 18},
+    {"idpersona": 8, "dia": "Miércoles", "hora_inicio": 10, "hora_fin": 14},
+    {"idpersona": 8, "dia": "Lunes", "hora_inicio": 9, "hora_fin": 13},
+
+    {"idpersona": 9, "dia": "Lunes", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 9, "dia": "Miércoles", "hora_inicio": 14, "hora_fin": 18},
+    {"idpersona": 9, "dia": "Jueves", "hora_inicio": 8, "hora_fin": 12},
+    {"idpersona": 9, "dia": "Sabado", "hora_inicio": 8, "hora_fin": 12},
+
+    {"idpersona": 10, "dia": "Martes", "hora_inicio": 10, "hora_fin": 14},
+    {"idpersona": 10, "dia": "Jueves", "hora_inicio": 9, "hora_fin": 13},
+    {"idpersona": 10, "dia": "Sabado", "hora_inicio": 14, "hora_fin": 18},
+    {"idpersona": 10, "dia": "Miércoles", "hora_inicio": 14, "hora_fin": 18},
 ]
 
 # Función para obtener los días disponibles para un docente
@@ -153,6 +187,10 @@ def dividir_horas_en_bloques(total_horas):
         elif total_horas == 3:
             bloques.append(3)
             total_horas -= 3
+        elif total_horas == 5:
+            bloques.append(3)
+            bloques.append(2)
+            total_horas -= 5
         elif total_horas >= 4:
             bloques.append(2)
             total_horas -= 2
@@ -160,6 +198,15 @@ def dividir_horas_en_bloques(total_horas):
             bloques.append(3)
             total_horas -= 3
     return bloques
+
+# Función para asegurar el descanso obligatorio
+def asegurar_descanso(horario):
+    for bloque in horario:
+        if bloque["hora_inicio"] <= 12 < bloque["hora_fin"]:
+            bloque["hora_fin"] = 12
+        elif bloque["hora_inicio"] < 13 <= bloque["hora_fin"]:
+            bloque["hora_inicio"] = 13
+    return horario
 
 # Inicialización de población
 def inicializar_poblacion(tamaño_población, cursos, curso_docente, curso_ambiente, grupos, disponibilidad_docente):
@@ -171,36 +218,19 @@ def inicializar_poblacion(tamaño_población, cursos, curso_docente, curso_ambie
             if curso is None:
                 continue
 
-            docente_asignado = next((item["idpersona"] for item in curso_docente if item["idcurso"] == curso["idcurso"]), "No definido")
-            ambiente_asignado = next((item["idambiente"] for item in curso_ambiente if item["idcurso"] == curso["idcurso"]), None)
+            docentes_asignados = next((item["idpersona"] for item in curso_docente if item["idcurso"] == curso["idcurso"]), ["No definido"])
+            ambientes_asignados = next((item["idambiente"] for item in curso_ambiente if item["idcurso"] == curso["idcurso"]), [None])
 
-            if ambiente_asignado is None:
-                print(f"Advertencia: No hay ambiente asignado para el curso {curso['idcurso']}")
+            if not docentes_asignados or not ambientes_asignados:
+                print(f"Advertencia: No hay docentes o ambientes asignados para el curso {curso['idcurso']}")
                 continue
 
             total_horas = curso["horas_practica"] + curso["horas_teoria"]
             bloques = dividir_horas_en_bloques(total_horas)
 
             for duracion in bloques:
-                dias_disponibles = obtener_dias_disponibles(docente_asignado, disponibilidad_docente)
-                intentos = 0
-                max_intentos = 100
-                while intentos < max_intentos:
-                    dia = random.choice(dias_disponibles)  # Restringir días a los disponibles para el docente
-                    if curso["idcurso"] % 2 == 1:  # Cursos impares
-                        hora_inicio = random.randint(7, 11 - duracion)  # Horario de inicio entre 7 y 11-duración horas
-                    else:  # Cursos pares
-                        hora_inicio = random.randint(14, 22 - duracion)  # Horario de inicio entre 14 y 18-duración horas
-                    hora_fin = hora_inicio + duracion
-                    if (verificar_disponibilidad_docente(docente_asignado, dia, hora_inicio, hora_fin, disponibilidad_docente) and
-                            verificar_disponibilidad_ambiente(horario, ambiente_asignado, dia, hora_inicio, hora_fin) and
-                            verificar_no_choque_docente(horario, docente_asignado, dia, hora_inicio, hora_fin) and
-                            verificar_no_choque_ciclos(horario, docente_asignado, dia, hora_inicio, hora_fin, curso["idcurso"], cursos)):
-                        break
-                    intentos += 1
-                else:
-                    print(f"Advertencia: No se encontró una disponibilidad válida para el curso {curso['idcurso']} con el docente {docente_asignado}")
-
+                dia, hora_inicio, hora_fin, docente_asignado, ambiente_asignado = asignar_bloque(
+                    docentes_asignados, ambientes_asignados, duracion, curso, disponibilidad_docente, horario)
                 horario.append({
                     "curso": curso["idcurso"],
                     "grupo": grupo["nombre"],
@@ -212,6 +242,31 @@ def inicializar_poblacion(tamaño_población, cursos, curso_docente, curso_ambie
                 })
         población.append(horario)
     return población
+
+# Función para asignar un bloque horario
+def asignar_bloque(docentes_asignados, ambientes_asignados, duracion, curso, disponibilidad_docente, horario):
+    intentos = 0
+    max_intentos = 100
+    while intentos < max_intentos:
+        docente_asignado = random.choice(docentes_asignados)
+        ambiente_asignado = random.choice(ambientes_asignados)
+        dias_disponibles = obtener_dias_disponibles(docente_asignado, disponibilidad_docente)
+        dia = random.choice(dias_disponibles)
+        if curso["idcurso"] % 2 == 1:  # Cursos impares
+            hora_inicio = random.randint(7, 11 - duracion)  # Horario de inicio entre 7 y 11-duración horas
+        else:  # Cursos pares
+            hora_inicio = random.randint(14, 22 - duracion)  # Horario de inicio entre 14 y 22-duración horas
+        hora_fin = hora_inicio + duracion
+        if 12 < hora_inicio < 13 or 12 < hora_fin < 13:  # Asegurar descanso obligatorio
+            continue
+        if (verificar_disponibilidad_docente(docente_asignado, dia, hora_inicio, hora_fin, disponibilidad_docente) and
+                verificar_disponibilidad_ambiente(horario, ambiente_asignado, dia, hora_inicio, hora_fin) and
+                verificar_no_choque_docente(horario, docente_asignado, dia, hora_inicio, hora_fin) and
+                verificar_no_choque_ciclos(horario, docente_asignado, dia, hora_inicio, hora_fin, curso["idcurso"], cursos)):
+            return dia, hora_inicio, hora_fin, docente_asignado, ambiente_asignado
+        intentos += 1
+    print(f"Advertencia: No se encontró una disponibilidad válida para el curso {curso['idcurso']} con el docente {docente_asignado}")
+    return "Lunes", 7, 9, "No definido", random.choice(ambientes_asignados)
 
 # Evaluación de población (función fitness)
 def evaluar_población(población, disponibilidad_docente):
@@ -264,7 +319,7 @@ def cruzar(horario1, horario2):
     return hijo
 
 # Mutación
-def mutar(horario, tasa_mutación, disponibilidad_docente):
+def mutar(horario, tasa_mutación, disponibilidad_docente, cursos):
     for bloque in horario:
         if random.random() < tasa_mutación:
             intentos = 0
@@ -276,8 +331,10 @@ def mutar(horario, tasa_mutación, disponibilidad_docente):
                 if bloque["curso"] % 2 == 1:  # Cursos impares
                     nueva_hora_inicio = random.randint(7, 11 - duracion)
                 else:  # Cursos pares
-                    nueva_hora_inicio = random.randint(14, 18 - duracion)
+                    nueva_hora_inicio = random.randint(14, 22 - duracion)
                 nueva_hora_fin = nueva_hora_inicio + duracion
+                if 12 < nueva_hora_inicio < 13 or 12 < nueva_hora_fin < 13:  # Asegurar descanso obligatorio
+                    continue
                 if (verificar_disponibilidad_docente(bloque["docente"], nuevo_dia, nueva_hora_inicio, nueva_hora_fin, disponibilidad_docente) and
                         verificar_disponibilidad_ambiente(horario, bloque["ambiente"], nuevo_dia, nueva_hora_inicio, nueva_hora_fin) and
                         verificar_no_choque_docente(horario, bloque["docente"], nuevo_dia, nueva_hora_inicio, nueva_hora_fin) and
@@ -303,7 +360,7 @@ def algoritmo_genetico(tamaño_población, generaciones, tasa_mutación, cursos,
         while len(nueva_población) < tamaño_población:
             padre1, padre2 = random.sample(padres, 2)
             hijo = cruzar(padre1, padre2)
-            mutar(hijo, tasa_mutación, disponibilidad_docente)
+            mutar(hijo, tasa_mutación, disponibilidad_docente, cursos)
             nueva_población.append(hijo)
         
         población = nueva_población
