@@ -126,5 +126,20 @@ def obtener_docente_por_nombre(nombres):
         return {"error": str(e)}
     finally:
         conexion.close()
+        
+
+## CARGA MASIVA CURSOS 
+def asignar_docente_excel(nombres, apellidos, n_documento, telefono, correo, tipopersona, cantHoras, tiempo_ref, estado):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Persona_Gestion', [1, None, nombres, apellidos, n_documento, telefono, correo, tipopersona, cantHoras, tiempo_ref, estado])
+            conexion.commit()
+            return {"mensaje": "Docente agregado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
 
 
+    

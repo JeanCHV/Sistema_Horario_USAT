@@ -8,9 +8,6 @@
     </ol>
 </nav>
 
-   <!-- <div id="mensajeResultado" style="display: none;"></div> 
-<div class="container">
-</div>-->
 
     <div class="card  mx-2" id="card_docentes">
         <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
@@ -161,6 +158,10 @@
                         <input type="file" class="form-control" id="archivo" name="archivo" accept=".xls,.xlsx"
                             required>
                     </div>
+                    <div class="progress mb-3" style="height: 25px;">
+                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;"
+                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
                     <button type="submit" class="btn btn-primary">Subir</button>
                 </form>
             </div>
@@ -169,6 +170,14 @@
 </div>
 
 <script>
+    function updateProgressBar(percentage) {
+        var progressBar = document.getElementById('progressBar');
+        progressBar.style.width = percentage + '%';
+        progressBar.setAttribute('aria-valuenow', percentage);
+        progressBar.innerText = percentage + '%';
+    }
+
+
     function descargarPlantilla() {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Plantilla');
@@ -181,16 +190,19 @@
         worksheet.getRow(1).height = 20;
 
         // Añadir las cabeceras
-        const headerRow = worksheet.addRow(['IDPersona','Nombres', 'Correo', 'Teléfono']);
+        const headerRow = worksheet.addRow(['Nombres','Apellidos','DNI','Teléfono', 'Correo', 'Cantidad de horas', 'Tiempo de refrigerio']);
         headerRow.font = { bold: false };
         headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
 
         // Ajustar el ancho de las columnas
         worksheet.columns = [
-            { key: 'idpersona', width: 20 },
-            { key: 'nombre', width: 20 },
-            { key: 'correo', width: 10 },
-            { key: 'telefono', width: 20 }
+            { key: 'nombres', width: 20 },
+            { key: 'apellidos', width: 20 },
+            { key: 'n_documento', width: 10 },
+            { key: 'telefono', width: 10 },
+            { key: 'correo', width: 20 },
+            { key: 'cantHoras', width: 15 },
+            { key: 'tiempo_ref', width: 15 }
         ];
 
         // Generar y guardar el archivo
@@ -294,21 +306,21 @@
                         }
                     }
                 ],
-                "ajax": {
-                    "url": "/get_docentes",
-                    "type": "GET",
-                    "dataSrc": ""
+                ajax: {
+                    url: "/get_docentes",
+                    type: "GET",
+                    dataSrc: ""
                 },
-                "processing": true,
-                "serverSide": false,
-                "columns": [
-                    { "data": "idpersona", "className": 'dt-body-center' },
-                    { "data": "nombre" },
-                    { "data": "correo" },
-                    { "data": "telefono", "className": 'dt-body-center' },
+                processing: true,
+                serverSide: false,
+                columns: [
+                    { data: "idpersona", className: 'dt-body-center' },
+                    { data: "nombre" },
+                    { data: "correo" },
+                    { data: "telefono", className: 'dt-body-center' },
                     {
-                        "data": null,
-                        "render": function (data, type, row) {
+                        data: null,
+                        render: function (data, type, row) {
                             return `
                                 <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
                                 <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
@@ -316,8 +328,8 @@
                         }
                     }
                 ],
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
                 }
             });
 
@@ -348,37 +360,67 @@
             });
         }
 
-        $('#formSubidaMasiva').submit(function (e) {
-            e.preventDefault();
-            var fileInput = document.getElementById('archivo');
-            var file = fileInput.files[0];
-            var reader = new FileReader();
+    $('#formSubidaMasiva').submit(function (e) {
+        e.preventDefault();
+        var fileInput = document.getElementById('archivo');
+        var file = fileInput.files[0];
+        updateProgressBar(0);
+        procesarArchivo(file);
+     });
 
-            reader.onload = function (e) {
-                var data = new Uint8Array(e.target.result);
-                var workbook = XLSX.read(data, { type: 'array' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+     async function procesarArchivo(file) {
+        var reader = new FileReader();
+        reader.onload = async function (e) {
 
-                var headers = jsonData[1];
-                var rows = jsonData.slice(2);
+            var data = new Uint8Array(e.target.result);
+            var workbook = XLSX.read(data, { type: 'array' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-                var formattedData = rows.map((row, index) => {
-                    return {
-                        idpersona: row[headers.indexOf("IDPersona")],
-                        nombre: row[headers.indexOf("Nombres")],
-                        correo: row[headers.indexOf("Correo")],
-                        telefono: row[headers.indexOf("Teléfono")]
-                    };
-                });
+            var headers = jsonData[1];
+            var rows = jsonData.slice(2);
 
-                console.log(JSON.stringify(formattedData, null, 2));
-            };
-            
+            var formattedData = await Promise.all(rows.map(async (row, index) => {
+                updateProgressBar(Math.round((index + 1) / rows.length * 100)); // Actualizar barra de progreso
+                return {
+                    nombres: row[headers.indexOf("Nombres")],
+                    apellidos: row[headers.indexOf("Apellidos")],
+                    n_documento: row[headers.indexOf("DNI")],
+                    telefono: row[headers.indexOf("Teléfono")],
+                    correo: row[headers.indexOf("Correo")],
+                    tipopersona: "D",
+                    cantHoras: row[headers.indexOf("Cantidad de horas")],
+                    tiempo_ref: row[headers.indexOf("Tiempo de refrigerio")],
+                    estado: 1
+                };
+            }));
 
-            reader.readAsArrayBuffer(file);
-        });
+            console.log(JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
+
+            $.ajax({
+                url: '/asignar_docentes_excel',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formattedData),
+                success: function (response) {
+                    if (response.error) {
+                        Swal.fire('Error', response.error, 'error');
+                    } else {
+                        Swal.fire('Éxito', 'La subida masiva se realizó correctamente.', 'success');
+                        table.ajax.reload();
+                        $('#modalSubidaMasiva').modal('hide');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire('Error', 'Hubo un error al realizar la operación.', 'error');
+                }
+            });
+
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
 
     $('#btn_agregar_docente').click(function(e) {
         e.preventDefault();
