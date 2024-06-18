@@ -1,21 +1,81 @@
 from bd import obtener_conexion
+#CRUD OPERACIONES
+
+## OBTENER LOS CURSOS CON SUS DATOS EN LA TABLA GENERAL
+def obtener_datos_cursos():
+    conexion = obtener_conexion()
+    cursos = []
+
+    with conexion.cursor() as cursor:
+        cursor.callproc('sp_Curso_Gestion', [0, None,None,None,None,None,None,None, None, None,None])
+        column_names = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+
+        for row in rows:
+            curso_dict = dict(zip(column_names, row))
+            cursos.append(curso_dict)
+
+    conexion.close()
+    return cursos
 
 
-# def obtener_cursos():
-#     conexion = obtener_conexion()
-#     cursos = []
+def para_tabla_cursos():
+    conexion = obtener_conexion()
+    cursos = []
 
-#     with conexion.cursor() as cursor:
-#         cursor.execute("SELECT * FROM curso c")
-#         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
-#         rows = cursor.fetchall()
+    with conexion.cursor() as cursor:
+        cursor.execute("""
+            SELECT c.idcurso,c.nombre, c.cod_curso, c.creditos, c.horas_teoria, c.horas_practica, 
+                CASE c.tipo_curso when 0 then 'PRESENCIAL' when 1 then 'VIRTUAL'
+                END as tipo_curso, c.ciclo, p.nombre AS nombre_plan_estudio, c.estado
+            FROM curso c
+            JOIN plan_estudio p ON c.id_plan_estudio = p.id_plan_estudio;
+            """)
+        column_names = [desc[0] for desc in cursor.description]  
+        rows = cursor.fetchall()
 
-#         for row in rows:
-#             curso_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
-#             cursos.append(curso_dict)
+        for row in rows:
+            curso_dict = dict(zip(column_names, row)) 
+            cursos.append(curso_dict)
+    conexion.close()
+    return cursos   
 
-#     conexion.close()
-#     return cursos
+def agregar_curso(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Curso_Gestion', [1, None, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio])
+            conexion.commit()
+            return {"mensaje": "Curso agregado correctamente"}
+    except Exception as e:
+        conexion.commit()
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def modificar_curso(idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Curso_Gestion', [2, idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio])
+            conexion.commit()
+            return {"mensaje": "Curso modificado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def eliminar_curso(idcurso):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Curso_Gestion', [4, idcurso, None, None, None, None, None, None, None, None, None])
+            conexion.commit()
+            return {"mensaje": "Curso eliminado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
 
 def obtener_cursoxescuela(escuela):
     conexion = obtener_conexion()
@@ -55,28 +115,7 @@ def obtener_escuelas():
     conexion.close()
     return escuelas
 
-## OBTENER LOS CURSOS CON SUS DATOS EN LA TABLA GENERAL
-def obtener_datos_cursos():
-    conexion = obtener_conexion()
-    cursos = []
 
-    with conexion.cursor() as cursor:
-        cursor.execute("""
-    SELECT c.idcurso,c.nombre, c.cod_curso, c.creditos, c.horas_teoria, c.horas_practica, 
-           CASE c.tipo_curso when 0 then 'PRESENCIAL' when 1 then 'VIRTUAL'
-           END as tipo_curso, c.ciclo, p.nombre AS nombre_plan_estudio, c.estado
-    FROM curso c
-    JOIN plan_estudio p ON c.id_plan_estudio = p.id_plan_estudio;
-    """)
-        column_names = [desc[0] for desc in cursor.description]  
-        rows = cursor.fetchall()
-
-        for row in rows:
-            curso_dict = dict(zip(column_names, row)) 
-            cursos.append(curso_dict)
-
-    conexion.close()
-    return cursos
 
 def ver_detalle_cursos(idcurso):
    conexion = obtener_conexion()
@@ -105,17 +144,7 @@ def ver_detalle_cursos(idcurso):
         conexion.close()
 
 ##MEJORAR
-def agregar_curso(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
-    conexion = obtener_conexion()
-    try:
-        with conexion.cursor() as cursor:
-            cursor.callproc('sp_Curso_Gestion', [1, None, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio])
-            conexion.commit()
-            return {"mensaje": "Curso agregado correctamente"}
-    except Exception as e:
-        return {"error": str(e)}
-    finally:
-        conexion.close()
+
 
 def obtener_planes_de_estudio():
     conexion = obtener_conexion()
@@ -130,29 +159,9 @@ def obtener_planes_de_estudio():
     return planes_de_estudio
 
 
-def eliminar_curso(idcurso):
-    conexion = obtener_conexion()
-    try:
-        with conexion.cursor() as cursor:
-            cursor.callproc('sp_Curso_Gestion', [4, idcurso, None, None, None, None, None, None, None, None, None])
-            conexion.commit()
-            return {"mensaje": "Curso eliminado correctamente"}
-    except Exception as e:
-        return {"error": str(e)}
-    finally:
-        conexion.close()
 
-def modificar_curso(idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
-    conexion = obtener_conexion()
-    try:
-        with conexion.cursor() as cursor:
-            cursor.callproc('sp_Curso_Gestion', [2, idcurso, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio])
-            conexion.commit()
-            return {"mensaje": "Curso modificado correctamente"}
-    except Exception as e:
-        return {"error": str(e)}
-    finally:
-        conexion.close()
+
+
 
 ##OBTENER CURSO POR ID
 

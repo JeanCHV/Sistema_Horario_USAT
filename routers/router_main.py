@@ -178,7 +178,7 @@ def get_ambiente(idambiente):
 ##DATOS CURSOS
 @app.route("/datos_cursos", methods=["GET"])
 def datos_cursos():
-    cursos = controlador_cursos.obtener_datos_cursos()
+    cursos = controlador_cursos.para_tabla_cursos()
     return jsonify(cursos)
 
 @app.route("/get_semestre", methods=["GET"])
@@ -546,9 +546,8 @@ def docentesxcursos():
 @app.route("/horarios")
 def horarios():
     persona = controlador_docente.obtener_docentes()
-    ambientes = controlador_ambientes.obtener_ambientess()
     semestres = controlador_semestre.obtener_semestres()
-    return render_template("dashboard/horarios.html", docente=persona,ambiente=ambientes,semestre=semestres)
+    return render_template("dashboard/horarios.html", docente=persona,semestre=semestres)
 
 @app.route("/ReporteAmbiente")
 def ReporteAmbiente():
