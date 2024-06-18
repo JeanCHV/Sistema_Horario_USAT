@@ -2,7 +2,7 @@ CREATE TABLE ambiente (
   idambiente     int(10) NOT NULL AUTO_INCREMENT, 
   nombre         varchar(255) NOT NULL, 
   aforo          int(10) NOT NULL, 
-  estado         varchar(50) NOT NULL, 
+  estado         char(1) NOT NULL, 
   idedificio     int(10) NOT NULL, 
   idambientetipo int(10) NOT NULL, 
   PRIMARY KEY (idambiente));
@@ -19,7 +19,7 @@ CREATE TABLE curso (
   horas_practica  int(10) NOT NULL, 
   ciclo           int(10) NOT NULL, 
   tipo_curso      tinyint(1) NOT NULL, 
-  estado          varchar(20) NOT NULL, 
+  estado          char(1) NOT NULL, 
   id_plan_estudio int(10) NOT NULL, 
   PRIMARY KEY (idcurso));
 CREATE TABLE docente_disponibilidad (
@@ -30,24 +30,24 @@ CREATE TABLE docente_disponibilidad (
 CREATE TABLE edificio (
   idedificio int(10) NOT NULL AUTO_INCREMENT, 
   nombre     varchar(255) NOT NULL, 
-  estado     tinyint(1) NOT NULL, 
+  estado     char(1) NOT NULL, 
   PRIMARY KEY (idedificio));
 CREATE TABLE escuela (
   id_escuela  int(10) NOT NULL AUTO_INCREMENT, 
   nombre      varchar(255) NOT NULL, 
   descripcion varchar(255), 
-  estado      varchar(20) NOT NULL, 
+  estado      char(1) NOT NULL, 
   id_facultad int(10) NOT NULL, 
   PRIMARY KEY (id_escuela));
 CREATE TABLE facultad (
   id_facultad int(10) NOT NULL AUTO_INCREMENT, 
   nombre      varchar(255) NOT NULL, 
   descripcion varchar(255), 
-  estado      varchar(20) NOT NULL, 
+  estado      char(1) NOT NULL, 
   PRIMARY KEY (id_facultad));
 CREATE TABLE grupo (
   id_grupo int(10) NOT NULL AUTO_INCREMENT, 
-  nombre   varchar(1) NOT NULL, 
+  nombre   char(1) NOT NULL, 
   vacantes int(10) NOT NULL, 
   idcurso  int(10) NOT NULL, 
   PRIMARY KEY (id_grupo));
