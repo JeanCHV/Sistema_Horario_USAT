@@ -4,10 +4,12 @@ from flask import (
     request,
     redirect,
     jsonify,
+    url_for,
     make_response,
     session,
 )
 import hashlib
+import datetime
 import random
 from main import app
 import os
@@ -43,28 +45,6 @@ login_attempts = {}
 def login():
     return render_template("login/login.html")
 
-"""MÉTODO A MODIFICAR A FUTURO PARA VALIDAR TIPO DE USUARIO Y PERMISOS"""
-""" @app.route("/validar_login", methods=["POST"])
-def validar_login():
-    try:
-        username = request.json.get('username')
-        token = request.json.get('token')
-
-        usuario = controlador_usuario.obtener_usuario_por_username(username)
-
-        if usuario == None or username != usuario[1] or token != usuario[5] or not usuario[3]:
-            return jsonify({'logeo':False})
-        else:
-            return jsonify({'logeo': True}) 
-    except:
-        return jsonify({'logeo':False}) """
-
-
-@app.route("/logout")
-def logout():
-    resp = make_response(redirect("/login"))
-    session.clear()
-    return resp
 
 @app.route("/procesar_login", methods=["POST"])
 def procesar_login():
@@ -73,11 +53,9 @@ def procesar_login():
         password = request.json.get('password')
         usuario = controlador_usuario.obtener_usuario_con_tipopersona_por_username(username)
 
-        # Inicializar el diccionario de intentos para el usuario si no existe
         if username not in login_attempts:
             login_attempts[username] = {'attempts': 0, 'last_attempt_time': 0}
 
-        # Verificar si el usuario está bloqueado
         if login_attempts[username]['attempts'] >= 3 and (time.time() - login_attempts[username]['last_attempt_time']) < 300:
             return jsonify({'mensaje': 'Cuenta bloqueada. Intente de nuevo más tarde.', 'logeo': False})
         
@@ -91,12 +69,10 @@ def procesar_login():
             return jsonify({'mensaje':'El usuario está inactivo', 'logeo':False})
         
         else:
-            # Encriptar password ingresado por usuario
             h = hashlib.new("sha256")
             h.update(bytes(password, encoding="utf-8"))
             encpassword = h.hexdigest()
             if encpassword == usuario[2]:
-                # Obteniendo token
                 t = hashlib.new("sha256")
                 entale = random.randint(1, 1024)
                 strEntale = str(entale)
@@ -106,8 +82,8 @@ def procesar_login():
                 persona = controlador_persona.obtener_persona_por_id(usuario[4])
                 foto = persona[9]
                 nombre = persona[1].split()[0]
-                # Almacenar el ID del usuario en la sesión
                 session['user_id'] = usuario[0]
+                session.permanent = True
                 return jsonify({'logeo': True, 'token': token, 'foto':foto, 'nombre':nombre})
             else:
                 login_attempts[username]['attempts'] += 1
@@ -115,7 +91,17 @@ def procesar_login():
                 return jsonify({'mensaje': 'La contraseña es incorrecta', 'logeo': False})
     except NameError:
         return jsonify({'mensaje':'Error al procesar el login'+NameError, 'logeo':False})
-    
+
+@app.route("/logout")
+def logout():
+    session.pop('idusuario', None)
+    return redirect(url_for('login'))
+
+@app.before_request
+def before_request():
+    session.modified = True
+    if 'idusuario' in session:
+        session['last_activity'] = datetime.datetime.now()
 
 @app.route("/get_ambientes", methods=["GET"])
 def get_ambientes():

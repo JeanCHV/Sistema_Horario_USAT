@@ -277,6 +277,16 @@
 
     </script>
 
+    <div id="session-expired-message" style="display: none; color: red;">Inactividad detectada. La sesión ha sido cerrada.</div>
+
+    <script>
+        // Mostrar mensaje si la sesión expiró por inactividad
+        if (localStorage.getItem('sessionExpired') === 'true') {
+            document.getElementById('session-expired-message').style.display = 'block';
+            localStorage.removeItem('sessionExpired');
+        }
+    </script>
+
 
 
 
