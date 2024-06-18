@@ -434,7 +434,37 @@ def obtener_docente_por_id(idpersona):
     resultado = controlador_docente.obtener_docente_por_id(idpersona)
     return jsonify(resultado)
 
+## CARGA MASIVA DOCENTES 
+@app.route("/asignar_docentes_excel", methods=["POST"])
+def asignar_docentes_excel():
+    try:
+        asignaciones = request.json
+        if not asignaciones:
+            return jsonify({"error": "No se proporcionaron asignaciones"}), 400
 
+        resultados = []
+        for asignacion in asignaciones:
+            nombres = asignacion.get('nombres')
+            apellidos = asignacion.get('apellidos')
+            n_documento = asignacion.get('n_documento')
+            telefono = asignacion.get('telefono')
+            correo = asignacion.get('correo')
+            tipopersona = asignacion.get('tipopersona')
+            cantHoras = asignacion.get('cantHoras')
+            tiempo_ref = asignacion.get('tiempo_ref')
+            estado = asignacion.get('estado')
+
+            # Verificar que todos los campos requeridos estén presentes
+            if not all(key in asignacion for key in ['nombres', 'apellidos', 'n_documento', 'telefono', 'correo', 'tipopersona', 'cantHoras', 'tiempo_ref', 'estado']):
+                return jsonify({"error": "Todos los campos son obligatorios"}), 400
+
+            resultado = controlador_docente.asignar_docente_excel(nombres, apellidos, n_documento, telefono, correo, tipopersona, cantHoras, tiempo_ref, estado)
+            resultados.append(resultado)
+
+        return jsonify(resultados)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  
+    
 #Gestionar Perfil
 #@app.route('/perfil', methods=["GET"])
 #def perfil():
