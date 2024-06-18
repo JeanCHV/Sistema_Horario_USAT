@@ -799,6 +799,22 @@ def api_guardar_docentes_curso():
         return jsonify(result), 200
     else:
         return jsonify(result), 500
+
+## ACTUALIZAR DOCENTE CURSO
+@app.route("/actualizar_docentes_curso", methods=["POST"])
+def api_actualizar_docentes_curso():
+    data = request.get_json()
+    curso_id = data.get('curso')
+    iddocente = data.get('docentes')
+
+    if not curso_id or not iddocente:
+        return jsonify({'status': 'error', 'message': 'Curso y docentes son requeridos'}), 400
+
+    result = controlador_curso_docente.actualizar_docentes_curso(curso_id, iddocente)
+    if result['status'] == 'success':
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 500
     
 @app.route("/eliminar_cursoDocente", methods=["POST"])
 def eliminar_cursoDocente():

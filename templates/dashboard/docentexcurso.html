@@ -124,6 +124,8 @@
                     </div>
                 </div>
             </div>
+            <input type="hidden" id="cursoIdSeleccionado">
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" id="guardarAsignacion" class="btn btn-primary"
@@ -338,12 +340,15 @@
         $('#tabla-curso tbody').on('click', 'tr', function () {
             if ($(this).hasClass('selected')) {
                 $(this).removeClass('selected');
+                $('#cursoIdSeleccionado').val('');  // Vaciar el campo oculto
             } else {
                 tablaCursos.$('tr.selected').removeClass('selected');
                 $(this).addClass('selected');
+                var data = tablaCursos.row(this).data();
+                $('#cursoIdSeleccionado').val(data.idcurso);
+                console.log(data);
             }
-            var data = tablaCursos.row(this).data();
-            console.log(data);
+        
         });
 
         // Evento para seleccionar filas y checkboxes en la tabla de docentes
@@ -405,9 +410,18 @@
                     curso: cursoSeleccionado,
                     docentes: selectedDocentes
                 }),
-                success: function (response) {
-                    $('#modalAsignacion').modal('hide');
-                    table.ajax.reload(); // Recargar la tabla con AJAX
+                success: function (response) {      
+                    if (response.error) {
+                        Swal.fire('Error', response.error, 'error');
+                    } else {
+                        Swal.fire('Éxito', 'Aignación agregada correctamente', 'success');
+                        $('#modalAsignacion').modal('hide');
+                        table.ajax.reload(); // Recargar la tabla con AJAX
+                    }
+
+
+
+                    
                 },
                 error: function (xhr, status, error) {
                     console.log(error);
@@ -517,6 +531,7 @@
             reader.readAsArrayBuffer(file);
         }
 
+       
         // Manejar la eliminación de un curso y ambiente
         $('#tabla-cursoxdocentes tbody').on('click', '.btnEliminar', function () {
             var idcurso = $(this).data('idcurso');
@@ -564,6 +579,10 @@
 
 
         });
+
+
+
+
     });
 
 </script>
