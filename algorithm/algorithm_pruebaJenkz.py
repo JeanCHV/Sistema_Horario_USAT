@@ -1,4 +1,4 @@
-""" import random
+import random
 import json
 import sys
 import os
@@ -13,6 +13,7 @@ import controladores.docente_disponibilidad.controlador_docente_disponibilidad a
 import controladores.curso_ambiente.controlador_curso_ambiente as controlador_curso_ambiente
 import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
 
+
 docentes1 = controlador_docente.get_docentes()
 ambientes1 = controlador_ambiente.get_ambientes()
 cursos1 = controlador_cursos.get_cursos()
@@ -21,9 +22,9 @@ disponibilidad = controlador_docente_disponibilidad.get_disponibilidad()
 curso_ambiente = controlador_curso_ambiente.get_curso_ambiente()
 curso_docente = controlador_curso_docente.get_curso_docente()
 
-DOCENTES = {docente['idpersona']: docente for docente in docentes1}
-AMBIENTES = {ambiente['idambiente']: ambiente for ambiente in ambientes1}
-CURSOS = {curso['idcurso']: curso for curso in cursos1}
+DOCENTES = docentes1
+AMBIENTES = ambientes1
+CURSOS = cursos1
 GRUPOS_HORARIO = grupo
 DISPONIBILIDAD_DOCENTES = disponibilidad
 CURSO_AMBIENTE = curso_ambiente
@@ -42,35 +43,23 @@ def generar_poblacion(tamano):
     poblacion = []
     for _ in range(tamano):
         horario = []
-        for idcurso, curso in CURSOS.items():
-            docentes_del_curso = [cd['idpersona'] for cd in CURSO_DOCENTE if cd['idcurso'] == idcurso]
-            if docentes_del_curso:
-                profesor = random.choice(docentes_del_curso)
-            else:
-                profesor = "No definido"
-            
-            grupo_cursos = [g for g in GRUPOS_HORARIO if g['idcurso'] == idcurso]
-            for grupo_curso in grupo_cursos:
-                # Generar horas totales (teoría + práctica)
-                horas_totales = curso['horas_teoria'] + curso['horas_practica']
-                while horas_totales > 0:
+        for curso in CURSOS:
+            idcurso = curso['idcurso']
+            for grupo in GRUPOS_HORARIO:
+                if grupo['idcurso'] == idcurso:
+                    profesor = random.randint(0, NUM_PROFESORES - 1)
                     dia = random.choice(DIAS)
-                    if horas_totales == 3:
-                        duracion = 3
-                    else:
-                        duracion = min(horas_totales, random.choice(DURACIONES_CLASES))
-                    
                     hora_inicio = random.choice(HORAS)
+                    duracion = random.choice(DURACIONES_CLASES)
                     hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
                     # Ajustar hora_fin si excede el límite de 23:00
                     if int(hora_fin.split(':')[0]) > 23:
                         continue
-
-                    ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
-                    
-                    horario.append((profesor, idcurso, grupo_curso['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
-                    horas_totales -= duracion
-
+                    if any(ca['idcurso'] == idcurso for ca in CURSO_AMBIENTE):
+                        ambiente = next(ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso)
+                    else:
+                        ambiente = random.randint(0, NUM_AULAS - 1)
+                    horario.append((profesor, idcurso, grupo['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
         poblacion.append(horario)
     return poblacion
 
@@ -80,19 +69,14 @@ def calcular_fitness(horario):
     for dia in DIAS:
         horas_ocupadas = {profesor: [] for profesor in range(NUM_PROFESORES)}
         for (profesor, idcurso, idgrupo, aula, d, hora_inicio, hora_fin) in horario:
-            if d == dia and profesor != "No definido" and aula != "No definido":
-                if profesor not in horas_ocupadas:
-                    continue  # Evitar KeyError si el profesor no está en horas_ocupadas
-                horas_profesor = horas_ocupadas[profesor]
-                
-                if any(hora in horas_profesor for hora in rango_horas(hora_inicio, hora_fin)) or not todas_horas_disponibles(profesor, d, hora_inicio, hora_fin):
+            if d == dia:
+                if any(hora in horas_ocupadas[profesor] for hora in rango_horas(hora_inicio, hora_fin)) or not todas_horas_disponibles(profesor, d, hora_inicio, hora_fin):
                     fitness -= 1
                 else:
                     horas_ocupadas[profesor].extend(rango_horas(hora_inicio, hora_fin))
                     
-                horas_curso = CURSOS[idcurso]['horas_teoria'] + CURSOS[idcurso]['horas_practica']
-                
-                if horas_curso != 0 and len(horas_ocupadas[profesor]) != horas_curso:
+                horas_ocupadas_total = sum([curso["horas_teoria"] for curso in CURSOS if curso["idcurso"] == idcurso])
+                if len(horas_ocupadas[profesor]) != horas_ocupadas_total:
                     fitness -= 1
 
                 if any(ca['idcurso'] == idcurso for ca in CURSO_AMBIENTE):
@@ -136,25 +120,19 @@ def cruce(padre1, padre2):
 def mutacion(individuo):
     if random.random() < 0.1:
         i = random.randint(0, len(individuo) - 1)
-        idcurso = individuo[i][1]
-        docentes_del_curso = [cd['idpersona'] for cd in CURSO_DOCENTE if cd['idcurso'] == idcurso]
-        if docentes_del_curso:
-            profesor = random.choice(docentes_del_curso)
-        else:
-            profesor = "No definido"
-        
+        profesor = random.randint(0, NUM_PROFESORES - 1)
         dia = random.choice(DIAS)
-        duracion = CURSOS[idcurso]['horas_teoria'] + CURSOS[idcurso]['horas_practica']
-        if duracion == 3:
-            duracion = 3
-        else:
-            duracion = random.choice(DURACIONES_CLASES)
         hora_inicio = random.choice(HORAS)
+        duracion = random.choice(DURACIONES_CLASES)
         hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
         # Ajustar hora_fin si excede el límite de 23:00
         if int(hora_fin.split(':')[0]) > 23:
             hora_fin = "23:00"
-        ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
+        idcurso = individuo[i][1]
+        if any(ca['idcurso'] == idcurso for ca in CURSO_AMBIENTE):
+            ambiente = next(ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso)
+        else:
+            ambiente = random.randint(0, NUM_AULAS - 1)
         individuo[i] = (profesor, idcurso, individuo[i][2], ambiente, dia, hora_inicio, hora_fin)
 
 def algoritmo_genetico():
@@ -178,20 +156,15 @@ def algoritmo_genetico():
     
     resultado = {}
     for (profesor, idcurso, idgrupo, aula, dia, hora_inicio, hora_fin) in mejor_individuo:
-        # Verificar si el profesor está dentro del rango válido o es "No definido"
-        if profesor != "No definido" and (profesor not in DOCENTES):
-            continue  # Ignorar esta entrada si el profesor no es válido
-        
-        nombre_curso = CURSOS[idcurso]["nombre"]
-        nombre_docente = "No definido" if profesor == "No definido" else DOCENTES[profesor]["nombres"]
-        apellidos_docente = "" if profesor == "No definido" else DOCENTES[profesor]["apellidos"]
+        nombre_curso = next(curso["nombre"] for curso in CURSOS if curso["idcurso"] == idcurso)
+        nombre_docente = DOCENTES[profesor]["nombres"]
+        apellidos_docente = DOCENTES[profesor]["apellidos"]
         
         # Validar índice de aula
-        if aula == "No definido" or aula not in AMBIENTES:
-            nombre_aula = "No definido"
-        else:
-            nombre_aula = AMBIENTES[aula]["nombre"]
+        if aula < 0 or aula >= len(AMBIENTES):
+            continue  # Ignorar esta entrada si el aula no es válida
         
+        nombre_aula = AMBIENTES[aula]["nombre"]
         grupo = next((g for g in GRUPOS_HORARIO if g["id_grupo"] == idgrupo), None)
         
         if grupo:
@@ -211,5 +184,6 @@ def algoritmo_genetico():
     return resultado
 
 resultado_json = algoritmo_genetico()
- """
+
+
 #print(json.dumps(resultado_json, ensure_ascii=False, indent=4))

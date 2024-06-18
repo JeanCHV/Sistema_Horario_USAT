@@ -236,3 +236,28 @@ def obtener_idcurso_por_nombre(nombre):
     finally:
         conexion.close()
 
+## DAR BAJA CURSO
+def dar_baja_curso(idcurso):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("UPDATE curso SET estado = 'I' WHERE idcurso= %s ", (idcurso,))
+            conexion.commit()
+            return {"mensaje": "Curso dado de baja correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+## CARGA MASIVA CURSOS 
+def asignar_curso_excel(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_Curso_Gestion', [1, None, nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio])
+            conexion.commit()
+            return {"mensaje": "Curso agregado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()

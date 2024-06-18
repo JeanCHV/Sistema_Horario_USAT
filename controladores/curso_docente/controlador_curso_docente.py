@@ -107,7 +107,7 @@ def eliminar_cursoxambiente(idcurso, idpersona):
         with conexion.cursor() as cursor:
             cursor.callproc('sp_CursosDocente_Gestion', [3, idcurso, idpersona])
             conexion.commit()
-            return {"mensaje": "Ambiente por Curso eliminado correctamente"}
+            return {"mensaje": "Docente por Curso eliminado correctamente"}
     except Exception as e:
         return {"error": str(e)}
     finally:

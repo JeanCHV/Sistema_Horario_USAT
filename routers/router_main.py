@@ -332,7 +332,49 @@ def obtener_curso_id(idcurso):
     resultado = controlador_cursos.obtener_curso_por_id(idcurso)
     return jsonify(resultado)
 
-    
+## DAR BAJA CURSO
+
+@app.route("/dar_baja_curso", methods=["POST"])
+def dar_baja_curso():
+    try:
+        data = request.json
+        idcurso = data.get('idcurso')
+        resultado = controlador_cursos.dar_baja_curso(idcurso)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+## CARGA MASIVA CURSOS 
+@app.route("/asignar_cursos_excel", methods=["POST"])
+def asignar_cursos_excel():
+    try:
+        asignaciones = request.json
+        if not asignaciones:
+            return jsonify({"error": "No se proporcionaron asignaciones"}), 400
+
+        resultados = []
+        for asignacion in asignaciones:
+            nombre = asignacion.get('nombre')
+            cod_curso = asignacion.get('cod_curso')
+            creditos = asignacion.get('creditos')
+            horas_teoria = asignacion.get('horas_teoria')
+            horas_practica = asignacion.get('horas_practica')
+            ciclo = asignacion.get('ciclo')
+            tipo_curso = asignacion.get('tipo_curso')
+            estado = asignacion.get('estado')
+            id_plan_estudio = asignacion.get('id_plan_estudio')
+
+            # Verificar que todos los campos requeridos estén presentes
+            if not all(key in asignacion for key in ['nombre', 'cod_curso', 'creditos', 'horas_teoria', 'horas_practica', 'ciclo', 'tipo_curso', 'estado', 'id_plan_estudio']):
+                return jsonify({"error": "Todos los campos son obligatorios"}), 400
+
+            resultado = controlador_cursos.asignar_curso_excel(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio)
+            resultados.append(resultado)
+
+        return jsonify(resultados)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500    
+
 #GESTIONAR DOCENTE
     
 
@@ -779,7 +821,7 @@ def eliminar_cursoDocente():
         data = request.json
         idcurso = data.get('idcurso')
         idpersona = data.get('idpersona')
-        resultado = controlador_curso_ambiente.eliminar_cursoxambiente(idcurso,idpersona)
+        resultado = controlador_curso_docente.eliminar_cursoxambiente(idcurso,idpersona)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
