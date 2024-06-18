@@ -546,9 +546,8 @@ def docentesxcursos():
 @app.route("/horarios")
 def horarios():
     persona = controlador_docente.obtener_docentes()
-    ambientes = controlador_ambientes.obtener_ambientess()
     semestres = controlador_semestre.obtener_semestres()
-    return render_template("dashboard/horarios.html", docente=persona,ambiente=ambientes,semestre=semestres)
+    return render_template("dashboard/horarios.html", docente=persona,semestre=semestres)
 
 @app.route("/ReporteAmbiente")
 def ReporteAmbiente():
