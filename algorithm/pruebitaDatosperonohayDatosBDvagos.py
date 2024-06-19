@@ -1,129 +1,40 @@
 import random
+import json
+import sys
+import os
 
-# Datos de ejemplo para cursos, docentes, ambientes y grupos
-cursos = [
-    {"idcurso": 1, "horas_practica": 2, "horas_teoria": 1, "ciclo": 1},
-    {"idcurso": 2, "horas_practica": 3, "horas_teoria": 2, "ciclo": 1},
-    {"idcurso": 3, "horas_practica": 1, "horas_teoria": 4, "ciclo": 2},
-    {"idcurso": 4, "horas_practica": 2, "horas_teoria": 3, "ciclo": 2},
-    {"idcurso": 5, "horas_practica": 3, "horas_teoria": 1, "ciclo": 3},
-    {"idcurso": 6, "horas_practica": 1, "horas_teoria": 2, "ciclo": 3},
-    {"idcurso": 7, "horas_practica": 2, "horas_teoria": 2, "ciclo": 4},
-    {"idcurso": 8, "horas_practica": 3, "horas_teoria": 3, "ciclo": 4},
-    {"idcurso": 9, "horas_practica": 2, "horas_teoria": 1, "ciclo": 5},
-    {"idcurso": 10, "horas_practica": 3, "horas_teoria": 2, "ciclo": 5},
-    {"idcurso": 11, "horas_practica": 1, "horas_teoria": 4, "ciclo": 6},
-    {"idcurso": 12, "horas_practica": 0, "horas_teoria": 3, "ciclo": 6},
-    {"idcurso": 13, "horas_practica": 2, "horas_teoria": 1, "ciclo": 7},
-    {"idcurso": 14, "horas_practica": 3, "horas_teoria": 2, "ciclo": 7},
-    {"idcurso": 15, "horas_practica": 1, "horas_teoria": 4, "ciclo": 8},
-    {"idcurso": 16, "horas_practica": 2, "horas_teoria": 3, "ciclo": 8},
-]
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-curso_docente = [
-    {"idcurso": 1, "idgrupo": 1, "idpersona": [1, 2]},
-    {"idcurso": 2, "idgrupo": 2, "idpersona": [2, 3]},
-    {"idcurso": 3, "idgrupo": 3, "idpersona": [3, 4]},
-    {"idcurso": 4, "idgrupo": 4, "idpersona": [4, 5]},
-    {"idcurso": 5, "idgrupo": 5, "idpersona": [5, 6]},
-    {"idcurso": 6, "idgrupo": 6, "idpersona": [6, 7]},
-    {"idcurso": 7, "idgrupo": 7, "idpersona": [7, 8]},
-    {"idcurso": 8, "idgrupo": 8, "idpersona": [8, 9]},
-    {"idcurso": 9, "idgrupo": 9, "idpersona": [9, 10]},
-    {"idcurso": 10, "idgrupo": 10, "idpersona": [10, 1]},
-    {"idcurso": 11, "idgrupo": 11, "idpersona": [1, 3]},
-    {"idcurso": 12, "idgrupo": 12, "idpersona": [2, 4]},
-    {"idcurso": 13, "idgrupo": 13, "idpersona": [3, 5]},
-    {"idcurso": 14, "idgrupo": 14, "idpersona": [4, 6]},
-    {"idcurso": 15, "idgrupo": 15, "idpersona": [5, 7]},
-    {"idcurso": 16, "idgrupo": 16, "idpersona": [6, 8]},
-]
+import controladores.docente.controlador_docente as controlador_docente
+import controladores.ambientes.controlador_ambiente as controlador_ambiente
+import controladores.cursos.controlador_cursos as controlador_cursos
+import controladores.grupo.controlador_grupo as controlador_grupo
+import controladores.docente_disponibilidad.controlador_docente_disponibilidad as controlador_docente_disponibilidad
+import controladores.curso_ambiente.controlador_curso_ambiente as controlador_curso_ambiente
+import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
 
-curso_ambiente = [
-    {"idcurso": 1, "idambiente": [1, 2]},
-    {"idcurso": 2, "idambiente": [2, 3]},
-    {"idcurso": 3, "idambiente": [3, 4]},
-    {"idcurso": 4, "idambiente": [1, 4]},
-    {"idcurso": 5, "idambiente": [1, 3]},
-    {"idcurso": 6, "idambiente": [2, 4]},
-    {"idcurso": 7, "idambiente": [1, 3]},
-    {"idcurso": 8, "idambiente": [2, 4]},
-    {"idcurso": 9, "idambiente": [1, 4]},
-    {"idcurso": 10, "idambiente": [2, 3]},
-    {"idcurso": 11, "idambiente": [3, 4]},
-    {"idcurso": 12, "idambiente": [1, 2]},
-    {"idcurso": 13, "idambiente": [2, 3]},
-    {"idcurso": 14, "idambiente": [3, 4]},
-    {"idcurso": 15, "idambiente": [1, 2]},
-    {"idcurso": 16, "idambiente": [2, 3]},
-]
+# Obtener los datos desde la base de datos
+docentes1 = controlador_docente.get_docentes()
+ambientes1 = controlador_ambiente.get_ambientes()
+cursos1 = controlador_cursos.get_cursos()
+grupo = controlador_grupo.get_grupo()
+disponibilidad = controlador_docente_disponibilidad.get_disponibilidad()
+curso_ambiente = controlador_curso_ambiente.get_curso_ambiente()
+curso_docente = controlador_curso_docente.get_curso_docente()
 
+# Convertir los datos en estructuras adecuadas
+DOCENTES = {docente['idpersona']: docente for docente in docentes1}
+AMBIENTES = {ambiente['idambiente']: ambiente for ambiente in ambientes1}
+CURSOS = {curso['idcurso']: curso for curso in cursos1}
+GRUPOS = grupo
+DISPONIBILIDAD_DOCENTES = disponibilidad
+CURSO_AMBIENTE = curso_ambiente
+CURSO_DOCENTE = curso_docente
 
-grupos = [
-    {"idgrupo": 1, "nombreGrupo": "A", "idcurso": 1},
-    {"idgrupo": 2, "nombreGrupo": "B", "idcurso": 2},
-    {"idgrupo": 3, "nombreGrupo": "A", "idcurso": 3},
-    {"idgrupo": 4, "nombreGrupo": "B", "idcurso": 4},
-    {"idgrupo": 5, "nombreGrupo": "A", "idcurso": 5},
-    {"idgrupo": 6, "nombreGrupo": "B", "idcurso": 6},
-    {"idgrupo": 7, "nombreGrupo": "A", "idcurso": 7},
-    {"idgrupo": 8, "nombreGrupo": "B", "idcurso": 8},
-    {"idgrupo": 9, "nombreGrupo": "A", "idcurso": 9},
-    {"idgrupo": 10, "nombreGrupo": "B", "idcurso": 10},
-    {"idgrupo": 11, "nombreGrupo": "A", "idcurso": 11},
-    {"idgrupo": 12, "nombreGrupo": "B", "idcurso": 12},
-    {"idgrupo": 13, "nombreGrupo": "A", "idcurso": 13},
-    {"idgrupo": 14, "nombreGrupo": "B", "idcurso": 14},
-    {"idgrupo": 15, "nombreGrupo": "A", "idcurso": 15},
-    {"idgrupo": 16, "nombreGrupo": "B", "idcurso": 16},
-]
-
-
-docentes = [
-    {"idpersona": 1, "nombre": "Docente 1"},
-    {"idpersona": 2, "nombre": "Docente 2"},
-    {"idpersona": 3, "nombre": "Docente 3"},
-    {"idpersona": 4, "nombre": "Docente 4"},
-    {"idpersona": 5, "nombre": "Docente 5"},
-    {"idpersona": 6, "nombre": "Docente 6"},
-    {"idpersona": 7, "nombre": "Docente 7"},
-    {"idpersona": 8, "nombre": "Docente 8"},
-    {"idpersona": 9, "nombre": "Docente 9"},
-    {"idpersona": 10, "nombre": "Docente 10"},
-]
-
-
-ambientes = [
-    {"idambiente": 1, "nombre": "Ambiente 1"},
-    {"idambiente": 2, "nombre": "Ambiente 2"},
-    {"idambiente": 3, "nombre": "Ambiente 3"},
-    {"idambiente": 4, "nombre": "Ambiente 4"},
-]
-
-
+# Convertir las disponibilidades a un formato adecuado
 disponibilidad_docente = [
-    {"idpersona": 1, "dia": "Lunes", "hora_inicio": 8, "hora_fin": 15},
-    {"idpersona": 1, "dia": "Martes", "hora_inicio": 10, "hora_fin": 18},
-    {"idpersona": 1, "dia": "Jueves", "hora_inicio": 8, "hora_fin": 15},
-    {"idpersona": 1, "dia": "Viernes", "hora_inicio": 10, "hora_fin": 18},
-    {"idpersona": 2, "dia": "Miércoles", "hora_inicio": 8, "hora_fin": 14},
-    {"idpersona": 2, "dia": "Jueves", "hora_inicio": 8, "hora_fin": 12},
-    {"idpersona": 3, "dia": "Viernes", "hora_inicio": 14, "hora_fin": 18},
-    {"idpersona": 3, "dia": "Lunes", "hora_inicio": 10, "hora_fin": 14},
-    {"idpersona": 4, "dia": "Sábado", "hora_inicio": 8, "hora_fin": 12},
-    {"idpersona": 4, "dia": "Jueves", "hora_inicio": 14, "hora_fin": 18},
-    {"idpersona": 5, "dia": "Miércoles", "hora_inicio": 8, "hora_fin": 12},
-    {"idpersona": 5, "dia": "Viernes", "hora_inicio": 10, "hora_fin": 14},
-    {"idpersona": 6, "dia": "Lunes", "hora_inicio": 14, "hora_fin": 18},
-    {"idpersona": 6, "dia": "Martes", "hora_inicio": 10, "hora_fin": 14},
-    {"idpersona": 7, "dia": "Miércoles", "hora_inicio": 8, "hora_fin": 12},
-    {"idpersona": 7, "dia": "Jueves", "hora_inicio": 10, "hora_fin": 14},
-    {"idpersona": 8, "dia": "Sábado", "hora_inicio": 8, "hora_fin": 12},
-    {"idpersona": 8, "dia": "Lunes", "hora_inicio": 10, "hora_fin": 14},
-    {"idpersona": 9, "dia": "Martes", "hora_inicio": 8, "hora_fin": 12},
-    {"idpersona": 9, "dia": "Jueves", "hora_inicio": 14, "hora_fin": 18},
-    {"idpersona": 10, "dia": "Sábado", "hora_inicio": 10, "hora_fin": 14},
-    {"idpersona": 10, "dia": "Viernes", "hora_inicio": 14, "hora_fin": 18},
+    {"idpersona": d['idpersona'], "dia": d['dia'], "hora_inicio": int(d['hora_inicio'].split(':')[0]), "hora_fin": int(d['hora_fin'].split(':')[0])}
+    for d in DISPONIBILIDAD_DOCENTES
 ]
 
 # Generar bloques horarios para cada curso
@@ -149,10 +60,10 @@ def generar_bloques_horarios(horas_totales):
 def generar_horario():
     horario = []
     dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
-    for curso in cursos:
+    for curso in CURSOS.values():
         horas_totales = curso["horas_practica"] + curso["horas_teoria"]
         bloques_horarios = generar_bloques_horarios(horas_totales)
-        for grupo in [g for g in grupos if g["idcurso"] == curso["idcurso"]]:
+        for grupo in [g for g in GRUPOS if g["idcurso"] == curso["idcurso"]]:
             for bloque in bloques_horarios:
                 dia = random.choice(dias)
                 if curso["idcurso"] % 2 != 0:
@@ -162,7 +73,7 @@ def generar_horario():
                 hora_fin = hora_inicio + bloque
                 entrada_horario = {
                     "idcurso": curso["idcurso"],
-                    "idgrupo": grupo["idgrupo"],
+                    "idgrupo": grupo["id_grupo"],
                     "idpersona": "No definido",
                     "idambiente": "No definido",
                     "dia": dia,
@@ -203,8 +114,8 @@ def asignar_horarios(horario):
     grupos_asignados = {}
     
     for entrada in horario:
-        curso_doc = next((item for item in curso_docente if item["idcurso"] == entrada["idcurso"] and item["idgrupo"] == entrada["idgrupo"]), None)
-        curso_amb = next((item for item in curso_ambiente if item["idcurso"] == entrada["idcurso"]), None)
+        curso_doc = [item for item in CURSO_DOCENTE if item["idcurso"] == entrada["idcurso"]]
+        curso_amb = [item for item in CURSO_AMBIENTE if item["idcurso"] == entrada["idcurso"]]
         
         # Verificar si ya se ha asignado un docente al grupo
         grupo_key = (entrada["idcurso"], entrada["idgrupo"])
@@ -213,16 +124,16 @@ def asignar_horarios(horario):
         else:
             docente_asignado = "No definido"
             if curso_doc:
-                for idpersona in curso_doc["idpersona"]:
+                for idpersona in [doc["idpersona"] for doc in curso_doc]:
                     disponible = all(verificar_disponibilidad_docente(idpersona, e["dia"], e["hora_inicio"], e["hora_fin"]) and not verificar_colision_docente(idpersona, e["dia"], e["hora_inicio"], e["hora_fin"], horarios_docentes) for e in horario if e["idcurso"] == entrada["idcurso"] and e["idgrupo"] == entrada["idgrupo"])
                     if disponible:
                         docente_asignado = idpersona
                         grupos_asignados[grupo_key] = docente_asignado
                         break
         
+        ambiente_asignado = "No definido"
         if curso_amb:
-            ambiente_asignado = "No definido"
-            for idambiente in curso_amb["idambiente"]:
+            for idambiente in [amb["idambiente"] for amb in curso_amb]:
                 if not verificar_colision_ambiente(idambiente, entrada["dia"], entrada["hora_inicio"], entrada["hora_fin"], horarios_ambientes):
                     ambiente_asignado = idambiente
                     break
@@ -298,7 +209,7 @@ def mutacion(hijo):
     return hijo
 
 # Parámetros del algoritmo genético
-generaciones = 10000
+generaciones = 1000
 poblacion_size = 100
 
 # Ejecutar el algoritmo genético

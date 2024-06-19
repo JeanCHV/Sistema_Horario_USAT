@@ -28,6 +28,8 @@ import controladores.curso_ambiente.controlador_curso_ambiente as controlador_cu
 import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
 import controladores.controlador_edificio as controlador_edificio
 import controladores.disponibilidad.controlador_disponibilidad as controlador_disponibilidad
+import controladores.docente_disponibilidad.controlador_docente_disponibilidad as controlador_docente_disponibilidad
+
 
 ##Para la validacion 3 intentos
 import time
