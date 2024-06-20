@@ -258,6 +258,20 @@ def dar_baja_curso(idcurso):
     finally:
         conexion.close()
 
+### CAMBIO ESTADOS
+
+def cambiar_estado_curso(idcurso, nuevo_estado):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("UPDATE curso SET estado = %s WHERE idcurso = %s", (nuevo_estado, idcurso))
+            conexion.commit()
+            return {"mensaje": "Estado del curso actualizado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
 ## CARGA MASIVA CURSOS 
 def asignar_curso_excel(nombre, cod_curso, creditos, horas_teoria, horas_practica, ciclo, tipo_curso, estado, id_plan_estudio):
     conexion = obtener_conexion()

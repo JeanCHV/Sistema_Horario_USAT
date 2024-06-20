@@ -37,7 +37,7 @@
     text-align: center;
 }
 
-.tabla-cursos {
+.tabla-cursos  {
     table-layout: auto;
     width: 100%;
 }
@@ -59,6 +59,44 @@
     background-color: #f8f9fa;
     z-index: 1;
 }
+
+.tabla-ambientes th,
+.tabla-ambientes td {
+    min-width: 100px; /* Ajusta según sea necesario */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.tabla-ambientes th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+}
+
+.tabla-docentes th,
+.tabla-docentes td {
+    min-width: 100px; /* Ajusta según sea necesario */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.tabla-docentes th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+}
+
+
 [data-image]{
     margin-right: 10px;
     filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(43deg) brightness(105%) contrast(101%);
@@ -74,8 +112,29 @@
     }
 }
 
+@media (max-width: 767.98px) {
+    .tabla-ambientes th, .tabla-ambientes  td {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .tabla-docentes th, .tabla-docentes  td {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+}
+
+.dt-search{
+    margin-bottom: 20px;
+    justify-content: flex-end;
+}
+
 @media (min-width: 1920px) {
-    .tabla-cursos {
+    .tabla-cursos .tabla-ambientes .tabla-docentes{
         width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible */
         margin: 0 auto;
     }

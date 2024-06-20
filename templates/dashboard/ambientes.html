@@ -21,14 +21,14 @@
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
             <div class="table-responsive mt-3">
-                <table id="tabla-ambiente" class="table table-striped" style="width:100%">
+                <table id="tabla-ambiente" class="table table-striped tabla-ambientes" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width: 20%; text-align: center;">Nombre</th>
-                            <th style="width: 3%; text-align: center;">Aforo</th>
-                            <th style="width: 3%; text-align: center;">Estado</th>
-                            <th style="width: 30%; text-align: center;">Edificio</th>
-                            <th style="width: 3%; text-align: center;">Opciones</th>
+                            <th style="text-align: center;">Nombre</th>
+                            <th style="text-align: center;">Aforo</th>
+                            <th style="text-align: center;">Estado</th>
+                            <th style="text-align: center;">Edificio</th>
+                            <th style="text-align: center;">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -176,7 +176,7 @@
                 autoWidth: true,
                 searching: true,
                 scrollY: "510px",
-                order: [], 
+                order: [],
                 dom: 'Bfrtip',
                 buttons: [
                     {
@@ -247,17 +247,22 @@
                     }
                 ],
 
-                "ajax": {
-                    "url": "/get_ambientes",
-                    "type": "GET",
-                    "dataSrc": ""
+                ajax: {
+                    url: "/datos_ambientes",
+                    type: "GET",
+                    dataSrc: ""
                 },
                 "processing": true,
                 "serverSide": false, // Desactiva la recarga automática al ordenar
                 "columns": [
                     { "data": "nombre", "className": 'dt-body-left' },
                     { "data": "aforo", "className": 'dt-body-center' },
-                    { "data": "estado" },
+                    {
+                        "data": "estado", "className": 'dt-body-center',
+                        "render": function (data, type, row) {
+                            return data === 'A' ? 'ACTIVO' : data === 'I' ? 'INACTIVO' : data;
+                        }
+                    },
                     {
                         "data": "idedificio", "className": 'dt-body-left',
                         "render": function (data, type, row) {
@@ -358,8 +363,8 @@
                 var worksheet = workbook.Sheets[firstSheetName];
                 var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-                var headers = jsonData[1];  
-                var rows = jsonData.slice(2); 
+                var headers = jsonData[1];
+                var rows = jsonData.slice(2);
 
                 var formattedData = rows.map((row, index) => {
                     return {
@@ -439,7 +444,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminarlo!'
+                confirmButtonText: 'Sí, eliminarlo!',
+                confirmCancelText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -449,15 +455,14 @@
                         data: JSON.stringify({ idambiente: id }),
                         success: function (response) {
                             if (response.error) {
-                                var errorMsg = response.error; 
-                                mostrarAlerta('error', 'Error', errorMsg);
+                                Swal.fire('Error', response.error, 'error');
                             } else {
-                                mostrarAlerta('success', 'Éxito', 'La operación se realizó correctamente.');
+                                Swal.fire('Éxito', 'La operación se realizó correctamente.', 'success');
                                 table.ajax.reload();
                             }
                         },
                         error: function (xhr, status, error) {
-                            mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+                            Swal.fire('Error', 'Hubo un error al eliminar el ambiente', 'error');
                         }
                     });
                 }
@@ -473,7 +478,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, dar de baja!'
+                confirmButtonText: 'Sí, dar de baja!',
+                confirmCancelText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
@@ -483,7 +489,7 @@
                         data: JSON.stringify({ idambiente: id }),
                         success: function (response) {
                             if (response.error) {
-                                var errorMsg = response.error; 
+                                var errorMsg = response.error;
                                 mostrarAlerta('error', 'Error', errorMsg);
                             } else {
                                 mostrarAlerta('success', 'Éxito', 'La operación se realizó correctamente.');

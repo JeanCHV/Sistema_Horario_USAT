@@ -105,8 +105,8 @@ def before_request():
     if 'idusuario' in session:
         session['last_activity'] = datetime.datetime.now()
 
-@app.route("/get_ambientes", methods=["GET"])
-def get_ambientes():
+@app.route("/datos_ambientes", methods=["GET"])
+def datos_ambientes():
     ambientes = controlador_ambientes.obtener_ambientes()
     return jsonify(ambientes)
 
@@ -331,6 +331,19 @@ def dar_baja_curso():
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})
+    
+### CAMBIAR ESTADO CURSOS
+@app.route('/curso_estado', methods=['POST'])
+def curso_estado():
+    data = request.get_json()
+    idcurso = data.get('idcurso')
+    nuevo_estado = data.get('estado')
+
+    resultado = controlador_cursos.cambiar_estado_curso(idcurso, nuevo_estado)
+    if "error" in resultado:
+        return jsonify({'error': resultado["error"]}), 500
+    else:
+        return jsonify({'mensaje': resultado["mensaje"]}), 200
 
 ## CARGA MASIVA CURSOS 
 @app.route("/asignar_cursos_excel", methods=["POST"])
@@ -523,6 +536,8 @@ def rellenar_tabla(escuela,semestre):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
     cursos = controlador_grupo.obtener_cursoxescuela(escuela,id_semestre)
     return jsonify(cursos)
+
+
 
 
 @app.route('/mantenimiento_grupos', methods=['POST'])
