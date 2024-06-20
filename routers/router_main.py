@@ -366,10 +366,10 @@ def asignar_cursos_excel():
 #GESTIONAR DOCENTE
     
 
-@app.route("/get_docentes", methods=["GET"])
+@app.route("/datos_docentes", methods=["GET"])
 def get_docentes():
     try:
-        docentes = controlador_docente.obtener_docentes()
+        docentes = controlador_docente.datos_docentes()
         return jsonify(docentes)
     except Exception as e:
         return jsonify({"error": str(e)})
