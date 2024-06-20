@@ -221,14 +221,14 @@
                                 <div class="form-group first">
                                     <span class="form-control-icon"></span>
                                     <input type="text" class="form-control" placeholder=" " id="username"
-                                        name="username">
+                                        name="username" style="padding-left: 25px;">
                                     <label class="form-control-label" for="username"><i class="fas fa-user"></i>
                                         Usuario</label>
                                 </div>
                                 <div class="form-group last mb-3">
                                     <span class="form-control-icon"></span>
                                     <input type="password" class="form-control" placeholder=" " id="password"
-                                        name="password">
+                                        name="password" style="padding-left: 25px;">
                                     <label class="form-control-label" for="password"><i class="fas fa-lock"></i>
                                         Contraseña</label>
                                 </div>
@@ -262,6 +262,7 @@
     <script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
     <script>
         function hideBgOnMobile() {
+            
             var screenWidth = window.innerWidth;
 
             var username = localStorage.getItem('username');
@@ -276,6 +277,7 @@
                 window.location.href = '/index';
             }
         }
+
         window.onload = hideBgOnMobile;
         window.onresize = hideBgOnMobile;
 
