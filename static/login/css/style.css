@@ -3,7 +3,7 @@ body {
   background-color: #fff; }
 
 p {
-  color: #b3b3b3;
+  color: #000000;
   font-weight: 300; }
 
 h1, h2, h3, h4, h5, h6,
@@ -31,20 +31,21 @@ h2 {
     height:500px; } }
 
 .half .contents, .half .bg {
-  width: 50%; }
+  width: 30%; }
   @media (max-width: 1199.98px) {
     .half .contents, .half .bg {
       width: 100%; } }
   .half .contents .form-group, .half .bg .form-group {
     margin-bottom: 0;
-    border: 1px solid #efefef;
+    /* border: 1px solid #efefef; */
     padding: 15px 15px;
-    border-bottom: none; }
+    border-bottom: none; 
+  }
     .half .contents .form-group.first, .half .bg .form-group.first {
       border-top-left-radius: 7px;
       border-top-right-radius: 7px; }
     .half .contents .form-group.last, .half .bg .form-group.last {
-      border-bottom: 1px solid #efefef;
+      /* border-bottom: 1px solid #efefef; */
       border-bottom-left-radius: 7px;
       border-bottom-right-radius: 7px; }
     .half .contents .form-group label, .half .bg .form-group label {
