@@ -19,12 +19,17 @@ def obtener_docentes():
         conexion.close()
 
     return docentes
-def obtener_docentess():
+def datos_docentes():
     conexion = obtener_conexion()
     docentes = []
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT idpersona, CONCAT(nombres, ' ', apellidos) AS nombre, correo, telefono FROM persona WHERE tipopersona = 'D'")
-        docentes = cursor.fetchall()
+        cursor.execute("SELECT idpersona, UPPER(CONCAT(apellidos, ' ', nombres)) AS docente, correo, telefono FROM persona WHERE tipopersona = 'D' ORDER BY docente")
+        column_names = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+
+        for row in rows:
+            docente_dict = dict(zip(column_names,row))
+            docentes.append(docente_dict)
     conexion.close()
     return docentes
 
