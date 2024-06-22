@@ -176,7 +176,7 @@ def get_reporte_cursos():
     reporte_curso = []
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT c.nombre AS curso,p.nombres AS docente,a.nombre AS ambiente,CONCAT(h.horainicio,' - ',h.horafin) AS horario,CASE WHEN c.estado='0' THEN 'Activo' ELSE 'Inactivo' END AS estado FROM horario h JOIN grupo g ON h.id_grupo=g.id_grupo JOIN curso c ON g.idcurso=c.idcurso JOIN persona p ON h.idpersona=p.idpersona JOIN ambiente a ON h.idambiente=a.idambiente;")
+            cursor.execute("SELECT c.nombre AS curso,p.nombres AS docente,a.nombre AS ambiente,CONCAT(h.horainicio,' - ',h.horafin) AS horario,CASE WHEN c.estado='A' THEN 'Activo' ELSE 'Inactivo' END AS estado FROM horario h JOIN grupo g ON h.id_grupo=g.id_grupo JOIN curso c ON g.idcurso=c.idcurso JOIN persona p ON h.idpersona=p.idpersona JOIN ambiente a ON h.idambiente=a.idambiente;")
             column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
 
