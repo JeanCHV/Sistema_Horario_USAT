@@ -5,197 +5,252 @@
 {% endblock %}
 
 {% block contenido %}
-  <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Perfil</li>
-    </ol>
-  </nav>
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Perfil</li>
+  </ol>
+</nav>
 
-  <div class="container-fluid">
-    <div id="loader" class="loader-wrapper">
-      <div class="loader"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-6 d-flex align-items-stretch">
-        <div class="card mb-4 w-100">
-          <div class="card-header">
-            <h5 class="card-title">Información personal</h5>
-          </div>
-          <div class="card-body">
-            <form id="perfil-form">
-              <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre</label>
-                <input id="nombre" name="nombres" type="text" class="form-control" placeholder="Ingresa tu nombre" />
-              </div>
-              <div class="mb-3">
-                <label for="apellidos" class="form-label">Apellidos</label>
-                <input id="apellidos" name="apellidos" type="text" class="form-control" placeholder="Ingresa tus apellidos" />
-              </div>
-              <div class="mb-3">
-                <label for="dni" class="form-label">DNI</label>
-                <input id="dni" name="n_documento" type="text" class="form-control" placeholder="Ingresa tu DNI" />
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Correo electrónico</label>
-                <input id="email" name="correo" type="email" class="form-control" placeholder="Ingresa tu correo electrónico" />
-              </div>
-              <div class="mb-3">
-                <label for="telefono" class="form-label">Teléfono</label>
-                <input id="telefono" name="telefono" type="tel" class="form-control" placeholder="Ingresa tu número de teléfono" />
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Guardar cambios</button>
-            </form>
-          </div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 d-flex align-items-stretch">
+      <div class="card mb-4 w-100 shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title">Información personal</h5>
         </div>
-      </div>
-      <div class="col-md-6 d-flex align-items-stretch">
-        <div class="card mb-4 w-100">
-          <div class="card-body d-flex justify-content-center position-relative">
-            <div class="profile-img-wrapper">
-              <img id="foto-perfil" alt="Foto de perfil" class="profile-img" />
-              <div class="profile-img-overlay">
-                <button id="mostrar-imagen" class="btn btn-light mb-2">Mostrar imagen</button>
-                <button id="cambiar-imagen" class="btn btn-light">Cambiar imagen</button>
-                <input type="file" id="file-input" class="d-none" accept="image/*">
+        <div class="card-body">
+          <form id="perfil-form">
+            {% for field in ['nombres', 'apellidos', 'dni', 'email', 'telefono'] %}
+            <div class="mb-3 skeleton">
+              <label for="{{ field }}" class="form-label">{{ field.capitalize() }}</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi {% if field == 'nombres' or field == 'apellidos' %}bi-person{% elif field == 'dni' %}bi-card-text{% elif field == 'email' %}bi-envelope{% else %}bi-telephone{% endif %}"></i>
+                </span>
+                <input id="{{ field }}" name="{{ field }}" type="{{ 'email' if field == 'email' else 'text' }}" class="form-control" placeholder="Ingresa tu {{ field }}" />
               </div>
             </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary w-100 skeleton">Guardar cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 d-flex align-items-stretch">
+      <div class="card mb-4 w-100 shadow-sm">
+        <div class="card-body d-flex justify-content-center position-relative">
+          <div class="profile-img-wrapper skeleton">
+            <div class="loading-spinner" id="loading-spinner"></div>
+            <img id="foto-perfil" alt="Foto de perfil" class="profile-img" style="display: none;" />
+            <div class="profile-img-overlay">
+              <button id="mostrar-imagen" class="btn btn-light mb-2">Mostrar imagen</button>
+              <button id="cambiar-imagen" class="btn btn-light mb-2">Cambiar imagen</button>
+              <button id="eliminar-imagen" class="btn btn-danger">Eliminar imagen</button>
+              <input type="file" id="file-input" class="d-none" accept="image/*">
+            </div>
           </div>
-          <div class="card-body text-center">
-            <h5 id="username" class="card-title"></h5>
-            <p class="card-text">Información de perfil</p>
-          </div>
+        </div>
+        <div class="card-body text-center">
+          <h5 id="username" class=" skeleton">Cargando...</h5>
+          <p class="card-text">Información de perfil</p>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLeSaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- Modal para mostrar imagen en grande -->
+<div class="modal fade" id="imagenModal" tabindex="-1" aria-labelledby="imagenModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imagenModalLabel">Imagen de perfil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img id="imagen-grande" src="" class="img-fluid" alt="Imagen de perfil">
+      </div>
+    </div>
+  </div>
+</div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      setTimeout(function () {
-        document.getElementById('loader').style.display = 'none';
-      }, 2000);
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLeSaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.2/font/bootstrap-icons.min.css"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-      fetch('/datos_usuario')
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            alert(data.error);
-          } else {
-            document.getElementById('nombre').value = data.nombres;
-            document.getElementById('apellidos').value = data.apellidos;
-            document.getElementById('dni').value = data.n_documento;
-            document.getElementById('email').value = data.correo;
-            document.getElementById('telefono').value = data.telefono;
-            document.getElementById('username').innerText = data.username;
-
-            const fotoPerfil = document.getElementById('foto-perfil');
-            if (data.foto) {
-              fotoPerfil.src = `/static/img/${data.foto}`;
-            } else {
-              fotoPerfil.src = '/static/img/USUARIO.jpg';
-            }
-          }
-        });
-
-      document.getElementById('perfil-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const formData = new FormData(this);
-        const jsonData = {};
-        formData.forEach((value, key) => { jsonData[key] = value });
-
-        fetch('/actualizar_datos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(jsonData)
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            alert(data.error);
-          } else {
-            alert(data.mensaje);
-          }
-        });
-      });
-
-      // Mostrar imagen en grande al hacer clic en "Mostrar imagen"
-      document.getElementById('mostrar-imagen').addEventListener('click', function () {
-        const fotoPerfil = document.getElementById('foto-perfil');
-        window.open(fotoPerfil.src, '_blank');
-      });
-
-      // Abrir el selector de archivos al hacer clic en "Cambiar imagen"
-      document.getElementById('cambiar-imagen').addEventListener('click', function () {
-        document.getElementById('file-input').click();
-      });
-
-      // Manejar la subida de la nueva imagen
-      document.getElementById('file-input').addEventListener('change', function (event) {
-        const file = event.target.files[0];
-        if (file) {
-          const formData = new FormData();
-          formData.append('foto', file);
-
-          fetch('/actualizar_foto', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              alert(data.error);
-            } else {
-              alert(data.mensaje);
-              document.getElementById('foto-perfil').src = `/static/img/${data.foto}`;
-            }
-          });
-        }
-      });
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function handleResponse(response, successCallback) {
+    response.json().then(data => {
+      if (data.error) {
+        Swal.fire('Error', data.error, 'error');
+      } else {
+        successCallback(data);
+      }
     });
-  </script>
+  }
 
-  <style>
-    .profile-img-wrapper {
-      position: relative;
-      width: 250px;
-      height: 250px;
-      border-radius: 50%;
-      overflow: hidden;
+  function updateProfileImage(data) {
+    const fotoPerfil = document.getElementById('foto-perfil');
+    if (data.foto) {
+      fotoPerfil.src = `/static/img/${data.foto}`;
+    } else {
+      fotoPerfil.src = '/static/img/USUARIO.jpg';
     }
+    fotoPerfil.onload = function() {
+      document.getElementById('loading-spinner').style.display = 'none';
+      fotoPerfil.style.display = 'block';
+    };
+    fotoPerfil.onerror = function() {
+      document.getElementById('loading-spinner').style.display = 'none';
+    };
+  }
 
-    .profile-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  fetch('/datos_usuario')
+    .then(response => handleResponse(response, data => {
+      document.getElementById('nombres').value = data.nombres;
+      document.getElementById('apellidos').value = data.apellidos;
+      document.getElementById('dni').value = data.n_documento;
+      document.getElementById('email').value = data.correo;
+      document.getElementById('telefono').value = data.telefono;
+      document.getElementById('username').innerText = data.username;
+      updateProfileImage(data);
+      document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+    }));
 
-    .profile-img-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
+  document.getElementById('perfil-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    const jsonData = Object.fromEntries(formData.entries());
+    fetch('/actualizar_datos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(jsonData)
+    })
+    .then(response => handleResponse(response, data => {
+      Swal.fire('Éxito', data.mensaje, 'success');
+    }));
+  });
 
-    .profile-img-wrapper:hover .profile-img-overlay {
-      opacity: 1;
-    }
+  document.getElementById('mostrar-imagen').addEventListener('click', function () {
+    const fotoPerfil = document.getElementById('foto-perfil');
+    document.getElementById('imagen-grande').src = fotoPerfil.src;
+    new bootstrap.Modal(document.getElementById('imagenModal')).show();
+  });
 
-    .profile-img-overlay button {
-      margin: 5px;
+  document.getElementById('cambiar-imagen').addEventListener('click', function () {
+    document.getElementById('file-input').click();
+  });
+
+  document.getElementById('file-input').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('foto', file);
+      fetch('/actualizar_foto', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => handleResponse(response, data => {
+        Swal.fire('Éxito', data.mensaje, 'success');
+        updateProfileImage(data);
+      }));
     }
-  </style>
+  });
+
+  document.getElementById('eliminar-imagen').addEventListener('click', function () {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "No podrás revertir esto",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminarla'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch('/static/img/USUARIO.jpg')
+          .then(res => res.blob())
+          .then(blob => {
+            const formData = new FormData();
+            formData.append('foto', blob, 'USUARIO.jpg');
+            fetch('/actualizar_foto', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => handleResponse(response, data => {
+              Swal.fire('Eliminada', 'La imagen de perfil ha sido eliminada.', 'success');
+              updateProfileImage(data);
+            }));
+          });
+      }
+    })
+  });
+});
+</script>
+
+<style>
+.card-title {
+    color: white;
+}
+.profile-img-wrapper {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.profile-img-wrapper:hover .profile-img-overlay {
+  opacity: 1;
+}
+.profile-img-overlay button {
+  margin: 5px;
+}
+.skeleton {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  color: transparent;
+}
+.skeleton::before {
+  content: '\00a0'; /* non-breaking space */
+}
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
 {% endblock %}
