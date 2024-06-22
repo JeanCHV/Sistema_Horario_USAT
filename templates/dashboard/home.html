@@ -2,503 +2,507 @@
 {% block titulo %} Inicio {% endblock %}
 {% block contenido %}
 <section class="section">
-    <main class="content">
-        <div class="container-fluid p-0">
-    
-            <h1 class="h3 mb-3"><strong>Analytics</strong> Dashboard</h1>
-    
-            <div class="row">
-                <div class="col-xl-6 col-xxl-5 d-flex">
-                    <div class="w-100">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col mt-0">
-                                                <h5 class="card-title">Sales</h5>
-                                            </div>
-    
-                                            <div class="col-auto">
-                                                <div class="stat text-primary">
-                                                    <i class="align-middle" data-feather="truck"></i>
-                                                </div>
-                                            </div>
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3">Panel de <strong>Análisis</strong></h1>
+
+        <div class="row">
+            <div class="col-xl-6 col-xxl-4 d-flex">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Cursos Activos</h5>
                                         </div>
-                                        <h1 class="mt-1 mb-3">2.382</h1>
-                                        <div class="mb-0">
-                                            <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i>
-                                                -3.65% </span>
-                                            <span class="text-muted">Since last week</span>
+                                        <div class="col-auto">
+                                            <div class="stat text-primary">
+                                                <i class="align-middle" data-feather="book"></i>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col mt-0">
-                                                <h5 class="card-title">Visitors</h5>
-                                            </div>
-    
-                                            <div class="col-auto">
-                                                <div class="stat text-primary">
-                                                    <i class="align-middle" data-feather="users"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <h1 class="mt-1 mb-3">14.212</h1>
-                                        <div class="mb-0">
-                                            <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
-                                                5.25% </span>
-                                            <span class="text-muted">Since last week</span>
-                                        </div>
-                                    </div>
+                                    <h1 class="mt-1 mb-3 skeleton skeleton-text" id="cursos-activos"></h1>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col mt-0">
-                                                <h5 class="card-title">Earnings</h5>
-                                            </div>
-    
-                                            <div class="col-auto">
-                                                <div class="stat text-primary">
-                                                    <i class="align-middle" data-feather="dollar-sign"></i>
-                                                </div>
-                                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Docentes Activos</h5>
                                         </div>
-                                        <h1 class="mt-1 mb-3">$21.300</h1>
-                                        <div class="mb-0">
-                                            <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
-                                                6.65% </span>
-                                            <span class="text-muted">Since last week</span>
+                                        <div class="col-auto">
+                                            <div class="stat text-primary">
+                                                <i class="align-middle" data-feather="users"></i>
+                                            </div>
                                         </div>
                                     </div>
+                                    <h1 class="mt-1 mb-3 skeleton skeleton-text" id="docentes-activos"></h1>
                                 </div>
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col mt-0">
-                                                <h5 class="card-title">Orders</h5>
-                                            </div>
-    
-                                            <div class="col-auto">
-                                                <div class="stat text-primary">
-                                                    <i class="align-middle" data-feather="shopping-cart"></i>
-                                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Ambientes Disponibles</h5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="stat text-primary">
+                                                <i class="align-middle" data-feather="home"></i>
                                             </div>
                                         </div>
-                                        <h1 class="mt-1 mb-3">64</h1>
-                                        <div class="mb-0">
-                                            <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i>
-                                                -2.25% </span>
-                                            <span class="text-muted">Since last week</span>
-                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-    
-                <div class="col-xl-6 col-xxl-7">
-                    <div class="card flex-fill w-100">
-                        <div class="card-header">
-    
-                            <h5 class="card-title mb-0">Recent Movement</h5>
-                        </div>
-                        <div class="card-body py-3">
-                            <div class="chart chart-sm">
-                                <canvas id="chartjs-dashboard-line"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    
-            <div class="row">
-                <div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
-                    <div class="card flex-fill w-100">
-                        <div class="card-header">
-    
-                            <h5 class="card-title mb-0">Browser Usage</h5>
-                        </div>
-                        <div class="card-body d-flex">
-                            <div class="align-self-center w-100">
-                                <div class="py-3">
-                                    <div class="chart chart-xs">
-                                        <canvas id="chartjs-dashboard-pie"></canvas>
-                                    </div>
-                                </div>
-    
-                                <table class="table mb-0">
-                                    <tbody>
-                                        <tr>
-                                            <td>Chrome</td>
-                                            <td class="text-end">4306</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Firefox</td>
-                                            <td class="text-end">3801</td>
-                                        </tr>
-                                        <tr>
-                                            <td>IE</td>
-                                            <td class="text-end">1689</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-12 col-xxl-6 d-flex order-3 order-xxl-2">
-                    <div class="card flex-fill w-100">
-                        <div class="card-header">
-    
-                            <h5 class="card-title mb-0">Real-Time</h5>
-                        </div>
-                        <div class="card-body px-4">
-                            <div id="world_map" style="height:350px;"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6 col-xxl-3 d-flex order-1 order-xxl-1">
-                    <div class="card flex-fill">
-                        <div class="card-header">
-    
-                            <h5 class="card-title mb-0">Calendar</h5>
-                        </div>
-                        <div class="card-body d-flex">
-                            <div class="align-self-center w-100">
-                                <div class="chart">
-                                    <div id="datetimepicker-dashboard"></div>
+                                    <h1 class="mt-1 mb-3 skeleton skeleton-text" id="ambientes-disponibles"></h1>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-    
-            <div class="row">
-                <div class="col-12 col-lg-8 col-xxl-9 d-flex">
-                    <div class="card flex-fill">
-                        <div class="card-header">
-    
-                            <h5 class="card-title mb-0">Latest Projects</h5>
-                        </div>
+
+            <!-- Reporte de Capacidad y Ocupación de Ambientes -->
+            <div class="col-xl-6 col-xxl-4 d-flex">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Capacidad y Ocupación de Ambientes</h5>
+                    </div>
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
                         <table class="table table-hover my-0">
-                            <thead>
+                            <thead class="table-header-fixed">
                                 <tr>
-                                    <th>Name</th>
-                                    <th class="d-none d-xl-table-cell">Start Date</th>
-                                    <th class="d-none d-xl-table-cell">End Date</th>
-                                    <th>Status</th>
-                                    <th class="d-none d-md-table-cell">Assignee</th>
+                                    <th>Nombre del Ambiente</th>
+                                    <th>Capacidad</th>
+                                    <th>Estado</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Project Apollo</td>
-                                    <td class="d-none d-xl-table-cell">01/01/2023</td>
-                                    <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                    <td><span class="badge bg-success">Done</span></td>
-                                    <td class="d-none d-md-table-cell">Vanessa Tucker</td>
-                                </tr>
-                                <tr>
-                                    <td>Project Fireball</td>
-                                    <td class="d-none d-xl-table-cell">01/01/2023</td>
-                                    <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                    <td><span class="badge bg-danger">Cancelled</span></td>
-                                    <td class="d-none d-md-table-cell">William Harris</td>
-                                </tr>
-                                <tr>
-                                    <td>Project Hades</td>
-                                    <td class="d-none d-xl-table-cell">01/01/2023</td>
-                                    <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                    <td><span class="badge bg-success">Done</span></td>
-                                    <td class="d-none d-md-table-cell">Sharon Lessman</td>
-                                </tr>
-                                <tr>
-                                    <td>Project Nitro</td>
-                                    <td class="d-none d-xl-table-cell">01/01/2023</td>
-                                    <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                    <td><span class="badge bg-warning">In progress</span></td>
-                                    <td class="d-none d-md-table-cell">Vanessa Tucker</td>
-                                </tr>
-                                <tr>
-                                    <td>Project Phoenix</td>
-                                    <td class="d-none d-xl-table-cell">01/01/2023</td>
-                                    <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                    <td><span class="badge bg-success">Done</span></td>
-                                    <td class="d-none d-md-table-cell">William Harris</td>
-                                </tr>
-                                <tr>
-                                    <td>Project X</td>
-                                    <td class="d-none d-xl-table-cell">01/01/2023</td>
-                                    <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                    <td><span class="badge bg-success">Done</span></td>
-                                    <td class="d-none d-md-table-cell">Sharon Lessman</td>
-                                </tr>
-                                <tr>
-                                    <td>Project Romeo</td>
-                                    <td class="d-none d-xl-table-cell">01/01/2023</td>
-                                    <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                    <td><span class="badge bg-success">Done</span></td>
-                                    <td class="d-none d-md-table-cell">Christina Mason</td>
-                                </tr>
-                                <tr>
-                                    <td>Project Wombat</td>
-                                    <td class="d-none d-xl-table-cell">01/01/2023</td>
-                                    <td class="d-none d-xl-table-cell">31/06/2023</td>
-                                    <td><span class="badge bg-warning">In progress</span></td>
-                                    <td class="d-none d-md-table-cell">William Harris</td>
-                                </tr>
+                            <tbody id="ambientes-ocupacion">
+                                <tr class="skeleton skeleton-table"><td colspan="3"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="3"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="3"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="3"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="3"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="3"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="3"></td></tr>
                             </tbody>
+                        </table>
+                        <div id="no-datos-ambientes-ocupacion" class="text-center mt-2" style="display: none;">
+                            No hay datos disponibles
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reporte de Cursos por Ciclo Académico -->
+            <div class="col-xl-6 col-xxl-4 d-flex">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Cursos por Ciclo Académico</h5>
+                    </div>
+                    <div class="card-body py-3">
+                        <div class="chart chart-sm">
+                            <canvas class="skeleton skeleton-chart" id="chartjs-cursos-por-ciclo"></canvas>
+                            <div id="no-datos-cursos-por-ciclo" class="text-center mt-2" style="display: none;">
+                                No hay datos disponibles
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Reporte de Cursos por Tipo -->
+            <div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Cursos por Tipo</h5>
+                    </div>
+                    <div class="card-body d-flex">
+                        <div class="align-self-center w-100">
+                            <div class="py-3">
+                                <div class="chart chart-xs">
+                                    <canvas class="skeleton skeleton-chart" id="chartjs-cursos-tipo"></canvas>
+                                    <div id="no-datos-cursos-tipo" class="text-center mt-2" style="display: none;">
+                                        No hay datos disponibles
+                                    </div>
+                                </div>
+                            </div>
+                            <table class="table mb-0">
+                                <thead class="table-header-fixed">
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Cursos</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-cursos-tipo">
+                                    <tr class="skeleton skeleton-table"><td colspan="2"></td></tr>
+                                    <tr class="skeleton skeleton-table"><td colspan="2"></td></tr>
+                                </tbody>
+                                <div id="no-datos-tabla-cursos-tipo" class="text-center mt-2" style="display: none;">
+                                    No hay datos disponibles
+                                </div>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reporte de Cursos por Docente -->
+            <div class="col-12 col-md-12 col-xxl-6 d-flex order-3 order-xxl-2">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Cursos por Docente</h5>
+                    </div>
+                    <div class="card-body px-4">
+                        <canvas class="skeleton skeleton-chart" id="chartjs-cursos-docentes"></canvas>
+                        <div id="no-datos-cursos-docentes" class="text-center mt-2" style="display: none;">
+                            No hay datos disponibles
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reporte de Grupos por Semestre Academico -->
+            <div class="col-12 col-md-6 col-xxl-3 d-flex order-1 order-xxl-1">
+                <div class="card flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Grupos por Semestre Academico</h5>
+                    </div>
+                    <div class="card-body d-flex w-100">
+                        <div class="align-self-center chart chart-lg">
+                            <canvas class="skeleton skeleton-chart" id="chartjs-cursos-por-facultad"></canvas>
+                            <div id="no-datos-cursos-por-facultad" class="text-center mt-2" style="display: none;">
+                                No hay datos disponibles
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Reporte de Cursos -->
+            <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Reporte de Cursos</h5>
+                    </div>
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                        <table class="table table-hover my-0">
+                            <thead class="table-header-fixed">
+                                <tr>
+                                    <th>Curso</th>
+                                    <th>Docente</th>
+                                    <th>Ambiente</th>
+                                    <th>Horario</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reporte-cursos">
+                                <tr class="skeleton skeleton-table"><td colspan="5"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="5"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="5"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="5"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="5"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="5"></td></tr>
+                                <tr class="skeleton skeleton-table"><td colspan="5"></td></tr>
+                            </tbody>
+                            <div id="no-datos-reporte-cursos" class="text-center mt-2" style="display: none;">
+                                No hay datos disponibles
+                            </div>
                         </table>
                     </div>
                 </div>
-                <div class="col-12 col-lg-4 col-xxl-3 d-flex">
-                    <div class="card flex-fill w-100">
-                        <div class="card-header">
-    
-                            <h5 class="card-title mb-0">Monthly Sales</h5>
-                        </div>
-                        <div class="card-body d-flex w-100">
-                            <div class="align-self-center chart chart-lg">
-                                <canvas id="chartjs-dashboard-bar"></canvas>
+            </div>
+
+            <!-- Reporte de Ambientes por Edificio -->
+            <div class="col-12 col-lg-4 col-xxl-3 d-flex">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Ambientes por Edificio</h5>
+                    </div>
+                    <div class="card-body d-flex w-100">
+                        <div class="align-self-center chart chart-lg">
+                            <canvas class="skeleton skeleton-chart" id="chartjs-ambientes-por-edificio"></canvas>
+                            <div id="no-datos-ambientes-por-edificio" class="text-center mt-2" style="display: none;">
+                                No hay datos disponibles
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-    
         </div>
-    </main>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var ctx = document.getElementById("chartjs-dashboard-line").getContext("2d");
-            var gradient = ctx.createLinearGradient(0, 0, 0, 225);
-            gradient.addColorStop(0, "rgba(215, 227, 244, 1)");
-            gradient.addColorStop(1, "rgba(215, 227, 244, 0)");
-            // Line chart
-            new Chart(document.getElementById("chartjs-dashboard-line"), {
-                type: "line",
-                data: {
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                    datasets: [{
-                        label: "Sales ($)",
-                        fill: true,
-                        backgroundColor: gradient,
-                        borderColor: window.theme.primary,
-                        data: [
-                            2115,
-                            1562,
-                            1584,
-                            1892,
-                            1587,
-                            1923,
-                            2566,
-                            2448,
-                            2805,
-                            3438,
-                            2917,
-                            3327
-                        ]
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    legend: {
-                        display: false
-                    },
-                    tooltips: {
-                        intersect: false
-                    },
-                    hover: {
-                        intersect: true
-                    },
-                    plugins: {
-                        filler: {
-                            propagate: false
-                        }
-                    },
-                    scales: {
-                        xAxes: [{
-                            reverse: true,
-                            gridLines: {
-                                color: "rgba(0,0,0,0.0)"
-                            }
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                stepSize: 1000
-                            },
-                            display: true,
-                            borderDash: [3, 3],
-                            gridLines: {
-                                color: "rgba(0,0,0,0.0)"
-                            }
-                        }]
-                    }
-                }
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Pie chart
-            new Chart(document.getElementById("chartjs-dashboard-pie"), {
-                type: "pie",
-                data: {
-                    labels: ["Chrome", "Firefox", "IE"],
-                    datasets: [{
-                        data: [4306, 3801, 1689],
-                        backgroundColor: [
-                            window.theme.primary,
-                            window.theme.warning,
-                            window.theme.danger
-                        ],
-                        borderWidth: 5
-                    }]
-                },
-                options: {
-                    responsive: !window.MSInputMethodContext,
-                    maintainAspectRatio: false,
-                    legend: {
-                        display: false
-                    },
-                    cutoutPercentage: 75
-                }
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Bar chart
-            new Chart(document.getElementById("chartjs-dashboard-bar"), {
-                type: "bar",
-                data: {
-                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                    datasets: [{
-                        label: "This year",
-                        backgroundColor: window.theme.primary,
-                        borderColor: window.theme.primary,
-                        hoverBackgroundColor: window.theme.primary,
-                        hoverBorderColor: window.theme.primary,
-                        data: [54, 67, 41, 55, 62, 45, 55, 73, 60, 76, 48, 79],
-                        barPercentage: .75,
-                        categoryPercentage: .5
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        yAxes: [{
-                            gridLines: {
-                                display: false
-                            },
-                            stacked: false,
-                            ticks: {
-                                stepSize: 20
-                            }
-                        }],
-                        xAxes: [{
-                            stacked: false,
-                            gridLines: {
-                                color: "transparent"
-                            }
-                        }]
-                    }
-                }
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var markers = [{
-                coords: [31.230391, 121.473701],
-                name: "Shanghai"
-            },
-            {
-                coords: [28.704060, 77.102493],
-                name: "Delhi"
-            },
-            {
-                coords: [6.524379, 3.379206],
-                name: "Lagos"
-            },
-            {
-                coords: [35.689487, 139.691711],
-                name: "Tokyo"
-            },
-            {
-                coords: [23.129110, 113.264381],
-                name: "Guangzhou"
-            },
-            {
-                coords: [40.7127837, -74.0059413],
-                name: "New York"
-            },
-            {
-                coords: [34.052235, -118.243683],
-                name: "Los Angeles"
-            },
-            {
-                coords: [41.878113, -87.629799],
-                name: "Chicago"
-            },
-            {
-                coords: [51.507351, -0.127758],
-                name: "London"
-            },
-            {
-                coords: [40.416775, -3.703790],
-                name: "Madrid "
+    </div>
+
+    <style>
+        .skeleton {
+            background-color: #e0e0e0;
+            background-image: linear-gradient(90deg, #e0e0e0, #f0f0f0, #e0e0e0);
+            background-size: 200% 100%;
+            background-position: 200% center;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            to {
+                background-position: -200% center;
             }
-            ];
-            var map = new jsVectorMap({
-                map: "world",
-                selector: "#world_map",
-                zoomButtons: true,
-                markers: markers,
-                markerStyle: {
-                    initial: {
-                        r: 9,
-                        strokeWidth: 7,
-                        stokeOpacity: .4,
-                        fill: window.theme.primary
-                    },
-                    hover: {
-                        fill: window.theme.primary,
-                        stroke: window.theme.primary
-                    }
-                },
-                zoomOnScroll: false
-            });
-            window.addEventListener("resize", () => {
-                map.updateSize();
-            });
-        });
-    </script>
+        }
+
+        .skeleton-text {
+            width: 100%;
+            height: 20px;
+            margin-bottom: 10px;
+        }
+
+        .skeleton-table {
+            width: 100%;
+            height: 50px;
+        }
+
+        .skeleton-chart {
+            width: 100%;
+            height: 300px;
+        }
+
+        .table-header-fixed {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .table td:nth-child(1),
+            .table th:nth-child(1) {
+                white-space: normal !important;
+                word-break: break-word !important;
+            }
+            .table th, .table td {
+                font-size: 14px;
+            }
+            .table td:nth-child(1) {
+                min-width: 150px;
+            }
+        }
+    </style>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            var date = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
-            var defaultDate = date.getUTCFullYear() + "-" + (date.getUTCMonth() + 1) + "-" + date.getUTCDate();
-            document.getElementById("datetimepicker-dashboard").flatpickr({
-                inline: true,
-                prevArrow: "<span title=\"Previous month\">&laquo;</span>",
-                nextArrow: "<span title=\"Next month\">&raquo;</span>",
-                defaultDate: defaultDate
+
+            function fetchData(url, callback, noDataCallback) {
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    success: function (data) {
+                        if (data.length === 0) {
+                            noDataCallback();
+                        } else {
+                            callback(data);
+                        }
+                        removeSkeleton();
+                    },
+                    error: function () {
+                        noDataCallback();
+                        removeSkeleton();
+                    }
+                });
+            }
+
+            function removeSkeleton() {
+                document.querySelectorAll('.skeleton').forEach(function (element) {
+                    element.classList.remove('skeleton');
+                });
+            }
+
+            function updateStat(elementId, data, key) {
+                document.getElementById(elementId).textContent = data[0][key];
+            }
+
+            function updateTable(tbodyId, data, createRow) {
+                var tbody = document.getElementById(tbodyId);
+                tbody.innerHTML = ''; 
+                data.forEach(function (item) {
+                    tbody.innerHTML += createRow(item);
+                });
+            }
+
+            function createAmbienteRow(ambiente) {
+                return `<tr>
+                            <td>${ambiente.nombre}</td>
+                            <td>${ambiente.capacidad}</td>
+                            <td><span class="badge ${ambiente.estado == 'Activo' ? 'bg-success' : 'bg-danger'}">${ambiente.estado}</span></td>
+                        </tr>`;
+            }
+
+            function createCursoTipoRow(curso) {
+                return `<tr>
+                            <td>${curso.tipo}</td>
+                            <td class="text-end">${curso.cursos}</td>
+                        </tr>`;
+            }
+
+            function createCursoRow(curso) {
+                return `<tr>
+                            <td>${curso.curso}</td>
+                            <td>${curso.docente}</td>
+                            <td>${curso.ambiente}</td>
+                            <td>${curso.horario}</td>
+                            <td><span class="badge ${curso.estado == 'Activo' ? 'bg-success' : 'bg-danger'}">${curso.estado}</span></td>
+                        </tr>`;
+            }
+
+            function createChart(elementId, type, labels, data, options) {
+                var canvas = document.getElementById(elementId);
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+                var ctx = canvas.getContext('2d');
+                new Chart(ctx, {
+                    type: type,
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: options.label,
+                            backgroundColor: options.backgroundColor,
+                            borderColor: options.borderColor,
+                            hoverBackgroundColor: options.hoverBackgroundColor,
+                            hoverBorderColor: options.hoverBorderColor,
+                            data: data,
+                            barPercentage: .75,
+                            categoryPercentage: .5
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        legend: { display: options.displayLegend },
+                        scales: {
+                            yAxes: [{
+                                gridLines: { display: false },
+                                stacked: false,
+                                ticks: { stepSize: 5 }
+                            }],
+                            xAxes: [{
+                                stacked: false,
+                                gridLines: { color: "transparent" }
+                            }]
+                        }
+                    }
+                });
+            }
+
+            fetchData('/get_cursos_activos', function (data) {
+                updateStat("cursos-activos", data, 'cursos_activos');
+            }, function () {
+                document.getElementById("cursos-activos").textContent = "No hay datos disponibles";
             });
+
+            fetchData('/get_docentes_activos', function (data) {
+                updateStat("docentes-activos", data, 'docentes_activos');
+            }, function () {
+                document.getElementById("docentes-activos").textContent = "No hay datos disponibles";
+            });
+
+            fetchData('/get_ambientes_disponibles', function (data) {
+                updateStat("ambientes-disponibles", data, 'ambientes_disponibles');
+            }, function () {
+                document.getElementById("ambientes-disponibles").textContent = "No hay datos disponibles";
+            });
+
+            fetchData('/get_ambientes_capacidad_ocupacion', function (data) {
+                updateTable("ambientes-ocupacion", data, createAmbienteRow);
+            }, function () {
+                document.getElementById("no-datos-ambientes-ocupacion").style.display = "block";
+            });
+
+            fetchData('/get_cursos_tipo', function (data) {
+                var labels = data.map(item => item.tipo);
+                var cursos = data.map(item => item.cursos);
+                removeSkeleton(); 
+                createChart("chartjs-cursos-tipo", "pie", labels, cursos, {
+                    label: "Cursos",
+                    backgroundColor: [window.theme.primary, window.theme.warning],
+                    borderColor: window.theme.primary,
+                    hoverBackgroundColor: window.theme.primary,
+                    hoverBorderColor: window.theme.primary,
+                    displayLegend: false
+                });
+                updateTable("tabla-cursos-tipo", data, createCursoTipoRow);
+            }, function () {
+                document.getElementById("no-datos-cursos-tipo").style.display = "block";
+                document.getElementById("no-datos-tabla-cursos-tipo").style.display = "block";
+            });
+
+            fetchData('/get_cursos_por_ciclo', function (data) {
+                var labels = data.map(item => item.ciclo);
+                var cursos = data.map(item => item.cantidad_cursos);
+                removeSkeleton(); 
+                createChart("chartjs-cursos-por-ciclo", "line", labels, cursos, {
+                    label: "Cursos",
+                    backgroundColor: "rgba(215, 227, 244, 1)",
+                    borderColor: window.theme.primary,
+                    hoverBackgroundColor: window.theme.primary,
+                    hoverBorderColor: window.theme.primary,
+                    displayLegend: false
+                });
+            }, function () {
+                document.getElementById("no-datos-cursos-por-ciclo").style.display = "block";
+            });
+
+            fetchData('/get_edificio_ambientes', function (data) {
+                var labels = data.map(item => item.edificio);
+                var ambientes = data.map(item => item.ambientes);
+                removeSkeleton(); 
+                createChart("chartjs-ambientes-por-edificio", "bar", labels, ambientes, {
+                    label: "Ambientes",
+                    backgroundColor: window.theme.primary,
+                    borderColor: window.theme.primary,
+                    hoverBackgroundColor: window.theme.primary,
+                    hoverBorderColor: window.theme.primary,
+                    displayLegend: false
+                });
+            }, function () {
+                document.getElementById("no-datos-ambientes-por-edificio").style.display = "block";
+            });
+
+            fetchData('/get_reporte_cursos', function (data) {
+                updateTable("reporte-cursos", data, createCursoRow);
+            }, function () {
+                document.getElementById("no-datos-reporte-cursos").style.display = "block";
+            });
+
+            fetchData('/get_cant_cursos_docente', function (data) {
+                var labels = data.map(item => item.docente);
+                var cursos = data.map(item => item.cantidad_cursos);
+                removeSkeleton();
+                createChart("chartjs-cursos-docentes", "bar", labels, cursos, {
+                    label: "Cantidad de Cursos",
+                    backgroundColor: window.theme.primary,
+                    borderColor: window.theme.primary,
+                    hoverBackgroundColor: window.theme.primary,
+                    hoverBorderColor: window.theme.primary,
+                    displayLegend: false
+                });
+            }, function () {
+                document.getElementById("no-datos-cursos-docentes").style.display = "block";
+            });
+
+            fetchData('/get_cant_grupos_semestre', function (data) {
+                var labels = data.map(item => item.semestre);
+                var grupos = data.map(item => item.cantidad_grupos);
+                removeSkeleton(); 
+                createChart("chartjs-cursos-por-facultad", "bar", labels, grupos, {
+                    label: "Cantidad de Grupos",
+                    backgroundColor: window.theme.primary,
+                    borderColor: window.theme.primary,
+                    hoverBackgroundColor: window.theme.primary,
+                    hoverBorderColor: window.theme.primary,
+                    displayLegend: false
+                });
+            }, function () {
+                document.getElementById("no-datos-cursos-por-facultad").style.display = "block";
+            });
+
         });
     </script>
 </section>
-
-
 {% endblock %}
