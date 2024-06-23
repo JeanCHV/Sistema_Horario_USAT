@@ -24,10 +24,10 @@
                 <table id="tabla-disponibilidad" class="table table-striped" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width: 20%; text-align: center;">Docente</th>
+                            <th style="width: 30%; text-align: center;">Docente</th>
                             <th style="width: 10%; text-align: center;">Día</th>
-                            <th style="width: 15%; text-align: center;">Hora Inicio</th>
-                            <th style="width: 15%; text-align: center;">Hora Fin</th>
+                            <th style="width: 10%; text-align: center;">Hora Inicio</th>
+                            <th style="width: 10%; text-align: center;">Hora Fin</th>
                             <th style="width: 10%; text-align: center;">Opciones</th>
                         </tr>
                     </thead>
@@ -249,23 +249,26 @@
                 "processing": true,
                 "serverSide": false, // Desactiva la recarga automática al ordenar
                 "columns": [
-                    { "data": "nombre_completo", "className": 'dt-body-left' },
-                    { "data": "dia", "className": 'dt-body-left' },
-                    { "data": "hora_inicio" },
-                    { "data": "hora_fin" },
+                    { "data": "nombre_completo", "className": 'dt-body-left'},
+                    { "data": "dia", "className": 'dt-body-center' },
+                    { "data": "hora_inicio", "className": 'dt-body-center'},
+                    { "data": "hora_fin","className": 'dt-body-center' },
                     {
                         "data": null, "className": 'dt-body-center',
                         "render": function (data, type, row) {
                             return `
                             <button class="btn btn-warning btn-sm btnModificar" data-id="${row.id}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
                             <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id}" title="Eliminar"><i class="fas fa-times"></i></button>
-                            <button class="btn btn-secondary btn-sm btnDarDeBaja" data-id="${row.id}" title="Dar de Baja"><i class="fas fa-arrow-down"></i></button>
                         `;
                         }
                     }
                 ],
                 "columnDefs": [
-                    { targets: '_all', className: 'dt-center', orderable: true } // Asegura que todas las columnas sean ordenables
+                    { "width": "10%", "targets": 0 }, // Adjust width for "nombre_completo" (Docente) column
+                    { "width": "15%", "targets": 1 }, // Adjust width for "dia" column
+                    { "width": "15%", "targets": 2 }, // Adjust width for "hora_inicio" column
+                    { "width": "15%", "targets": 3 }, // Adjust width for "hora_fin" column
+                    { "width": "15%", "targets": 4 }  // Adjust width for "Opciones" column
                 ],
                 "language": {
                     "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
