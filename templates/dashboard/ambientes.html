@@ -312,9 +312,16 @@
 
         $('#formAmbiente').submit(function (e) {
             e.preventDefault();
+
+            var aforo = $('#aforo').val();
+            if (isNaN(aforo) || aforo.length > 2 || aforo <= 0) {
+                mostrarAlerta('error', 'Error', 'El aforo debe ser un número positivo de hasta 2 dígitos.');
+                return;
+            }
+
             var data = {
                 nombre: $('#nombre').val(),
-                aforo: $('#aforo').val(),
+                aforo: aforo,
                 estado: $('#estado').val(),
                 idedificio: $('#idedificio').val(),
                 idambientetipo: $('#idambientetipo').val()
