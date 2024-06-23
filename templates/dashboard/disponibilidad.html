@@ -142,7 +142,7 @@
 
     function cargarDocentes() {
         $.ajax({
-            url: '/get_docentes',
+            url: '/datos_docentes',
             type: 'GET',
             success: function (data) {
                 var docentesSelect = $('#docente');
@@ -255,12 +255,12 @@
                     { "data": "hora_fin","className": 'dt-body-center' },
                     {
                         "data": null, "className": 'dt-body-center',
-                        "render": function (data, type, row) {
-                            return `
-                            <button class="btn btn-warning btn-sm btnModificar" data-id="${row.id}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id}" title="Eliminar"><i class="fas fa-times"></i></button>
-                        `;
-                        }
+                "render": function (data, type, row) {
+                    return `
+                    <button class="btn btn-warning btn-sm btnModificar" data-idpersona="${row.idpersona}" data-dia="${row.dia}" data-hora_inicio="${row.hora_inicio}" data-hora_fin="${row.hora_fin}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
+                    <button class="btn btn-danger btn-sm btnEliminar" data-idpersona="${row.idpersona}" data-dia="${row.dia}" data-hora_inicio="${row.hora_inicio}" data-hora_fin="${row.hora_fin}" title="Eliminar"><i class="fas fa-times"></i></button>
+                    `;
+                }
                     }
                 ],
                 "columnDefs": [
@@ -303,14 +303,14 @@
         $('#formDisponibilidad').submit(function (e) {
             e.preventDefault();
             var data = {
-                docente: $('#docente').val(),
+                idpersona: $('#docente').val(),
                 dia: $('#dia').val(),
-                horaInicio: $('#horaInicio').val(),
-                horaFin: $('#horaFin').val()
+                hora_inicio: $('#horaInicio').val(),
+                hora_fin: $('#horaFin').val()
             };
 
             var idDisponibilidad = $('#idDisponibilidad').val();
-            var url = idDisponibilidad ? '/modificar_disponibilidad' : '/agregar_disponibilidad';
+            var url = idDisponibilidad ? '/update_disponibilidad' : '/add_disponibilidad';
             if (idDisponibilidad) data.idDisponibilidad = idDisponibilidad;
 
             $.ajax({
@@ -322,7 +322,7 @@
                     if (response.error) {
                         mostrarAlerta('error', 'Error', response.error);
                     } else {
-                        var mensajeExito = idDisponibilidad ? 'La operación se realizó correctamente.' : 'La operación se realizó correctamente.';
+                        var mensajeExito = idDisponibilidad ? 'Disponibilidad modificada correctamente.' : 'Disponibilidad agregada correctamente.';
                         mostrarAlerta('success', 'Éxito', mensajeExito);
                         table.ajax.reload();
                         $('#modalDisponibilidad').modal('hide');
@@ -352,17 +352,17 @@
 
                 var formattedData = rows.map((row, index) => {
                     return {
-                        docente: row[headers.indexOf("Docente")],
+                        idpersona: row[headers.indexOf("Docente")],
                         dia: row[headers.indexOf("Dia")],
-                        horaInicio: row[headers.indexOf("Hora Inicio")],
-                        horaFin: row[headers.indexOf("Hora Fin")]
+                        hora_inicio: row[headers.indexOf("Hora Inicio")],
+                        hora_fin: row[headers.indexOf("Hora Fin")]
                     };
                 });
 
                 console.log(JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
 
                 // $.ajax({
-                //     url: '/agrega_disponibilidad_excel',
+                //     url: '/add_disponibilidad_excel',
                 //     type: 'POST',
                 //     contentType: 'application/json',
                 //     data: JSON.stringify(formattedData),
@@ -385,32 +385,36 @@
         });
 
         $('#tabla-disponibilidad tbody').on('click', '.btnModificar', function () {
-    var idpersona = $(this).data('idpersona');
-    var dia = $(this).data('dia');
-    var hora_inicio = $(this).data('hora_inicio');
-    var hora_fin = $(this).data('hora_fin');
+            var idpersona = $(this).data('idpersona');
+            var dia = $(this).data('dia');
+            var hora_inicio = $(this).data('hora_inicio');
+            var hora_fin = $(this).data('hora_fin');
 
-    $.ajax({
-        url: `/get_disponibilidad/${idpersona}/${dia}/${hora_inicio}/${hora_fin}`,
-        type: 'GET',
-        contentType: 'application/json',
-        success: function (response) {
-            var disponibilidad = response;
-            $('#docente').val(disponibilidad.idpersona);
-            $('#dia').val(disponibilidad.dia);
-            $('#horaInicio').val(disponibilidad.hora_inicio);
-            $('#horaFin').val(disponibilidad.hora_fin);
-            $('#modalDisponibilidadLabel').text('Modificar Disponibilidad');
-            $('#modalDisponibilidad').modal('show');
-        },
-        error: function (xhr, status, error) {
-            mostrarAlerta('error', 'Error', 'Hubo un error al obtener los datos de la disponibilidad.');
-        }
-    });
-});
+            $.ajax({
+                url: `/get_disponibilidad_by_id?idpersona=${idpersona}&dia=${dia}&hora_inicio=${hora_inicio}&hora_fin=${hora_fin}`,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var disponibilidad = response;
+                    $('#docente').val(disponibilidad.idpersona);
+                    $('#dia').val(disponibilidad.dia);
+                    $('#horaInicio').val(disponibilidad.hora_inicio);
+                    $('#horaFin').val(disponibilidad.hora_fin);
+                    $('#modalDisponibilidadLabel').text('Modificar Disponibilidad');
+                    $('#modalDisponibilidad').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    mostrarAlerta('error', 'Error', 'Hubo un error al obtener los datos de la disponibilidad.');
+                }
+            });
+        });
 
         $('#tabla-disponibilidad tbody').on('click', '.btnEliminar', function () {
-            var id = $(this).data('id');
+            var idpersona = $(this).data('idpersona');
+            var dia = $(this).data('dia');
+            var hora_inicio = $(this).data('hora_inicio');
+            var hora_fin = $(this).data('hora_fin');
+
             Swal.fire({
                 title: '¿Estás seguro?',
                 text: "No podrás revertir esta acción.",
@@ -422,50 +426,16 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/eliminar_disponibilidad',
-                        type: 'POST',
+                        url: '/delete_disponibilidad',
+                        type: 'DELETE',
                         contentType: 'application/json',
-                        data: JSON.stringify({ id: id }),
+                        data: JSON.stringify({ idpersona: idpersona, dia: dia, hora_inicio: hora_inicio, hora_fin: hora_fin }),
                         success: function (response) {
                             if (response.error) {
                                 var errorMsg = response.error; 
                                 mostrarAlerta('error', 'Error', errorMsg);
                             } else {
-                                mostrarAlerta('success', 'Éxito', 'La operación se realizó correctamente.');
-                                table.ajax.reload();
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
-                        }
-                    });
-                }
-            });
-        });
-
-        $('#tabla-disponibilidad tbody').on('click', '.btnDarDeBaja', function () {
-            var id = $(this).data('id');
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "No podrás revertir esta acción.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, dar de baja!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/dar_baja_disponibilidad',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ id: id }),
-                        success: function (response) {
-                            if (response.error) {
-                                var errorMsg = response.error; 
-                                mostrarAlerta('error', 'Error', errorMsg);
-                            } else {
-                                mostrarAlerta('success', 'Éxito', 'La operación se realizó correctamente.');
+                                mostrarAlerta('success', 'Éxito', 'Disponibilidad eliminada correctamente.');
                                 table.ajax.reload();
                             }
                         },
@@ -479,3 +449,4 @@
     });
 </script>
 {% endblock %}
+

@@ -1044,43 +1044,54 @@ def obtener_disponibilidades():
     return jsonify(disponibilidades)
 
 # Ruta para agregar una nueva disponibilidad
-@app.route('/agregar_disponibilidad', methods=['POST'])
-def add_disponibilidad():
-    data = request.get_json()
-    idpersona = data.get('idpersona')
-    dia = data.get('dia')
-    hora_inicio = data.get('horaInicio')
-    hora_fin = data.get('horaFin')
+@app.route('/add_disponibilidad', methods=['POST'])
+def agregar_disponibilidad():
+    datos = request.json
+    idpersona = datos.get('idpersona')
+    dia = datos.get('dia')
+    hora_inicio = datos.get('hora_inicio')
+    hora_fin = datos.get('hora_fin')
+    
     resultado = controlador_disponibilidad.agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
     return jsonify(resultado)
 
 # Ruta para modificar una disponibilidad existente
-@app.route('/modificar_disponibilidad', methods=['POST'])
-def update_disponibilidad():
-    data = request.get_json()
-    idpersona = data.get('idpersona')
-    dia = data.get('dia')
-    hora_inicio = data.get('horaInicio')
-    hora_fin = data.get('horaFin')
-    nuevo_dia = data.get('nuevo_dia')
-    nueva_hora_inicio = data.get('nueva_hora_inicio')
-    nueva_hora_fin = data.get('nueva_hora_fin')
+@app.route('/update_disponibilidad', methods=['PUT'])
+def modificar_disponibilidad():
+    datos = request.json
+    idpersona = datos.get('idpersona')
+    dia = datos.get('dia')
+    hora_inicio = datos.get('hora_inicio')
+    hora_fin = datos.get('hora_fin')
+    nuevo_dia = datos.get('nuevo_dia')
+    nueva_hora_inicio = datos.get('nueva_hora_inicio')
+    nueva_hora_fin = datos.get('nueva_hora_fin')
+    
     resultado = controlador_disponibilidad.modificar_disponibilidad(idpersona, dia, hora_inicio, hora_fin, nuevo_dia, nueva_hora_inicio, nueva_hora_fin)
     return jsonify(resultado)
 
+
 # Ruta para eliminar una disponibilidad
-@app.route('/eliminar_disponibilidad', methods=['POST'])
-def delete_disponibilidad():
-    data = request.get_json()
-    idpersona = data.get('idpersona')
-    dia = data.get('dia')
-    hora_inicio = data.get('horaInicio')
-    hora_fin = data.get('horaFin')
+def eliminar_disponibilidad():
+    datos = request.json
+    idpersona = datos.get('idpersona')
+    dia = datos.get('dia')
+    hora_inicio = datos.get('hora_inicio')
+    hora_fin = datos.get('hora_fin')
+    
     resultado = controlador_disponibilidad.eliminar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
     return jsonify(resultado)
 
 # Ruta para obtener una disponibilidad por detalles específicos (idpersona, dia, hora_inicio, hora_fin)
-@app.route('/get_disponibilidad/<int:idpersona>/<dia>/<hora_inicio>/<hora_fin>', methods=['GET'])
-def obtener_disponibilidad(idpersona, dia, hora_inicio, hora_fin):
-    disponibilidad = controlador_disponibilidad.obtener_disponibilidad_por_detalles(idpersona, dia, hora_inicio, hora_fin)
-    return jsonify(disponibilidad)
+@app.route('/get_disponibilidad_by_id', methods=['GET'])
+def obtener_disponibilidad_por_id_route():
+    idpersona = request.args.get('idpersona')
+    dia = request.args.get('dia')
+    hora_inicio = request.args.get('hora_inicio')
+    hora_fin = request.args.get('hora_fin')
+
+    print(f"Recibido: idpersona={idpersona}, dia={dia}, hora_inicio={hora_inicio}, hora_fin={hora_fin}")  # Registro de los valores recibidos
+
+    resultado = controlador_disponibilidad.obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin)
+    return jsonify(resultado)
+
