@@ -274,7 +274,7 @@
 						<li class="sidebar-item">
 							<span class="sidebar-link a d-flex align-items-center">
 								<i class="align-middle" data-feather="align-left"></i>
-								<span class="align-middle">Reporte Ambientes</span>
+								<span class="align-middle">Reportes</span>
 								<span class="ml-auto">
 									<span class="btn btn-sm ms-2 " onclick="mostrar(this)">
 										<i class="fa fa-caret-down text-end"></i>
@@ -282,6 +282,14 @@
 								</span>
 							</span>
 							<!-- aca -->
+							<ul class="list-unstyled  px-3">
+								<li class="sidebar-item a" hidden>
+									<a class="sidebar-link " href="{{url_for('reporte_horas_html')}}">
+										<i class="align-middle" data-feather="align-left"></i> <span
+											class="align-middle">Reporte carga academica</span>
+									</a>
+								</li>
+							</ul>
 							<ul class="list-unstyled  px-3">
 								<li class="sidebar-item a" hidden>
 									<a class="sidebar-link " href="{{url_for('ReporteAmbiente')}}">

@@ -29,6 +29,7 @@ import controladores.curso_docente.controlador_curso_docente as controlador_curs
 import controladores.controlador_edificio as controlador_edificio
 import controladores.disponibilidad.controlador_disponibilidad as controlador_disponibilidad
 import controladores.docente_disponibilidad.controlador_docente_disponibilidad as controlador_docente_disponibilidad
+import controladores.reportes.controlador_reporte as controlador_reporte
 
 
 ##Para la validacion 3 intentos
@@ -966,3 +967,8 @@ def horarios_por_ciclo():
 def get_disponibilidad():
     disponibilidad = controlador_disponibilidad.get_disponibilidad()
     return jsonify(disponibilidad)
+
+@app.route("/reporte_horas_html", methods=["GET"])
+def reporte_horas_html():
+    reporte = controlador_reporte.obtener_reporte_horas()
+    return render_template('reportes/reporte_horas.html', reporte=reporte)
