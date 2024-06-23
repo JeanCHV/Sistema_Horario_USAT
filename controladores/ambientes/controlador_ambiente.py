@@ -132,5 +132,42 @@ def get_ambientes():
     conexion.close()
     return ambientes
 
+#DASHBOARD
+def get_ambientes_disponibles():
+    conexion = obtener_conexion()
+    ambientes_disponibles = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) AS ambientes_disponibles FROM ambiente WHERE estado = 'A'")
+            column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+            row = cursor.fetchone()
+
+            if row:
+                ambiente_dict = dict(zip(column_names, row))  # Convertir la fila en un diccionario
+                ambientes_disponibles.append(ambiente_dict)
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+    return ambientes_disponibles
+
+
+def get_ambientes_capacidad_ocupacion():
+    conexion = obtener_conexion()
+    ambientes = []
+
+    with conexion.cursor() as cursor:
+        cursor.execute("SELECT nombre AS nombre,aforo AS capacidad,CASE WHEN estado='A' THEN 'Activo' WHEN estado='I' THEN 'Inactivo' ELSE 'Desconocido' END AS estado FROM ambiente ORDER BY capacidad DESC;")
+        column_names = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+
+        for row in rows:
+            ambiente_dict = dict(zip(column_names, row))
+            ambientes.append(ambiente_dict)
+
+    conexion.close()
+    return ambientes
+
 
 

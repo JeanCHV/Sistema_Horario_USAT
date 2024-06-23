@@ -114,6 +114,68 @@ def datos_ambientes():
 def get_edificios():
     edificio = controlador_edificio.obtener_edificios()
     return jsonify(edificio)
+
+#DASHBOARD
+@app.route("/get_cursos_activos", methods=["GET"])
+def get_cursos_activos():
+    cursos_activos = controlador_cursos.obtener_cursos_activos()
+    return jsonify(cursos_activos)
+
+
+@app.route("/get_docentes_activos", methods=["GET"])
+def get_docentes_activos():
+    docentes_activos = controlador_docente.get_docentes_activos()
+    return jsonify(docentes_activos)
+
+@app.route("/get_ambientes_disponibles", methods=["GET"])
+def get_ambientes_disponibles():
+    ambientes_activos = controlador_ambientes.get_ambientes_disponibles()
+    return jsonify(ambientes_activos)
+
+@app.route("/get_ambientes_capacidad_ocupacion", methods=["GET"])
+def get_ambientes_capacidad_ocupacion():
+    ambientes_capacidad_ocupacion = controlador_ambientes.get_ambientes_capacidad_ocupacion()
+    return jsonify(ambientes_capacidad_ocupacion)
+
+@app.route("/get_cursos_por_ciclo", methods=["GET"])
+def get_cursos_por_ciclo():
+    cursos_por_ciclo = controlador_cursos.obtener_cursos_por_ciclo()
+    return jsonify(cursos_por_ciclo)
+
+
+@app.route("/get_cursos_tipo", methods=["GET"])
+def get_cursos_tipo():
+    get_cursos_tipo = controlador_cursos.get_cursos_tipo()
+    return jsonify(get_cursos_tipo)
+
+@app.route("/get_edificio_ambientes", methods=["GET"])
+def get_edificio_ambientes():
+    get_edificio_ambientes = controlador_edificio.get_edificio_ambientes()
+    return jsonify(get_edificio_ambientes)
+
+
+@app.route("/get_reporte_cursos", methods=["GET"])
+def get_reporte_cursos():
+    get_reporte_cursos = controlador_horario.get_reporte_cursos()
+    return jsonify(get_reporte_cursos)
+
+@app.route("/get_cant_cursos_docente", methods=["GET"])
+def get_cant_cursos_docente():
+    get_cant_cursos_docente =  controlador_cursos.get_cant_cursos_docente()
+    return jsonify(get_cant_cursos_docente)
+
+@app.route("/get_cant_grupos_semestre", methods=["GET"])
+def get_cant_grupos_semestre():
+    grupos = controlador_grupo.get_cant_grupos_semestre()
+    return jsonify(grupos)
+
+
+
+
+
+
+
+
 #AGREGAR AMBIENTE
 @app.route("/agregar_ambiente", methods=["POST"])
 def agregar_ambiente():
@@ -180,7 +242,7 @@ def get_ambiente(idambiente):
 ##DATOS CURSOS
 @app.route("/datos_cursos", methods=["GET"])
 def datos_cursos():
-    cursos = controlador_cursos.para_tabla_cursos()
+    cursos = controlador_cursos.obtener_cursos_Activos()
     return jsonify(cursos)
 
 @app.route("/get_semestre", methods=["GET"])
