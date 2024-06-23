@@ -1037,7 +1037,50 @@ def horarios_por_ciclo():
     return render_template("horarios/horarios_por_ciclo.html",semestres=semestres,ciclos=ciclos)
 
 #DISPONIBILIDAD
-@app.route("/get_disponibilidad", methods=["GET"])
-def get_disponibilidad():
-    disponibilidad = controlador_disponibilidad.get_disponibilidad()
+# Ruta para obtener todas las disponibilidades
+@app.route('/get_disponibilidad', methods=['GET'])
+def obtener_disponibilidades():
+    disponibilidades = controlador_disponibilidad.get_disponibilidad()
+    return jsonify(disponibilidades)
+
+# Ruta para agregar una nueva disponibilidad
+@app.route('/agregar_disponibilidad', methods=['POST'])
+def add_disponibilidad():
+    data = request.get_json()
+    idpersona = data.get('idpersona')
+    dia = data.get('dia')
+    hora_inicio = data.get('horaInicio')
+    hora_fin = data.get('horaFin')
+    resultado = controlador_disponibilidad.agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
+    return jsonify(resultado)
+
+# Ruta para modificar una disponibilidad existente
+@app.route('/modificar_disponibilidad', methods=['POST'])
+def update_disponibilidad():
+    data = request.get_json()
+    idpersona = data.get('idpersona')
+    dia = data.get('dia')
+    hora_inicio = data.get('horaInicio')
+    hora_fin = data.get('horaFin')
+    nuevo_dia = data.get('nuevo_dia')
+    nueva_hora_inicio = data.get('nueva_hora_inicio')
+    nueva_hora_fin = data.get('nueva_hora_fin')
+    resultado = controlador_disponibilidad.modificar_disponibilidad(idpersona, dia, hora_inicio, hora_fin, nuevo_dia, nueva_hora_inicio, nueva_hora_fin)
+    return jsonify(resultado)
+
+# Ruta para eliminar una disponibilidad
+@app.route('/eliminar_disponibilidad', methods=['POST'])
+def delete_disponibilidad():
+    data = request.get_json()
+    idpersona = data.get('idpersona')
+    dia = data.get('dia')
+    hora_inicio = data.get('horaInicio')
+    hora_fin = data.get('horaFin')
+    resultado = controlador_disponibilidad.eliminar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
+    return jsonify(resultado)
+
+# Ruta para obtener una disponibilidad por detalles específicos (idpersona, dia, hora_inicio, hora_fin)
+@app.route('/get_disponibilidad/<int:idpersona>/<dia>/<hora_inicio>/<hora_fin>', methods=['GET'])
+def obtener_disponibilidad(idpersona, dia, hora_inicio, hora_fin):
+    disponibilidad = controlador_disponibilidad.obtener_disponibilidad_por_detalles(idpersona, dia, hora_inicio, hora_fin)
     return jsonify(disponibilidad)
