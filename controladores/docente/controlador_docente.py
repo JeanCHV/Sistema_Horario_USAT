@@ -19,12 +19,17 @@ def obtener_docentes():
         conexion.close()
 
     return docentes
-def obtener_docentess():
+def datos_docentes():
     conexion = obtener_conexion()
     docentes = []
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT idpersona, CONCAT(nombres, ' ', apellidos) AS nombre, correo, telefono FROM persona WHERE tipopersona = 'D'")
-        docentes = cursor.fetchall()
+        cursor.execute("SELECT idpersona, UPPER(CONCAT(apellidos, ' ', nombres)) AS docente, correo, telefono FROM persona WHERE tipopersona = 'D' ORDER BY docente")
+        column_names = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+
+        for row in rows:
+            docente_dict = dict(zip(column_names,row))
+            docentes.append(docente_dict)
     conexion.close()
     return docentes
 
@@ -81,8 +86,27 @@ def get_docentes():
         return {"error": str(e)}
     finally:
         conexion.close()
-
     return docentes
+
+def get_docentes_activos():
+    conexion = obtener_conexion()
+    docentes_activos = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) AS docentes_activos FROM persona WHERE tipopersona = 'D' AND estado = 1")
+            column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+            row = cursor.fetchone()
+
+            if row:
+                docente_dict = dict(zip(column_names, row))  # Convertir la fila en un diccionario
+                docentes_activos.append(docente_dict)
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+    return docentes_activos
+
 
 ##OBTENER DOCENTE POR ID
 

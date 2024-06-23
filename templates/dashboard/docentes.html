@@ -8,139 +8,142 @@
     </ol>
 </nav>
 
-
-    <div class="card  mx-2" id="card_docentes">
+<div class="container-fluid my-4">
+    <div class="card w-100" id="card_docentes">
         <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
-        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
             Docentes
         </div>
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
-            <div class="table-responsive mt-3">
-                 <table id="tabla-docente" class="table table-striped" style="width:100%">
+            <div class="table-responsive">
+                <table id="tabla-docente" class="table table-striped tabla-docentes" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width: 10%; text-align:center">ID</th>
-                            <th style="width: 40%; text-align:center">Nombres</th>
-                            <th style="width: 15%; text-align:center">Correo</th>
-                            <th style="width: 15%; text-align:center">Teléfono</th>
-                            <th style="width: 5%; text-align:center">Opciones</th>
+                            <th style="text-align:center">Nombres</th>
+                            <th style="text-align:center">Correo</th>
+                            <th style="text-align:center">Teléfono</th>
+                            <th style="text-align:center">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                    <!-- Los datos de los docentes se cargarán dinámicamente aquí -->
+                        <!-- Los datos de los docentes se cargarán dinámicamente aquí -->
                     </tbody>
-                 </table>
-                </div>
-            </div>
-         </div>
-
-
-        <!-- MODAL AGREGAR DOCENTE -->
-        <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-labelledby="modalDocenteLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Agregar Docente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formAgregarDocente">
-                            <div class="mb-3">
-                                <label for="nombreDocente" class="form-label">Nombres:</label>
-                                <input type="text" class="form-control" id="nombreDocente" name="nombres" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="apellidosDocente" class="form-label">Apellidos:</label>
-                                <input type="text" class="form-control" id="apellidosDocente" name="apellidos" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="documentoDocente" class="form-label">Número de Documento:</label>
-                                <input type="text" class="form-control" id="documentoDocente" name="n_documento" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="telefonoDocente" class="form-label">Teléfono:</label>
-                                <input type="text" class="form-control" id="telefonoDocente" name="telefono" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="correoDocente" class="form-label">Correo:</label>
-                                <input type="email" class="form-control" id="correoDocente" name="correo" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="cantHorasDocente" class="form-label">Cantidad de Horas:</label>
-                                <input type="number" class="form-control" id="cantHorasDocente" name="cantHoras" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="tiempoRefDocente" class="form-label">Tiempo de Referencia:</label>
-                                <input type="number" class="form-control" id="tiempoRefDocente" name="tiempo_ref" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="estadoDocente" class="form-label">Estado:</label>
-                                <select class="form-control" id="estadoDocente" name="estado" required>
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </form>
-                    </div>
-                </div>
+                </table>
             </div>
         </div>
+    </div>
 
-        <!-- MODAL MODIFICAR DOCENTE -->
-        <div class="modal fade" id="modalModificarDocente" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Modificar Docente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formModificarDocente">
-                            <div class="mb-3">
-                                <label for="modificarNombreDocente" class="form-label">Nombres:</label>
-                                <input type="text" class="form-control" id="modificarNombreDocente" name="nombres" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="modificarApellidosDocente" class="form-label">Apellidos:</label>
-                                <input type="text" class="form-control" id="modificarApellidosDocente" name="apellidos" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="modificarDocumentoDocente" class="form-label">Número de Documento:</label>
-                                <input type="text" class="form-control" id="modificarDocumentoDocente" name="n_documento" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="modificarTelefonoDocente" class="form-label">Teléfono:</label>
-                                <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="modificarCorreoDocente" class="form-label">Correo:</label>
-                                <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="modificarCantHoras" class="form-label">Cantidad de Horas:</label>
-                                <input type="number" class="form-control" id="modificarCantHoras" name="cantHoras" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="modificarTiempoRef" class="form-label">Tiempo de Referencia:</label>
-                                <input type="number" class="form-control" id="modificarTiempoRef" name="tiempo_ref" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="modificarEstadoDocente" class="form-label">Estado:</label>
-                                <select class="form-control" id="modificarEstadoDocente" name="estado" required>
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
-                            <input type="hidden" id="modificarIdDocente" name="idpersona">
-                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                        </form>
-                    </div>
+
+    <!-- MODAL AGREGAR DOCENTE -->
+    <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-labelledby="modalDocenteLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Docente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarDocente">
+                        <div class="mb-3">
+                            <label for="nombreDocente" class="form-label">Nombres:</label>
+                            <input type="text" class="form-control" id="nombreDocente" name="nombres" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellidosDocente" class="form-label">Apellidos:</label>
+                            <input type="text" class="form-control" id="apellidosDocente" name="apellidos" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="documentoDocente" class="form-label">Número de Documento:</label>
+                            <input type="text" class="form-control" id="documentoDocente" name="n_documento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefonoDocente" class="form-label">Teléfono:</label>
+                            <input type="text" class="form-control" id="telefonoDocente" name="telefono" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correoDocente" class="form-label">Correo:</label>
+                            <input type="email" class="form-control" id="correoDocente" name="correo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cantHorasDocente" class="form-label">Cantidad de Horas:</label>
+                            <input type="number" class="form-control" id="cantHorasDocente" name="cantHoras" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tiempoRefDocente" class="form-label">Tiempo de Referencia:</label>
+                            <input type="number" class="form-control" id="tiempoRefDocente" name="tiempo_ref" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoDocente" class="form-label">Estado:</label>
+                            <select class="form-control" id="estadoDocente" name="estado" required>
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- MODAL MODIFICAR DOCENTE -->
+    <div class="modal fade" id="modalModificarDocente" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modificar Docente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formModificarDocente">
+                        <div class="mb-3">
+                            <label for="modificarNombreDocente" class="form-label">Nombres:</label>
+                            <input type="text" class="form-control" id="modificarNombreDocente" name="nombres" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modificarApellidosDocente" class="form-label">Apellidos:</label>
+                            <input type="text" class="form-control" id="modificarApellidosDocente" name="apellidos"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modificarDocumentoDocente" class="form-label">Número de Documento:</label>
+                            <input type="text" class="form-control" id="modificarDocumentoDocente" name="n_documento"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modificarTelefonoDocente" class="form-label">Teléfono:</label>
+                            <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modificarCorreoDocente" class="form-label">Correo:</label>
+                            <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modificarCantHoras" class="form-label">Cantidad de Horas:</label>
+                            <input type="number" class="form-control" id="modificarCantHoras" name="cantHoras" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modificarTiempoRef" class="form-label">Tiempo de Referencia:</label>
+                            <input type="number" class="form-control" id="modificarTiempoRef" name="tiempo_ref"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modificarEstadoDocente" class="form-label">Estado:</label>
+                            <select class="form-control" id="modificarEstadoDocente" name="estado" required>
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="modificarIdDocente" name="idpersona">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal para la subida masiva de datos -->
 <div class="modal fade" id="modalSubidaMasiva" tabindex="-1" aria-labelledby="modalSubidaMasivaLabel"
@@ -190,7 +193,7 @@
         worksheet.getRow(1).height = 20;
 
         // Añadir las cabeceras
-        const headerRow = worksheet.addRow(['Nombres','Apellidos','DNI','Teléfono', 'Correo', 'Cantidad de horas', 'Tiempo de refrigerio']);
+        const headerRow = worksheet.addRow(['Nombres', 'Apellidos', 'DNI', 'Teléfono', 'Correo', 'Cantidad de horas', 'Tiempo de refrigerio']);
         headerRow.font = { bold: false };
         headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
 
@@ -212,28 +215,13 @@
     }
 </script>
 <script>
-    $(document).ready(function() {
-    var docentes = [];
+    $(document).ready(function () {
+        var docentes = [];
 
-    function cargarDocentes() {
-        $.ajax({
-            url: '/get_docentes',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function(response) {
-                docentes = response;
-                table.clear().rows.add(docentes).draw();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    }
-    
-    function initializeDataTable() {
+        function initializeDataTable() {
             var table = $('#tabla-docente').DataTable({
-                paging: true,
-                info: true,
+                paging: false,
+                info: false,
                 responsive: true,
                 autoWidth: true,
                 searching: true,
@@ -307,29 +295,28 @@
                     }
                 ],
                 ajax: {
-                    url: "/get_docentes",
+                    url: "/datos_docentes",
                     type: "GET",
                     dataSrc: ""
                 },
                 processing: true,
                 serverSide: false,
                 columns: [
-                    { data: "idpersona", className: 'dt-body-center' },
-                    { data: "nombre" },
-                    { data: "correo" },
+                    { data: "docente" },
+                    { data: "correo", className: 'dt-body-center' },
                     { data: "telefono", className: 'dt-body-center' },
                     {
-                        data: null,
+                        data: null, className: 'dt-body-center',
                         render: function (data, type, row) {
                             return `
                                 <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idpersona}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
-                                <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
+                                <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idpersona}" data-nombre="${row.docente}" title="Eliminar"><i class="fas fa-times"></i></button>
                             `;
                         }
                     }
                 ],
                 language: {
-                    url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                    url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
                 }
             });
 
@@ -348,8 +335,6 @@
             table = initializeDataTable();
         }
 
-        cargarDocentes();
-
         function mostrarAlerta(tipo, titulo, mensaje) {
             Swal.fire({
                 icon: tipo,
@@ -360,202 +345,205 @@
             });
         }
 
-    $('#formSubidaMasiva').submit(function (e) {
-        e.preventDefault();
-        var fileInput = document.getElementById('archivo');
-        var file = fileInput.files[0];
-        updateProgressBar(0);
-        procesarArchivo(file);
-     });
+        $('#formSubidaMasiva').submit(function (e) {
+            e.preventDefault();
+            var fileInput = document.getElementById('archivo');
+            var file = fileInput.files[0];
+            updateProgressBar(0);
+            procesarArchivo(file);
+        });
 
-     async function procesarArchivo(file) {
-        var reader = new FileReader();
-        reader.onload = async function (e) {
+        async function procesarArchivo(file) {
+            var reader = new FileReader();
+            reader.onload = async function (e) {
 
-            var data = new Uint8Array(e.target.result);
-            var workbook = XLSX.read(data, { type: 'array' });
-            var firstSheetName = workbook.SheetNames[0];
-            var worksheet = workbook.Sheets[firstSheetName];
-            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            var headers = jsonData[1];
-            var rows = jsonData.slice(2);
+                var headers = jsonData[1];
+                var rows = jsonData.slice(2);
 
-            var formattedData = await Promise.all(rows.map(async (row, index) => {
-                updateProgressBar(Math.round((index + 1) / rows.length * 100)); // Actualizar barra de progreso
-                return {
-                    nombres: row[headers.indexOf("Nombres")],
-                    apellidos: row[headers.indexOf("Apellidos")],
-                    n_documento: row[headers.indexOf("DNI")],
-                    telefono: row[headers.indexOf("Teléfono")],
-                    correo: row[headers.indexOf("Correo")],
-                    tipopersona: "D",
-                    cantHoras: row[headers.indexOf("Cantidad de horas")],
-                    tiempo_ref: row[headers.indexOf("Tiempo de refrigerio")],
-                    estado: 1
-                };
-            }));
+                var formattedData = await Promise.all(rows.map(async (row, index) => {
+                    updateProgressBar(Math.round((index + 1) / rows.length * 100)); // Actualizar barra de progreso
+                    return {
+                        nombres: row[headers.indexOf("Nombres")],
+                        apellidos: row[headers.indexOf("Apellidos")],
+                        n_documento: row[headers.indexOf("DNI")],
+                        telefono: row[headers.indexOf("Teléfono")],
+                        correo: row[headers.indexOf("Correo")],
+                        tipopersona: "D",
+                        cantHoras: row[headers.indexOf("Cantidad de horas")],
+                        tiempo_ref: row[headers.indexOf("Tiempo de refrigerio")],
+                        estado: 1
+                    };
+                }));
 
-            console.log(JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
+                //console.log(JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
+
+                $.ajax({
+                    url: '/asignar_docentes_excel',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formattedData),
+                    success: function (response) {
+                        if (response.error) {
+                            Swal.fire('Error', response.error, 'error');
+                        } else {
+                            Swal.fire('Éxito', 'La subida masiva se realizó correctamente.', 'success');
+                            table.ajax.reload();
+                            $('#modalSubidaMasiva').modal('hide');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire('Error', 'Hubo un error al realizar la operación.', 'error');
+                    }
+                });
+
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+
+        $('#btn_agregar_docente').click(function (e) {
+            e.preventDefault();
+            $('#modalAgregarDocente').modal('show');
+            $('#formAgregarDocente')[0].reset();
+        });
+
+        $('#formAgregarDocente').submit(function (e) {
+            e.preventDefault();
+            var data = {
+                nombres: $('#nombreDocente').val(),
+                apellidos: $('#apellidosDocente').val(),
+                n_documento: $('#documentoDocente').val(),
+                telefono: $('#telefonoDocente').val(),
+                correo: $('#correoDocente').val(),
+                cantHoras: $('#cantHorasDocente').val(),
+                tiempo_ref: $('#tiempoRefDocente').val(),
+                estado: $('#estadoDocente').val()
+            };
 
             $.ajax({
-                url: '/asignar_docentes_excel',
+                url: '/agregar_docente',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(formattedData),
+                data: JSON.stringify(data),
                 success: function (response) {
                     if (response.error) {
                         Swal.fire('Error', response.error, 'error');
                     } else {
-                        Swal.fire('Éxito', 'La subida masiva se realizó correctamente.', 'success');
+                        Swal.fire('Éxito', 'Docente agregado correctamente', 'success');
                         table.ajax.reload();
-                        $('#modalSubidaMasiva').modal('hide');
+                        $('#modalAgregarDocente').modal('hide');
                     }
+                    $('#mensajeResultado').show();
                 },
                 error: function (xhr, status, error) {
-                    Swal.fire('Error', 'Hubo un error al realizar la operación.', 'error');
+                    Swal.fire('Error', 'Hubo un error al agregar el docente', 'error');
                 }
             });
-
-        };
-        reader.readAsArrayBuffer(file);
-    }
-
-
-    $('#btn_agregar_docente').click(function(e) {
-        e.preventDefault();
-        $('#modalAgregarDocente').modal('show');
-        $('#formAgregarDocente')[0].reset();
-    });
-
-    $('#formAgregarDocente').submit(function(e) {
-        e.preventDefault();
-        var data = {
-            nombres: $('#nombreDocente').val(),
-            apellidos: $('#apellidosDocente').val(),
-            n_documento: $('#documentoDocente').val(),
-            telefono: $('#telefonoDocente').val(),
-            correo: $('#correoDocente').val(),
-            cantHoras: $('#cantHorasDocente').val(),
-            tiempo_ref: $('#tiempoRefDocente').val(),
-            estado: $('#estadoDocente').val()
-        };
-
-        $.ajax({
-            url: '/agregar_docente',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function(response) {
-                $('#mensajeResultado').removeClass().empty();
-                if (response.error) {
-                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Docente agregado correctamente');
-                    cargarDocentes();
-                    $('#modalAgregarDocente').modal('hide');
-                }
-                $('#mensajeResultado').show();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
         });
-    });
 
-    $('#formModificarDocente').submit(function(e) {
-        e.preventDefault();
-        var data = {
-            idpersona: $('#modificarIdDocente').val(),
-            nombres: $('#modificarNombreDocente').val(),
-            apellidos: $('#modificarApellidosDocente').val(),
-            n_documento: $('#modificarDocumentoDocente').val(),
-            telefono: $('#modificarTelefonoDocente').val(),
-            correo: $('#modificarCorreoDocente').val(),
-            cantHoras: $('#modificarCantHoras').val(),
-            tiempo_ref: $('#modificarTiempoRef').val(),
-            estado: $('#modificarEstadoDocente').val()
-        };
+        $('#formModificarDocente').submit(function (e) {
+            e.preventDefault();
+            var data = {
+                idpersona: $('#modificarIdDocente').val(),
+                nombres: $('#modificarNombreDocente').val(),
+                apellidos: $('#modificarApellidosDocente').val(),
+                n_documento: $('#modificarDocumentoDocente').val(),
+                telefono: $('#modificarTelefonoDocente').val(),
+                correo: $('#modificarCorreoDocente').val(),
+                cantHoras: $('#modificarCantHoras').val(),
+                tiempo_ref: $('#modificarTiempoRef').val(),
+                estado: $('#modificarEstadoDocente').val()
+            };
 
-        $.ajax({
-            url: '/modificar_docente',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function(response) {
-                $('#mensajeResultado').removeClass().empty();
-                if (response.error) {
-                    $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Docente modificado correctamente');
-                    cargarDocentes();
-                    $('#modalModificarDocente').modal('hide');
-                }
-                $('#mensajeResultado').show();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $('#tabla-docente tbody').on('click', '.btnModificar', function() {
-        var id = $(this).data('id');
-        console.log(id);
-        $.ajax({
-            url: '/obtener_docente_por_id/' + id,
-            type: 'GET',
-            contentType: 'application/json',
-            success: function(response) {
-                var docente = response;
-                $('#modificarIdDocente').val(docente.idpersona);
-                $('#modificarNombreDocente').val(docente.nombres);
-                $('#modificarApellidosDocente').val(docente.apellidos);
-                $('#modificarDocumentoDocente').val(docente.n_documento);
-                $('#modificarTelefonoDocente').val(docente.telefono);
-                $('#modificarCorreoDocente').val(docente.correo);
-                $('#modificarCantHoras').val(docente.cantHoras);
-                $('#modificarTiempoRef').val(docente.tiempo_ref);
-                $('#modificarEstadoDocente').val(docente.estado);
-                $('#modalModificarDocente').modal('show');
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    });
-
-    $('#tabla-docente tbody').on('click', '.btnEliminar', function() {
-        var id = $(this).data('id');
-        var nombre = $(this).data('nombre');
-
-        if (confirm(`¿Seguro que quieres eliminar el docente: ${nombre}?`)) {
-            if (id) {
-                $.ajax({
-                    url: '/eliminar_docente',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ idpersona: id }),
-                    success: function(response) {
-                        $('#mensajeResultado').removeClass().empty();
-                        if (response.error) {
-                            $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                        } else {
-                            $('#mensajeResultado').addClass('alert alert-success').text('Docente eliminado correctamente');
-                            cargarDocentes();
-                        }
-                        $('#mensajeResultado').show();
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(error);
+            $.ajax({
+                url: '/modificar_docente',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (response) {
+                    if (response.error) {
+                        Swal.fire('Error', response.error, 'error');
+                    } else {
+                        Swal.fire('Éxito', 'Docente modificado correctamente', 'success');
+                        table.ajax.reload();
+                        $('#modalModificarDocente').modal('hide');
                     }
-                });
-            } else {
-                console.log('ID no definido');
-            }
-        }
+                    $('#mensajeResultado').show();
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#tabla-docente tbody').on('click', '.btnModificar', function () {
+            var id = $(this).data('id');
+            console.log(id);
+            $.ajax({
+                url: '/obtener_docente_por_id/' + id,
+                type: 'GET',
+                contentType: 'application/json',
+                success: function (response) {
+                    var docente = response;
+                    $('#modificarIdDocente').val(docente.idpersona);
+                    $('#modificarNombreDocente').val(docente.nombres);
+                    $('#modificarApellidosDocente').val(docente.apellidos);
+                    $('#modificarDocumentoDocente').val(docente.n_documento);
+                    $('#modificarTelefonoDocente').val(docente.telefono);
+                    $('#modificarCorreoDocente').val(docente.correo);
+                    $('#modificarCantHoras').val(docente.cantHoras);
+                    $('#modificarTiempoRef').val(docente.tiempo_ref);
+                    $('#modificarEstadoDocente').val(docente.estado);
+                    $('#modalModificarDocente').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#tabla-docente tbody').on('click', '.btnEliminar', function () {
+            var id = $(this).data('id');
+            var nombre = $(this).data('nombre');
+            Swal.fire({
+                title: `¿Seguro que quieres eliminar el docente: ${nombre}?`,
+                text: "No podrás revertir esta acción.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminarlo!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/eliminar_docente',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ idpersona: id }),
+                        success: function (response) {
+                            if (response.error) {
+                                Swal.fire('Error', response.error, 'error');
+                            } else {
+                                Swal.fire('Éxito', 'La operación se realizó correctamente.', 'success');
+                                table.ajax.reload();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Error', 'Hubo un error al eliminar el docente', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
     });
-});
 
 
 </script>

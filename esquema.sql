@@ -82,7 +82,7 @@ CREATE TABLE horario (
   h_presencial tinyint(1) NOT NULL, 
   idpersona    int(10) NOT NULL, 
   id_grupo     int(10) NOT NULL, 
-  PRIMARY KEY (idhorario)) AUTO_INCREMENT=28;
+  PRIMARY KEY (idhorario)) AUTO_INCREMENT=30;
 CREATE TABLE incidencia (
   idincidencia int(10) NOT NULL AUTO_INCREMENT, 
   descripcion  varchar(255) NOT NULL, 
