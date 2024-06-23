@@ -410,42 +410,41 @@
         });
 
         $('#tabla-disponibilidad tbody').on('click', '.btnEliminar', function () {
-            var idpersona = $(this).data('idpersona');
-            var dia = $(this).data('dia');
-            var hora_inicio = $(this).data('hora_inicio');
-            var hora_fin = $(this).data('hora_fin');
+    var idpersona = $(this).data('idpersona');
+    var dia = $(this).data('dia');
+    var hora_inicio = $(this).data('hora_inicio');
+    var hora_fin = $(this).data('hora_fin');
 
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "No podrás revertir esta acción.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminarlo!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/delete_disponibilidad',
-                        type: 'DELETE',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ idpersona: idpersona, dia: dia, hora_inicio: hora_inicio, hora_fin: hora_fin }),
-                        success: function (response) {
-                            if (response.error) {
-                                var errorMsg = response.error; 
-                                mostrarAlerta('error', 'Error', errorMsg);
-                            } else {
-                                mostrarAlerta('success', 'Éxito', 'Disponibilidad eliminada correctamente.');
-                                table.ajax.reload();
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
-                        }
-                    });
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'No podrás revertir esta acción.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminarlo!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/eliminar_disponibilidad/' + idpersona,
+                type: 'DELETE',
+                success: function (response) {
+                    if (response.error) {
+                        var errorMsg = response.error;
+                        mostrarAlerta('error', 'Error', errorMsg);
+                    } else {
+                        mostrarAlerta('success', 'Éxito', 'Disponibilidad eliminada correctamente.');
+                        table.ajax.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
                 }
             });
-        });
+        }
+    });
+});
+
     });
 </script>
 {% endblock %}

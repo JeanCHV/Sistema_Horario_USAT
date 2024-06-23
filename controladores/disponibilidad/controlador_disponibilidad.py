@@ -47,17 +47,13 @@ def agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin):
         conexion.close()
 
 # Función para modificar una disponibilidad existente
-def modificar_disponibilidad(iddisponibilidad, idpersona, dia, hora_inicio, hora_fin):
+def eliminar_disponibilidad(idpersona):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("""
-                UPDATE docente_disponibilidad
-                SET idpersona = %s, dia = %s, hora_inicio = %s, hora_fin = %s
-                WHERE iddisponibilidad = %s
-            """, (idpersona, dia, hora_inicio, hora_fin, iddisponibilidad))
+            cursor.execute("DELETE FROM docente_disponibilidad WHERE idpersona = %s", (idpersona,))
             conexion.commit()
-            return {"mensaje": "Disponibilidad modificada correctamente"}
+            return {"mensaje": "Disponibilidad eliminada correctamente"}
     except Exception as e:
         conexion.commit()
         return {"error": str(e)}

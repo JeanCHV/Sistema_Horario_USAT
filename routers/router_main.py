@@ -1072,15 +1072,20 @@ def modificar_disponibilidad():
 
 
 # Ruta para eliminar una disponibilidad
-def eliminar_disponibilidad():
-    datos = request.json
-    idpersona = datos.get('idpersona')
-    dia = datos.get('dia')
-    hora_inicio = datos.get('hora_inicio')
-    hora_fin = datos.get('hora_fin')
-    
-    resultado = controlador_disponibilidad.eliminar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
-    return jsonify(resultado)
+@app.route('/eliminar_disponibilidad/<int:idpersona>', methods=['DELETE'])
+def eliminar_disponibilidad_por_idpersona(idpersona):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("DELETE FROM docente_disponibilidad WHERE idpersona = %s", (idpersona,))
+            conexion.commit()
+            return {"mensaje": "Disponibilidad eliminada correctamente"}
+    except Exception as e:
+        conexion.rollback()
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
 
 # Ruta para obtener una disponibilidad por detalles específicos (idpersona, dia, hora_inicio, hora_fin)
 @app.route('/get_disponibilidad_by_id', methods=['GET'])
