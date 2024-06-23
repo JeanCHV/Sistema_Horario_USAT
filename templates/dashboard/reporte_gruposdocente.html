@@ -72,7 +72,7 @@
         <div class="col-md-6 d-flex align-items-stretch">
             <div class="card mb-4 w-100">
                 <div class="card-header bg-red-usat text-white">
-                    <h5 class="card-title text-white">Reporte por Docente</h5>
+                    <h5 class="card-title text-white">Reporte Disponibilidad de Docentes</h5>
                 </div>
                 <div class="card-body">
                     <canvas id="chartAmbiente"></canvas>
@@ -107,7 +107,7 @@
 
                 // Datos para los gráficos
                 const dataAmbiente = {
-                    labels: ['Docentes con disponibilidad', 'Docentes sin disponibilidad'],
+                    labels: ['Docentes con disponibilidad registrada', 'Docentes sin disponibilidad registrada'],
                     datasets: [{
                         label: 'Reporte por Docente',
                         data: [docentes_con_disponibilidad, docentes_sin_disponibilidad],
@@ -116,7 +116,7 @@
                 };
 
                 const dataDocente = {
-                    labels: ['Grupos con horario', 'Grupos sin horario'],
+                    labels: ['Grupos con horario asignados', 'Grupos sin horarios asignados'],
                     datasets: [{
                         label: 'Reporte de Grupos',
                         data: [grupos_con_horario, grupos_sin_horario],

@@ -232,6 +232,18 @@
                     });
                 }
             }
+        
+            if (datos.valores.length === 0) {
+                // Mostrar un mensaje si no se ha seleccionado ningún checkbox
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Debe seleccionar al menos un grupo para modificar.',
+                    icon: 'error',
+                    confirmButtonText: 'Ok'
+                });
+                return;
+            }
+        
             Swal.fire({
                 title: '¿Seguro de querer modificar grupos?',
                 text: "No podrás revertir esta acción.",
@@ -259,7 +271,8 @@
                 } 
             });
         }
-    window.validar = function() {
+        
+        window.validar = function() {
             var semestre = document.getElementById('semestre');
             var escuela = document.getElementById('escuela');
             if (semestre.selectedIndex > 0 && escuela.selectedIndex > 0) {
