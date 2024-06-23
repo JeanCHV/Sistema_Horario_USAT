@@ -15,7 +15,7 @@
             Cursos
         </div>
         <div class="card-body">
-            <div class="table-responsive"  >
+            <div class="table-responsive">
                 <table id="tabla-curso" class="table table-striped tabla-cursos" style="width:100%">
                     <thead>
                         <tr>
@@ -210,6 +210,17 @@
     </div>
 </div>
 <script>
+    //Normalizar cadenas y eliminar diacríticos
+    jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+        "locale-compare-asc": function (a, b) {
+            return a.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(b.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), 'es', { sensitivity: 'base' });
+        },
+        "locale-compare-desc": function (a, b) {
+            return b.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(a.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), 'es', { sensitivity: 'base' });
+        }
+    });
+
+
     function updateProgressBar(percentage) {
         var progressBar = document.getElementById('progressBar');
         progressBar.style.width = percentage + '%';
@@ -254,7 +265,7 @@
     $(document).ready(function () {
         var cursos = [];
         var planEstudioMap = {};
-        var table; // Mueve la declaración de la variable table aquí para que sea accesible globalmente
+        var table; 
 
         function cargarPlanesDeEstudio(selectElementId, selectedValue = null) {
             $.ajax({
@@ -292,6 +303,7 @@
         }
 
         function initializeDataTable() {
+
             return $('#tabla-curso').DataTable({
                 paging: false,
                 info: false,
@@ -299,7 +311,10 @@
                 autoWidth: true,
                 searching: true,
                 scrollY: "600px",
-                order: [],
+                order: [[0, 'asc']], 
+                columnDefs: [
+                    { type: 'locale-compare', targets: 0 }
+                ],
                 dom: 'Bfrtip',
                 buttons: [
                     {
@@ -419,6 +434,7 @@
                     url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
                 }
             });
+
         }
 
         $('#search_box').on('keyup', function () {
@@ -547,7 +563,7 @@
                 var formattedData = await Promise.all(rows.map(async (row, index) => {
                     var planEstudioNombre = row[headers.indexOf("Plan de Estudio")];
                     var idPlanEstudio = planEstudioMap[planEstudioNombre] || null;
-                    updateProgressBar(Math.round((index + 1) / rows.length * 100)); 
+                    updateProgressBar(Math.round((index + 1) / rows.length * 100));
                     return {
                         nombre: row[headers.indexOf("Nombre")],
                         cod_curso: row[headers.indexOf("Código")],
@@ -728,7 +744,7 @@
                         Swal.fire('Éxito', 'El estado del curso ha sido actualizado.', 'success');
                         table.ajax.reload(function (json) {
                             console.log('Datos recargados después de la actualización:', json);
-                        }, false); 
+                        }, false);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -760,4 +776,3 @@
     });
 </script>
 {% endblock %}
-

@@ -238,6 +238,19 @@ def get_ambiente(idambiente):
     resultado = controlador_ambientes.obtener_ambiente_por_id(idambiente)
     return jsonify(resultado)
 
+### CAMBIAR ESTADO CURSOS
+@app.route('/ambiente_estado', methods=['POST'])
+def ambiente_estado():
+    data = request.get_json()
+    idambiente = data.get('idambiente')
+    nuevo_estado = data.get('estado')
+
+    resultado = controlador_ambientes.cambiar_estado_ambiente(idambiente, nuevo_estado)
+    if "error" in resultado:
+        return jsonify({'error': resultado["error"]}), 500
+    else:
+        return jsonify({'mensaje': resultado["mensaje"]}), 200
+
 
 ##DATOS CURSOS
 @app.route("/datos_cursos", methods=["GET"])
