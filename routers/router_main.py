@@ -169,12 +169,12 @@ def get_cant_grupos_semestre():
     grupos = controlador_grupo.get_cant_grupos_semestre()
     return jsonify(grupos)
 
+#GRUPO PINEDA
 
-
-
-
-
-
+@app.route('/obtener_grupo_por_id/<int:id_grupo>', methods=['GET'])
+def obtener_grupo_por_id(id_grupo):
+    resultado = controlador_grupo.obtener_grupo_por_id(id_grupo)
+    return jsonify(resultado)
 
 #AGREGAR AMBIENTE
 @app.route("/agregar_ambiente", methods=["POST"])

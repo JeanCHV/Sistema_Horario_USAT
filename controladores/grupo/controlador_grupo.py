@@ -33,6 +33,25 @@ def obtener_cursoxescuela(escuela, semestre):
 
     conexion.close()
     return cursos
+
+#OBTENER GRUPO POR ID
+def obtener_grupo_por_id(id_grupo):
+    conexion = obtener_conexion()
+    grupo = None
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT * FROM grupo WHERE id_grupo = %s", (id_grupo,))
+            persona = cursor.fetchone()
+            if persona:
+                columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas
+                persona_dict = dict(zip(columnas, grupo))  # Convierte la tupla en un diccionario
+                return persona_dict
+            else:
+                return {"error": "Grupo no encontrado"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
      
 def obtener_idsemestre(semestre):
     conexion = obtener_conexion()
