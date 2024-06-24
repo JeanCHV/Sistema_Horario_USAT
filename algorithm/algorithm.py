@@ -38,6 +38,10 @@ DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 # Definir duraciones posibles para las clases (en horas)
 DURACIONES_CLASES = [2, 3]
 
+# Horas divididas por mañana y tarde
+horas_inicio_manana = [f"{h}:00" for h in range(7, 12)]
+horas_inicio_tarde = [f"{h}:00" for h in range(13, 22)]
+
 def generar_poblacion(tamano):
     poblacion = []
     for _ in range(tamano):
@@ -62,12 +66,11 @@ def generar_poblacion(tamano):
                     
                     hora_inicio = random.choice(HORAS)
                     hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
-                    # Ajustar hora_fin si excede el límite de 23:00
-                    if int(hora_fin.split(':')[0]) > 23:
+                    # Ajustar hora_fin si excede el límite de 22:00
+                    if int(hora_fin.split(':')[0]) > 22:
                         continue
 
                     ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
-                    
                     horario.append((profesor, idcurso, grupo_curso['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
                     horas_totales -= duracion
 
@@ -78,26 +81,53 @@ def calcular_fitness(horario):
     fitness = 0
     
     for dia in DIAS:
-        horas_ocupadas = {profesor: [] for profesor in range(NUM_PROFESORES)}
+        horas_ocupadas = {profesor: [] for profesor in DOCENTES}
+        aulas_ocupadas = {aula: [] for aula in AMBIENTES}
         for (profesor, idcurso, idgrupo, aula, d, hora_inicio, hora_fin) in horario:
             if d == dia and profesor != "No definido" and aula != "No definido":
-                if profesor not in horas_ocupadas:
-                    continue  # Evitar KeyError si el profesor no está en horas_ocupadas
-                horas_profesor = horas_ocupadas[profesor]
+                if not todas_horas_disponibles(profesor, d, hora_inicio, hora_fin):
+                    fitness -= 1
                 
-                if any(hora in horas_profesor for hora in rango_horas(hora_inicio, hora_fin)) or not todas_horas_disponibles(profesor, d, hora_inicio, hora_fin):
+                # Verificar si el docente tiene superposición de horas
+                horas_profesor = horas_ocupadas[profesor]
+                if any(hora in horas_profesor for hora in rango_horas(hora_inicio, hora_fin)):
                     fitness -= 1
                 else:
                     horas_ocupadas[profesor].extend(rango_horas(hora_inicio, hora_fin))
-                    
-                horas_curso = CURSOS[idcurso]['horas_teoria'] + CURSOS[idcurso]['horas_practica']
                 
-                if horas_curso != 0 and len(horas_ocupadas[profesor]) != horas_curso:
+                # Verificar si el aula tiene superposición de horas
+                horas_aula = aulas_ocupadas[aula]
+                if any(hora in horas_aula for hora in rango_horas(hora_inicio, hora_fin)):
                     fitness -= 1
-
+                else:
+                    aulas_ocupadas[aula].extend(rango_horas(hora_inicio, hora_fin))
+                
+                # Verificar si se respeta el ambiente preferido
                 if any(ca['idcurso'] == idcurso for ca in CURSO_AMBIENTE):
                     ambiente_especifico = next(ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso)
                     if aula != ambiente_especifico:
+                        fitness -= 1
+                
+                # Verificar el total de horas asignadas
+                horas_curso = CURSOS[idcurso]['horas_teoria'] + CURSOS[idcurso]['horas_practica']
+                if horas_curso != 0 and len(horas_ocupadas[profesor]) != horas_curso:
+                    fitness -= 1
+
+                # Verificar que no haya más de 3 horas de clase seguidas
+                if len(rango_horas(hora_inicio, hora_fin)) > 3:
+                    fitness -= 1
+
+                # Verificar que no se asignen horas durante el almuerzo
+                if any(hora in ['12:00', '13:00'] for hora in rango_horas(hora_inicio, hora_fin)):
+                    fitness -= 1
+
+                # Verificar si las horas se asignan en el ciclo correcto (mañana/tarde)
+                ciclo = CURSOS[idcurso]['ciclo']
+                if ciclo % 2 == 1:  # ciclo impar: tarde
+                    if any(hora in horas_inicio_manana for hora in rango_horas(hora_inicio, hora_fin)):
+                        fitness -= 1
+                else:  # ciclo par: mañana
+                    if any(hora in horas_inicio_tarde for hora in rango_horas(hora_inicio, hora_fin)):
                         fitness -= 1
     
     return fitness
@@ -114,7 +144,7 @@ def obtener_horas_disponibles(profesor, dia):
 def todas_horas_disponibles(profesor, dia, hora_inicio, hora_fin):
     horas_disponibles = obtener_horas_disponibles(profesor, dia)
     for hora in rango_horas(hora_inicio, hora_fin):
-        if hora :
+        if hora not in horas_disponibles:
             return False
     return True
 
@@ -151,69 +181,74 @@ def mutacion(individuo):
             duracion = random.choice(DURACIONES_CLASES)
         hora_inicio = random.choice(HORAS)
         hora_fin = f"{int(hora_inicio.split(':')[0]) + duracion}:00"
-        # Ajustar hora_fin si excede el límite de 23:00
-        if int(hora_fin.split(':')[0]) > 23:
-            hora_fin = "23:00"
+        # Ajustar hora_fin si excede el límite de 22:00
+        if int(hora_fin.split(':')[0]) > 22:
+            hora_fin = "22:00"
         ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
         individuo[i] = (profesor, idcurso, individuo[i][2], ambiente, dia, hora_inicio, hora_fin)
 
 def algoritmo_genetico():
-    poblacion = generar_poblacion(10)
-    
-    for generacion in range(100):
-        nueva_poblacion = []
+    try:
+        poblacion = generar_poblacion(100)  # Aumentar a 500 para mayor diversidad
         
-        padres = seleccion(poblacion)
+        for generacion in range(100):  # Aumentar a 500 para más iteraciones
+            nueva_poblacion = []
+            
+            padres = seleccion(poblacion)
+            
+            while len(nueva_poblacion) < 100:
+                padre1, padre2 = random.sample(padres, 2)
+                hijo1, hijo2 = cruce(padre1, padre2)
+                mutacion(hijo1)
+                mutacion(hijo2)
+                nueva_poblacion.extend([hijo1, hijo2])
+            
+            poblacion = nueva_poblacion[:100]  # Limitar la población a 500
         
-        while len(nueva_poblacion) < 10:
-            padre1, padre2 = random.sample(padres, 2)
-            hijo1, hijo2 = cruce(padre1, padre2)
-            mutacion(hijo1)
-            mutacion(hijo2)
-            nueva_poblacion.extend([hijo1, hijo2])
+        mejor_individuo = max(poblacion, key=calcular_fitness)
         
-        poblacion = nueva_poblacion
-    
-    mejor_individuo = max(poblacion, key=calcular_fitness)
-    
-    resultado = {}
-    for (profesor, idcurso, idgrupo, aula, dia, hora_inicio, hora_fin) in mejor_individuo:
-        # Verificar si el profesor está dentro del rango válido o es "No definido"
-        if profesor != "No definido" and (profesor not in DOCENTES):
-            continue  # Ignorar esta entrada si el profesor no es válido
+        resultado = {}
+        for (profesor, idcurso, idgrupo, aula, dia, hora_inicio, hora_fin) in mejor_individuo:
+            # Verificar si el profesor está dentro del rango válido o es "No definido"
+            if profesor != "No definido" and (profesor not in DOCENTES):
+                continue  # Ignorar esta entrada si el profesor no es válido
+            
+            nombre_curso = CURSOS[idcurso]["nombre"]
+            tipo_curso = CURSOS[idcurso]["tipo_curso"]
+            nombre_docente = "No definido" if profesor == "No definido" else DOCENTES[profesor]["nombres"]
+            apellidos_docente = "" if profesor == "No definido" else DOCENTES[profesor]["apellidos"]
+            
+            # Validar índice de aula
+            if aula == "No definido" or aula not in AMBIENTES:
+                nombre_aula = "No definido"
+            else:
+                nombre_aula = AMBIENTES[aula]["nombre"]
+            
+            grupo = next((g for g in GRUPOS_HORARIO if g["id_grupo"] == idgrupo), None)
+            
+            if grupo:
+                grupo_nombre = grupo["nombre"]
+                if nombre_curso not in resultado:
+                    resultado[nombre_curso] = {}
+                if grupo_nombre not in resultado[nombre_curso]:
+                    resultado[nombre_curso][grupo_nombre] = []
+            
+                tipo_curso_str = "Presencial" if tipo_curso == 0 else "Virtual"
+                resultado[nombre_curso][grupo_nombre].append({
+                    "docente": f"{nombre_docente} {apellidos_docente}",
+                    "aula": nombre_aula,
+                    "dia": dia,
+                    "hora_inicio": hora_inicio,
+                    "hora_fin": hora_fin,
+                    "tipo_curso": tipo_curso_str
+                })
         
-        nombre_curso = CURSOS[idcurso]["nombre"]
-        tipo_curso = CURSOS[idcurso]["tipo_curso"]
-        nombre_docente = "No definido" if profesor == "No definido" else DOCENTES[profesor]["nombres"]
-        apellidos_docente = "" if profesor == "No definido" else DOCENTES[profesor]["apellidos"]
+        return resultado
         
-        # Validar índice de aula
-        if aula == "No definido": #o aula no está en AMBIENTES:
-            nombre_aula = "No definido"
-        else:
-            nombre_aula = AMBIENTES[aula]["nombre"]
-        
-        grupo = next((g for g in GRUPOS_HORARIO if g["id_grupo"] == idgrupo), None)
-        
-        if grupo:
-            grupo_nombre = grupo["nombre"]
-            if nombre_curso not in resultado:
-                resultado[nombre_curso] = {}
-            if grupo_nombre not in resultado[nombre_curso]:
-                resultado[nombre_curso][grupo_nombre] = []
-        
-            tipo_curso_str = "Presencial" if tipo_curso == 0 else "Virtual"
-            resultado[nombre_curso][grupo_nombre].append({
-                "docente": f"{nombre_docente} {apellidos_docente}",
-                "aula": nombre_aula,
-                "dia": dia,
-                "hora_inicio": hora_inicio,
-                "hora_fin": hora_fin,
-                "tipo_curso": tipo_curso_str
-            })
-    
-    return resultado
+    except Exception as e:
+        error_json = {"error": str(e)}
+        print(json.dumps(error_json, ensure_ascii=False, indent=4))
 
-resultado_json = algoritmo_genetico()
-
-#print(json.dumps(resultado_json, ensure_ascii=False, indent=4))
+# Ejecución del algoritmo genético mejorado
+resultado = algoritmo_genetico()
+#print(json.dumps(resultado, ensure_ascii=False, indent=4))

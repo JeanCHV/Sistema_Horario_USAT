@@ -36,9 +36,9 @@ import time
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
-#Algorithm 
-import algorithm.algorithm as algoritmo
-import algorithm.algorithm_pruebaJenkz as algoritmoJenkz
+# #Algorithm 
+# import algorithm.algorithm as algoritmo
+# import algorithm.algorithm_pruebaJenkz as algoritmoJenkz
 
 login_attempts = {}
 
@@ -978,23 +978,23 @@ def eliminar_cursoAmbiente():
 
 
 
-#ALGORITHM
-@app.route('/generarHorario', methods=['GET'])
-def obtener_horarios():
-    try:
-        horario = algoritmo.algoritmo_genetico()
-        return jsonify(horario)
-    except Exception as e:
-        return jsonify({"error": str(e)})
+# #ALGORITHM
+# @app.route('/generarHorario', methods=['GET'])
+# def obtener_horarios():
+#     try:
+#         horario = algoritmo.algoritmo_genetico()
+#         return jsonify(horario)
+#     except Exception as e:
+#         return jsonify({"error": str(e)})
     
-# PRUEBA ALGORITMO - JENKZ
-@app.route('/generarHorario_Jenkz', methods=['GET'])
-def obtener_horariosJenkz():
-    try:
-        horario = algoritmoJenkz.algoritmo_genetico()
-        return jsonify(horario)
-    except Exception as e:
-        return jsonify({"error": str(e)})
+# # PRUEBA ALGORITMO - JENKZ
+# @app.route('/generarHorario_Jenkz', methods=['GET'])
+# def obtener_horariosJenkz():
+#     try:
+#         horario = algoritmoJenkz.algoritmo_genetico()
+#         return jsonify(horario)
+#     except Exception as e:
+#         return jsonify({"error": str(e)})
     
 
 
@@ -1039,9 +1039,14 @@ def horarios_por_ciclo():
 #DISPONIBILIDAD
 # Ruta para obtener todas las disponibilidades
 @app.route('/get_disponibilidad', methods=['GET'])
-def obtener_disponibilidades():
+def get_disponibilidad():
     disponibilidades = controlador_disponibilidad.get_disponibilidad()
     return jsonify(disponibilidades)
+
+@app.route('/get_docente_sin_disponibilidad', methods=['GET'])
+def get_docente_sin_disponibilidad():
+    get_docente_sin_disponibilidad = controlador_disponibilidad.get_docente_sin_disponibilidad()
+    return jsonify(get_docente_sin_disponibilidad)
 
 # Ruta para agregar una nueva disponibilidad
 @app.route('/add_disponibilidad', methods=['POST'])
