@@ -100,15 +100,15 @@ def guardar_docentes_curso(curso_id, docentes):
     finally:
         conexion.close()
 
-def actualizar_docentes_curso(cursoid,docenteid):
+def actualizar_docentes_curso(cursoid, docenteid):
     conexion = obtener_conexion()
-    try: 
+    try:
         with conexion.cursor() as cursor:
-            cursor.callproc('sp_CursosDocente_Gestion', [2,cursoid,docenteid])
+            cursor.callproc('sp_CursosDocente_Gestion', [2, cursoid, docenteid])
             conexion.commit()
-            return {"mensaje":" Curso por docente actualizado correctamente"}
+            return {"status": "success", "message": "Curso por docente actualizado correctamente"}
     except Exception as e:
-        return {"error": str(e)}
+        return {"status": "error", "message": str(e)}
     finally:
         conexion.close()
             

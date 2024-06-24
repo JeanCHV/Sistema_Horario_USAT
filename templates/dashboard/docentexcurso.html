@@ -60,7 +60,7 @@
     </div>
 </div>
 
-<!-- Modal para agregar o modificar un ambiente -->
+<!-- Modal para agregar o modificar un docentexcurso -->
 <div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="modalAsignacionLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -82,8 +82,8 @@
                                         style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th style="width:40%; text-align:center;">Nombre del Curso</th>
-                                                <th style="width:30%; text-align:center;">Código</th>
+                                                <th style="text-align:center;">Nombre del Curso</th>
+                                                <th style="text-align:center;">Código</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -109,9 +109,9 @@
                                                 <th style="width:5%; text-align:center;">
                                                     <input type="checkbox" id="select-all">
                                                 </th>
-                                                <th style="width:40%; text-align:center;">Nombre</th>
-                                                <th style="width:30%; text-align:center;">Correo</th>
-                                                <th style="width:10%; text-align:center;">Teléfono</th>
+                                                <th style="text-align:center;">Nombre</th>
+                                                <th style="text-align:center;">Correo</th>
+                                                <th style="text-align:center;">Teléfono</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -257,10 +257,26 @@
                 },
                 {
                     text: '<i class="fas fa-plus"></i> Realizar Asignación',
+                    text: '<i class="fas fa-plus"></i> Realizar Asignación',
                     className: 'btn_agregar_ambiente',
                     action: function (e) {
                         e.preventDefault();
+
+                        // Reiniciar selección de cursos y docentes al abrir el modal
+                        $('#tabla-curso tbody tr').removeClass('selected');
+                        $('#tabla-curso').DataTable().search('').draw();
+
+                        $('#tabla-docente tbody tr').removeClass('selected');
+                        $('#tabla-docente input[type="checkbox"]').prop('checked', false);
+
                         $('#modalAsignacionLabel').text('REALIZAR ASIGNACION');
+                        
+                        // Ajustar el ancho de las columnas de las tablas dentro del modal
+                        $('#modalAsignacion').on('shown.bs.modal', function () {
+                            $('#tabla-curso').DataTable().columns.adjust().draw();
+                            $('#tabla-docente').DataTable().columns.adjust().draw();
+                        });
+
                         $('#modalAsignacion').modal('show');
                     }
                 }
@@ -396,6 +412,18 @@
             });
 
             var cursoSeleccionado = $('#cursoIdSeleccionado').val();
+            var modalTitle = $('#modalAsignacionLabel').text().trim(); // Obtener el título del modal
+
+            var url = '/guardar_docentes_curso';
+            var type = 'POST';
+            var messageSuccess = 'Asignación agregada correctamente';
+
+            // Verificar si el modal está en modo de modificación
+            if (modalTitle.includes('MODIFICAR ASIGNACIÓN')) {
+                url = '/actualizar_docentes_curso'; // Cambiar la URL para actualizar
+                type = 'POST'; // Usar el método POST para la actualización
+                messageSuccess = 'Asignación modificada correctamente';
+            }
 
             if (!cursoSeleccionado) {
                 alert("Por favor seleccione un curso antes de asignar docentes.");
@@ -403,28 +431,25 @@
             }
 
             $.ajax({
-                url: '/guardar_docentes_curso',
-                type: 'POST',
+                url: url,
+                type: type,
                 contentType: 'application/json',
                 data: JSON.stringify({
                     curso: cursoSeleccionado,
                     docentes: selectedDocentes
                 }),
-                success: function (response) {      
-                    if (response.error) {
-                        Swal.fire('Error', response.error, 'error');
-                    } else {
-                        Swal.fire('Éxito', 'Aignación agregada correctamente', 'success');
+                success: function (response) {
+                    if (response.status === 'success') {
+                        Swal.fire('Éxito', messageSuccess, 'success');
                         $('#modalAsignacion').modal('hide');
                         table.ajax.reload(); // Recargar la tabla con AJAX
+                    } else {
+                        Swal.fire('Error', response.message ? response.message : 'Error inesperado', 'error');
                     }
-
-
-
-                    
                 },
                 error: function (xhr, status, error) {
                     console.log(error);
+                    Swal.fire('Error', 'Error al procesar la solicitud', 'error');
                 }
             });
         });
@@ -580,8 +605,60 @@
 
         });
 
+        // Modificar docentes x curso
+        $('#tabla-cursoxdocentes tbody').on('click', '.btnModificar', function () {
+            var idCurso = $(this).data('id');
+            var cursoNombre = $(this).closest('tr').find('td:eq(0)').text().trim();
 
+            $('#modalAsignacionLabel').text('MODIFICAR ASIGNACIÓN');
+            $('#tabla-curso tbody tr').removeClass('selected');
+            $('#tabla-curso tbody tr').each(function () {
+                var nombreCursoTabla = $(this).find('td:eq(0)').text().trim();
+                if (nombreCursoTabla === cursoNombre) {
+                    $(this).addClass('selected');
+                    var data = tablaCursos.row(this).data();
+                    $('#cursoIdSeleccionado').val(data.idcurso);
+                    return false;
+                }
+            });
 
+            $('#tabla-docente tbody tr').removeClass('selected');
+            $('#tabla-docente input[type="checkbox"]').prop('checked', false);
+
+            $.ajax({
+                url: '/obtener_cursos_docentes',
+                type: 'GET',
+                data: { idCurso: idCurso },
+                success: function (response) {
+                    if (!response.error) {
+                        response.forEach(function (cursoDocente) {
+                            var nombreCursoDocente = cursoDocente.nombreCurso.trim();
+                            if (nombreCursoDocente === cursoNombre) {
+                                var nombreCompletoDocente = cursoDocente.nombreDocente.trim();
+                                $('#tabla-docente tbody tr').each(function () {
+                                    var nombreDocenteTabla = $(this).find('td:eq(1)').text().trim();
+                                    if (nombreDocenteTabla === nombreCompletoDocente) {
+                                        $(this).addClass('selected');
+                                        $(this).find('input[type="checkbox"]').prop('checked', true);
+                                        return false;
+                                    }
+                                });
+                            }
+                        });
+                        $('#modalAsignacion').on('shown.bs.modal', function () {
+                            $('#tabla-curso').DataTable().columns.adjust().draw();
+                            $('#tabla-docente').DataTable().columns.adjust().draw();
+                        });
+                        $('#modalAsignacion').modal('show');
+                    } else {
+                        console.log('Error al obtener cursos y docentes:', response.error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error en la solicitud AJAX:', error);
+                }
+            });
+        });
 
     });
 
