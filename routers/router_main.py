@@ -1100,3 +1100,13 @@ def obtener_disponibilidad_por_id_route():
     resultado = controlador_disponibilidad.obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin)
     return jsonify(resultado)
 
+
+@app.route('/docentes_disponibilidad', methods=['GET'])
+def obtener_disponibilidad():
+    try:
+        personas = controlador_disponibilidad.obtener_disponibilidad()
+        return jsonify(personas)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+

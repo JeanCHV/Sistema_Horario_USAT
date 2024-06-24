@@ -141,22 +141,41 @@
     }
 
     function cargarDocentes() {
-        $.ajax({
-            url: '/datos_docentes',
-            type: 'GET',
-            success: function (data) {
-                var docentesSelect = $('#docente');
-                docentesSelect.empty();
-                docentesSelect.append('<option value="">Seleccione</option>');
-                data.forEach(function (docente) {
-                    docentesSelect.append('<option value="' + docente.idpersona + '">' + docente.nombre_completo + '</option>');
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al cargar los docentes:', error);
+    $.ajax({
+        url: '/docentes_disponibilidad',
+        type: 'GET',
+        success: function (data) {
+            if (data.error) {
+                console.error('Error del servidor:', data.error);
+                return;
             }
-        });
-    }
+            var docentesSelect = $('#docente');
+            docentesSelect.empty();
+            docentesSelect.append('<option value="">Seleccione</option>');
+            data.forEach(function (docente) {
+                if (docente.idpersona && docente.nombre_completo) {
+                    docentesSelect.append('<option value="' + docente.idpersona + '">' + docente.nombre_completo + '</option>');
+                } else {
+                    console.error('Datos de docente incorrectos:', docente);
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error al cargar los docentes:', error);
+        }
+    });
+}
+
+$(document).ready(function () {
+    cargarDocentes();
+});
+
+
+$(document).ready(function () {
+    // Asegúrate de llamar a cargarDocentes en algún momento apropiado
+    cargarDocentes();
+});
+
 
     $(document).ready(function () {
         var disponibilidad = [];

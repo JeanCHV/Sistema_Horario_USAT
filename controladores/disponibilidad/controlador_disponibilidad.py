@@ -100,4 +100,24 @@ def obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin):
     finally:
         conexion.close()
 
+def obtener_disponibilidad():
+    conexion = obtener_conexion()
+    docentes = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+            SELECT idpersona, CONCAT(apellidos, ' ', nombres) AS nombre_completo, correo, telefono
+            FROM persona
+            WHERE tipopersona = 'D'
+            """)
+            column_names = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            for row in rows:
+                docente_dict = dict(zip(column_names, row))
+                docentes.append(docente_dict)
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
 
+    return docentes
