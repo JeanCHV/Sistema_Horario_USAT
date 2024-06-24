@@ -115,6 +115,68 @@ def datos_ambientes():
 def get_edificios():
     edificio = controlador_edificio.obtener_edificios()
     return jsonify(edificio)
+
+#DASHBOARD
+@app.route("/get_cursos_activos", methods=["GET"])
+def get_cursos_activos():
+    cursos_activos = controlador_cursos.obtener_cursos_activos()
+    return jsonify(cursos_activos)
+
+
+@app.route("/get_docentes_activos", methods=["GET"])
+def get_docentes_activos():
+    docentes_activos = controlador_docente.get_docentes_activos()
+    return jsonify(docentes_activos)
+
+@app.route("/get_ambientes_disponibles", methods=["GET"])
+def get_ambientes_disponibles():
+    ambientes_activos = controlador_ambientes.get_ambientes_disponibles()
+    return jsonify(ambientes_activos)
+
+@app.route("/get_ambientes_capacidad_ocupacion", methods=["GET"])
+def get_ambientes_capacidad_ocupacion():
+    ambientes_capacidad_ocupacion = controlador_ambientes.get_ambientes_capacidad_ocupacion()
+    return jsonify(ambientes_capacidad_ocupacion)
+
+@app.route("/get_cursos_por_ciclo", methods=["GET"])
+def get_cursos_por_ciclo():
+    cursos_por_ciclo = controlador_cursos.obtener_cursos_por_ciclo()
+    return jsonify(cursos_por_ciclo)
+
+
+@app.route("/get_cursos_tipo", methods=["GET"])
+def get_cursos_tipo():
+    get_cursos_tipo = controlador_cursos.get_cursos_tipo()
+    return jsonify(get_cursos_tipo)
+
+@app.route("/get_edificio_ambientes", methods=["GET"])
+def get_edificio_ambientes():
+    get_edificio_ambientes = controlador_edificio.get_edificio_ambientes()
+    return jsonify(get_edificio_ambientes)
+
+
+@app.route("/get_reporte_cursos", methods=["GET"])
+def get_reporte_cursos():
+    get_reporte_cursos = controlador_horario.get_reporte_cursos()
+    return jsonify(get_reporte_cursos)
+
+@app.route("/get_cant_cursos_docente", methods=["GET"])
+def get_cant_cursos_docente():
+    get_cant_cursos_docente =  controlador_cursos.get_cant_cursos_docente()
+    return jsonify(get_cant_cursos_docente)
+
+@app.route("/get_cant_grupos_semestre", methods=["GET"])
+def get_cant_grupos_semestre():
+    grupos = controlador_grupo.get_cant_grupos_semestre()
+    return jsonify(grupos)
+
+
+
+
+
+
+
+
 #AGREGAR AMBIENTE
 @app.route("/agregar_ambiente", methods=["POST"])
 def agregar_ambiente():
@@ -177,11 +239,24 @@ def get_ambiente(idambiente):
     resultado = controlador_ambientes.obtener_ambiente_por_id(idambiente)
     return jsonify(resultado)
 
+### CAMBIAR ESTADO CURSOS
+@app.route('/ambiente_estado', methods=['POST'])
+def ambiente_estado():
+    data = request.get_json()
+    idambiente = data.get('idambiente')
+    nuevo_estado = data.get('estado')
+
+    resultado = controlador_ambientes.cambiar_estado_ambiente(idambiente, nuevo_estado)
+    if "error" in resultado:
+        return jsonify({'error': resultado["error"]}), 500
+    else:
+        return jsonify({'mensaje': resultado["mensaje"]}), 200
+
 
 ##DATOS CURSOS
 @app.route("/datos_cursos", methods=["GET"])
 def datos_cursos():
-    cursos = controlador_cursos.para_tabla_cursos()
+    cursos = controlador_cursos.obtener_cursos_Activos()
     return jsonify(cursos)
 
 @app.route("/get_semestre", methods=["GET"])
@@ -963,6 +1038,7 @@ def horarios_por_ciclo():
     return render_template("horarios/horarios_por_ciclo.html",semestres=semestres,ciclos=ciclos)
 
 #DISPONIBILIDAD
+<<<<<<< HEAD
 @app.route("/get_disponibilidad", methods=["GET"])
 def get_disponibilidad():
     disponibilidad = controlador_disponibilidad.get_disponibilidad()
@@ -972,3 +1048,68 @@ def get_disponibilidad():
 def reporte_horas_html():
     reporte = controlador_reporte.obtener_reporte_horas()
     return render_template('reportes/reporte_horas.html', reporte=reporte)
+=======
+# Ruta para obtener todas las disponibilidades
+@app.route('/get_disponibilidad', methods=['GET'])
+def obtener_disponibilidades():
+    disponibilidades = controlador_disponibilidad.get_disponibilidad()
+    return jsonify(disponibilidades)
+
+# Ruta para agregar una nueva disponibilidad
+@app.route('/add_disponibilidad', methods=['POST'])
+def agregar_disponibilidad():
+    datos = request.json
+    idpersona = datos.get('idpersona')
+    dia = datos.get('dia')
+    hora_inicio = datos.get('hora_inicio')
+    hora_fin = datos.get('hora_fin')
+    
+    resultado = controlador_disponibilidad.agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
+    return jsonify(resultado)
+
+# Ruta para modificar una disponibilidad existente
+@app.route('/update_disponibilidad', methods=['PUT'])
+def modificar_disponibilidad():
+    datos = request.json
+    idpersona = datos.get('idpersona')
+    dia = datos.get('dia')
+    hora_inicio = datos.get('hora_inicio')
+    hora_fin = datos.get('hora_fin')
+    nuevo_dia = datos.get('nuevo_dia')
+    nueva_hora_inicio = datos.get('nueva_hora_inicio')
+    nueva_hora_fin = datos.get('nueva_hora_fin')
+    
+    resultado = controlador_disponibilidad.modificar_disponibilidad(idpersona, dia, hora_inicio, hora_fin, nuevo_dia, nueva_hora_inicio, nueva_hora_fin)
+    return jsonify(resultado)
+
+
+# Ruta para eliminar una disponibilidad
+@app.route('/eliminar_disponibilidad/<int:idpersona>', methods=['DELETE'])
+def eliminar_disponibilidad_por_idpersona(idpersona):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("DELETE FROM docente_disponibilidad WHERE idpersona = %s", (idpersona,))
+            conexion.commit()
+            return {"mensaje": "Disponibilidad eliminada correctamente"}
+    except Exception as e:
+        conexion.rollback()
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+
+# Ruta para obtener una disponibilidad por detalles específicos (idpersona, dia, hora_inicio, hora_fin)
+@app.route('/get_disponibilidad_by_id', methods=['GET'])
+def obtener_disponibilidad_por_id_route():
+    idpersona = request.args.get('idpersona')
+    dia = request.args.get('dia')
+    hora_inicio = request.args.get('hora_inicio')
+    hora_fin = request.args.get('hora_fin')
+
+    print(f"Recibido: idpersona={idpersona}, dia={dia}, hora_inicio={hora_inicio}, hora_fin={hora_fin}")  # Registro de los valores recibidos
+
+    resultado = controlador_disponibilidad.obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin)
+    return jsonify(resultado)
+
+>>>>>>> ff8ed1eb097ed6cdcd0c0fb7207308a567e64bd8

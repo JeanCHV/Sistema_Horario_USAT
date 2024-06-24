@@ -209,9 +209,18 @@
         </div>
     </div>
 </div>
-
-
 <script>
+    //Normalizar cadenas y eliminar diacríticos
+    jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+        "locale-compare-asc": function (a, b) {
+            return a.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(b.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), 'es', { sensitivity: 'base' });
+        },
+        "locale-compare-desc": function (a, b) {
+            return b.normalize('NFD').replace(/[\u0300-\u036f]/g, "").localeCompare(a.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), 'es', { sensitivity: 'base' });
+        }
+    });
+
+
     function updateProgressBar(percentage) {
         var progressBar = document.getElementById('progressBar');
         progressBar.style.width = percentage + '%';
@@ -256,7 +265,7 @@
     $(document).ready(function () {
         var cursos = [];
         var planEstudioMap = {};
-        var table; // Mueve la declaración de la variable table aquí para que sea accesible globalmente
+        var table; 
 
         function cargarPlanesDeEstudio(selectElementId, selectedValue = null) {
             $.ajax({
@@ -294,19 +303,23 @@
         }
 
         function initializeDataTable() {
+
             return $('#tabla-curso').DataTable({
                 paging: false,
                 info: false,
                 responsive: true,
                 autoWidth: true,
                 searching: true,
-                scrollY: "510px",
-                order: [],
+                scrollY: "600px",
+                order: [[0, 'asc']], 
+                columnDefs: [
+                    { type: 'locale-compare', targets: 0 }
+                ],
                 dom: 'Bfrtip',
                 buttons: [
                     {
                         extend: 'collection',
-                        text: '<i class="fas fa-file-import"></i> Importar',
+                        text: '<i class="fas fa-file-import"></i> Importar/ Plantilla',
                         className: 'btn btn-secondary',
                         buttons: [
                             {
@@ -335,27 +348,42 @@
                             {
                                 extend: 'copy',
                                 text: '<i class="fas fa-copy"></i> Copiar',
-                                className: 'dropdown-item'
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
                             },
                             {
                                 extend: 'csv',
                                 text: '<i class="fas fa-file-csv"></i> CSV',
-                                className: 'dropdown-item'
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
                             },
                             {
                                 extend: 'excel',
                                 text: '<i class="fas fa-file-excel"></i> Excel',
-                                className: 'dropdown-item'
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
                             },
                             {
                                 extend: 'pdf',
                                 text: '<i class="fas fa-file-pdf"></i> PDF',
-                                className: 'dropdown-item'
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
                             },
                             {
                                 extend: 'print',
                                 text: '<i class="fas fa-print"></i> Imprimir',
-                                className: 'dropdown-item'
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
                             }
                         ]
                     },
@@ -382,7 +410,7 @@
                     { data: "ciclo", className: 'dt-body-center' },
                     { data: "tipo_curso", className: 'dt-body-center' },
                     {
-                        "data": "estado", "className": 'dt-body-center',
+                        "data": "estado", className: "dt-body-center",
                         "render": function (data, type, row) {
                             return data === 'A' ? 'ACTIVO' : data === 'I' ? 'INACTIVO' : data;
                         }
@@ -403,9 +431,10 @@
                     }
                 ],
                 language: {
-                    url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+                    url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
                 }
             });
+
         }
 
         $('#search_box').on('keyup', function () {
@@ -464,6 +493,48 @@
             procesarArchivo(file);
         });
 
+        function verificarEstructuraColumnas(headers) {
+            const columnasEsperadas = ["Nombre", "Código", "Créditos", "Horas Teoría", "Horas Práctica", "Ciclo", "Tipo Curso", "Plan de Estudio"];
+            const discrepancias = [];
+
+            if (headers.length !== columnasEsperadas.length) {
+                return {
+                    esValido: false,
+                    mensaje: `Número de columnas incorrecto. Esperado: ${columnasEsperadas.length}, Encontrado: ${headers.length}`
+                };
+            }
+
+            for (let i = 0; i < headers.length; i++) {
+                if (headers[i] !== columnasEsperadas[i]) {
+                    discrepancias.push(`Columna ${i + 1}: Esperado "${columnasEsperadas[i]}", Encontrado "${headers[i]}"`);
+                }
+            }
+
+            if (discrepancias.length > 0) {
+                return {
+                    esValido: false,
+                    mensaje: `Discrepancias en las columnas:\n` + discrepancias.join('\n')
+                };
+            }
+
+            return { esValido: true };
+        }
+
+        function verificarTiposDatos(rows) {
+            const errores = [];
+            rows.forEach((row, index) => {
+                if (typeof row[0] !== 'string') errores.push(`Fila ${index + 3}, Columna Nombre: se esperaba texto.`);
+                if (typeof row[1] !== 'string') errores.push(`Fila ${index + 3}, Columna Código: se esperaba texto.`);
+                if (typeof row[2] !== 'number') errores.push(`Fila ${index + 3}, Columna Créditos: se esperaba número.`);
+                if (typeof row[3] !== 'number') errores.push(`Fila ${index + 3}, Columna Horas Teoría: se esperaba número.`);
+                if (typeof row[4] !== 'number') errores.push(`Fila ${index + 3}, Columna Horas Práctica: se esperaba número.`);
+                if (typeof row[5] !== 'number') errores.push(`Fila ${index + 3}, Columna Ciclo: se esperaba número.`);
+                if (typeof row[6] !== 'string' || !['Presencial', 'Virtual'].includes(row[6])) errores.push(`Fila ${index + 3}, Columna Tipo Curso: se esperaba 'Presencial' o 'Virtual'.`);
+                if (typeof row[7] !== 'string') errores.push(`Fila ${index + 3}, Columna Plan de Estudio: se esperaba texto.`);
+            });
+            return errores;
+        }
+
         async function procesarArchivo(file) {
             var reader = new FileReader();
             reader.onload = async function (e) {
@@ -474,12 +545,25 @@
                 var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
                 var headers = jsonData[1];
+                var verificacion = verificarEstructuraColumnas(headers);
+
+                if (!verificacion.esValido) {
+                    Swal.fire('Error', verificacion.mensaje, 'error');
+                    return;
+                }
+
                 var rows = jsonData.slice(2);
+                var erroresTipos = verificarTiposDatos(rows);
+
+                if (erroresTipos.length > 0) {
+                    Swal.fire('Error', 'Errores en los tipos de datos:\n' + erroresTipos.join('\n'), 'error');
+                    return;
+                }
 
                 var formattedData = await Promise.all(rows.map(async (row, index) => {
                     var planEstudioNombre = row[headers.indexOf("Plan de Estudio")];
                     var idPlanEstudio = planEstudioMap[planEstudioNombre] || null;
-                    updateProgressBar(Math.round((index + 1) / rows.length * 100)); // Actualizar barra de progreso
+                    updateProgressBar(Math.round((index + 1) / rows.length * 100));
                     return {
                         nombre: row[headers.indexOf("Nombre")],
                         cod_curso: row[headers.indexOf("Código")],
@@ -660,7 +744,7 @@
                         Swal.fire('Éxito', 'El estado del curso ha sido actualizado.', 'success');
                         table.ajax.reload(function (json) {
                             console.log('Datos recargados después de la actualización:', json);
-                        }, false); // Recargar la tabla sin restablecer la paginación
+                        }, false);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -691,6 +775,4 @@
 
     });
 </script>
-
-
 {% endblock %}
