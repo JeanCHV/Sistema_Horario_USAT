@@ -36,9 +36,9 @@ import time
 import clases.usuario as clase_usuario
 import clases.persona as clase_persona
 
-#Algorithm 
-import algorithm.algorithm as algoritmo
-import algorithm.algorithm_pruebaJenkz as algoritmoJenkz
+# #Algorithm 
+# import algorithm.algorithm as algoritmo
+# import algorithm.algorithm_pruebaJenkz as algoritmoJenkz
 
 login_attempts = {}
 
@@ -169,12 +169,12 @@ def get_cant_grupos_semestre():
     grupos = controlador_grupo.get_cant_grupos_semestre()
     return jsonify(grupos)
 
+#GRUPO PINEDA
 
-
-
-
-
-
+@app.route('/obtener_grupo_por_id/<int:id_grupo>', methods=['GET'])
+def obtener_grupo_por_id(id_grupo):
+    resultado = controlador_grupo.obtener_grupo_por_id(id_grupo)
+    return jsonify(resultado)
 
 #AGREGAR AMBIENTE
 @app.route("/agregar_ambiente", methods=["POST"])
@@ -237,6 +237,19 @@ def modificar_ambiente_route():
 def get_ambiente(idambiente):
     resultado = controlador_ambientes.obtener_ambiente_por_id(idambiente)
     return jsonify(resultado)
+
+### CAMBIAR ESTADO CURSOS
+@app.route('/ambiente_estado', methods=['POST'])
+def ambiente_estado():
+    data = request.get_json()
+    idambiente = data.get('idambiente')
+    nuevo_estado = data.get('estado')
+
+    resultado = controlador_ambientes.cambiar_estado_ambiente(idambiente, nuevo_estado)
+    if "error" in resultado:
+        return jsonify({'error': resultado["error"]}), 500
+    else:
+        return jsonify({'mensaje': resultado["mensaje"]}), 200
 
 
 ##DATOS CURSOS
@@ -965,23 +978,23 @@ def eliminar_cursoAmbiente():
 
 
 
-#ALGORITHM
-@app.route('/generarHorario', methods=['GET'])
-def obtener_horarios():
-    try:
-        horario = algoritmo.algoritmo_genetico()
-        return jsonify(horario)
-    except Exception as e:
-        return jsonify({"error": str(e)})
+# #ALGORITHM
+# @app.route('/generarHorario', methods=['GET'])
+# def obtener_horarios():
+#     try:
+#         horario = algoritmo.algoritmo_genetico()
+#         return jsonify(horario)
+#     except Exception as e:
+#         return jsonify({"error": str(e)})
     
-# PRUEBA ALGORITMO - JENKZ
-@app.route('/generarHorario_Jenkz', methods=['GET'])
-def obtener_horariosJenkz():
-    try:
-        horario = algoritmoJenkz.algoritmo_genetico()
-        return jsonify(horario)
-    except Exception as e:
-        return jsonify({"error": str(e)})
+# # PRUEBA ALGORITMO - JENKZ
+# @app.route('/generarHorario_Jenkz', methods=['GET'])
+# def obtener_horariosJenkz():
+#     try:
+#         horario = algoritmoJenkz.algoritmo_genetico()
+#         return jsonify(horario)
+#     except Exception as e:
+#         return jsonify({"error": str(e)})
     
 
 
@@ -1024,7 +1037,81 @@ def horarios_por_ciclo():
     return render_template("horarios/horarios_por_ciclo.html",semestres=semestres,ciclos=ciclos)
 
 #DISPONIBILIDAD
-@app.route("/get_disponibilidad", methods=["GET"])
+# Ruta para obtener todas las disponibilidades
+@app.route('/get_disponibilidad', methods=['GET'])
 def get_disponibilidad():
-    disponibilidad = controlador_disponibilidad.get_disponibilidad()
-    return jsonify(disponibilidad)
+    disponibilidades = controlador_disponibilidad.get_disponibilidad()
+    return jsonify(disponibilidades)
+
+@app.route('/get_docente_sin_disponibilidad', methods=['GET'])
+def get_docente_sin_disponibilidad():
+    get_docente_sin_disponibilidad = controlador_disponibilidad.get_docente_sin_disponibilidad()
+    return jsonify(get_docente_sin_disponibilidad)
+
+# Ruta para agregar una nueva disponibilidad
+@app.route('/add_disponibilidad', methods=['POST'])
+def agregar_disponibilidad():
+    datos = request.json
+    idpersona = datos.get('idpersona')
+    dia = datos.get('dia')
+    hora_inicio = datos.get('hora_inicio')
+    hora_fin = datos.get('hora_fin')
+    
+    resultado = controlador_disponibilidad.agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
+    return jsonify(resultado)
+
+# Ruta para modificar una disponibilidad existente
+@app.route('/update_disponibilidad', methods=['PUT'])
+def modificar_disponibilidad():
+    datos = request.json
+    idpersona = datos.get('idpersona')
+    dia = datos.get('dia')
+    hora_inicio = datos.get('hora_inicio')
+    hora_fin = datos.get('hora_fin')
+    nuevo_dia = datos.get('nuevo_dia')
+    nueva_hora_inicio = datos.get('nueva_hora_inicio')
+    nueva_hora_fin = datos.get('nueva_hora_fin')
+    
+    resultado = controlador_disponibilidad.modificar_disponibilidad(idpersona, dia, hora_inicio, hora_fin, nuevo_dia, nueva_hora_inicio, nueva_hora_fin)
+    return jsonify(resultado)
+
+
+# Ruta para eliminar una disponibilidad
+@app.route('/eliminar_disponibilidad/<int:idpersona>', methods=['DELETE'])
+def eliminar_disponibilidad_por_idpersona(idpersona):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("DELETE FROM docente_disponibilidad WHERE idpersona = %s", (idpersona,))
+            conexion.commit()
+            return {"mensaje": "Disponibilidad eliminada correctamente"}
+    except Exception as e:
+        conexion.rollback()
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+
+# Ruta para obtener una disponibilidad por detalles específicos (idpersona, dia, hora_inicio, hora_fin)
+@app.route('/get_disponibilidad_by_id', methods=['GET'])
+def obtener_disponibilidad_por_id_route():
+    idpersona = request.args.get('idpersona')
+    dia = request.args.get('dia')
+    hora_inicio = request.args.get('hora_inicio')
+    hora_fin = request.args.get('hora_fin')
+
+    print(f"Recibido: idpersona={idpersona}, dia={dia}, hora_inicio={hora_inicio}, hora_fin={hora_fin}")  # Registro de los valores recibidos
+
+    resultado = controlador_disponibilidad.obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin)
+    return jsonify(resultado)
+
+
+@app.route('/docentes_disponibilidad', methods=['GET'])
+def obtener_disponibilidad():
+    try:
+        personas = controlador_disponibilidad.obtener_disponibilidad()
+        return jsonify(personas)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+

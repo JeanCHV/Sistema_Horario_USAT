@@ -90,12 +90,15 @@ CREATE TABLE incidencia (
   idError      int(10) NOT NULL, 
   idhorario    int(10) NOT NULL, 
   PRIMARY KEY (idincidencia));
-CREATE TABLE modificacion_tablas (
-  id_modificacion int(10) NOT NULL AUTO_INCREMENT comment 'Indentificador autoincremental de modificación', 
-  descripcion     varchar(255) comment 'Descripción del cambio modificación', 
-  tabla           varchar(255) NOT NULL comment 'Referencia a la tabla de la bd', 
-  idusuario       int(10) NOT NULL comment 'Identificador que referencia de la tabla usuario', 
-  PRIMARY KEY (id_modificacion));
+CREATE TABLE bitacora (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario VARCHAR(50),
+    accion VARCHAR(100),
+    tabla_afectada VARCHAR(50),
+    registro_afectado_id INT,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    detalles TEXT
+);
 CREATE TABLE persona (
   idpersona   int(10) NOT NULL AUTO_INCREMENT comment 'Identicador autoincremental de persona', 
   nombres     varchar(255) NOT NULL comment 'Nombre de persona', 

@@ -56,6 +56,20 @@ def dar_baja_ambiente(idambiente):
     finally:
         conexion.close()
 
+### CAMBIO ESTADOS
+
+def cambiar_estado_ambiente(idambiente, nuevo_estado):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("UPDATE ambiente SET estado = %s WHERE idambiente = %s", (nuevo_estado, idambiente))
+            conexion.commit()
+            return {"mensaje": "Estado del ambiente actualizado correctamente"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
 def eliminar_ambiente(idambiente):
     conexion = obtener_conexion()
     try:
