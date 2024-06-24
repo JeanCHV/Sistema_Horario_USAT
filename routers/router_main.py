@@ -1038,7 +1038,6 @@ def horarios_por_ciclo():
     return render_template("horarios/horarios_por_ciclo.html",semestres=semestres,ciclos=ciclos)
 
 #DISPONIBILIDAD
-<<<<<<< HEAD
 @app.route("/get_disponibilidad", methods=["GET"])
 def get_disponibilidad():
     disponibilidad = controlador_disponibilidad.get_disponibilidad()
@@ -1048,68 +1047,3 @@ def get_disponibilidad():
 def reporte_horas_html():
     reporte = controlador_reporte.obtener_reporte_horas()
     return render_template('reportes/reporte_horas.html', reporte=reporte)
-=======
-# Ruta para obtener todas las disponibilidades
-@app.route('/get_disponibilidad', methods=['GET'])
-def obtener_disponibilidades():
-    disponibilidades = controlador_disponibilidad.get_disponibilidad()
-    return jsonify(disponibilidades)
-
-# Ruta para agregar una nueva disponibilidad
-@app.route('/add_disponibilidad', methods=['POST'])
-def agregar_disponibilidad():
-    datos = request.json
-    idpersona = datos.get('idpersona')
-    dia = datos.get('dia')
-    hora_inicio = datos.get('hora_inicio')
-    hora_fin = datos.get('hora_fin')
-    
-    resultado = controlador_disponibilidad.agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
-    return jsonify(resultado)
-
-# Ruta para modificar una disponibilidad existente
-@app.route('/update_disponibilidad', methods=['PUT'])
-def modificar_disponibilidad():
-    datos = request.json
-    idpersona = datos.get('idpersona')
-    dia = datos.get('dia')
-    hora_inicio = datos.get('hora_inicio')
-    hora_fin = datos.get('hora_fin')
-    nuevo_dia = datos.get('nuevo_dia')
-    nueva_hora_inicio = datos.get('nueva_hora_inicio')
-    nueva_hora_fin = datos.get('nueva_hora_fin')
-    
-    resultado = controlador_disponibilidad.modificar_disponibilidad(idpersona, dia, hora_inicio, hora_fin, nuevo_dia, nueva_hora_inicio, nueva_hora_fin)
-    return jsonify(resultado)
-
-
-# Ruta para eliminar una disponibilidad
-@app.route('/eliminar_disponibilidad/<int:idpersona>', methods=['DELETE'])
-def eliminar_disponibilidad_por_idpersona(idpersona):
-    conexion = obtener_conexion()
-    try:
-        with conexion.cursor() as cursor:
-            cursor.execute("DELETE FROM docente_disponibilidad WHERE idpersona = %s", (idpersona,))
-            conexion.commit()
-            return {"mensaje": "Disponibilidad eliminada correctamente"}
-    except Exception as e:
-        conexion.rollback()
-        return {"error": str(e)}
-    finally:
-        conexion.close()
-
-
-# Ruta para obtener una disponibilidad por detalles específicos (idpersona, dia, hora_inicio, hora_fin)
-@app.route('/get_disponibilidad_by_id', methods=['GET'])
-def obtener_disponibilidad_por_id_route():
-    idpersona = request.args.get('idpersona')
-    dia = request.args.get('dia')
-    hora_inicio = request.args.get('hora_inicio')
-    hora_fin = request.args.get('hora_fin')
-
-    print(f"Recibido: idpersona={idpersona}, dia={dia}, hora_inicio={hora_inicio}, hora_fin={hora_fin}")  # Registro de los valores recibidos
-
-    resultado = controlador_disponibilidad.obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin)
-    return jsonify(resultado)
-
->>>>>>> ff8ed1eb097ed6cdcd0c0fb7207308a567e64bd8
