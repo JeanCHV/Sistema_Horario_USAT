@@ -33,7 +33,6 @@
         </div>
     </div>
 
-    
     <!-- MODAL AGREGAR DOCENTE -->
     <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-labelledby="modalDocenteLabel"
         aria-hidden="true">
@@ -55,7 +54,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="documentoDocente" class="form-label">Número de Documento:</label>
-                            <input type="text" class="form-control" id="documentoDocente" name="n_documento" required>
+                            <input type="text" class="form-control" id="documentoDocente" name="n_documento" maxlength="8" pattern="\d{8}" oninput="validarNumeroDocumento(this)" required>
+                            <div class="invalid-feedback">
+                                El número de documento debe tener exactamente 8 dígitos.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="telefonoDocente" class="form-label">Teléfono:</label>
@@ -109,7 +111,10 @@
                         <div class="mb-3">
                             <label for="modificarDocumentoDocente" class="form-label">Número de Documento:</label>
                             <input type="text" class="form-control" id="modificarDocumentoDocente" name="n_documento"
-                                required>
+                                maxlength="8" pattern="\d{8}" oninput="validarNumeroDocumento(this)" required>
+                            <div class="invalid-feedback">
+                                El número de documento debe tener exactamente 8 dígitos.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="modificarTelefonoDocente" class="form-label">Teléfono:</label>
@@ -125,7 +130,7 @@
                             <input type="number" class="form-control" id="modificarCantHoras" name="cantHoras" required>
                         </div>
                         <div class="mb-3">
-                            <label for="modificarTiempoRef" class="form-label">Tiempo de Referencia:</label>
+                            <label for="modificarTiempoRef" class="form-label">Tiempo de Refrigerio:</label>
                             <input type="number" class="form-control" id="modificarTiempoRef" name="tiempo_ref"
                                 required>
                         </div>
@@ -173,13 +178,24 @@
 </div>
 
 <script>
+    function validarNumeroDocumento(input) {
+        const regex = /^\d{0,8}$/;
+        if (!regex.test(input.value)) {
+            input.value = input.value.slice(0, -1);
+        }
+        if (input.value.length === 8) {
+            input.setCustomValidity('');
+        } else {
+            input.setCustomValidity('El número de documento debe tener exactamente 8 dígitos.');
+        }
+    }
+
     function updateProgressBar(percentage) {
         var progressBar = document.getElementById('progressBar');
         progressBar.style.width = percentage + '%';
         progressBar.setAttribute('aria-valuenow', percentage);
         progressBar.innerText = percentage + '%';
     }
-
 
     function descargarPlantilla() {
         const workbook = new ExcelJS.Workbook();
@@ -213,8 +229,7 @@
             saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'USAT_Docentes_Plantilla.xlsx');
         });
     }
-</script>
-<script>
+
     $(document).ready(function () {
         var docentes = [];
 
@@ -406,7 +421,6 @@
             reader.readAsArrayBuffer(file);
         }
 
-
         $('#btn_agregar_docente').click(function (e) {
             e.preventDefault();
             $('#modalAgregarDocente').modal('show');
@@ -544,8 +558,5 @@
         });
 
     });
-
-
 </script>
-
 {% endblock %}
