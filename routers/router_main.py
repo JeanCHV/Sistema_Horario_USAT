@@ -598,10 +598,6 @@ def cursos():
 def grupos():
     return render_template("dashboard/grupos.html")
 
-@app.route("/ambientesxCursos")
-def ambientesxCursos():
-    return render_template("dashboard/ambientesxcurso.html")
-
 @app.route("/disponibilidad")
 def disponibilidad():
     return render_template("dashboard/disponibilidad.html")
@@ -611,9 +607,6 @@ def rellenar_tabla(escuela,semestre):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
     cursos = controlador_grupo.obtener_cursoxescuela(escuela,id_semestre)
     return jsonify(cursos)
-
-
-
 
 @app.route('/mantenimiento_grupos', methods=['POST'])
 def mantenimiento_grupos():
@@ -1115,3 +1108,67 @@ def obtener_disponibilidad():
         return jsonify({'error': str(e)}), 500
 
 
+
+## CURSO AMBIENTE
+
+@app.route("/ambientesxCursos")
+def ambientesxCursos():
+    semestres = controlador_cursos.obtener_semestres()
+    escuelas = controlador_cursos.obtener_escuelas()
+    return render_template("dashboard/ambientesxcurso.html",semestres=semestres,escuelas=escuelas)
+
+@app.route("/obtener_ambientes_activos", methods=["GET"])
+def obtener_ambientes_activos():
+    ambiente = controlador_curso_ambiente.obtener_ambientes()
+    return jsonify(ambiente)
+
+@app.route('/obtener_cursos', methods=['GET'])
+def obtener_cursos():
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute('SELECT idcurso, nombre, ciclo FROM curso')
+            cursos = cursor.fetchall()
+        return jsonify(cursos)
+    except Exception as e:
+        print(f"Error al obtener cursos: {e}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conexion.close()
+
+@app.route('/asignar_ambientes', methods=['POST'])
+def asignar_ambientes():
+    data = request.json
+    idcurso = data['idcurso']
+    idambientes = data['idambientes']
+
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute('DELETE FROM curso_ambiente WHERE idcurso = %s', (idcurso,))
+            for idambiente in idambientes:
+                cursor.execute('INSERT INTO curso_ambiente (idcurso, idambiente) VALUES (%s, %s)', (idcurso, idambiente))
+
+        conexion.commit()
+    except Exception as e:
+        conexion.rollback()
+        print(f"Error al asignar ambientes: {e}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conexion.close()
+    
+    return jsonify({'success': True})
+
+@app.route('/tabla_curso_ambiente/<string:escuela>/<string:semestre>', methods=['GET'])
+def tabla_curso_ambiente(escuela, semestre):
+    id_semestre = controlador_grupo.obtener_idsemestre(semestre)
+    id_escuela = controlador_curso_docente.obtener_idescuela(escuela)
+    datos = controlador_curso_ambiente.obtener_cursos_con_ambientes(id_escuela, id_semestre)
+    return jsonify(datos)
+   
+@app.route('/obtenerAmbientesCurso/<int:idcurso>', methods=['GET'])
+def obtener_ambientes_curso_endpoint(idcurso):
+    ambientes = controlador_curso_ambiente.obtener_ambientes_curso(idcurso)
+    if "error" in ambientes:
+        return jsonify(ambientes), 500
+    return jsonify(ambientes)

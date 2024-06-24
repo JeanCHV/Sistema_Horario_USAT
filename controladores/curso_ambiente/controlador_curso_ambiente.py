@@ -112,3 +112,53 @@ def eliminar_cursoxambiente(idcurso, idambiente):
         return {"error": str(e)}
     finally:
         conexion.close()
+
+### NUEVO
+def obtener_cursos_con_ambientes(escuela, semestre):
+    conexion = obtener_conexion()
+    cursos = []
+    with conexion.cursor() as cursor:
+        cursor.execute('''
+                SELECT DISTINCT C.idcurso,
+       C.ciclo AS ciclo,
+       C.nombre AS cursos,
+       COALESCE(GROUP_CONCAT(DISTINCT A.nombre SEPARATOR ', '), 'No tiene ambiente asignado') AS ambientes
+        FROM curso C
+        LEFT JOIN curso_ambiente CA ON C.idcurso = CA.idcurso
+        LEFT JOIN ambiente A ON CA.idambiente = A.idambiente
+        LEFT JOIN grupo G ON G.idcurso = C.idcurso
+        LEFT JOIN plan_estudio PE ON PE.id_plan_estudio = C.id_plan_estudio
+        LEFT JOIN semestre_academico SA ON SA.idsemestre = G.idsemestre
+        LEFT JOIN escuela E ON E.id_escuela = PE.id_escuela
+        WHERE E.id_escuela = %s AND SA.idsemestre = %s
+        GROUP BY C.idcurso, C.ciclo, C.nombre
+        ''', (escuela, semestre))
+        column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+        rows = cursor.fetchall()
+        for row in rows:
+            curso_dict = dict(zip(column_names, row))  # Convertir cada fila en un diccionario
+            cursos.append(curso_dict)
+    conexion.close()
+    return cursos
+        
+def obtener_ambientes_curso(idcurso):
+    conexion = obtener_conexion()
+    ambientes = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+                SELECT A.idambiente, A.nombre
+                FROM curso_ambiente CA
+                INNER JOIN ambiente A ON A.idambiente = CA.idambiente
+                WHERE CA.idcurso = %s
+            """, (idcurso,))
+            resultados = cursor.fetchall()
+            for row in resultados:
+                ambientes.append({"idambiente": row[0], "nombre": row[1]})
+            return ambientes
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+
