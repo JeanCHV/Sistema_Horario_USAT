@@ -12,10 +12,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const columna_dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    combo_edificio.disabled = true;
 
     combo_edificio.addEventListener('change', fetchAmbientes);
     combo_ambiente.addEventListener('change', fetchHorarios);
-    combo_semestre.addEventListener('change', fetchHorarios);
+
+    combo_semestre.addEventListener('change', function() {
+        // Habilitar el combo de edificio solo si se ha seleccionado un semestre válido
+        if (combo_semestre.value !== "-1") {
+            combo_edificio.disabled = false;
+        } else {
+            combo_edificio.disabled = true;
+        }
+        fetchHorarios();
+    });
+
+    combo_edificio.addEventListener('change', function() {
+        // Habilitar el combo de ambiente solo si se ha seleccionado un edificio válido
+        if (combo_edificio.value !== "-1") {
+            combo_ambiente.disabled = false;
+        } else {
+            combo_ambiente.disabled = true;
+        }
+        fetchHorarios();    
+    });
 
     let ambientesMap = {};
 
