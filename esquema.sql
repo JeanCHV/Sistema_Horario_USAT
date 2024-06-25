@@ -38,7 +38,8 @@ CREATE TABLE docente_disponibilidad (
   dia         varchar(255) NOT NULL comment 'Identificador de día por semana', 
   hora_inicio time(8) NOT NULL comment 'Hora de inicio donde tiene disponibilidad', 
   hora_fin    time(8) NOT NULL comment 'Hora de fin donde termina sus disponibilidad', 
-  idpersona   int(10) NOT NULL comment 'Identificador que se referencia de la tabla persona  ');
+  idpersona   int(10) NOT NULL comment 'Identificador que se referencia de la tabla persona  '),
+  id_disponibilidad_docente int(10) NOT NULL AUTO_INCREMENT PRIMARY KEY
 CREATE TABLE edificio (
   idedificio  int(10) NOT NULL AUTO_INCREMENT comment 'Identificador auto incremental de la tabla edificio', 
   nombre      varchar(255) NOT NULL comment 'Nombre del Edificio', 
