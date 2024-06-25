@@ -4,7 +4,7 @@ from flask import request, session, redirect, url_for,jsonify
 #Algorithm 
 import algorithm.algorithm as algoritmo
 import algorithm.algorithm_pruebaJenkz as algoritmoJenkz
-
+import controladores.controlador_horario as controlador_horario
 
 #ALGORITHM
 @app.route('/generarHorario', methods=['GET'])
@@ -23,3 +23,13 @@ def obtener_horariosJenkz():
         return jsonify(horario)
     except Exception as e:
         return jsonify({"error": str(e)})
+
+@app.route("/insertar_horarios_ia", methods=["POST"])
+def insertar_horarios_ia():
+    data = request.get_json()
+    horarios = data.get('horarios')
+    if not horarios:
+        return jsonify({"error": "No se proporcionaron horarios"}), 400
+    
+    resultado = controlador_horario.insertar_horarios_ia(horarios)
+    return jsonify(resultado)

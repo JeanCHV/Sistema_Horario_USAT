@@ -3,30 +3,28 @@ $(document).ready(function () {
     var cursos = [];
     var semestres = [];
     var table = $('#tabla-grupo').DataTable({
-        "paging": false,
-        "info": true,
-        "responsive": true,
-        "autoWidth": true,
-        "stateSave": true,
-        "scrollY": "510px",
-        "columns": [
-            { "data": "nombre", "className": 'dt-body-center' },
-            { "data": "vacantes", "className": 'dt-body-center' },
+        paging: false,
+        info: true,
+        responsive: true,
+        autoWidth: true,
+        stateSave: true,
+        scrollY: "510px",
+        columns: [
+            { data: "nombre", className: 'dt-body-center' },
+            { data: "vacantes", className: 'dt-body-center' },
             {
-                "data": "curso",
-                "render": function (data, type, row) {
+                data: "curso",
+                render: function (data, type, row) {
                     return cursos[data] || data;
                 }
             },
-            { "data": "descripcion", "className": 'dt-body-center' },
+            { data: "descripcion", className: 'dt-body-center' },
             {
-                "data": null, "className": 'dt-body-center',
-                "render": function (data, type, row) {
+                data: null, className: 'dt-body-center',
+                render: function (data, type, row) {
                     return `
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-warning btn-sm btnModificar me-2" data-id_grupo="${row.id_grupo}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="btn btn-warning btn-sm btnModificar" data-id_grupo="${row.id_grupo}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
                         <button class="btn btn-danger btn-sm btnEliminar" data-id_grupo="${row.id_grupo}" title="Eliminar"><i class="fas fa-times"></i></button>
-                    </div>
                     `;
                 }
             }
@@ -117,7 +115,7 @@ $(document).ready(function () {
             contentType: 'application/json',
             success: function (response) {
                 semestres = response;
-                var select = $('#modificarSemestre, #agregarSemestre');
+                var select = $('#agregarSemestre, #modificarSemestre');
                 select.empty();
                 response.forEach(function (semestre) {
                     select.append($('<option>', {
@@ -162,7 +160,7 @@ $(document).ready(function () {
                 if (response.error) {
                     $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
                 } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Curso agregado correctamente');
+                    $('#mensajeResultado').addClass('alert alert-success').text('Grupo agregado correctamente');
                     $('#modalAgregarGrupo').modal('hide');
                     cargarGrupos();
                 }
@@ -174,7 +172,7 @@ $(document).ready(function () {
         });
     });
 
-    $('#formModificarGrupos').submit(function (e) {
+    $('#formModificarGrupo').submit(function (e) { // Cambié aquí de 'formModificarGrupos' a 'formModificarGrupo'
         e.preventDefault();
         var data = {
             id_grupo: $('#id_grupo').val(),
@@ -194,12 +192,12 @@ $(document).ready(function () {
                     Swal.fire('Error', response.error, 'error');
                 } else {
                     Swal.fire('Éxito', 'Grupo modificado correctamente', 'success');
-                    table.ajax.reload();
+                    cargarGrupos(); // Cambié de 'table.ajax.reload();' a 'cargarGrupos();'
                     $('#modalModificarGrupo').modal('hide');
                 }
-                $('#mensajeResultado').show();
             },
             error: function (xhr, status, error) {
+                Swal.fire('Error', 'Hubo un error al modificar el grupo', 'error');
                 console.log(error);
             }
         });
@@ -207,24 +205,27 @@ $(document).ready(function () {
 
     $('#tabla-grupo tbody').on('click', '.btnModificar', function () {
         var id = $(this).data('id_grupo');
-        console.log("ID del grupo a modificar:", id);
         $.ajax({
             url: '/obtener_grupo_por_id/' + id,
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
-                console.log("Datos del grupo recibidos:", response); // Registro de depuración
-                var grupo = response;
-                if (grupo.error) {
-                    console.error(grupo.error);
-                } else {
-                    $('#id_grupo').val(grupo.id_grupo);
-                    $('#nombre').val(grupo.nombre);
-                    $('#vacantes').val(grupo.vacantes);
-                    $('#idcurso').val(grupo.idcurso);
-                    $('#idsemestre').val(grupo.idsemestre);
-                    $('#modalModificarGrupo').modal('show');
+                if (response.error) {
+                    console.log(response.error);
+                    return;
                 }
+
+                var grupo = response;
+                $('#modificarIdGrupo').val(grupo.id_grupo);
+                $('#modificarNombre').val(grupo.nombre);
+                $('#modificarVacantes').val(grupo.vacantes);
+
+                // Cargar cursos y semestres antes de mostrar el modal
+                $.when(cargarCursos(), cargarSemestres()).done(function () {
+                    $('#modificarCurso').val(grupo.idcurso);
+                    $('#modificarSemestre').val(grupo.idsemestre);
+                    $('#modalModificarGrupo').modal('show');
+                });
             },
             error: function (xhr, status, error) {
                 console.log(error);
@@ -235,13 +236,13 @@ $(document).ready(function () {
     $('#tabla-grupo tbody').on('click', '.btnEliminar', function () {
         var id = $(this).data('id_grupo');
         Swal.fire({
-            title: '¿Estás seguro?',
-            text: "No podrás revertir esta acción.",
+            title: '¿Estás seguro de que deseas eliminar este grupo?',
+            text: "Esta acción no se puede deshacer.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminarlo!',
+            confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -267,41 +268,5 @@ $(document).ready(function () {
                 });
             }
         });
-    });
-
-    cargarCursos();
-    cargarSemestres();
-
-    function cargarCursosEnFiltro() {
-        $.ajax({
-            url: '/obtener_cursos',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                var select = $('#filtro_cursos');
-                select.empty();
-                select.append($('<option>', { value: '', text: 'Todos los cursos' }));
-                response.forEach(function (curso) {
-                    select.append($('<option>', {
-                        value: curso.idcurso,
-                        text: curso.nombre
-                    }));
-                    cursos[curso.idcurso] = curso.nombre;
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log('Error al cargar los cursos:', error);
-            }
-        });
-    }
-    cargarCursosEnFiltro();
-
-    $('#filtro_cursos').on('change', function () {
-        var filtro = $(this).val();
-        if (filtro) {
-            table.column(2).search(cursos[filtro]).draw();
-        } else {
-            table.column(2).search('').draw();
-        }
     });
 });

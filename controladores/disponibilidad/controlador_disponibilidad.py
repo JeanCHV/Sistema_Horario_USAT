@@ -154,3 +154,28 @@ WHERE p.tipopersona = 'D' AND dd.idpersona IS NULL;
         conexion.close()
 
     return docentes
+
+def asignar_disponibilidad_docente(tipo, dia, hora_inicio, hora_fin, idpersona):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_disponibilidad_Gestion', [tipo, dia, hora_inicio, hora_fin, idpersona])
+            conexion.commit()
+            return {"mensaje": f"Operación {tipo} realizada correctamente para el docente {idpersona} en el día {dia}"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def obtener_id_persona(nombre_docente):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT idpersona FROM docentes WHERE nombre_completo = %s", (nombre_docente,))
+            result = cursor.fetchone()
+            return result['idpersona'] if result else None
+    except Exception as e:
+        print({"error": str(e)})
+    finally:
+        conexion.close()
+

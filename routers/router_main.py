@@ -127,6 +127,12 @@ def get_docentes_activos():
     docentes_activos = controlador_docente.get_docentes_activos()
     return jsonify(docentes_activos)
 
+
+@app.route("/docentes_validar_horas", methods=["GET"])
+def docentes_validar_horas():
+    docentes_validar_horas = controlador_docente.docentes_validar_horas()
+    return jsonify(docentes_validar_horas)
+
 @app.route("/get_ambientes_disponibles", methods=["GET"])
 def get_ambientes_disponibles():
     ambientes_activos = controlador_ambientes.get_ambientes_disponibles()
@@ -268,16 +274,6 @@ def get_ambiente_semestre():
     nombre = request.json.get('nombre')
     semestre = controlador_ambientes.obtener_ambiente_semestre(nombre)
     return jsonify(semestre)
-
-@app.route("/insertar_horarios_ia", methods=["POST"])
-def insertar_horarios_ia():
-    data = request.get_json()
-    horarios = data.get('horarios')
-    if not horarios:
-        return jsonify({"error": "No se proporcionaron horarios"}), 400
-    
-    resultado = controlador_horario.insertar_horarios_ia(horarios)
-    return jsonify(resultado)
 
 ##VER DETALLES CURSOS
 
@@ -598,10 +594,6 @@ def cursos():
 def grupos():
     return render_template("dashboard/grupos.html")
 
-@app.route("/ambientesxCursos")
-def ambientesxCursos():
-    return render_template("dashboard/ambientesxcurso.html")
-
 @app.route("/disponibilidad")
 def disponibilidad():
     return render_template("dashboard/disponibilidad.html")
@@ -611,9 +603,6 @@ def rellenar_tabla(escuela,semestre):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
     cursos = controlador_grupo.obtener_cursoxescuela(escuela,id_semestre)
     return jsonify(cursos)
-
-
-
 
 @app.route('/mantenimiento_grupos', methods=['POST'])
 def mantenimiento_grupos():
@@ -661,10 +650,6 @@ def docentes():
     except Exception as e:
         return str(e), 500
     
-@app.route("/docentesxcursos")
-def docentesxcursos():
-    return render_template("dashboard/docentexcurso.html")
-
 @app.route("/horarios")
 def horarios():
     persona = controlador_docente.obtener_docentes()
@@ -907,21 +892,6 @@ def curso_prensencial():
     return jsonify(curso_prensencial)
 
 
-@app.route("/guardar_docentes_curso", methods=["POST"])
-def api_guardar_docentes_curso():
-    data = request.get_json()
-    curso_id = data.get('curso')
-    docentes = data.get('docentes')
-
-    if not curso_id or not docentes:
-        return jsonify({'status': 'error', 'message': 'Curso y docentes son requeridos'}), 400
-
-    result = controlador_curso_docente.guardar_docentes_curso(curso_id, docentes)
-    if result['status'] == 'success':
-        return jsonify(result), 200
-    else:
-        return jsonify(result), 500
-
 ## ACTUALIZAR DOCENTE CURSO
 @app.route("/actualizar_docentes_curso", methods=["POST"])
 def api_actualizar_docentes_curso():
@@ -1115,3 +1085,135 @@ def obtener_disponibilidad():
         return jsonify({'error': str(e)}), 500
 
 
+
+###CURSO X DOCENTE
+
+@app.route("/docentesxcursos")
+def docentesxcursos():
+    semestres = controlador_cursos.obtener_semestres()
+    escuelas = controlador_cursos.obtener_escuelas()
+    return render_template("dashboard/docentexcurso.html", semestres=semestres , escuelas=escuelas)
+
+
+@app.route("/tabla_curso_docente/<string:escuela>/<string:semestre>")
+def tabla_curso_docente(escuela,semestre):
+    id_semestre = controlador_grupo.obtener_idsemestre(semestre)
+    id_escuela = controlador_curso_docente.obtener_idescuela(escuela)
+    datos = controlador_curso_docente.datosCursoxDocente(id_escuela,id_semestre)
+    return jsonify(datos)
+
+@app.route('/asignar_docentes', methods=['POST'])
+def asignar_docentes():
+    data = request.json
+    grupoId = data['grupoId']
+    docentes = data['docentes']
+    eliminados = data['eliminados']
+    
+    success, error = controlador_curso_docente.asignar_docentes_a_grupo(grupoId, docentes, eliminados)
+    
+    if success:
+        return jsonify({'success': True})
+    else:
+        return jsonify({'error': error}), 500
+
+@app.route('/obtenerDocentesGrupo/<int:id_grupo>', methods=['GET'])
+def obtenerDocentesGrupo(id_grupo):
+    datos = controlador_curso_docente.obtenerDocentesporGrupo(id_grupo)    
+    return jsonify(datos)
+
+## CURSO AMBIENTE
+
+@app.route("/ambientesxCursos")
+def ambientesxCursos():
+    semestres = controlador_cursos.obtener_semestres()
+    escuelas = controlador_cursos.obtener_escuelas()
+    return render_template("dashboard/ambientesxcurso.html",semestres=semestres,escuelas=escuelas)
+
+@app.route("/obtener_ambientes_activos", methods=["GET"])
+def obtener_ambientes_activos():
+    ambiente = controlador_curso_ambiente.obtener_ambientes()
+    return jsonify(ambiente)
+
+@app.route('/obtener_cursos', methods=['GET'])
+def obtener_cursos():
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute('SELECT idcurso, nombre, ciclo FROM curso')
+            cursos = cursor.fetchall()
+        return jsonify(cursos)
+    except Exception as e:
+        print(f"Error al obtener cursos: {e}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conexion.close()
+
+@app.route('/asignar_ambientes', methods=['POST'])
+def asignar_ambientes():
+    data = request.json
+    idcurso = data['idcurso']
+    idambientes = data['idambientes']
+
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute('DELETE FROM curso_ambiente WHERE idcurso = %s', (idcurso,))
+            for idambiente in idambientes:
+                cursor.execute('INSERT INTO curso_ambiente (idcurso, idambiente) VALUES (%s, %s)', (idcurso, idambiente))
+
+        conexion.commit()
+    except Exception as e:
+        conexion.rollback()
+        print(f"Error al asignar ambientes: {e}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conexion.close()
+    
+    return jsonify({'success': True})
+
+@app.route('/tabla_curso_ambiente/<string:escuela>/<string:semestre>', methods=['GET'])
+def tabla_curso_ambiente(escuela, semestre):
+    id_semestre = controlador_grupo.obtener_idsemestre(semestre)
+    id_escuela = controlador_curso_docente.obtener_idescuela(escuela)
+    datos = controlador_curso_ambiente.obtener_cursos_con_ambientes(id_escuela, id_semestre)
+    return jsonify(datos)
+   
+@app.route('/obtenerAmbientesCurso/<int:idcurso>', methods=['GET'])
+def obtener_ambientes_curso_endpoint(idcurso):
+    ambientes = controlador_curso_ambiente.obtener_ambientes_curso(idcurso)
+    if "error" in ambientes:
+        return jsonify(ambientes), 500
+    return jsonify(ambientes)
+
+@app.route('/eliminar_ambientes_curso/<int:idcurso>', methods=['DELETE'])
+def eliminar_ambientes_curso_route(idcurso):
+    resultado = controlador_curso_ambiente.eliminar_ambientes_curso(idcurso)
+    if 'error' in resultado:
+        return jsonify(resultado), 500
+    return jsonify(resultado)
+
+
+@app.route('/asignar_disponibilidad_excel', methods=['POST'])
+def asignar_disponibilidad_excel():
+    data = request.get_json()
+    conexion = obtener_conexion()
+    resultados = []
+
+    try:
+        for item in data:
+            idpersona = controlador_disponibilidad.obtener_id_persona(item['docente'])
+            if not idpersona:
+                resultados.append({"error": f"No se encontró el docente: {item['docente']}"})
+                continue
+            
+            try:
+                with conexion.cursor() as cursor:
+                    cursor.callproc('sp_disponibilidad_Gestion', [1, item['dia'], item['hora_inicio'], item['hora_fin'], idpersona])
+                    conexion.commit()
+                    resultados.append({"mensaje": f"Disponibilidad agregada correctamente para {item['docente']}"})
+            except Exception as e:
+                resultados.append({"error": str(e)})
+    finally:
+        conexion.close()
+
+    return jsonify(resultados)
