@@ -194,18 +194,18 @@ $(document).ready(function () {
             }
         ],
         columns: [
-            { data: "nombre" },
-            { data: "vacantes" },
-            { data: "curso" },
-            { data: "descripcion" },
+            { data: "nombre", "className": "dt-center" },
+            { data: "vacantes", "className": "" },
+            { data: "curso", "className": "dt-left" },
+            { data: "descripcion", "className": "dt-center" },
             {
                 data: null,
                 defaultContent: "<button class='btn btn-warning' title='Modificar'><i class='fas fa-pencil-alt'></i></button> <button class='btn btn-danger' title='Eliminar'><i class='fas fa-times'></i></button>"
             },
         ],
-        columnDefs: [
-            { "className": "dt-center", "targets": "_all" }
-        ],
+        // columnDefs: [
+        //     { "className": "dt-center", "targets": "_all" }
+        // ],
         language: {
             url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
         }
