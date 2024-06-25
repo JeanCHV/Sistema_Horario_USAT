@@ -654,10 +654,6 @@ def docentes():
     except Exception as e:
         return str(e), 500
     
-@app.route("/docentesxcursos")
-def docentesxcursos():
-    return render_template("dashboard/docentexcurso.html")
-
 @app.route("/horarios")
 def horarios():
     persona = controlador_docente.obtener_docentes()
@@ -900,21 +896,6 @@ def curso_prensencial():
     return jsonify(curso_prensencial)
 
 
-@app.route("/guardar_docentes_curso", methods=["POST"])
-def api_guardar_docentes_curso():
-    data = request.get_json()
-    curso_id = data.get('curso')
-    docentes = data.get('docentes')
-
-    if not curso_id or not docentes:
-        return jsonify({'status': 'error', 'message': 'Curso y docentes son requeridos'}), 400
-
-    result = controlador_curso_docente.guardar_docentes_curso(curso_id, docentes)
-    if result['status'] == 'success':
-        return jsonify(result), 200
-    else:
-        return jsonify(result), 500
-
 ## ACTUALIZAR DOCENTE CURSO
 @app.route("/actualizar_docentes_curso", methods=["POST"])
 def api_actualizar_docentes_curso():
@@ -1108,6 +1089,41 @@ def obtener_disponibilidad():
         return jsonify({'error': str(e)}), 500
 
 
+
+###CURSO X DOCENTE
+
+@app.route("/docentesxcursos")
+def docentesxcursos():
+    semestres = controlador_cursos.obtener_semestres()
+    escuelas = controlador_cursos.obtener_escuelas()
+    return render_template("dashboard/docentexcurso.html", semestres=semestres , escuelas=escuelas)
+
+
+@app.route("/tabla_curso_docente/<string:escuela>/<string:semestre>")
+def tabla_curso_docente(escuela,semestre):
+    id_semestre = controlador_grupo.obtener_idsemestre(semestre)
+    id_escuela = controlador_curso_docente.obtener_idescuela(escuela)
+    datos = controlador_curso_docente.datosCursoxDocente(id_escuela,id_semestre)
+    return jsonify(datos)
+
+@app.route('/asignar_docentes', methods=['POST'])
+def asignar_docentes():
+    data = request.json
+    grupoId = data['grupoId']
+    docentes = data['docentes']
+    eliminados = data['eliminados']
+    
+    success, error = controlador_curso_docente.asignar_docentes_a_grupo(grupoId, docentes, eliminados)
+    
+    if success:
+        return jsonify({'success': True})
+    else:
+        return jsonify({'error': error}), 500
+
+@app.route('/obtenerDocentesGrupo/<int:id_grupo>', methods=['GET'])
+def obtenerDocentesGrupo(id_grupo):
+    datos = controlador_curso_docente.obtenerDocentesporGrupo(id_grupo)    
+    return jsonify(datos)
 
 ## CURSO AMBIENTE
 

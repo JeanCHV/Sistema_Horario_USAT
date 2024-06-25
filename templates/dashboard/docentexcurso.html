@@ -1,31 +1,56 @@
 {% extends "dashboard/index.html" %}
+
 {% block titulo %} Docente por Cursos {% endblock %}
+
 {% block contenido %}
+
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
-        <li class="breadcrumb-item active"><a href="{{ url_for('docentesxcursos') }}">Asignar Docentes por Cursos</a>
-        </li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('docentesxcursos') }}">Asignar Docentes por Cursos</a></li>
     </ol>
 </nav>
-
 <div class="container-fluid my-4">
-    <div class="card w-100">
-        <div class="card-header bg-red-usat text-white">
-            Asignar Docentes por Cursos
+    <div class="card w-500" id="card_cursos">
+        <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            Docentes por curso
         </div>
+        <div class="ms-4 mt-3">
+            <!-- Semestre -->
+            <div class="d-flex mb-3 mt-3">
+                <label for="" class="mb-2 mt-2" style="width: 8%;">Semestre:</label>
+                <select class="form-select" aria-label="Default select example" id="semestre">
+                    <option selected disabled>-----Seleccione un semestre-----</option>
+                    {% for semestre in semestres %}
+                    <option>{{ semestre[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Escuelas -->
+            <div class="d-flex mb-3 me-4 mt-3">
+                <label for="" class="mb-2 mt-2" style="width: 8%;">Escuela:</label>
+                <select class="form-select" aria-label="Default select example" id="escuela">
+                    <option selected disabled>-----Seleccione una escuela-----</option>
+                    {% for escuela in escuelas %}
+                    <option>{{ escuela[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <hr class="border-black" style="margin-bottom: 0%;">
         <div class="card-body">
-            <div class="table-responsive">
-                <table id="tabla-cursoxdocentes" class="table table-striped tabla-cursoxdocentes" style="width:100%">
+            <div class="table-responsive" id="miTabla">
+                <table class="table table-striped table-bordered tabla-cursos" style="width:100%" id="tabla-cursos">
                     <thead>
                         <tr>
-                            <th style="width:40%; text-align: center">Curso</th>
-                            <th style="width:20%; text-align: center">Docente</th>
-                            <th style="width:4%; text-align: center">Opciones</th>
+                            <th style="text-align:center">Ciclo</th>
+                            <th style="text-align:center">Nombre del Curso</th>
+                            <th style="text-align:center">Grupo</th>
+                            <th style="text-align:center">Docente(s)</th>
+                            <th style="text-align:center">Opciones</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Los datos de los cursos se cargarán dinámicamente aquí -->
+                    <tbody id="cuerpo_tabla">
                     </tbody>
                 </table>
             </div>
@@ -33,171 +58,168 @@
     </div>
 </div>
 
-<!-- Modal para la subida masiva de datos -->
-<div class="modal fade" id="modalSubidaMasiva" tabindex="-1" aria-labelledby="modalSubidaMasivaLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
+<!-- Modal para la asignación de docentes -->
+<div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="modalAsignacionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalSubidaMasivaLabel">Subida Masiva de Datos</h5>
+                <h5 class="modal-title" id="modalAsignacionLabel">Asignar docente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formSubidaMasiva" enctype="multipart/form-data">
+                <form id="formAsignacionDocente">
                     <div class="mb-3">
-                        <label for="archivo" class="form-label">Seleccionar archivo (Excel):</label>
-                        <input type="file" class="form-control" id="archivo" name="archivo" accept=".xls,.xlsx"
-                            required>
+                        <label for="buscarDocente" class="form-label">Buscar docente:</label>
+                        <input type="text" class="form-control" id="buscarDocente" placeholder="Escriba para buscar...">
+                        <ul id="sugerenciasDocente" class="list-group" style="position: absolute; z-index: 1000;"></ul>
                     </div>
-                    <div class="progress mb-3" style="height: 25px;">
-                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;"
-                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div class="mb-3">
+                        <label for="docentesSeleccionados" class="form-label">Seleccionados:</label>
+                        <div id="docentesSeleccionados" class="form-control" style="height: auto;">
+                            <!-- Los docentes seleccionados se mostrarán aquí -->
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Subir</button>
+                    <input type="hidden" id="grupoIdSeleccionado" name="grupoIdSeleccionado">
                 </form>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para agregar o modificar un docentexcurso -->
-<div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="modalAsignacionLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalAsignacionLabel">Asignación de Curso y Docentes</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <!-- Sección para el curso -->
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="modal-title" id="modalCursoLabel">Seleccionar Curso</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table id="tabla-curso" class="table table-striped table-bordered"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th style="text-align:center;">Nombre del Curso</th>
-                                                <th style="text-align:center;">Código</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Los datos de los cursos se cargarán dinámicamente aquí -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Sección para los docentes -->
-                    <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="modal-title" id="modalDocentesLabel">Seleccionar Docentes</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table id="tabla-docente" class="table table-striped table-bordered"
-                                        style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:5%; text-align:center;">
-                                                    <input type="checkbox" id="select-all">
-                                                </th>
-                                                <th style="text-align:center;">Nombre</th>
-                                                <th style="text-align:center;">Correo</th>
-                                                <th style="text-align:center;">Teléfono</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Los datos de los docentes se cargarán dinámicamente aquí -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <input type="hidden" id="cursoIdSeleccionado">
-
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" id="guardarAsignacion" class="btn btn-primary"
-                    data-bs-dismiss="modal">Guardar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarAsignacion">Guardar</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function updateProgressBar(percentage) {
-        var progressBar = document.getElementById('progressBar');
-        progressBar.style.width = percentage + '%';
-        progressBar.setAttribute('aria-valuenow', percentage);
-        progressBar.innerText = percentage + '%';
-    }
+$(document).ready(function () {
+        var docentesSeleccionados = [];
+        var listaDocentes = [];
+        var docentesEliminados = [];
 
-    function descargarPlantilla() {
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Plantilla');
-
-        // Añadir el título
-        const titleRow = worksheet.addRow(['USAT - Docentes Cursos']);
-        worksheet.mergeCells('A1', 'B1');
-        titleRow.font = { bold: true, size: 14 };
-        titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
-        worksheet.getRow(1).height = 20;
-
-        // Añadir las cabeceras
-        const headerRow = worksheet.addRow(['Curso', 'Docente']);
-        headerRow.font = { bold: false };
-        headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
-
-        // Ajustar el ancho de las columnas
-        worksheet.columns = [
-            { key: 'curso', width: 20 },
-            { key: 'docente', width: 10 }
-        ];
-
-        // Generar y guardar el archivo
-        workbook.xlsx.writeBuffer().then(function (buffer) {
-            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'USAT_DocenteCurso_Plantilla.xlsx');
+        $.ajax({
+            url: '/obtener_docentes_activos',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                listaDocentes = response;
+            },
+            error: function (xhr, status, error) {
+                console.log('Error al obtener la lista de docentes:', error);
+            }
         });
-    }
 
-    $(document).ready(function () {
-        // Inicializar DataTable para la tabla de cursos por ambientes
-        var table = $('#tabla-cursoxdocentes').DataTable({
+        $('#buscarDocente').on('input', function () {
+            var query = $(this).val().toLowerCase();
+            var sugerencias = listaDocentes.filter(function (docente) {
+                return docente.nombre.toLowerCase().includes(query);
+            });
+            mostrarSugerencias(sugerencias);
+        });
+
+        function mostrarSugerencias(sugerencias) {
+            var contenedorSugerencias = $('#sugerenciasDocente');
+            contenedorSugerencias.empty();
+            sugerencias.forEach(function (docente) {
+                contenedorSugerencias.append(`<li class="list-group-item list-group-item-action" data-id="${docente.idpersona}">${docente.nombre}</li>`);
+            });
+        }
+
+        $('#sugerenciasDocente').on('click', 'li', function () {
+            var id = $(this).data('id');
+            var nombre = $(this).text();
+            if (!docentesSeleccionados.find(doc => doc.id === id)) {
+                docentesSeleccionados.push({ id: id, nombre: nombre });
+                actualizarDocentesSeleccionados();
+            }
+            $('#buscarDocente').val('');
+            $('#sugerenciasDocente').empty();
+        });
+
+        function actualizarDocentesSeleccionados() {
+            var container = $('#docentesSeleccionados');
+            container.empty();
+            if (docentesSeleccionados.length === 0) {
+                container.append('<p class="placeholder-text">No tiene docente asignado</p>');
+            } else {
+                docentesSeleccionados.forEach(function (doc) {
+                    container.append(`
+                        <div class="docente-tag">
+                            ${doc.nombre}
+                            <span class="remove-tag" data-id="${doc.id}">&times;</span>
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        $('#docentesSeleccionados').on('click', '.remove-tag', function () {
+            var id = $(this).data('id');
+            var nombre = $(this).parent().text().slice(0, -1);
+            docentesSeleccionados = docentesSeleccionados.filter(function (doc) {
+                return doc.id !== id;
+            });
+            docentesEliminados.push({ id: id, nombre: nombre });
+            actualizarDocentesSeleccionados();
+        });
+
+        $('#guardarAsignacion').on('click', function () {
+            var grupoId = $('#grupoIdSeleccionado').val();
+            var docentes = docentesSeleccionados.map(doc => doc.id);
+
+            $.ajax({
+                url: '/asignar_docentes',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ grupoId: grupoId, docentes: docentes, eliminados: docentesEliminados.map(doc => doc.id) }),
+                success: function (response) {
+                    $('#modalAsignacion').modal('hide');
+                    rellenarTablaCursos($('#escuela').val(), $('#semestre').val());
+                    docentesEliminados = [];  
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al asignar docentes:', error);
+                }
+            });
+        });
+
+        $('#tabla-cursos tbody').on('click', '.btnAsignar', function () {
+            var grupoId = $(this).data('id');
+            var cursoNombre = $(this).data('curso');
+            $('#modalAsignacionLabel').text(`Asignar docente para ${cursoNombre}`);
+            $('#grupoIdSeleccionado').val(grupoId);
+            cargarDocentesAsignados(grupoId);
+            $('#modalAsignacion').modal('show');
+        });
+
+        function cargarDocentesAsignados(grupoId) {
+            $.ajax({
+                url: `/obtenerDocentesGrupo/${grupoId}`,
+                type: 'GET',
+                success: function (response) {
+                    docentesSeleccionados = response.map(doc => ({ id: doc.idpersona, nombre: doc.nombre }));
+                    actualizarDocentesSeleccionados();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al cargar los docentes asignados:', error);
+                }
+            });
+        }
+
+        $('#modalAsignacion').on('show.bs.modal', function (event) {
+            $('#buscarDocente').val('');
+            $('#sugerenciasDocente').empty();
+        });
+
+        var table = $('#tabla-cursos').DataTable({
             paging: false,
             info: false,
-            responsive: true,
             autoWidth: true,
+            responsive: true,
+            scroller: true,
+            scrollY: '200px',
             searching: true,
-            scrollY: "510px",
-            "ajax": {
-                "url": "/obtener_cursos_docentes",
-                "type": "GET",
-                "dataSrc": ""
-            },
-            "columns": [
-                { "data": "nombreCurso" },
-                { "data": "nombreDocente" },
-                {
-                    "data": null, "className": 'dt-body-center',
-                    "render": function (data, type, row) {
-                        return `
-                    <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idcurso}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
-                    <button class="btn btn-danger btn-sm btnEliminar" data-iddocente="${row.idpersona}" data-idcurso="${row.idcurso}" data-nombreDocente="${row.nombreDocente}" data-nombreCurso="${row.nombreCurso}" title="Eliminar"><i class="fas fa-times"></i></button>
-                `;
-                    }
-                }
-            ],
+            processing: true,
+            serverSide: false,
             dom: 'Bfrtip',
             buttons: [
                 {
@@ -255,412 +277,58 @@
                         }
                     ]
                 },
+            ],
+            columns: [
+                { data: "ciclo", className: "text-center id" },
+                { data: "curso" },
+                { data: "grupo", className: "text-center" },
                 {
-                    text: '<i class="fas fa-plus"></i> Realizar Asignación',
-                    text: '<i class="fas fa-plus"></i> Realizar Asignación',
-                    className: 'btn_agregar_ambiente',
-                    action: function (e) {
-                        e.preventDefault();
-
-                        // Reiniciar selección de cursos y docentes al abrir el modal
-                        $('#tabla-curso tbody tr').removeClass('selected');
-                        $('#tabla-curso').DataTable().search('').draw();
-
-                        $('#tabla-docente tbody tr').removeClass('selected');
-                        $('#tabla-docente input[type="checkbox"]').prop('checked', false);
-
-                        $('#modalAsignacionLabel').text('REALIZAR ASIGNACION');
-                        
-                        // Ajustar el ancho de las columnas de las tablas dentro del modal
-                        $('#modalAsignacion').on('shown.bs.modal', function () {
-                            $('#tabla-curso').DataTable().columns.adjust().draw();
-                            $('#tabla-docente').DataTable().columns.adjust().draw();
-                        });
-
-                        $('#modalAsignacion').modal('show');
+                    data: "docentes",
+                    className: "text-center",
+                    render: function (data, type, row) {
+                        return `<textarea class="form-control" rows="3">${data}</textarea>`;
                     }
-                }
-            ],
-            "language": {
-                "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-            }
-        });
-
-        // Inicializar DataTable para la tabla de cursos
-        var tablaCursos = $('#tabla-curso').DataTable({
-            paging: false,
-            info: false,
-            responsive: true,
-            autoWidth: true,
-            searching: true,
-            scrollY: "510px",
-            order: [],
-            "columnDefs": [
-                { "orderable": false, "targets": 0 } // Desactivar ordenamiento en la primera columna (checkbox)
-            ],
-            "ajax": {
-                "url": "/obtener_cursos_presenciales", // Endpoint para obtener los cursos
-                "type": "GET",
-                "dataSrc": ""
-            },
-            "columns": [
-                { "data": "nombre" },
-                { "data": "codigoCurso" },
-            ],
-            "language": {
-                "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-            }
-        });
-
-        // Inicializar DataTable para la tabla de docentes
-        var tablaDocente = $('#tabla-docente').DataTable({
-            paging: false,
-            info: false,
-            responsive: true,
-            autoWidth: true,
-            searching: true,
-            scrollY: "510px",
-            order: [],
-            "columnDefs": [
-                { "orderable": false, "targets": 0 } // Desactivar ordenamiento en la primera columna (checkbox)
-            ],
-            "ajax": {
-                "url": "/obtener_docentes_activos", // Endpoint para obtener los docentes
-                "type": "GET",
-                "dataSrc": ""
-            },
-            "columns": [
+                },
                 {
-                    "data": null,
-                    "className": 'dt-body-center',
-                    "render": function (data, type, row) {
-                        return `<input type="checkbox" class="form-check-input seleccionar-docente" value="${row.idpersona}">`;
-                    }
-                },
-                { "data": "nombre" },
-                { "data": "correo", "className": 'dt-body-center' },
-                { "data": "telefono", "className": 'dt-body-center' },
+                    data: null,
+                    render: function (data, type, row) {
+                        return `
+                            <button class="btn btn-warning btn-sm btnAsignar" data-id="${row.id_grupo}" data-curso="${row.curso}" title="Asignar"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id_grupo}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
+                        `;
+                    },
+                    className: "text-center",
+                }
             ],
-            "language": {
-                "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
             }
         });
 
-        // Evento para seleccionar o deseleccionar todas las filas
-        $('#select-all').on('click', function () {
-            var rows = tablaDocente.rows({ 'search': 'applied' }).nodes();
-            $('input[type="checkbox"]', rows).prop('checked', this.checked);
-        });
-
-        // Evento para permitir seleccionar solo una fila en la tabla de cursos
-        $('#tabla-curso tbody').on('click', 'tr', function () {
-            if ($(this).hasClass('selected')) {
-                $(this).removeClass('selected');
-                $('#cursoIdSeleccionado').val('');  // Vaciar el campo oculto
-            } else {
-                tablaCursos.$('tr.selected').removeClass('selected');
-                $(this).addClass('selected');
-                var data = tablaCursos.row(this).data();
-                $('#cursoIdSeleccionado').val(data.idcurso);
-                console.log(data);
-            }
-        
-        });
-
-        // Evento para seleccionar filas y checkboxes en la tabla de docentes
-        $('#tabla-docente tbody').on('click', 'tr', function () {
-            var checkbox = $(this).find('input[type="checkbox"]');
-            if ($(this).hasClass('selected')) {
-                $(this).removeClass('selected');
-                checkbox.prop('checked', false);
-            } else {
-                $(this).addClass('selected');
-                checkbox.prop('checked', true);
-            }
-            var data = tablaDocente.row(this).data();
-            console.log(data);
-        });
-
-        // Añadir cursor pointer en hover
-        $('#tabla-curso tbody, #tabla-docente tbody').css('cursor', 'pointer');
-
-        // Limpiar selección de docentes y cargar datos al abrir el modal
-        $('#modalDocentes').one('show.bs.modal', function () {
-            // Limpiar selección de checkboxes
-            $('#tabla-docente input[type="checkbox"]').prop('checked', false);
-
-            // Cargar datos nuevamente
-            tablaDocente.clear().draw();
-            $.ajax({
-                url: '/obtener_docentes_activos',
-                type: 'GET',
-                contentType: 'application/json',
-                success: function (response) {
-                    tablaDocente.clear().rows.add(response).draw();
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        });
-
-        // Manejar la selección y el guardado de docentes
-        $('#guardarAsignacion').on('click', function () {
-            var selectedDocentes = [];
-            $('#tabla-docente input[type="checkbox"]:checked').each(function () {
-                selectedDocentes.push($(this).val());
-            });
-
-            var cursoSeleccionado = $('#cursoIdSeleccionado').val();
-            var modalTitle = $('#modalAsignacionLabel').text().trim(); // Obtener el título del modal
-
-            var url = '/guardar_docentes_curso';
-            var type = 'POST';
-            var messageSuccess = 'Asignación agregada correctamente';
-
-            // Verificar si el modal está en modo de modificación
-            if (modalTitle.includes('MODIFICAR ASIGNACIÓN')) {
-                url = '/actualizar_docentes_curso'; // Cambiar la URL para actualizar
-                type = 'POST'; // Usar el método POST para la actualización
-                messageSuccess = 'Asignación modificada correctamente';
-            }
-
-            if (!cursoSeleccionado) {
-                alert("Por favor seleccione un curso antes de asignar docentes.");
-                return;
-            }
-
-            $.ajax({
-                url: url,
-                type: type,
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    curso: cursoSeleccionado,
-                    docentes: selectedDocentes
-                }),
-                success: function (response) {
-                    if (response.status === 'success') {
-                        Swal.fire('Éxito', messageSuccess, 'success');
-                        $('#modalAsignacion').modal('hide');
-                        table.ajax.reload(); // Recargar la tabla con AJAX
-                    } else {
-                        Swal.fire('Error', response.message ? response.message : 'Error inesperado', 'error');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                    Swal.fire('Error', 'Error al procesar la solicitud', 'error');
-                }
-            });
-        });
-
-        $('#formSubidaMasiva').submit(function (e) {
-            e.preventDefault();
-            var fileInput = document.getElementById('archivo');
-            var file = fileInput.files[0];
-            updateProgressBar(0); // Reiniciar barra de progreso
-            procesarArchivo(file);
-        });
-
-        function getCursoId(nombreCurso) {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: '/obtener_idcurso_por_nombre',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ nombre: nombreCurso }),
-                    success: function (response) {
-                        if (response.error) {
-                            mostrarAlerta('error', 'Error', response.error);
-                            reject(response.error);
-                        } else {
-                            resolve(response.idcurso);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
-                        reject(error);
-                    }
+        function rellenarTablaCursos(escuela, semestre) {
+            fetch(`/tabla_curso_docente/${escuela}/${semestre}`)
+                .then(response => response.json())
+                .then(data => {
+                    table.clear();
+                    table.rows.add(data);
+                    table.draw();
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos de la tabla de cursos:', error);
                 });
-            });
         }
 
-        function getDocenteId(nombreDocente) {
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: '/obtener_docente_por_nombre',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ nombres: nombreDocente }),
-                    success: function (response) {
-                        if (response.error) {
-                            mostrarAlerta('error', 'Error', response.error);
-                            reject(response.error);
-                        } else {
-                            resolve(response.idpersona);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
-                        reject(error);
-                    }
-                });
-            });
-        }
-
-        async function procesarArchivo(file) {
-            var reader = new FileReader();
-            reader.onload = async function (e) {
-                var data = new Uint8Array(e.target.result);
-                var workbook = XLSX.read(data, { type: 'array' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                var headers = jsonData[1];
-                var rows = jsonData.slice(2);
-
-                var formattedData = await Promise.all(rows.map(async (row, index) => {
-                    const idCurso = await getCursoId(row[headers.indexOf("Curso")]);
-                    const idDocente = await getDocenteId(row[headers.indexOf("Docente")]);
-                    updateProgressBar(Math.round((index + 1) / rows.length * 100)); // Actualizar barra de progreso
-                    return {
-                        idcurso: idCurso,
-                        iddocente: idDocente
-                    };
-                }));
-
-                //console.log(JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
-
-                // Aquí puedes hacer la solicitud AJAX para enviar los datos procesados
-                $.ajax({
-                    url: '/asignar_curso_docentes_excel',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formattedData),
-                    success: function (response) {
-                        if (response.error) {
-                            mostrarAlerta('error', 'Error', response.error);
-                        } else {
-                            mostrarAlerta('success', 'Éxito', 'La subida masiva se realizó correctamente.');
-                            table.ajax.reload();
-                            $('#modalSubidaMasiva').modal('hide');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
-                    }
-                });
-            };
-
-            reader.readAsArrayBuffer(file);
-        }
-
-       
-        // Manejar la eliminación de un curso y ambiente
-        $('#tabla-cursoxdocentes tbody').on('click', '.btnEliminar', function () {
-            var idcurso = $(this).data('idcurso');
-            var idpersona = $(this).data('iddocente');
-            var nombreCurso = $(this).data('nombrecurso');
-            var nombreDocente = $(this).data('nombredocente');
-            console.log(idcurso, idpersona, nombreCurso, nombreDocente);
-
-            Swal.fire({
-                title: `¿Seguro que quieres eliminar la asignación del curso: ${nombreCurso} con el docente: ${nombreDocente}?`,
-                text: "Esta acción no se puede revertir.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminarlo!',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if (idcurso && idpersona) {
-                        $.ajax({
-                            url: '/eliminar_cursoDocente',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify({ idcurso: idcurso, idpersona: idpersona }),
-                            success: function (response) {
-                                console.log(response);
-                                if (response.error) {
-                                    Swal.fire('Error', response.error, 'error');
-                                } else {
-                                    Swal.fire('Éxito', 'Asignación eliminada correctamente.', 'success');
-                                    table.ajax.reload(); // Recargar la tabla con AJAX
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.log(error);
-                            }
-                        });
-                    } else {
-                        console.log('ID de curso o docente no definido');
-                    }
-                }
-
-            });
-
-
-        });
-
-        // Modificar docentes x curso
-        $('#tabla-cursoxdocentes tbody').on('click', '.btnModificar', function () {
-            var idCurso = $(this).data('id');
-            var cursoNombre = $(this).closest('tr').find('td:eq(0)').text().trim();
-
-            $('#modalAsignacionLabel').text('MODIFICAR ASIGNACIÓN');
-            $('#tabla-curso tbody tr').removeClass('selected');
-            $('#tabla-curso tbody tr').each(function () {
-                var nombreCursoTabla = $(this).find('td:eq(0)').text().trim();
-                if (nombreCursoTabla === cursoNombre) {
-                    $(this).addClass('selected');
-                    var data = tablaCursos.row(this).data();
-                    $('#cursoIdSeleccionado').val(data.idcurso);
-                    return false;
-                }
-            });
-
-            $('#tabla-docente tbody tr').removeClass('selected');
-            $('#tabla-docente input[type="checkbox"]').prop('checked', false);
-
-            $.ajax({
-                url: '/obtener_cursos_docentes',
-                type: 'GET',
-                data: { idCurso: idCurso },
-                success: function (response) {
-                    if (!response.error) {
-                        response.forEach(function (cursoDocente) {
-                            var nombreCursoDocente = cursoDocente.nombreCurso.trim();
-                            if (nombreCursoDocente === cursoNombre) {
-                                var nombreCompletoDocente = cursoDocente.nombreDocente.trim();
-                                $('#tabla-docente tbody tr').each(function () {
-                                    var nombreDocenteTabla = $(this).find('td:eq(1)').text().trim();
-                                    if (nombreDocenteTabla === nombreCompletoDocente) {
-                                        $(this).addClass('selected');
-                                        $(this).find('input[type="checkbox"]').prop('checked', true);
-                                        return false;
-                                    }
-                                });
-                            }
-                        });
-                        $('#modalAsignacion').on('shown.bs.modal', function () {
-                            $('#tabla-curso').DataTable().columns.adjust().draw();
-                            $('#tabla-docente').DataTable().columns.adjust().draw();
-                        });
-                        $('#modalAsignacion').modal('show');
-                    } else {
-                        console.log('Error al obtener cursos y docentes:', response.error);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log('Error en la solicitud AJAX:', error);
-                }
-            });
+        // Evento de cambio para el selector de escuela y semestre
+        $('#escuela, #semestre').on('change', function () {
+            const escuela = $('#escuela').val();
+            const semestre = $('#semestre').val();
+            if (escuela && semestre) {
+                rellenarTablaCursos(escuela, semestre);
+            }
         });
 
     });
-
 </script>
+
+
 {% endblock %}
