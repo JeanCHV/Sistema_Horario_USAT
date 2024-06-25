@@ -40,7 +40,7 @@ def obtener_grupo_por_id(id_grupo):
     grupo = None
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT * FROM grupo WHERE id_grupo = %s", (id_grupo,))
+            cursor.execute("SELECT * FROM grupo WHERE id_grupo = %s" , (id_grupo,))
             persona = cursor.fetchone()
             if persona:
                 columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas

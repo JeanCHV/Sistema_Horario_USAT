@@ -878,12 +878,12 @@ def dar_baja_grupo():
 def modificar_grupo():
     try:
         data = request.json
-        idgrupo = data.get('id')
+        id_grupo = data.get('id_grupo')
         nombre = data.get('nombre')
         vacantes = data.get('vacantes')
         idcurso = data.get('idcurso')
         idsemestre = data.get('idsemestre')
-        resultado = controlador_grupo.modificar_grupo(idgrupo, nombre, vacantes, idcurso, idsemestre)
+        resultado = controlador_grupo.modificar_grupo(id_grupo, nombre, vacantes, idcurso, idsemestre)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({"error": str(e)})

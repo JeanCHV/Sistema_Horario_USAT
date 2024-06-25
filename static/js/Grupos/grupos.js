@@ -13,12 +13,12 @@ $(document).ready(function () {
             { "data": "nombre", "className": 'dt-body-center' },
             { "data": "vacantes", "className": 'dt-body-center' },
             {
-                "data": "curso", 
+                "data": "curso",
                 "render": function (data, type, row) {
                     return cursos[data] || data;
                 }
             },
-            { "data": "descripcion","className": 'dt-body-center' },
+            { "data": "descripcion", "className": 'dt-body-center' },
             {
                 "data": null, "className": 'dt-body-center',
                 "render": function (data, type, row) {
@@ -95,7 +95,7 @@ $(document).ready(function () {
             contentType: 'application/json',
             success: function (response) {
                 cursos = response;
-                var select = $('#agregarCurso');
+                var select = $('#agregarCurso, #modificarCurso');
                 select.empty();
                 response.forEach(function (curso) {
                     select.append($('<option>', {
@@ -117,7 +117,7 @@ $(document).ready(function () {
             contentType: 'application/json',
             success: function (response) {
                 semestres = response;
-                var select = $('#agregarSemestre');
+                var select = $('#modificarSemestre, #agregarSemestre');
                 select.empty();
                 response.forEach(function (semestre) {
                     select.append($('<option>', {
@@ -177,11 +177,11 @@ $(document).ready(function () {
     $('#formModificarGrupos').submit(function (e) {
         e.preventDefault();
         var data = {
-            id_grupo: $('#modificarIdGrupo').val(),
-            nombre: $('#modificarNombre').val(),
-            vacantes: $('#modificarVacantes').val(),
-            idcurso: $('#modificarCurso').val(),
-            idsemestre: $('#modificarSemestre').val(),
+            id_grupo: $('#id_grupo').val(),
+            nombre: $('#nombre').val(),
+            vacantes: $('#vacante').val(),
+            idcurso: $('#idcurso').val(),
+            idsemestre: $('#idsemestre').val()
         };
 
         $.ajax({
@@ -206,20 +206,25 @@ $(document).ready(function () {
     });
 
     $('#tabla-grupo tbody').on('click', '.btnModificar', function () {
-        var id = $(this).data('id');
-        console.log(id);
+        var id = $(this).data('id_grupo');
+        console.log("ID del grupo a modificar:", id);
         $.ajax({
             url: '/obtener_grupo_por_id/' + id,
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
+                console.log("Datos del grupo recibidos:", response); // Registro de depuración
                 var grupo = response;
-                $('#modificarIdGrupo').val(grupo.id_grupo);
-                $('#modificarNombre').val(grupo.nombre);
-                $('#modificarVacantes').val(grupo.vacantes);
-                $('#modificarCurso').val(grupo.idcurso);
-                $('#modificarSemestre').val(grupo.idsemestre);
-                $('#modalModificarGrupo').modal('show');
+                if (grupo.error) {
+                    console.error(grupo.error);
+                } else {
+                    $('#id_grupo').val(grupo.id_grupo);
+                    $('#nombre').val(grupo.nombre);
+                    $('#vacantes').val(grupo.vacantes);
+                    $('#idcurso').val(grupo.idcurso);
+                    $('#idsemestre').val(grupo.idsemestre);
+                    $('#modalModificarGrupo').modal('show');
+                }
             },
             error: function (xhr, status, error) {
                 console.log(error);
@@ -229,29 +234,43 @@ $(document).ready(function () {
 
     $('#tabla-grupo tbody').on('click', '.btnEliminar', function () {
         var id = $(this).data('id_grupo');
-        if (confirm('¿Estás seguro de que deseas eliminar este grupo?')) {
-            $.ajax({
-                url: '/eliminar_grupo',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ id_grupo: id }),
-                success: function (response) {
-                    console.log(response);
-                    $('#mensajeResultado').removeClass().empty();
-                    if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                    } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Grupo eliminado correctamente');
-                        cargarGrupos();
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "No podrás revertir esta acción.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminarlo!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/eliminar_grupo',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ id_grupo: id }),
+                    success: function (response) {
+                        console.log(response);
+                        $('#mensajeResultado').removeClass().empty();
+                        if (response.error) {
+                            $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                        } else {
+                            $('#mensajeResultado').addClass('alert alert-success').text('Grupo eliminado correctamente');
+                            cargarGrupos();
+                        }
+                        $('#mensajeResultado').show();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
                     }
-                    $('#mensajeResultado').show();
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        }
+                });
+            }
+        });
     });
+
+    cargarCursos();
+    cargarSemestres();
 
     function cargarCursosEnFiltro() {
         $.ajax({

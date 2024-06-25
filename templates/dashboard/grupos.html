@@ -46,39 +46,80 @@
                     </tbody>
                 </table>
                 <div class="d-flex justify-content-end mt-3">
-                    <a href="#" id="btn_agregar_grupo" data-href="grupo_agregar.html" class="btn btn-primary">Agregar Nuevo Grupo</a>
+                    <a href="#" id="btn_agregar_grupo" data-href="grupo_agregar.html" class="btn btn-primary">Agregar
+                        Nuevo Grupo</a>
                 </div>
             </div>
         </div>
     </div>
     <!-- Modal para modificar un Grupo -->
-    <div class="modal fade" id="modalModificarGrupo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalModificarGrupo" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modificarIdGrupo">Agregar/Modificar Grupo</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Modificar Grupo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formModificarGrupos">
                         <div class="mb-3">
-                            <label for="modificarNombre" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="modificarNombre" name="nombre" required>
+                            <label for="nombre" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
                         </div>
                         <div class="mb-3">
-                            <label for="modificarVacantes" class="form-label">Vacantes:</label>
-                            <input type="number" class="form-control" id="modificarVacantes" name="vacantes" required>
+                            <label for="vacantes" class="form-label">Vacantes:</label>
+                            <input type="number" class="form-control" id="vacantes" name="vacantes" required>
                         </div>
-
                         <div class="mb-3">
-                            <label for="modificarCurso" class="form-label">Curso:</label>
-                            <select class="form-control" id="modificarCurso" name="idcurso" required>
+                            <label for="idcurso" class="form-label">Curso:</label>
+                            <select class="form-control" id="idcurso" name="idcurso" required>
                                 <!-- Opciones de curso cargadas dinámicamente -->
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="modificarSemestre" class="form-label">Semestre Academico:</label>
-                            <select class="form-control" id="modificarSemestre" name="idsemestre" required>
+                            <label for="idsemestre" class="form-label">Semestre Academico:</label>
+                            <select class="form-control" id="idsemestre" name="idsemestre" required>
+                                <!-- Opciones de semestre cargadas dinámicamente -->
+                            </select>
+                        </div>
+                        <input type="hidden" id="id_grupo" name="id_grupo">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- MODAL AGREGAR Grupo -->
+    <div class="modal fade" id="modalAgregarGrupo" tabindex="-1" aria-labelledby="modalGrupoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Grupo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarGrupo">
+                        <div class="mb-3">
+                            <label for="agregarGrupo" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="agregarGrupo" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="agregarVacante" class="form-label">Vacantes:</label>
+                            <input type="text" class="form-control" id="agregarVacante" name="vacantes" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="agregarCurso" class="form-label">Curso:</label>
+                            <select class="form-control" id="agregarCurso" name="idcurso" required>
+                                <!-- Opciones de curso cargadas dinámicamente -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="agregarSemestre" class="form-label">Semestre:</label>
+                            <select class="form-control" id="agregarSemestre" name="idsemestre" required>
                                 <!-- Opciones de semestre cargadas dinámicamente -->
                             </select>
                         </div>
@@ -88,44 +129,6 @@
             </div>
         </div>
     </div>
-
-    <!-- MODAL AGREGAR Grupo -->
-<div class="modal fade" id="modalAgregarGrupo" tabindex="-1" aria-labelledby="modalGrupoLabel"
-aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agregar Grupo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formAgregarGrupo">
-                    <div class="mb-3">
-                        <label for="agregarGrupo" class="form-label">Nombre:</label>
-                        <input type="text" class="form-control" id="agregarGrupo" name="nombre" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="agregarVacante" class="form-label">Vacantes:</label>
-                        <input type="text" class="form-control" id="agregarVacante" name="vacantes" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="agregarCurso" class="form-label">Curso:</label>
-                        <select class="form-control" id="agregarCurso" name="idcurso" required>
-                            <!-- Opciones de curso cargadas dinámicamente -->
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="agregarSemestre" class="form-label">Semestre:</label>
-                        <select class="form-control" id="agregarSemestre" name="idsemestre" required>
-                            <!-- Opciones de semestre cargadas dinámicamente -->
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 </div>
