@@ -195,7 +195,7 @@ def obtener_grupos():
     grupos = []
 
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT G.id_grupo,G.nombre, G.vacantes, C.nombre as curso,S.descripcion FROM grupo G inner join semestre_academico S on S.idsemestre=G.idsemestre inner join curso C on C.idcurso = G.idcurso")
+        cursor.execute("SELECT G.idsemestre, G.id_grupo,G.nombre, G.vacantes, C.nombre as curso,S.descripcion FROM grupo G inner join semestre_academico S on S.idsemestre=G.idsemestre inner join curso C on C.idcurso = G.idcurso")
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
 

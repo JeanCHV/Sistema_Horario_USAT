@@ -9,6 +9,9 @@
 </nav>
 <script src="{{ url_for('static', filename='js/Grupos/grupos.js') }}"></script>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+
 <div id="mensajeResultado" style="display: none;"></div>
 
 <div class="card mx-2" id="card_grupos">
@@ -16,7 +19,7 @@
         data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
         Grupos
     </div>
-    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+    <div id="collapseOne" class="collapsed" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
             <div class="search-box">
                 <div class="col-sm-12">
@@ -45,89 +48,46 @@
                         <!-- Los datos de los grupos se cargarán dinámicamente aquí -->
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-end mt-3">
-                    <a href="#" id="btn_agregar_grupo" data-href="grupo_agregar.html" class="btn btn-primary">Agregar Nuevo Grupo</a>
-                </div>
             </div>
         </div>
     </div>
-    <!-- Modal para modificar un Grupo -->
-    <div class="modal fade" id="modalModificarGrupo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+    <!-- Modal para agregar/modificar un Grupo -->
+    <div class="modal fade" id="modalGrupo" tabindex="-1" aria-labelledby="modalGrupoLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modificarIdGrupo">Modificar Grupo</h5>
+                    <h5 class="modal-title" id="modalGrupoLabel">Agregar/Modificar Grupo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formModificarGrupos">
+                    <form id="formGrupo">
+                        <input type="hidden" id="grupoId" name="id_grupo">
                         <div class="mb-3">
-                            <label for="modificarNombre" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="modificarNombre" name="nombre" required>
+                            <label for="nombreGrupo" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreGrupo" name="nombre" required>
                         </div>
                         <div class="mb-3">
-                            <label for="modificarVacantes" class="form-label">Vacantes:</label>
-                            <input type="number" class="form-control" id="modificarVacantes" name="vacantes" required>
+                            <label for="vacantesGrupo" class="form-label">Vacantes:</label>
+                            <input type="number" class="form-control" id="vacantesGrupo" name="vacantes" required>
                         </div>
-
                         <div class="mb-3">
-                            <label for="modificarCurso" class="form-label">Curso:</label>
-                            <select class="form-control" id="modificarCurso" name="idcurso" required>
-                                <!-- Opciones de curso cargadas dinámicamente -->
+                            <label for="cursoGrupo" class="form-label">Curso:</label>
+                            <select class="form-control" id="cursoGrupo" name="idcurso" required>
+                                <option value="">Seleccionar curso</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="modificarSemestre" class="form-label">Semestre Academico:</label>
-                            <select class="form-control" id="modificarSemestre" name="idsemestre" required>
-                                <!-- Opciones de semestre cargadas dinámicamente -->
+                            <label for="semestreGrupo" class="form-label">Semestre:</label>
+                            <select class="form-control" id="semestreGrupo" name="idsemestre" required>
+                                <option value="">Seleccionar semestre</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button id="btn_guardarGrupo" class="btn btn-primary">Guardar</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- MODAL AGREGAR Grupo -->
-<div class="modal fade" id="modalAgregarGrupo" tabindex="-1" aria-labelledby="modalGrupoLabel"
-aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agregar Grupo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formAgregarGrupo">
-                    <div class="mb-3">
-                        <label for="agregarGrupo" class="form-label">Nombre:</label>
-                        <input type="text" class="form-control" id="agregarGrupo" name="nombre" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="agregarVacante" class="form-label">Vacantes:</label>
-                        <input type="text" class="form-control" id="agregarVacante" name="vacantes" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="agregarCurso" class="form-label">Curso:</label>
-                        <select class="form-control" id="agregarCurso" name="idcurso" required>
-                            <!-- Opciones de curso cargadas dinámicamente -->
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="agregarSemestre" class="form-label">Semestre:</label>
-                        <select class="form-control" id="agregarSemestre" name="idsemestre" required>
-                            <!-- Opciones de semestre cargadas dinámicamente -->
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </form>
-            </div>
-        </div>
-    </div>
 </div>
-
-
-</div>
-
 {% endblock %}
