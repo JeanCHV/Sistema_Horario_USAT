@@ -134,12 +134,12 @@ def datosCursoxDocente(escuela, semestre):
                         INNER JOIN escuela E ON PE.id_escuela = E.id_escuela
                         LEFT JOIN (
                             SELECT 
-                                CD.idgrupo,
+                                CD.idcurso,
                                 GROUP_CONCAT(CONCAT(P.apellidos, ' ', P.nombres) SEPARATOR ', ') AS docentes
                             FROM curso_docente CD
                             INNER JOIN persona P ON P.idpersona = CD.idpersona
-                            GROUP BY CD.idgrupo
-                        ) D ON G.id_grupo = D.idgrupo
+                            GROUP BY CD.idcurso
+                        ) D ON G.id_grupo = D.idcurso
                             WHERE E.id_escuela = %s AND G.idsemestre = %s
                             ORDER BY curso,grupo
                                     ;
@@ -154,7 +154,7 @@ def datosCursoxDocente(escuela, semestre):
     conexion.close()
     return cursos
 
-def ver_docente_grupo(idgrupo):
+def ver_docente_grupo(idcurso):
     conexion = obtener_conexion()
     docentes = []
     try:
@@ -162,10 +162,10 @@ def ver_docente_grupo(idgrupo):
             cursor.execute("""
                 SELECT CONCAT(P.nombres, ' ', P.apellidos) AS docente 
                 FROM curso_docente CD
-                INNER JOIN grupo G ON G.id_grupo = CD.idgrupo
+                INNER JOIN grupo G ON G.id_grupo = CD.idcurso
                 INNER JOIN persona P ON P.idpersona = CD.idpersona
                 WHERE G.id_grupo = %s
-            """, (idgrupo,))
+            """, (idcurso,))
             resultados = cursor.fetchall()
             for row in resultados:
                 docentes.append(row[0])  # Añadir solo el nombre del docente a la lista
@@ -200,13 +200,13 @@ def asignar_docentes_a_grupo(grupoId, docentes, eliminados):
         with conexion.cursor() as cursor:
             # Eliminar docentes
             if eliminados:
-                query = 'DELETE FROM curso_docente WHERE idgrupo = %s AND idpersona IN (' + ','.join(['%s'] * len(eliminados)) + ')'
+                query = 'DELETE FROM curso_docente WHERE idcurso = %s AND idpersona IN (' + ','.join(['%s'] * len(eliminados)) + ')'
                 cursor.execute(query, [grupoId] + eliminados)
 
             # Asignar nuevos docentes
             for docenteId in docentes:
                 cursor.execute('''
-                    INSERT INTO curso_docente (idgrupo, idpersona) 
+                    INSERT INTO curso_docente (idcurso, idpersona) 
                     VALUES (%s, %s)
                     ON DUPLICATE KEY UPDATE idpersona = idpersona
                 ''', (grupoId, docenteId))
@@ -222,7 +222,7 @@ def asignar_docentes_a_grupo(grupoId, docentes, eliminados):
 
 
 ## OBTENER DOCENTES POR GRUPO
-def obtenerDocentesporGrupo(idgrupo):
+def obtenerDocentesporGrupo(idcurso):
     conexion = obtener_conexion()
     docentes = []
     try:
@@ -233,15 +233,15 @@ def obtenerDocentesporGrupo(idgrupo):
                     CONCAT(P.apellidos, ' ', P.nombres) AS nombre
                 FROM grupo G
                 INNER JOIN curso C ON G.idcurso = C.idcurso 
-                LEFT JOIN curso_docente CD ON G.id_grupo = CD.idgrupo
+                LEFT JOIN curso_docente CD ON G.id_grupo = CD.idcurso
                 INNER JOIN persona P ON P.idpersona = CD.idpersona
                 WHERE G.id_grupo = %s
-            ''', (idgrupo,))
+            ''', (idcurso,))
             result = cursor.fetchall()
             if result:
                 docentes = [{'idpersona': row[0], 'nombre': row[1]} for row in result]
     except Exception as e:
-        print(f"Error al obtener los docentes del grupo {idgrupo}: {e}")
+        print(f"Error al obtener los docentes del grupo {idcurso}: {e}")
     finally:
         conexion.close()
     return docentes
