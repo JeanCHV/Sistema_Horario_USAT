@@ -33,6 +33,25 @@ def obtener_cursoxescuela(escuela, semestre):
 
     conexion.close()
     return cursos
+
+#OBTENER GRUPO POR ID
+def obtener_grupo_por_id(id_grupo):
+    conexion = obtener_conexion()
+    grupo = None
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT * FROM grupo WHERE id_grupo = %s" , (id_grupo,))
+            persona = cursor.fetchone()
+            if persona:
+                columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas
+                persona_dict = dict(zip(columnas, grupo))  # Convierte la tupla en un diccionario
+                return persona_dict
+            else:
+                return {"error": "Grupo no encontrado"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
      
 def obtener_idsemestre(semestre):
     conexion = obtener_conexion()
@@ -176,7 +195,7 @@ def obtener_grupos():
     grupos = []
 
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT G.id_grupo,G.nombre, G.vacantes, C.nombre as curso,S.descripcion FROM grupo G inner join semestre_academico S on S.idsemestre=G.idsemestre inner join curso C on C.idcurso = G.idcurso")
+        cursor.execute("SELECT G.idsemestre, G.id_grupo,G.nombre, G.vacantes, C.nombre as curso,S.descripcion FROM grupo G inner join semestre_academico S on S.idsemestre=G.idsemestre inner join curso C on C.idcurso = G.idcurso")
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
 
@@ -186,6 +205,24 @@ def obtener_grupos():
 
     conexion.close()
     return grupos
+
+def obtener_grupo_por_id(id_grupo):
+    conexion = obtener_conexion()
+    grupo = None
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT * FROM grupo WHERE id_grupo = %s", (id_grupo,))
+            grupo = cursor.fetchone()
+            if grupo:
+                columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas
+                grupo_dict = dict(zip(columnas, grupo))  # Convierte la tupla en un diccionario
+                return grupo_dict
+            else:
+                return {"error": "Grupo no encontrado"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
 
 def agregar_grupo(nombre, vacantes, idcurso, idsemestre):
     conexion = obtener_conexion()
@@ -290,3 +327,20 @@ def get_cant_grupos_semestre():
     conexion.close()
     return grupos
 
+def obtener_grupo_por_id(id_grupo):
+    conexion = obtener_conexion()
+    grupo = None
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT * FROM grupo WHERE id_grupo = %s", (id_grupo,))
+            grupo = cursor.fetchone()
+            if grupo:
+                columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas
+                grupo_dict = dict(zip(columnas, grupo))  # Convierte la tupla en un diccionario
+                return grupo_dict
+            else:
+                return {"error": "Grupo no encontrado"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()

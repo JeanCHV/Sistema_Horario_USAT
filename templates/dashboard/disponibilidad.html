@@ -21,7 +21,7 @@
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
             <div class="table-responsive mt-3">
-                <table id="tabla-disponibilidad" class="table table-striped" style="width:100%">
+                <table id="tabla-disponibilidad" class="table table-striped tabla-disponibilidad tabla-comun" style="width:100%">
                     <thead>
                         <tr>
                             <th style="width: 30%; text-align: center;">Docente</th>
@@ -141,22 +141,34 @@
     }
 
     function cargarDocentes() {
-        $.ajax({
-            url: '/datos_docentes',
-            type: 'GET',
-            success: function (data) {
-                var docentesSelect = $('#docente');
-                docentesSelect.empty();
-                docentesSelect.append('<option value="">Seleccione</option>');
-                data.forEach(function (docente) {
-                    docentesSelect.append('<option value="' + docente.idpersona + '">' + docente.nombre_completo + '</option>');
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al cargar los docentes:', error);
+    $.ajax({
+        url: '/docentes_disponibilidad',
+        type: 'GET',
+        success: function (data) {
+            if (data.error) {
+                console.error('Error del servidor:', data.error);
+                return;
             }
-        });
-    }
+            var docentesSelect = $('#docente');
+            docentesSelect.empty();
+            docentesSelect.append('<option value="">Seleccione</option>');
+            data.forEach(function (docente) {
+                if (docente.idpersona && docente.nombre_completo) {
+                    docentesSelect.append('<option value="' + docente.idpersona + '">' + docente.nombre_completo + '</option>');
+                } else {
+                    console.error('Datos de docente incorrectos:', docente);
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error('Error al cargar los docentes:', error);
+        }
+    });
+}
+
+$(document).ready(function () {
+    cargarDocentes();
+});
 
     $(document).ready(function () {
         var disponibilidad = [];
@@ -335,54 +347,58 @@
         });
 
         $('#formSubidaMasiva').submit(function (e) {
-            e.preventDefault();
-            var fileInput = document.getElementById('archivo');
-            var file = fileInput.files[0];
-            var reader = new FileReader();
+    e.preventDefault();
+    var fileInput = document.getElementById('archivo');
+    var file = fileInput.files[0];
+    var reader = new FileReader();
 
-            reader.onload = function (e) {
-                var data = new Uint8Array(e.target.result);
-                var workbook = XLSX.read(data, { type: 'array' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    reader.onload = function (e) {
+        var data = new Uint8Array(e.target.result);
+        var workbook = XLSX.read(data, { type: 'array' });
+        var firstSheetName = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[firstSheetName];
+        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-                var headers = jsonData[1];  
-                var rows = jsonData.slice(2); 
+        var headers = jsonData[1];  // La fila correcta que contiene los encabezados
+        console.log("Headers:", headers);
 
-                var formattedData = rows.map((row, index) => {
-                    return {
-                        idpersona: row[headers.indexOf("Docente")],
-                        dia: row[headers.indexOf("Dia")],
-                        hora_inicio: row[headers.indexOf("Hora Inicio")],
-                        hora_fin: row[headers.indexOf("Hora Fin")]
-                    };
-                });
+        var rows = jsonData.slice(2); 
+        console.log("Rows:", rows);
 
-                console.log(JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
-
-                // $.ajax({
-                //     url: '/add_disponibilidad_excel',
-                //     type: 'POST',
-                //     contentType: 'application/json',
-                //     data: JSON.stringify(formattedData),
-                //     success: function (response) {
-                //         if (response.error) {
-                //             mostrarAlerta('error', 'Error', response.error);
-                //         } else {
-                //             mostrarAlerta('success', 'Éxito', 'La subida masiva se realizó correctamente.');
-                //             table.ajax.reload();
-                //             $('#modalSubidaMasiva').modal('hide');
-                //         }
-                //     },
-                //     error: function (xhr, status, error) {
-                //         mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
-                //     }
-                // });
+        var formattedData = rows.map((row, index) => {
+            return {
+                docente: row[headers.indexOf("Docente")],
+                dia: row[headers.indexOf("Día")],
+                hora_inicio: row[headers.indexOf("Hora Inicio")],
+                hora_fin: row[headers.indexOf("Hora Fin")]
             };
-
-            reader.readAsArrayBuffer(file);
         });
+
+        console.log("Formatted Data:", JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
+
+        $.ajax({
+            url: '/asignar_disponibilidad_excel',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formattedData),
+            success: function (response) {
+                if (response.error) {
+                    mostrarAlerta('error', 'Error', response.error);
+                } else {
+                    mostrarAlerta('success', 'Éxito', 'La subida masiva se realizó correctamente.');
+                    table.ajax.reload();
+                    $('#modalSubidaMasiva').modal('hide');
+                }
+            },
+            error: function (xhr, status, error) {
+                mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+            }
+        });
+    };
+
+    reader.readAsArrayBuffer(file);
+});
+
 
         $('#tabla-disponibilidad tbody').on('click', '.btnModificar', function () {
             var idpersona = $(this).data('idpersona');
@@ -422,6 +438,7 @@
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
         confirmButtonText: 'Sí, eliminarlo!'
     }).then((result) => {
         if (result.isConfirmed) {

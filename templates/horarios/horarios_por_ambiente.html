@@ -59,7 +59,7 @@
                             <label for="combo_edificio"
                                 class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Edificio:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                                <select class="form-select" aria-label="Default select example" id="combo_edificio">
+                                <select class="form-select" aria-label="Default select example" id="combo_edificio" disabled>
                                     <option value="-1" selected>[-- SELECCIONE --]</option>
                                     {% for edificio in edificios %}
                                     <option value="{{ edificio.idedificio }}">{{ edificio.nombre }}</option>
@@ -72,7 +72,7 @@
                             <label for="combo_ambiente"
                                 class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Ambiente:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                                <select class="form-select" aria-label="Default select example" id="combo_ambiente">
+                                <select class="form-select" aria-label="Default select example" id="combo_ambiente" disabled>
                                     <option value="-1" selected>[-- SELECCIONE --]</option>
                                     {% for ambiente in ambientes %}
                                     <option value="{{ ambiente[0] }}">{{ ambiente[1] }}</option>

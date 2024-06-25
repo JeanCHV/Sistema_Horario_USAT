@@ -12,7 +12,8 @@ def get_disponibilidad():
                 TIME_FORMAT(TIME(hora_fin), '%H:%i') AS hora_fin
                 FROM docente_disponibilidad
                 INNER JOIN persona ON docente_disponibilidad.idpersona = persona.idpersona;
-            """)
+            """
+            )
             column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
 
@@ -34,10 +35,13 @@ def agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO docente_disponibilidad (idpersona, dia, hora_inicio, hora_fin)
                 VALUES (%s, %s, %s, %s)
-            """, (idpersona, dia, hora_inicio, hora_fin))
+            """,
+                (idpersona, dia, hora_inicio, hora_fin),
+            )
             conexion.commit()
             return {"mensaje": "Disponibilidad agregada correctamente"}
     except Exception as e:
@@ -45,6 +49,7 @@ def agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin):
         return {"error": str(e)}
     finally:
         conexion.close()
+
 
 # Función para modificar una disponibilidad existente
 def eliminar_disponibilidad(idpersona):
@@ -60,12 +65,16 @@ def eliminar_disponibilidad(idpersona):
     finally:
         conexion.close()
 
+
 # Función para eliminar una disponibilidad
 def eliminar_disponibilidad(iddisponibilidad):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("DELETE FROM docente_disponibilidad WHERE iddisponibilidad = %s", (iddisponibilidad,))
+            cursor.execute(
+                "DELETE FROM docente_disponibilidad WHERE iddisponibilidad = %s",
+                (iddisponibilidad,),
+            )
             conexion.commit()
             return {"mensaje": "Disponibilidad eliminada correctamente"}
     except Exception as e:
@@ -100,4 +109,73 @@ def obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin):
     finally:
         conexion.close()
 
+def obtener_disponibilidad():
+    conexion = obtener_conexion()
+    docentes = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+            SELECT idpersona, CONCAT(apellidos, ' ', nombres) AS nombre_completo, correo, telefono
+            FROM persona
+            WHERE tipopersona = 'D'
+            """)
+            column_names = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            for row in rows:
+                docente_dict = dict(zip(column_names, row))
+                docentes.append(docente_dict)
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+    return docentes
+
+def get_docente_sin_disponibilidad():
+    conexion = obtener_conexion()
+    docentes = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("""
+SELECT p.idpersona, p.nombres, p.apellidos, p.correo
+FROM persona p
+LEFT JOIN docente_disponibilidad dd ON p.idpersona = dd.idpersona
+WHERE p.tipopersona = 'D' AND dd.idpersona IS NULL;
+
+            """)
+            column_names = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            for row in rows:
+                docente_dict = dict(zip(column_names, row))
+                docentes.append(docente_dict)
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+    return docentes
+
+def asignar_disponibilidad_docente(tipo, dia, hora_inicio, hora_fin, idpersona):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.callproc('sp_disponibilidad_Gestion', [tipo, dia, hora_inicio, hora_fin, idpersona])
+            conexion.commit()
+            return {"mensaje": f"Operación {tipo} realizada correctamente para el docente {idpersona} en el día {dia}"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def obtener_id_persona(nombre_docente):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT idpersona FROM docentes WHERE nombre_completo = %s", (nombre_docente,))
+            result = cursor.fetchone()
+            return result['idpersona'] if result else None
+    except Exception as e:
+        print({"error": str(e)})
+    finally:
+        conexion.close()
 

@@ -21,7 +21,7 @@
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
             <div class="table-responsive mt-3">
-                <table id="tabla-ambiente" class="table table-striped tabla-ambientes" style="width:100%">
+                <table id="tabla-ambiente" class="table table-striped tabla-ambientes tabla-comun" style="width:100%">
                     <thead>
                         <tr>
                             <th style="text-align: center;">Nombre</th>
@@ -273,7 +273,6 @@
                             var darDeBajaIcono = row.estado === 'A' ? 'fas fa-arrow-down' : 'fas fa-arrow-up';
                             var darDeBajaTitulo = row.estado === 'A' ? 'Dar de Baja' : 'Activar';
                             return `
-                                <button class="btn btn-primary btn-sm btnVer" data-id="${row.idambiente}" title="Ver"><i class="fas fa-eye"></i></button>
                                 <button class="btn btn-warning btn-sm btnModificar" data-id="${row.idambiente}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
                                 <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idambiente}" title="Eliminar"><i class="fas fa-times"></i></button>
                                 <button class="btn btn-secondary btn-sm btnCambiarEstado" data-id="${row.idambiente}" title="${darDeBajaTitulo}"><i class="${darDeBajaIcono}"></i></button>
