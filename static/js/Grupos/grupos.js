@@ -29,8 +29,8 @@ $(document).ready(function () {
                 }
             }
         ],
-        language: {
-            url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
         }
     });
 
@@ -93,7 +93,7 @@ $(document).ready(function () {
             contentType: 'application/json',
             success: function (response) {
                 cursos = response;
-                var select = $('#agregarCurso');
+                var select = $('#agregarCurso, #modificarCurso');
                 select.empty();
                 response.forEach(function (curso) {
                     select.append($('<option>', {
@@ -115,7 +115,7 @@ $(document).ready(function () {
             contentType: 'application/json',
             success: function (response) {
                 semestres = response;
-                var select = $('#agregarSemestre');
+                var select = $('#agregarSemestre, #modificarSemestre');
                 select.empty();
                 response.forEach(function (semestre) {
                     select.append($('<option>', {
@@ -179,7 +179,7 @@ $(document).ready(function () {
             nombre: $('#modificarNombre').val(),
             vacantes: $('#modificarVacantes').val(),
             idcurso: $('#modificarCurso').val(),
-            idsemestre: $('#modificarSemestre').val()
+            idsemestre: $('#modificarSemestre').val(),
         };
 
         $.ajax({
@@ -206,19 +206,26 @@ $(document).ready(function () {
     $('#tabla-grupo tbody').on('click', '.btnModificar', function () {
         var id = $(this).data('id_grupo');
         $.ajax({
-            url: '/obtener_grupo/' + id,
+            url: '/obtener_grupo_por_id/' + id,
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
+                if (response.error) {
+                    console.log(response.error);
+                    return;
+                }
+
                 var grupo = response;
                 $('#modificarIdGrupo').val(grupo.id_grupo);
                 $('#modificarNombre').val(grupo.nombre);
                 $('#modificarVacantes').val(grupo.vacantes);
-                cargarCursos().then(function() {
+
+                // Cargar cursos y semestres antes de mostrar el modal
+                $.when(cargarCursos(), cargarSemestres()).done(function () {
                     $('#modificarCurso').val(grupo.idcurso);
+                    $('#modificarSemestre').val(grupo.idsemestre);
+                    $('#modalModificarGrupo').modal('show');
                 });
-                $('#modificarSemestre').val(grupo.idsemestre);
-                $('#modalModificarGrupo').modal('show');
             },
             error: function (xhr, status, error) {
                 console.log(error);
@@ -252,30 +259,7 @@ $(document).ready(function () {
         }
     });
 
-    function cargarCursosEnFiltro() {
-        $.ajax({
-            url: '/obtener_cursos',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                var select = $('#filtro_cursos');
-                select.empty();
-                select.append($('<option>', { value: '', text: 'Todos los cursos' }));
-                response.forEach(function (curso) {
-                    select.append($('<option>', {
-                        value: curso.idcurso,
-                        text: curso.nombre
-                    }));
-                    cursos[curso.idcurso] = curso.nombre;
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log('Error al cargar los cursos:', error);
-            }
-        });
-    }
     cargarCursosEnFiltro();
-
     $('#filtro_cursos').on('change', function () {
         var filtro = $(this).val();
         if (filtro) {
