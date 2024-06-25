@@ -24,7 +24,7 @@
 	<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.bootstrap5.css">
 	<script src="/static/js/autocomplete-0.3.0.js"></script>
 	<script src="/static/js/jquery-1.8.2.min.js"></script>
-	<script src="{{ url_for('static', filename='js/Login/auto_logout.js') }}"></script>
+	<!-- <script src="{{ url_for('static', filename='js/Login/auto_logout.js') }}"></script> -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 	<link rel="stylesheet" href="/static/css/autocomplete-0.3.0.css">
 
@@ -96,7 +96,7 @@
 							</a>
 						</li>
 
-						
+
 
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{{url_for('perfil')}}">
@@ -108,7 +108,7 @@
 							Gestión
 						</li>
 
-						
+
 						<li class="sidebar-item">
 							<span class="sidebar-link a d-flex align-items-center">
 								<i class="align-middle" data-feather="align-left"></i>
@@ -139,17 +139,17 @@
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('cursosxescuela')}}">
 										<i class="align-middle" data-feather="check-square"></i> <span
-											class="align-middle">Grupos por Curso</span>
+											class="align-middle">Asignar Grupos- Curso</span>
 									</a>
 								</li>
-		
+
 
 							</ul>
 							<!-- aca -->
 
 
 						</li>
-						
+
 						<li class="sidebar-item">
 							<span class="sidebar-link a d-flex align-items-center">
 								<i class="align-middle" data-feather="align-left"></i>
@@ -179,8 +179,7 @@
 
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('disponibilidad')}}">
-										<img data-image=""
-											src="https://img.icons8.com/ios-filled/50/planning-skill.png"
+										<img data-image="" src="https://img.icons8.com/ios-filled/50/planning-skill.png"
 											alt="planning-skill" /> <span class="align-middle">Disponibilidad</span>
 									</a>
 								</li>
@@ -213,7 +212,7 @@
 											alt="training--v1" /> <span class="align-middle">Ambientes por Curso</span>
 									</a>
 								</li>
-		
+
 							</ul>
 							<!-- aca -->
 						</li>
@@ -234,25 +233,27 @@
 							<ul class="list-unstyled  px-3">
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('horarios')}}">
-										<img data-image="" src="https://img.icons8.com/glyph-neue/64/000000/calendar.png"
+										<img data-image=""
+											src="https://img.icons8.com/glyph-neue/64/000000/calendar.png"
 											alt="calendar" /> <span class="align-middle">Horarios</span>
 									</a>
 								</li>
-		
+
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('horarios_por_docente')}}">
 										<img data-image="" src="https://img.icons8.com/ios-filled/50/planning-skill.png"
-											alt="planning-skill" /> <span class="align-middle">Horarios por docente</span>
+											alt="planning-skill" /> <span class="align-middle">Horarios por
+											docente</span>
 									</a>
 								</li>
-		
+
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('horarios_por_ambiente')}}">
 										<i class="align-middle" data-feather="align-left"></i> <span
 											class="align-middle">Horarios por ambiente</span>
 									</a>
 								</li>
-		
+
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('horarios_por_ciclo')}}">
 										<img data-image=""
@@ -267,7 +268,7 @@
 							</ul>
 							<!-- aca -->
 						</li>
-						
+
 
 
 						<!-- aca -->
@@ -294,11 +295,12 @@
 							<ul class="list-unstyled px-3">
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{ url_for('reportegrupo_docente') }}">
-										<i class="align-middle" data-feather="align-left"></i> <span class="align-middle">Reporte Grupos</span>
+										<i class="align-middle" data-feather="align-left"></i> <span
+											class="align-middle">Reporte Grupos</span>
 									</a>
 								</li>
 							</ul>
-							
+
 						</li>
 
 
@@ -314,7 +316,13 @@
 					<div class="navbar-collapse collapse">
 
 						<ul class="navbar-nav navbar-align">
-							<button class="theme-toggle" id="theme-toggle" title="Activar/desactivar modo oscuro"
+							<button type="button" class="btn btn-danger">
+								<a class="mt-2 text-white  text-center"
+									href="{{url_for('mostrar_chatbot')}}">
+									Asistente virtual
+								</a>
+							</button>
+							<!-- <button class="theme-toggle" id="theme-toggle" title="Activar/desactivar modo oscuro"
 								aria-label="auto" aria-live="polite"
 								style="border: none; background: none; color: black;">
 								<svg class="sun-and-moon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24">
@@ -335,7 +343,7 @@
 										<line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
 									</g>
 								</svg>
-							</button>
+							</button> -->
 
 
 
@@ -344,10 +352,8 @@
 									data-bs-toggle="dropdown">
 									<i class="align-middle" data-feather="settings"></i>
 								</a>
-
 								<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#"
 									data-bs-toggle="dropdown">
-
 									<img id="github-profile-pic" src="static/img/{{foto_perfil}}"
 										class="avatar img-fluid rounded me-1" alt="foto_perfil" />
 									<span id="usernamenav" class="text-dark">{{usuario}}</span>
@@ -482,29 +488,29 @@
 	});
 
 	function mostrar(element) {
-    var hijo = element.children[0];
-    var padre = element.parentNode.parentNode.parentNode;
-    // Obtener el primer elemento <ul> dentro del abuelo
-    var ul = padre.querySelector("ul");
-    var lis = ul.querySelectorAll('li');
+		var hijo = element.children[0];
+		var padre = element.parentNode.parentNode.parentNode;
+		// Obtener el primer elemento <ul> dentro del abuelo
+		var ul = padre.querySelector("ul");
+		var lis = ul.querySelectorAll('li');
 
-    // Verificar si el primer li está oculto para aplicar la acción a todos
-    if (lis[0].hidden == true) {
-        // Mostrar todos los li
-        lis.forEach(function(li) {
-            li.hidden = false;
-        });
-        hijo.classList.remove("fa-caret-down");
-        hijo.classList.add("fa-caret-up");
-    } else {
-        // Ocultar todos los li
-        lis.forEach(function(li) {
-            li.hidden = true;
-        });
-        hijo.classList.remove("fa-caret-up");
-        hijo.classList.add("fa-caret-down");
-    }
-}
+		// Verificar si el primer li está oculto para aplicar la acción a todos
+		if (lis[0].hidden == true) {
+			// Mostrar todos los li
+			lis.forEach(function (li) {
+				li.hidden = false;
+			});
+			hijo.classList.remove("fa-caret-down");
+			hijo.classList.add("fa-caret-up");
+		} else {
+			// Ocultar todos los li
+			lis.forEach(function (li) {
+				li.hidden = true;
+			});
+			hijo.classList.remove("fa-caret-up");
+			hijo.classList.add("fa-caret-down");
+		}
+	}
 
 
 

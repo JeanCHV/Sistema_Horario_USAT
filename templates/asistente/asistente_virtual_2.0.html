@@ -1,0 +1,32 @@
+{% extends "dashboard/index.html" %}
+{% block titulo %} Ambientes {% endblock %}
+{% block contenido %}
+<h1>Asistente virtual</h1>
+<div id="chat-container"></div>
+<form id="form-chatbot">
+    <input type="text" id="mensaje" name="mensaje" placeholder="Escribe tu mensaje aquí">
+    <button type="button" onclick="enviarMensaje()">Enviar</button>
+</form>
+<script>
+    function enviarMensaje() {
+        var mensaje = document.getElementById('mensaje').value;
+        var chatContainer = document.getElementById('chat-container');
+        var mensajeUsuario = document.createElement('p');
+        mensajeUsuario.textContent = "> " + mensaje;
+        chatContainer.appendChild(mensajeUsuario);
+        fetch('/chatbot', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ mensaje: mensaje })
+        })
+            .then(response => response.json())
+            .then(data => {
+                var respuestaChatbot = document.createElement('p');
+                respuestaChatbot.textContent = data.respuesta;
+                chatContainer.appendChild(respuestaChatbot);
+            });
+    }
+</script>
+{% endblock %}

@@ -16,7 +16,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="tabla-docente" class="table table-striped tabla-docentes" style="width:100%">
+                <table id="tabla-docente" class="table table-striped tabla-docentes tabla-comun" style="width:100%">
                     <thead>
                         <tr>
                             <th style="text-align:center">Nombres</th>
@@ -32,7 +32,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- MODAL AGREGAR DOCENTE -->
     <div class="modal fade" id="modalAgregarDocente" tabindex="-1" aria-labelledby="modalDocenteLabel"
@@ -55,15 +54,21 @@
                         </div>
                         <div class="mb-3">
                             <label for="documentoDocente" class="form-label">Número de Documento:</label>
-                            <input type="text" class="form-control" id="documentoDocente" name="n_documento" required>
+                            <input type="text" class="form-control" id="documentoDocente" name="n_documento" maxlength="8" pattern="\d{8}" oninput="validarNumeroDocumento(this)" required>
+                            <div class="invalid-feedback">
+                                El número de documento debe tener exactamente 8 dígitos.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="telefonoDocente" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="telefonoDocente" name="telefono" required>
+                            <input type="text" class="form-control" id="telefonoDocente" name="telefono" maxlength="9" pattern="\d{9}" oninput="validarTelefono(this)" required>
+                            <div class="invalid-feedback">
+                                El número de teléfono debe tener exactamente 9 dígitos.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="correoDocente" class="form-label">Correo:</label>
-                            <input type="email" class="form-control" id="correoDocente" name="correo" required>
+                            <input type="email" class="form-control" id="correoDocente" name="correo" oninput="completarCorreo(this)" required>
                         </div>
                         <div class="mb-3">
                             <label for="cantHorasDocente" class="form-label">Cantidad de Horas:</label>
@@ -109,23 +114,28 @@
                         <div class="mb-3">
                             <label for="modificarDocumentoDocente" class="form-label">Número de Documento:</label>
                             <input type="text" class="form-control" id="modificarDocumentoDocente" name="n_documento"
-                                required>
+                                maxlength="8" pattern="\d{8}" oninput="validarNumeroDocumento(this)" required>
+                            <div class="invalid-feedback">
+                                El número de documento debe tener exactamente 8 dígitos.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="modificarTelefonoDocente" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono"
-                                required>
+                            <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono" maxlength="9" pattern="\d{9}" oninput="validarTelefono(this)" required>
+                            <div class="invalid-feedback">
+                                El número de teléfono debe tener exactamente 9 dígitos.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="modificarCorreoDocente" class="form-label">Correo:</label>
-                            <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" required>
+                            <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" oninput="completarCorreo(this)" required>
                         </div>
                         <div class="mb-3">
                             <label for="modificarCantHoras" class="form-label">Cantidad de Horas:</label>
                             <input type="number" class="form-control" id="modificarCantHoras" name="cantHoras" required>
                         </div>
                         <div class="mb-3">
-                            <label for="modificarTiempoRef" class="form-label">Tiempo de Referencia:</label>
+                            <label for="modificarTiempoRef" class="form-label">Tiempo de Refrigerio:</label>
                             <input type="number" class="form-control" id="modificarTiempoRef" name="tiempo_ref"
                                 required>
                         </div>
@@ -173,13 +183,62 @@
 </div>
 
 <script>
+
+    function completarCorreo(input) {
+        const value = input.value;
+        const lastChar = value.charAt(value.length - 1);
+        const parts = value.split('@');
+        
+        if (parts.length > 1) {
+            const username = parts[0];
+            const domain = parts[1];
+
+            switch (domain) {
+                case 'u':
+                    input.value = username + '@usat.edu.pe';
+                    break;
+                case 'g':
+                    input.value = username + '@gmail.com';
+                    break;
+                case 'o':
+                    input.value = username + '@outlook.com';
+                    break;
+                case 'h':
+                    input.value = username + '@hotmail.com';
+                    break;
+            }
+        }
+    }
+    function validarNumeroDocumento(input) {
+        const regex = /^\d{0,8}$/;
+        if (!regex.test(input.value)) {
+            input.value = input.value.slice(0, -1);
+        }
+        if (input.value.length === 8) {
+            input.setCustomValidity('');
+        } else {
+            input.setCustomValidity('El número de documento debe tener exactamente 8 dígitos.');
+        }
+    }
+
+    function validarTelefono(input) {
+        const regex = /^\d{0,9}$/;
+        if (!regex.test(input.value)) {
+            input.value = input.value.slice(0, -1);
+        }
+        if (input.value.length === 9) {
+            input.setCustomValidity('');
+        } else {
+            input.setCustomValidity('El número de teléfono debe tener exactamente 9 dígitos.');
+        }
+    }
+
     function updateProgressBar(percentage) {
         var progressBar = document.getElementById('progressBar');
         progressBar.style.width = percentage + '%';
         progressBar.setAttribute('aria-valuenow', percentage);
         progressBar.innerText = percentage + '%';
     }
-
 
     function descargarPlantilla() {
         const workbook = new ExcelJS.Workbook();
@@ -213,8 +272,7 @@
             saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'USAT_Docentes_Plantilla.xlsx');
         });
     }
-</script>
-<script>
+
     $(document).ready(function () {
         var docentes = [];
 
@@ -406,7 +464,6 @@
             reader.readAsArrayBuffer(file);
         }
 
-
         $('#btn_agregar_docente').click(function (e) {
             e.preventDefault();
             $('#modalAgregarDocente').modal('show');
@@ -544,8 +601,5 @@
         });
 
     });
-
-
 </script>
-
 {% endblock %}

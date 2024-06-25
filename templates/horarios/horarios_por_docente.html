@@ -2,6 +2,7 @@
 {% block titulo %} Horarios por docente {% endblock %}
 {% block contenido %}
 <script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
 
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -11,7 +12,8 @@
 </nav>
 
 <div class="card mx-2" id="card_horarios">
-    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
+        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
         Horarios asignados por docente
     </div>
     <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
@@ -22,19 +24,22 @@
                     <div class="col-md-10 order-md-1 order-sm-2">
                         <!-- Primer input y label -->
                         <div class="form-group row mb-3 d-flex justify-content-center">
-                            <label for="combo_semestre" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Semestre académico:</label>
+                            <label for="combo_semestre"
+                                class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Semestre
+                                académico:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
                                 <select class="form-select" aria-label="Default select example" id="combo_semestre">
                                     <option value="-1" selected>[-- SELECCIONE --]</option>
                                     {% for semestre in semestres %}
-                                        <option value="{{semestre[1]}}">{{semestre[1]}}</option>
+                                    <option value="{{semestre[1]}}">{{semestre[1]}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
                         <!-- Segundo input y label -->
                         <div class="form-group row d-flex justify-content-center" style="align-items: center;">
-                            <label for="search_bar" class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
+                            <label for="search_bar"
+                                class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
                             <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
                                 <!-- Buscador con autocompletado de sugerencias -->
                                 <div id="buscador-multiopcion-sugerencias">
@@ -54,9 +59,17 @@
                 </div>
                 <!-- Tabla inferior -->
                 <div class="card-body show">
-                    <div id="loading"><div></div></div>
+                    <div id="loading">
+                        <div></div>
+                    </div>
                     <div class="row mt-3">
                         <div class="col-md-12" id="panel_docentes"></div>
+                        <div class="col-md-12 text-end mt-3 mb-3">
+                            <button class="btn btn-success" id="btn-exportar-excel">Exportar a Excel</button>
+                            <form action="{{ url_for('send_email') }}" method="post" style="display:inline;">
+                                <button class="btn btn-primary" type="submit">Notificar por correo</button>
+                            </form>
+                        </div>
                         <div class="col-md-12" id="espacio_tabla"></div>
                     </div>
                 </div>
@@ -67,30 +80,31 @@
 
 <link rel="stylesheet" href="/static/filtros_horarios/css/horarios_por_docente.css">
 <script src="/static/filtros_horarios/js/horarios_por_docente.js"></script>
+<script src="/static/filtros_horarios/js/exportar_excel_horario.js"></script>
 
 <style>
-#panel_docentes {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
+    #panel_docentes {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
 
-.docente-tab {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    margin: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    display: inline-block;
-}
+    .docente-tab {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-block;
+    }
 
-.docente-tab.active {
-    background-color: #3e8e41;
-}
+    .docente-tab.active {
+        background-color: #3e8e41;
+    }
 
-.docente-tab:hover {
-    background-color: #45a049;
-}
+    .docente-tab:hover {
+        background-color: #45a049;
+    }
 </style>
 {% endblock %}

@@ -3,92 +3,64 @@
 {% block titulo %} Horarios {% endblock %}
 
 {% block contenido %}
+<script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
+
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
-        <li class="breadcrumb-item active"><a href="{{url_for('horarios')}}">Horarios</a></li>
+        <li class="breadcrumb-item" href="Home"><a>Inicio</a></li>
+        <li class="breadcrumb-item active" data-href="#"><a>Horarios</a></li>
     </ol>
 </nav>
 
 <div class="card mx-2" id="card_horarios">
     <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
-        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-        Horarios con un click
+        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Generar Horarios Academicos
     </div>
     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
         <div class="card-body">
-
-            <div class="row align-items-end my-3">
-                <div class="col-md-10 order-md-1 order-sm-2">
-                    <!-- Primer input y label -->
-                    <div class="form-group row mb-3 d-flex justify-content-center">
-                        <label for="combo_semestre"
-                            class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Semestre
-                            académico:</label>
-                        <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                            <select class="form-select" aria-label="Default select example" id="combo_semestre">
-                                <option selected>SEMESTRE ACTUAL</option>
-                            </select>
-                        </div>
+            <div class="my-3">
+                <div id="estadoGeneracion">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner1"></div>
+                        <div id="estadoDisponibilidad">Disponibilidad de docentes</div>
                     </div>
-                    <!-- Segundo input y label -->
-                    <div class="form-group row mb-3 d-flex justify-content-center">
-                        <label for="combo_ambiente"
-                            class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Ambiente:</label>
-                        <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                            <select class="form-select" aria-label="Default select example" id="combo_ambiente">
-                                <option selected>[-- SELECCIONE --]</option>
-                            </select>
-                        </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner2"></div>
+                        <div id="estadoCursosActivos">Cursos Activos</div>
                     </div>
-                    <!-- Tercer input y label -->
-                    <div class="form-group row mb-3 d-flex justify-content-center">
-                        <label for="combo_grupo"
-                            class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Curso:</label>
-                        <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                            <select class="form-select" aria-label="Default select example" id="combo_grupo">
-                                <option selected>[-- SELECCIONE --]</option>
-                                {% for grupo in grupos %}
-                                <option value="{{grupo[1]}}">{{grupo[1]}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner3"></div>
+                        <div id="estadoAmbientesDisponibles">Ambientes asignados</div>
                     </div>
-                    <!-- Cuarto input y label -->
-                    <div class="form-group row d-flex justify-content-center" style="align-items: center;">
-                        <label for="combo_docente"
-                            class="col-form-label col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 texto-label">Docente:</label>
-                        <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9">
-                            <select class="form-select" aria-label="Default select example" id="combo_docente">
-                                <option selected>DOCENTE FALTANTE</option>
-                                {% for docente in docentes %}
-                                <option value="{{docente[1]}}">{{docente[1]}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner4"></div>
+                        <div id="estadoMinimoHorasAsignado">Mínimo de Horas Asignado</div>
                     </div>
-                </div>
-                <div class="col-md-2 order-md-2 order-sm-1 d-flex justify-content-center align-items-center">
-                    <!-- Foto -->
-                    <img src="/static/img/USUARIO.jpg" class="img-fluid" alt="Foto" id="foto_perfil">
                 </div>
             </div>
+            <!-- Div superior -->
+            <div class="row align-items-end my-3">
+                <!-- Espacio y botones -->
+                <div class="d-flex justify-content-center mt-3">
+                    <button class="btn btn-success btn-lg mx-2" onclick="generarHorario()">Generar Horario</button>
+                    <button class="btn btn-success btn-lg mx-2" onclick="RegistrarHorario()">Registrar Horario</button>
+                    <button class="btn btn-danger btn-lg mx-2" onclick="limpiarTabla()">Limpiar</button>
+                    <button class="btn btn-warning btn-lg mx-2" onclick="mostrarAmbientesNoDefinidos()">Ver Ambientes No Definidos</button>
+                </div>
+            </div>
+            <!-- Progreso de generación de horario -->
+
             <!-- Tabla inferior -->
-            <div class="card-body show">
+            <div class="card-body show" style="max-height: 600px; overflow-y: auto;">
+                <div id="loading">
+                    <div></div>
+                </div>
                 <div class="row mt-3">
                     <div class="col-md-12" id="espacio_tabla">
                         <table class="table table-bordered text-center" id="tabla_horarios">
                             <thead class="border border-white bg-red-usat -horario-usat">
-                                <tr>
-                                    <th scope="col" class="border border-white text-light">Horas</th>
-                                    <th scope="col" class="border border-white text-light">Lunes</th>
-                                    <th scope="col" class="border border-white text-light">Martes</th>
-                                    <th scope="col" class="border border-white text-light">Miércoles</th>
-                                    <th scope="col" class="border border-white text-light">Jueves</th>
-                                    <th scope="col" class="border border-white text-light">Viernes</th>
-                                    <th scope="col" class="border border-white text-light">Sábado</th>
-                                    <th scope="col" class="border border-white text-light">Domingo</th>
-                                </tr>
+                                <!-- Aquí se llenará el thead dinámicamente -->
                             </thead>
                             <tbody style="background-color: #EEEEEE;">
                                 <!-- Las filas se llenarán dinámicamente con JavaScript -->
@@ -96,17 +68,6 @@
                         </table>
                     </div>
                 </div>
-            </div>
-            <!-- Espacio y botón verde -->
-            <div class="d-flex justify-content-center mt-3"> <!-- Cambio en el margen superior -->
-                <button class="btn btn-success btn-lg mx-2" onclick="generarHorario()">Generar Horario</button>
-                <!-- Cambio en el tamaño -->
-
-                <button class="btn btn-success btn-lg mx-2" onclick="RegistrarHorario()">Regstrar Horario</button>
-                <!-- Cambio en el tamaño -->
-            </div>
-            <div class="d-flex justify-content-center mt-3"> <!-- Cambio en el margen superior -->
-
             </div>
         </div>
     </div>
@@ -126,7 +87,160 @@
     </div>
 </div>
 
-<!-- Script para inicializar el DataTable y realizar la búsqueda -->
+<!-- Modal de Edición -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Curso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="mb-3">
+                        <label for="cursoNombre" class="form-label">Curso</label>
+                        <input type="text" class="form-control" id="cursoNombre" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cursoDocente" class="form-label">Docente</label>
+                        <input type="text" class="form-control" id="cursoDocente">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cursoTipo" class="form-label">Tipo</label>
+                        <input type="text" class="form-control" id="cursoTipo">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cursoAula" class="form-label">Aula</label>
+                        <input type="text" class="form-control" id="cursoAula">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cursoHoraInicio" class="form-label">Hora Inicio</label>
+                        <input type="time" class="form-control" id="cursoHoraInicio">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cursoHoraFin" class="form-label">Hora Fin</label>
+                        <input type="time" class="form-control" id="cursoHoraFin">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cursoGrupo" class="form-label">Grupo</label>
+                        <input type="text" class="form-control" id="cursoGrupo" readonly>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarCambios()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ambientesModal" tabindex="-1" aria-labelledby="ambientesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ambientesModalLabel">Cursos con Ambientes No Definidos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="tablaAmbientesNoDefinidos">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Curso</th>
+                                <th>Docente</th>
+                                <th>Tipo</th>
+                                <th>Aula</th>
+                                <th>Hora Inicio</th>
+                                <th>Hora Fin</th>
+                                <th>Grupo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se llenarán dinámicamente con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #panel_docentes {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .docente-tab {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .docente-tab.active {
+        background-color: #3e8e41;
+    }
+
+    .docente-tab:hover {
+        background-color: #45a049;
+    }
+
+    .curso-detalle {
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .curso-tipo {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+        padding: 2px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    .ambiente {
+        color: #4214fa;
+        font-weight: bold;
+    }
+
+    .curso {
+        width: 100%;
+        display: block;
+        margin: 3px 0;
+    }
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 1rem);
+    }
+
+    .modal-content {
+        width: 100%;
+    }
+
+    .table-responsive {
+        max-height: 70vh; 
+        overflow-y: auto;
+    }
+
+    #tablaAmbientesNoDefinidos th, #tablaAmbientesNoDefinidos td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    #tablaAmbientesNoDefinidos .btn {
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+
 <script>
     $(document).ready(function () {
         $('#tabla-cursos').DataTable({
@@ -139,120 +253,16 @@
             },
         });
 
-        // Solicitud para obtener los semestres y llenar el select
-        $.ajax({
-            url: '/get_semestre',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                llenarSelectSemestres(response);
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
-
-        // Solicitud para obtener los ambientes y llenar el select
-        $.ajax({
-            url: '/get_ambientes',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                llenarSelectAmbientes(response);
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
-
-        // Solicitud para obtener los docentes y llenar el select
-        $.ajax({
-            url: '/get_docentes',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                llenarSelectDocentes(response);
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
-
-        // Solicitud para obtener los cursos y llenar el select
-        $.ajax({
-            url: '/get_cursos',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                llenarSelectCursos(response);
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
-
-        // Agregar eventos de cambio para filtrar
-        $('#combo_semestre').change(filtrarDatos);
-        $('#combo_ambiente').change(filtrarDatos);
-        $('#combo_grupo').change(filtrarDatos);
-        $('#combo_docente').change(filtrarDatos);
+        verificarDisponibilidadDocentes();
+        verificarCursosActivos();
+        verificarAmbientesDisponibles();
+        verificarMinimoHorasAsignado();
     });
 
-    function llenarSelectSemestres(data) {
-        let comboSemestre = $('#combo_semestre');
-        comboSemestre.empty();
-        comboSemestre.append('<option selected>SEMESTRE ACTUAL</option>');
-
-        for (let key in data) {
-            if (data.hasOwnProperty(key)) {
-                let semestre = data[key];
-                comboSemestre.append(`<option value="${semestre.idsemestre}">${semestre.descripcion}</option>`);
-            }
-        }
-    }
-
-    function llenarSelectAmbientes(data) {
-        let comboAmbiente = $('#combo_ambiente');
-        comboAmbiente.empty();
-        comboAmbiente.append('<option selected>[-- SELECCIONE --]</option>');
-
-        for (let key in data) {
-            if (data.hasOwnProperty(key)) {
-                let ambiente = data[key];
-                comboAmbiente.append(`<option value="${ambiente.idambiente}">${ambiente.nombre}</option>`);
-            }
-        }
-    }
-
-    function llenarSelectDocentes(data) {
-        let comboDocente = $('#combo_docente');
-        comboDocente.empty();
-        comboDocente.append('<option selected>DOCENTE FALTANTE</option>');
-
-        for (let key in data) {
-            if (data.hasOwnProperty(key)) {
-                let docente = data[key];
-                comboDocente.append(`<option value="${docente.iddocente}">${docente.nombre}</option>`);
-            }
-        }
-    }
-
-    function llenarSelectCursos(data) {
-        let comboGrupo = $('#combo_grupo');
-        comboGrupo.empty();
-        comboGrupo.append('<option selected>[-- SELECCIONE --]</option>');
-
-        for (let key in data) {
-            if (data.hasOwnProperty(key)) {
-                let grupo = data[key];
-                comboGrupo.append(`<option value="${grupo.idgrupo}">${grupo.nombre}</option>`);
-            }
-        }
-    }
     var horario = [];
-    var horarioJSON = '';
+    var cursoEditando = null;
+
     function generarHorario() {
-        // Mostrar el modal de carga
         $('#loadingModal').modal('show');
         $.ajax({
             url: '/generarHorario',
@@ -260,62 +270,180 @@
             contentType: 'application/json',
             success: function (response) {
                 horario = response;
-                console.log(response);
-                // No es necesario convertir `horario` a una cadena JSON aquí
-                horarioJSON = horario;
-                console.log(horarioJSON);
-                // Ocultar el modal de carga
                 $('#loadingModal').modal('hide');
-                // Procesar y mostrar los datos en la tabla
                 llenarTablaHorarios(response);
             },
             error: function (xhr, status, error) {
                 console.log(error);
-                // Ocultar el modal de carga
                 $('#loadingModal').modal('hide');
             }
         });
     }
 
+    function verificarDisponibilidadDocentes() {
+        $.ajax({
+            url: '/get_docente_sin_disponibilidad',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.length > 0) {
+                    $('#spinner1').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                    $('#estadoDisponibilidad').html('Hay Docentes sin disponibilidad Asignada <a href="/disponibilidad" class="btn btn-warning btn-sm ms-2">Ir a disponibilidad</a>');
+                } else if (response.length == 0) {
+                    $('#spinner1').replaceWith('<i class="fa fa-check text-success me-2"></i>');
+                    $('#estadoDisponibilidad').text('Disponibilidad de docentes');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                $('#spinner1').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                $('#estadoDisponibilidad').text('Error al verificar disponibilidad de docentes');
+            }
+        });
+    }
+
+    function verificarCursosActivos() {
+        $.ajax({
+            url: '/get_cursos_activos',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.length > 0) {
+                    $('#spinner2').replaceWith('<i class="fa fa-check text-success me-2"></i>');
+                    $('#estadoCursosActivos').text('Cursos Activos');
+                } else if (response.length == 0) {
+                    $('#spinner2').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                    $('#estadoCursosActivos').html('No hay cursos activos <a href="/cursos" class="btn btn-warning btn-sm ms-2">Ir a Cursos</a>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                $('#spinner2').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                $('#estadoCursosActivos').text('Error al verificar cursos activos');
+            }
+        });
+    }
+
+    function verificarAmbientesDisponibles() {
+        $.ajax({
+            url: '/get_ambientes_disponibles',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.length > 0) {
+                    $('#spinner3').replaceWith('<i class="fa fa-check text-success me-2"></i>');
+                    $('#estadoAmbientesDisponibles').text('Ambientes asignados');
+                } else if (response.length == 0) {
+                    $('#spinner3').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                    $('#estadoAmbientesDisponibles').html('No hay ambientes disponibles <a href="/ambientes" class="btn btn-warning btn-sm ms-2">Ir a Ambientes</a>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                $('#spinner3').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                $('#estadoAmbientesDisponibles').text('Error al verificar ambientes disponibles');
+            }
+        });
+    }
+
+    function verificarMinimoHorasAsignado() {
+        $.ajax({
+            url: '/docentes_validar_horas',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.length == 0) {
+                    $('#spinner4').replaceWith('<i class="fa fa-check text-success me-2"></i>');
+                    $('#estadoMinimoHorasAsignado').text('Mínimo de Horas Asignado');
+                } else if (response.length > 0) {
+                    $('#spinner4').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                    $('#estadoMinimoHorasAsignado').html('Docentes sin horas asignadas <a href="/docentes" class="btn btn-warning btn-sm ms-2">Ir a Docentes</a>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                $('#spinner4').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                $('#estadoMinimoHorasAsignado').text('Error al verificar el mínimo de horas asignado');
+            }
+        });
+    }
+
     function llenarTablaHorarios(data) {
-        const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
-        let horario = {};
+        const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+        var cursosPorDia = {
+            "Lunes": [],
+            "Martes": [],
+            "Miércoles": [],
+            "Jueves": [],
+            "Viernes": [],
+            "Sábado": []
+        };
 
-        // Inicializar el objeto horario con horas vacías para cada día
-        for (let dia of dias) {
-            horario[dia] = {};
-        }
-
-        // Procesar los datos recibidos
+        // Procesar los datos recibidos y agruparlos por día y grupo
         for (let curso in data) {
             for (let grupo in data[curso]) {
                 for (let clase of data[curso][grupo]) {
-                    let dia = clase.dia;
-                    let hora_inicio = clase.hora_inicio;
-                    let hora_fin = clase.hora_fin;
-                    let aula = clase.aula;
-                    let docente = clase.docente;
-                    let detalle = `${curso}<br>${aula}<br>${docente}<br>${hora_inicio} - ${hora_fin}`;
-
-                    if (!horario[dia][hora_inicio]) {
-                        horario[dia][hora_inicio] = [];
-                    }
-                    horario[dia][hora_inicio].push(detalle);
+                    cursosPorDia[clase.dia].push({
+                        curso: curso,
+                        docente: clase.docente,
+                        tipo: clase.tipo_curso,
+                        aula: clase.aula,
+                        hora_inicio: clase.hora_inicio,
+                        hora_fin: clase.hora_fin,
+                        grupo: grupo,
+                        dia: clase.dia
+                    });
                 }
             }
         }
+
+        // Imprimir los cursos de cada día en la consola
+        console.log("Cursos Lunes: ", cursosPorDia["Lunes"]);
+        console.log("Cursos Martes: ", cursosPorDia["Martes"]);
+        console.log("Cursos Miércoles: ", cursosPorDia["Miércoles"]);
+        console.log("Cursos Jueves: ", cursosPorDia["Jueves"]);
+        console.log("Cursos Viernes: ", cursosPorDia["Viernes"]);
+        console.log("Cursos Sábado: ", cursosPorDia["Sábado"]);
+
+        // Crear el encabezado de la tabla
+        let thead = $('#tabla_horarios thead');
+        thead.empty();
+        let filaEncabezado = '<tr><th scope="col" class="border border-white text-light">Horas</th>';
+        for (let dia of dias) {
+            filaEncabezado += `<th scope="col" class="border border-white text-light">${dia}</th>`;
+        }
+        filaEncabezado += '</tr>';
+        thead.append(filaEncabezado);
 
         // Crear las filas de la tabla
         let tabla = $('#tabla_horarios tbody');
         tabla.empty();
 
         for (let i = 7; i <= 22; i++) {
-            let hora = `${i}:00 - ${i + 1}:00`;
-            let fila = `<tr><th scope="row">${hora}</th>`;
+            let fila = `<tr><th scope="row">${i}:00 - ${i + 1}:00</th>`;
 
             for (let dia of dias) {
-                let clases = horario[dia][`${i}:00`] ? horario[dia][`${i}:00`].join('<br><br>') : '';
-                fila += `<td class="bg-warning text-center" style="vertical-align:middle;">${clases}</td>`;
+                let cursosDia = cursosPorDia[dia].filter(curso => {
+                    let horaInicio = parseInt(curso.hora_inicio.split(":")[0]);
+                    let horaFin = parseInt(curso.hora_fin.split(":")[0]);
+                    return i >= horaInicio && i < horaFin;
+                });
+
+                if (cursosDia.length > 0) {
+                    let curso = cursosDia[0]; // En caso de solapamiento, toma el primero encontrado
+                    let detalle = `
+                        <div class="curso-detalle" onclick='abrirModal(${JSON.stringify(curso)})'>
+                            <div class="curso">${curso.curso} (Grupo ${curso.grupo})</div><br>
+                            ${curso.docente}<br>
+                            <div class="curso-tipo">${curso.tipo}</div><br>
+                            <div class="ambiente">${curso.aula}</div><br>
+                            ${curso.hora_inicio} - ${curso.hora_fin}
+                        </div>
+                    `;
+                    fila += `<td class="bg-warning text-center curso-cell" style="vertical-align:middle;" rowspan="${curso.hora_fin.split(":")[0] - curso.hora_inicio.split(":")[0]}">${detalle}</td>`;
+                } else {
+                    fila += `<td class="bg-warning text-center curso-cell" style="vertical-align:middle;"></td>`;
+                }
             }
 
             fila += `</tr>`;
@@ -323,23 +451,134 @@
         }
     }
 
-    function filtrarDatos() {
-        // Obtener los valores seleccionados
-        let semestre = $('#combo_semestre').val();
-        let ambiente = $('#combo_ambiente').val();
-        let curso = $('#combo_grupo').val();
-        let docente = $('#combo_docente').val();
-
-        // Filtrar datos y volver a llenar los selects y la tabla según los valores seleccionados
-
+    function abrirModal(curso) {
+        cursoEditando = curso;
+        $('#cursoNombre').val(curso.curso);
+        $('#cursoDocente').val(curso.docente);
+        $('#cursoTipo').val(curso.tipo);
+        $('#cursoAula').val(curso.aula);
+        $('#cursoHoraInicio').val(curso.hora_inicio);
+        $('#cursoHoraFin').val(curso.hora_fin);
+        $('#cursoGrupo').val(curso.grupo);
+        $('#editModal').modal('show');
     }
+
+    function guardarCambios() {
+        let cursoEditado = {
+            curso: $('#cursoNombre').val(),
+            docente: $('#cursoDocente').val(),
+            tipo: $('#cursoTipo').val(),
+            aula: $('#cursoAula').val(),
+            hora_inicio: $('#cursoHoraInicio').val(),
+            hora_fin: $('#cursoHoraFin').val(),
+            grupo: $('#cursoGrupo').val(),
+            dia: cursoEditando.dia
+        };
+
+        for (let curso in horario) {
+            for (let grupo in horario[curso]) {
+                for (let i = 0; i < horario[curso][grupo].length; i++) {
+                    let clase = horario[curso][grupo][i];
+                    if (clase.dia === cursoEditado.dia && clase.aula === cursoEditado.aula && clase.hora_inicio === cursoEditado.hora_inicio) {
+                        horario[curso][grupo][i] = cursoEditado;
+                    }
+                }
+            }
+        }
+
+        $('#editModal').modal('hide');
+        llenarTablaHorarios(horario);
+    }
+
+    function mostrarAmbientesNoDefinidos() {
+        let ambientesNoDefinidos = [];
+
+        for (let curso in horario) {
+            for (let grupo in horario[curso]) {
+                for (let clase of horario[curso][grupo]) {
+                    if (clase.aula === "No definido") {
+                        ambientesNoDefinidos.push({
+                            curso: curso,
+                            docente: clase.docente,
+                            tipo: clase.tipo_curso,
+                            aula: clase.aula,
+                            hora_inicio: clase.hora_inicio,
+                            hora_fin: clase.hora_fin,
+                            grupo: grupo
+                        });
+                    }
+                }
+            }
+        }
+
+        if (ambientesNoDefinidos.length === 0) {
+            console.log("No se encontró 'No definido'");
+            return;
+        }
+
+        let tabla = $('#tablaAmbientesNoDefinidos tbody');
+        tabla.empty();
+
+        for (let curso of ambientesNoDefinidos) {
+            let fila = `
+                <tr>
+                    <td>${curso.curso}</td>
+                    <td>${curso.docente}</td>
+                    <td>${curso.tipo}</td>
+                    <td>${curso.aula}</td>
+                    <td>${curso.hora_inicio}</td>
+                    <td>${curso.hora_fin}</td>
+                    <td>${curso.grupo}</td>
+                    <td><button class="btn btn-primary btn-sm" onclick='editarAmbiente(${JSON.stringify(curso)})'>Editar</button></td>
+                </tr>
+            `;
+            tabla.append(fila);
+        }
+
+        $('#ambientesModal').modal('show');
+    }
+
+    function editarAmbiente(curso) {
+        cursoEditando = curso;
+        $('#cursoNombre').val(curso.curso);
+        $('#cursoDocente').val(curso.docente);
+        $('#cursoTipo').val(curso.tipo);
+        $('#cursoAula').val(curso.aula);
+        $('#cursoHoraInicio').val(curso.hora_inicio);
+        $('#cursoHoraFin').val(curso.hora_fin);
+        $('#cursoGrupo').val(curso.grupo);
+        $('#editModal').modal('show');
+        $('#ambientesModal').modal('hide');
+    }
+
     function RegistrarHorario() {
-        console.log(horarioJSON);
+        let horariosActualizados = [];
+
+        for (let curso in horario) {
+            for (let grupo in horario[curso]) {
+                for (let clase of horario[curso][grupo]) {
+                    horariosActualizados.push({
+                        curso: curso,
+                        grupo: grupo,
+                        dia: clase.dia,
+                        hora_inicio: clase.hora_inicio,
+                        hora_fin: clase.hora_fin,
+                        aula: clase.aula,
+                        docente: clase.docente,
+                        tipo: clase.tipo_curso
+                    });
+                }
+            }
+        }
+
+        console.log(JSON.stringify(horariosActualizados, null, 2));
+
+        /*
         $.ajax({
             url: '/insertar_horarios_ia',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ horarios: horarioJSON }), // Asegúrate de enviar JSON correcto
+            data: JSON.stringify({ horarios: horariosActualizados }),
             success: function (response) {
                 console.log('Horario registrado exitosamente:', response);
             },
@@ -347,7 +586,12 @@
                 console.log('Error al registrar el horario:', error);
             }
         });
+        */
+    }
+
+    function limpiarTabla() {
+        let tabla = $('#tabla_horarios tbody');
+        tabla.empty();
     }
 </script>
-
 {% endblock %}
