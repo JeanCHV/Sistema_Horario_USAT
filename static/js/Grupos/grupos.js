@@ -3,36 +3,34 @@ $(document).ready(function () {
     var cursos = [];
     var semestres = [];
     var table = $('#tabla-grupo').DataTable({
-        "paging": false,
-        "info": true,
-        "responsive": true,
-        "autoWidth": true,
-        "stateSave": true,
-        "scrollY": "510px",
-        "columns": [
-            { "data": "nombre", "className": 'dt-body-center' },
-            { "data": "vacantes", "className": 'dt-body-center' },
+        paging: false,
+        info: true,
+        responsive: true,
+        autoWidth: true,
+        stateSave: true,
+        scrollY: "510px",
+        columns: [
+            { data: "nombre", className: 'dt-body-center' },
+            { data: "vacantes", className: 'dt-body-center' },
             {
-                "data": "curso", 
-                "render": function (data, type, row) {
+                data: "curso",
+                render: function (data, type, row) {
                     return cursos[data] || data;
                 }
             },
-            { "data": "descripcion","className": 'dt-body-center' },
+            { data: "descripcion", className: 'dt-body-center' },
             {
-                "data": null, "className": 'dt-body-center',
-                "render": function (data, type, row) {
+                data: null, className: 'dt-body-center',
+                render: function (data, type, row) {
                     return `
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-warning btn-sm btnModificar me-2" data-id_grupo="${row.id_grupo}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="btn btn-warning btn-sm btnModificar" data-id_grupo="${row.id_grupo}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
                         <button class="btn btn-danger btn-sm btnEliminar" data-id_grupo="${row.id_grupo}" title="Eliminar"><i class="fas fa-times"></i></button>
-                    </div>
                     `;
                 }
             }
         ],
-        "language": {
-            "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
         }
     });
 
@@ -181,7 +179,7 @@ $(document).ready(function () {
             nombre: $('#modificarNombre').val(),
             vacantes: $('#modificarVacantes').val(),
             idcurso: $('#modificarCurso').val(),
-            idsemestre: $('#modificarSemestre').val(),
+            idsemestre: $('#modificarSemestre').val()
         };
 
         $.ajax({
@@ -206,10 +204,9 @@ $(document).ready(function () {
     });
 
     $('#tabla-grupo tbody').on('click', '.btnModificar', function () {
-        var id = $(this).data('id');
-        console.log(id);
+        var id = $(this).data('id_grupo');
         $.ajax({
-            url: '/obtener_grupo_por_id/' + id,
+            url: '/obtener_grupo/' + id,
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
@@ -217,7 +214,9 @@ $(document).ready(function () {
                 $('#modificarIdGrupo').val(grupo.id_grupo);
                 $('#modificarNombre').val(grupo.nombre);
                 $('#modificarVacantes').val(grupo.vacantes);
-                $('#modificarCurso').val(grupo.idcurso);
+                cargarCursos().then(function() {
+                    $('#modificarCurso').val(grupo.idcurso);
+                });
                 $('#modificarSemestre').val(grupo.idsemestre);
                 $('#modalModificarGrupo').modal('show');
             },

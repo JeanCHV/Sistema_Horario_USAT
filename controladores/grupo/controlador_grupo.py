@@ -206,6 +206,24 @@ def obtener_grupos():
     conexion.close()
     return grupos
 
+def obtener_grupo_por_id(id_grupo):
+    conexion = obtener_conexion()
+    grupo = None
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT * FROM grupo WHERE id_grupo = %s", (id_grupo,))
+            grupo = cursor.fetchone()
+            if grupo:
+                columnas = [desc[0] for desc in cursor.description]  # Obtiene los nombres de las columnas
+                grupo_dict = dict(zip(columnas, grupo))  # Convierte la tupla en un diccionario
+                return grupo_dict
+            else:
+                return {"error": "Grupo no encontrado"}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
 def agregar_grupo(nombre, vacantes, idcurso, idsemestre):
     conexion = obtener_conexion()
     try:

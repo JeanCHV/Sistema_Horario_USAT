@@ -1188,3 +1188,8 @@ def obtener_ambientes_curso_endpoint(idcurso):
     if "error" in ambientes:
         return jsonify(ambientes), 500
     return jsonify(ambientes)
+
+@app.route('/obtener_grupo/<int:id_grupo>', methods=['GET'])
+def obtener_grupo_id(id_grupo):
+    resultado = controlador_grupo.obtener_grupo_por_id(id_grupo)
+    return jsonify(resultado)
