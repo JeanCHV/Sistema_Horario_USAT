@@ -1218,40 +1218,40 @@ def asignar_disponibilidad_excel():
 
     return jsonify(resultados)
 
-# Ruta Para notificar por correo 
+# # Ruta Para notificar por correo 
 
-from flask_mail import Mail, Message
+# from flask_mail import Mail, Message
 
-# Configuración de Flask-Mail
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'brayanhornamartinez@gmail.com'  # Tu correo de Gmail
-app.config['MAIL_PASSWORD'] = '2048001041'  # Tu contraseña de Gmail
+# # Configuración de Flask-Mail
+# app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+# app.config['MAIL_PORT'] = 587
+# app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USE_SSL'] = False
+# app.config['MAIL_USERNAME'] = 'brayanhornamartinez@gmail.com'  # Tu correo de Gmail
+# app.config['MAIL_PASSWORD'] = '2048001041'  # Tu contraseña de Gmail
 
-@app.route('/send-email', methods=['POST'])
-def send_email():
-    msg = Message("Buenos días",
-                  sender="brayanhornamartinez@gmail.com",
-                  recipients=["brayanhorna773@gmail.com"])
-    msg.body = "Buenos días"
-    Mail.send(msg)
-    return redirect(url_for('index'))
+# @app.route('/send-email', methods=['POST'])
+# def send_email():
+#     msg = Message("Buenos días",
+#                   sender="brayanhornamartinez@gmail.com",
+#                   recipients=["brayanhorna773@gmail.com"])
+#     msg.body = "Buenos días"
+#     Mail.send(msg)
+#     return redirect(url_for('index'))
 
-from controladores.Asistente.asistente_virtual import *
+# from controladores.Asistente.asistente_virtual import *
 
 
-@app.route('/chatbot', methods=['POST'])
-def chatbot():
-    datos_peticion = request.get_json()
-    peticion_usuario = datos_peticion.get('mensaje')
-    respuesta_chatbot = obtener_respuesta(peticion_usuario)
-    return respuesta_chatbot
+# @app.route('/chatbot', methods=['POST'])
+# def chatbot():
+#     datos_peticion = request.get_json()
+#     peticion_usuario = datos_peticion.get('mensaje')
+#     respuesta_chatbot = obtener_respuesta(peticion_usuario)
+#     return respuesta_chatbot
 
-@app.route('/chatbot-html')
-def mostrar_chatbot():
-    return render_template('asistente/asistente_virtual.html')
+# @app.route('/chatbot-html')
+# def mostrar_chatbot():
+#     return render_template('asistente/asistente_virtual.html')
 
 # @app.route('/chatbot', methods=['POST'])
 # def chatbot():
