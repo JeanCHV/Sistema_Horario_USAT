@@ -111,6 +111,24 @@ def get_docentes_activos():
         conexion.close()
 
     return docentes_activos
+def docentes_validar_horas():
+    conexion = obtener_conexion()
+    docentes_activos = []
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("SELECT idpersona,nombres,apellidos,cantHoras FROM persona WHERE tipopersona='D' AND cantHoras<=6;")
+            column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+            row = cursor.fetchone()
+
+            if row:
+                docente_dict = dict(zip(column_names, row))  # Convertir la fila en un diccionario
+                docentes_activos.append(docente_dict)
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+    return docentes_activos
 
 
 ##OBTENER DOCENTE POR ID
