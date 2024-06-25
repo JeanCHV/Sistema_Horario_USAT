@@ -161,4 +161,19 @@ def obtener_ambientes_curso(idcurso):
     finally:
         conexion.close()
 
-
+## ELIMINAR 
+def eliminar_ambientes_curso(idcurso):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute('''
+                DELETE FROM curso_ambiente
+                WHERE idcurso = %s
+            ''', (idcurso,))
+        conexion.commit()
+        return {'success': True}
+    except Exception as e:
+        conexion.rollback()
+        return {'error': str(e)}
+    finally:
+        conexion.close()

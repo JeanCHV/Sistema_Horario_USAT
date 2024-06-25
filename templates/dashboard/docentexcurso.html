@@ -213,13 +213,8 @@ $(document).ready(function () {
         var table = $('#tabla-cursos').DataTable({
             paging: false,
             info: false,
-            autoWidth: true,
-            responsive: true,
-            scroller: true,
-            scrollY: '200px',
-            searching: true,
-            processing: true,
-            serverSide: false,
+            scrollY: '800px',
+            order: [[0, 'asc']], 
             dom: 'Bfrtip',
             buttons: [
                 {
