@@ -37,7 +37,7 @@ def agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin):
         with conexion.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO docente_disponibilidad (idpersona, dia, hora_inicio, hora_fin)
+                INSERT INTO docente_disponibilidad (id, dia, hora_inicio, hora_fin)
                 VALUES (%s, %s, %s, %s)
             """,
                 (idpersona, dia, hora_inicio, hora_fin),
@@ -50,52 +50,49 @@ def agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin):
     finally:
         conexion.close()
 
-
 # Función para modificar una disponibilidad existente
-def eliminar_disponibilidad(idpersona):
-    conexion = obtener_conexion()
-    try:
-        with conexion.cursor() as cursor:
-            cursor.execute("DELETE FROM docente_disponibilidad WHERE idpersona = %s", (idpersona,))
-            conexion.commit()
-            return {"mensaje": "Disponibilidad eliminada correctamente"}
-    except Exception as e:
-        conexion.commit()
-        return {"error": str(e)}
-    finally:
-        conexion.close()
-
-
-# Función para eliminar una disponibilidad
-def eliminar_disponibilidad(iddisponibilidad):
+def modificar_disponibilidad(id_disponibilidad_docente, nuevo_dia, nueva_hora_inicio, nueva_hora_fin):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
             cursor.execute(
-                "DELETE FROM docente_disponibilidad WHERE iddisponibilidad = %s",
-                (iddisponibilidad,),
+                """
+                UPDATE docente_disponibilidad
+                SET dia = %s, hora_inicio = %s, hora_fin = %s
+                WHERE id_disponibilidad_docente = %s
+                """,
+                (nuevo_dia, nueva_hora_inicio, nueva_hora_fin, id_disponibilidad_docente)
             )
             conexion.commit()
-            return {"mensaje": "Disponibilidad eliminada correctamente"}
+            return {"mensaje": "Disponibilidad modificada correctamente"}
     except Exception as e:
-        conexion.commit()
+        conexion.rollback()
         return {"error": str(e)}
     finally:
         conexion.close()
 
-def obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin):
+# Función para eliminar una disponibilidad
+def eliminar_disponibilidad(id_disponibilidad_docente):
+    conexion = obtener_conexion()
+    try:
+        with conexion.cursor() as cursor:
+            cursor.execute("DELETE FROM docente_disponibilidad WHERE id_disponibilidad_docente = %s", (id_disponibilidad_docente,))
+            conexion.commit()
+            return {"mensaje": "Disponibilidad eliminada correctamente"}
+    except Exception as e:
+        conexion.rollback()
+        return {"error": str(e)}
+    finally:
+        conexion.close()
+
+def obtener_disponibilidad_por_id(id_disponibilidad_docente):
     conexion = obtener_conexion()
     disponibilidad = None
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("""
-                SELECT persona.idpersona, CONCAT(persona.apellidos, ' ', persona.nombres) AS nombre_completo, dia, 
-                TIME_FORMAT(hora_inicio, '%%H:%%i') AS hora_inicio, 
-                TIME_FORMAT(hora_fin, '%%H:%%i') AS hora_fin
-                FROM docente_disponibilidad
-                INNER JOIN persona ON docente_disponibilidad.idpersona = persona.idpersona
-                WHERE persona.idpersona = %s AND dia = %s AND TIME_FORMAT(hora_inicio, '%%H:%%i') = %s AND TIME_FORMAT(hora_fin, '%%H:%%i') = %s
-            """, (idpersona, dia, hora_inicio, hora_fin))
+            cursor.execute(
+                """ select from docente_disponibilidad where id_disponibilidad_docente=%s""",(id_disponibilidad_docente) 
+            )
             disponibilidad = cursor.fetchone()
             if disponibilidad:
                 columnas = [desc[0] for desc in cursor.description]

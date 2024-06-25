@@ -1063,16 +1063,20 @@ def eliminar_disponibilidad_por_idpersona(idpersona):
 
 
 # Ruta para obtener una disponibilidad por detalles específicos (idpersona, dia, hora_inicio, hora_fin)
-@app.route('/get_disponibilidad_by_id', methods=['GET'])
-def obtener_disponibilidad_por_id_route():
-    idpersona = request.args.get('idpersona')
-    dia = request.args.get('dia')
-    hora_inicio = request.args.get('hora_inicio')
-    hora_fin = request.args.get('hora_fin')
+@app.route('/get_disponibilidad_by_id/<int:id_disponibilidad_docente>', methods=['GET'])
+def get_disponibilidad_by_id(id_disponibilidad_docente):
+    resultado = controlador_disponibilidad.obtener_disponibilidad_por_id(id_disponibilidad_docente)
+    return jsonify(resultado)
 
-    print(f"Recibido: idpersona={idpersona}, dia={dia}, hora_inicio={hora_inicio}, hora_fin={hora_fin}")  # Registro de los valores recibidos
-
-    resultado = controlador_disponibilidad.obtener_disponibilidad_por_id(idpersona, dia, hora_inicio, hora_fin)
+@app.route('/update_disponibilidad', methods=['PUT'])
+def actualizar_disponibilidad():
+    datos = request.json
+    id_disponibilidad_docente = datos.get('id_disponibilidad_docente')
+    nuevo_dia = datos.get('nuevo_dia')
+    nueva_hora_inicio = datos.get('nueva_hora_inicio')
+    nueva_hora_fin = datos.get('nueva_hora_fin')
+    
+    resultado = controlador_disponibilidad.modificar_disponibilidad(id_disponibilidad_docente, nuevo_dia, nueva_hora_inicio, nueva_hora_fin)
     return jsonify(resultado)
 
 
@@ -1216,4 +1220,54 @@ def asignar_disponibilidad_excel():
     finally:
         conexion.close()
 
+<<<<<<< Updated upstream
     return jsonify(resultados)
+=======
+    return jsonify(resultados)
+
+# Ruta Para notificar por correo 
+
+# from flask_mail import Mail, Message
+
+# Configuración de Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'brayanhornamartinez@gmail.com'  # Tu correo de Gmail
+app.config['MAIL_PASSWORD'] = '2048001041'  # Tu contraseña de Gmail
+
+@app.route('/send-email', methods=['POST'])
+def send_email():
+    msg = Message("Buenos días",
+                  sender="brayanhornamartinez@gmail.com",
+                  recipients=["brayanhorna773@gmail.com"])
+    msg.body = "Buenos días"
+    Mail.send(msg)
+    return redirect(url_for('index'))
+
+from controladores.Asistente.asistente_virtual import *
+
+
+@app.route('/chatbot', methods=['POST'])
+def chatbot():
+    datos_peticion = request.get_json()
+    peticion_usuario = datos_peticion.get('mensaje')
+    respuesta_chatbot = obtener_respuesta(peticion_usuario)
+    return respuesta_chatbot
+
+@app.route('/chatbot-html')
+def mostrar_chatbot():
+    return render_template('asistente/asistente_virtual.html')
+
+# @app.route('/chatbot', methods=['POST'])
+# def chatbot():
+#     datos_peticion = request.get_json()
+#     peticion_usuario = datos_peticion.get('mensaje')
+#     respuesta_chatbot = obtener_respuesta_nltk(peticion_usuario)
+#     return jsonify({"respuesta": respuesta_chatbot})
+
+# @app.route('/chatbot-html')
+# def mostrar_chatbot():
+#     return render_template('asistente/asistente_virtual.html')
+>>>>>>> Stashed changes

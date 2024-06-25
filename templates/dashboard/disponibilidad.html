@@ -39,52 +39,52 @@
         </div>
     </div>
 
-    <!-- Modal para agregar o modificar disponibilidad -->
-    <div class="modal fade" id="modalDisponibilidad" tabindex="-1" aria-labelledby="modalDisponibilidadLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalDisponibilidadLabel">Agregar Disponibilidad</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formDisponibilidad">
-                        <input type="hidden" id="idDisponibilidad">
-                        <div class="mb-3">
-                            <label for="docente" class="form-label">Docente:</label>
-                            <select class="form-control" id="docente" name="docente" required>
-                                <option value="">Seleccione</option>
-                                <!-- Los docentes se cargarán dinámicamente aquí -->
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="dia" class="form-label">Día:</label>
-                            <select class="form-control" id="dia" name="dia" required>
-                                <option value="">Seleccione</option>
-                                <option value="Lunes">Lunes</option>
-                                <option value="Martes">Martes</option>
-                                <option value="Miércoles">Miércoles</option>
-                                <option value="Jueves">Jueves</option>
-                                <option value="Viernes">Viernes</option>
-                                <option value="Sábado">Sábado</option>
-                                <option value="Domingo">Domingo</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="horaInicio" class="form-label">Hora Inicio:</label>
-                            <input type="time" class="form-control" id="horaInicio" name="horaInicio" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="horaFin" class="form-label">Hora Fin:</label>
-                            <input type="time" class="form-control" id="horaFin" name="horaFin" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                    </form>
-                </div>
+<!-- Modal para agregar o modificar disponibilidad -->
+<div class="modal fade" id="modalDisponibilidad" tabindex="-1" aria-labelledby="modalDisponibilidadLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDisponibilidadLabel">Agregar Disponibilidad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formDisponibilidad">
+                    <input type="hidden" id="idDisponibilidad">
+                    <div class="mb-3">
+                        <label for="docente" class="form-label">Docente:</label>
+                        <select class="form-control" id="docente" name="docente" required>
+                            <option value="">Seleccione</option>
+                            <!-- Los docentes se cargarán dinámicamente aquí -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dia" class="form-label">Día:</label>
+                        <select class="form-control" id="dia" name="dia" required>
+                            <option value="">Seleccione</option>
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                            <option value="Sábado">Sábado</option>
+                            <option value="Domingo">Domingo</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="horaInicio" class="form-label">Hora Inicio:</label>
+                        <input type="time" class="form-control" id="horaInicio" name="horaInicio" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="horaFin" class="form-label">Hora Fin:</label>
+                        <input type="time" class="form-control" id="horaFin" name="horaFin" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
 
 <!-- Modal para la subida masiva de datos -->
 <div class="modal fade" id="modalSubidaMasiva" tabindex="-1" aria-labelledby="modalSubidaMasivaLabel"
@@ -269,8 +269,8 @@ $(document).ready(function () {
                         "data": null, "className": 'dt-body-center',
                 "render": function (data, type, row) {
                     return `
-                    <button class="btn btn-warning btn-sm btnModificar" data-idpersona="${row.idpersona}" data-dia="${row.dia}" data-hora_inicio="${row.hora_inicio}" data-hora_fin="${row.hora_fin}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
-                    <button class="btn btn-danger btn-sm btnEliminar" data-idpersona="${row.idpersona}" data-dia="${row.dia}" data-hora_inicio="${row.hora_inicio}" data-hora_fin="${row.hora_fin}" title="Eliminar"><i class="fas fa-times"></i></button>
+                    <button class="btn btn-warning btn-sm btnModificar" data-id_disponibilidad_docente="${row.id_disponibilidad_docente}" data-dia="${row.dia}" data-hora_inicio="${row.hora_inicio}" data-hora_fin="${row.hora_fin}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
+                    <button class="btn btn-danger btn-sm btnEliminar" data-id_disponibilidad_docente="${row.id_disponibilidad_docente}" data-dia="${row.dia}" data-hora_inicio="${row.hora_inicio}" data-hora_fin="${row.hora_fin}" title="Eliminar"><i class="fas fa-times"></i></button>
                     `;
                 }
                     }
@@ -399,31 +399,58 @@ $(document).ready(function () {
     reader.readAsArrayBuffer(file);
 });
 
+$('#tabla-disponibilidad tbody').on('click', '.btnModificar', function () {
+    var id_disponibilidad_docente = $(this).data('id_disponibilidad_docente');
+    console.log(id_disponibilidad_docente)
+    $.ajax({
+        url: `/get_disponibilidad_by_id` + id_disponibilidad_docente,
+        type: 'GET',
+        contentType: 'application/json',
+        success: function (response) {
+            var disponibilidad = response;
+            $('#id_disponibilidad_docente').val(id_disponibilidad_docente); // Guardar el ID en un campo oculto
+            $('#docente').val(disponibilidad.idpersona);
+            $('#dia').val(disponibilidad.dia);
+            $('#horaInicio').val(disponibilidad.hora_inicio);
+            $('#horaFin').val(disponibilidad.hora_fin);
+            $('#modalDisponibilidadLabel').text('Modificar Disponibilidad');
+            $('#modalDisponibilidad').modal('show');
+        },
+        error: function (xhr, status, error) {
+            mostrarAlerta('error', 'Error', 'Hubo un error al obtener los datos de la disponibilidad.');
+        }
+    });
+});
 
-        $('#tabla-disponibilidad tbody').on('click', '.btnModificar', function () {
-            var idpersona = $(this).data('idpersona');
-            var dia = $(this).data('dia');
-            var hora_inicio = $(this).data('hora_inicio');
-            var hora_fin = $(this).data('hora_fin');
+$('#formModificarDisponibilidad').on('submit', function (e) {
+    e.preventDefault();
 
-            $.ajax({
-                url: `/get_disponibilidad_by_id?idpersona=${idpersona}&dia=${dia}&hora_inicio=${hora_inicio}&hora_fin=${hora_fin}`,
-                type: 'GET',
-                contentType: 'application/json',
-                success: function (response) {
-                    var disponibilidad = response;
-                    $('#docente').val(disponibilidad.idpersona);
-                    $('#dia').val(disponibilidad.dia);
-                    $('#horaInicio').val(disponibilidad.hora_inicio);
-                    $('#horaFin').val(disponibilidad.hora_fin);
-                    $('#modalDisponibilidadLabel').text('Modificar Disponibilidad');
-                    $('#modalDisponibilidad').modal('show');
-                },
-                error: function (xhr, status, error) {
-                    mostrarAlerta('error', 'Error', 'Hubo un error al obtener los datos de la disponibilidad.');
-                }
-            });
-        });
+    var id_disponibilidad_docente = $('#id_disponibilidad_docente').val();
+    var nuevo_dia = $('#dia').val();
+    var nueva_hora_inicio = $('#horaInicio').val();
+    var nueva_hora_fin = $('#horaFin').val();
+
+    $.ajax({
+        url: '/update_disponibilidad',
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            id_disponibilidad_docente: id_disponibilidad_docente,
+            nuevo_dia: nuevo_dia,
+            nueva_hora_inicio: nueva_hora_inicio,
+            nueva_hora_fin: nueva_hora_fin
+        }),
+        success: function (response) {
+            $('#modalDisponibilidad').modal('hide');
+            mostrarAlerta('success', 'Éxito', 'Disponibilidad modificada correctamente.');
+            // Actualizar la tabla o realizar cualquier otra acción necesaria
+        },
+        error: function (xhr, status, error) {
+            mostrarAlerta('error', 'Error', 'Hubo un error al modificar la disponibilidad.');
+        }
+    });
+});
+
 
         $('#tabla-disponibilidad tbody').on('click', '.btnEliminar', function () {
     var idpersona = $(this).data('idpersona');
