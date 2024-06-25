@@ -1188,3 +1188,29 @@ def obtener_ambientes_curso_endpoint(idcurso):
     if "error" in ambientes:
         return jsonify(ambientes), 500
     return jsonify(ambientes)
+
+
+@app.route('/asignar_disponibilidad_excel', methods=['POST'])
+def asignar_disponibilidad_excel():
+    data = request.get_json()
+    conexion = obtener_conexion()
+    resultados = []
+
+    try:
+        for item in data:
+            idpersona = controlador_disponibilidad.obtener_id_persona(item['docente'])
+            if not idpersona:
+                resultados.append({"error": f"No se encontró el docente: {item['docente']}"})
+                continue
+            
+            try:
+                with conexion.cursor() as cursor:
+                    cursor.callproc('sp_disponibilidad_Gestion', [1, item['dia'], item['hora_inicio'], item['hora_fin'], idpersona])
+                    conexion.commit()
+                    resultados.append({"mensaje": f"Disponibilidad agregada correctamente para {item['docente']}"})
+            except Exception as e:
+                resultados.append({"error": str(e)})
+    finally:
+        conexion.close()
+
+    return jsonify(resultados)
