@@ -68,7 +68,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="correoDocente" class="form-label">Correo:</label>
-                            <input type="email" class="form-control" id="correoDocente" name="correo" required>
+                            <input type="email" class="form-control" id="correoDocente" name="correo" oninput="completarCorreo(this)" required>
                         </div>
                         <div class="mb-3">
                             <label for="cantHorasDocente" class="form-label">Cantidad de Horas:</label>
@@ -128,7 +128,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="modificarCorreoDocente" class="form-label">Correo:</label>
-                            <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" required>
+                            <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" oninput="completarCorreo(this)" required>
                         </div>
                         <div class="mb-3">
                             <label for="modificarCantHoras" class="form-label">Cantidad de Horas:</label>
@@ -183,6 +183,32 @@
 </div>
 
 <script>
+
+    function completarCorreo(input) {
+        const value = input.value;
+        const lastChar = value.charAt(value.length - 1);
+        const parts = value.split('@');
+        
+        if (parts.length > 1) {
+            const username = parts[0];
+            const domain = parts[1];
+
+            switch (domain) {
+                case 'u':
+                    input.value = username + '@usat.edu.pe';
+                    break;
+                case 'g':
+                    input.value = username + '@gmail.com';
+                    break;
+                case 'o':
+                    input.value = username + '@outlook.com';
+                    break;
+                case 'h':
+                    input.value = username + '@hotmail.com';
+                    break;
+            }
+        }
+    }
     function validarNumeroDocumento(input) {
         const regex = /^\d{0,8}$/;
         if (!regex.test(input.value)) {
