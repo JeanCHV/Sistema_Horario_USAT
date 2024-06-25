@@ -160,7 +160,7 @@ $(document).ready(function () {
                 if (response.error) {
                     $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
                 } else {
-                    $('#mensajeResultado').addClass('alert alert-success').text('Curso agregado correctamente');
+                    $('#mensajeResultado').addClass('alert alert-success').text('Grupo agregado correctamente');
                     $('#modalAgregarGrupo').modal('hide');
                     cargarGrupos();
                 }
@@ -235,28 +235,39 @@ $(document).ready(function () {
 
     $('#tabla-grupo tbody').on('click', '.btnEliminar', function () {
         var id = $(this).data('id_grupo');
-        if (confirm('¿Estás seguro de que deseas eliminar este grupo?')) {
-            $.ajax({
-                url: '/eliminar_grupo',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ id_grupo: id }),
-                success: function (response) {
-                    console.log(response);
-                    $('#mensajeResultado').removeClass().empty();
-                    if (response.error) {
-                        $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
-                    } else {
-                        $('#mensajeResultado').addClass('alert alert-success').text('Grupo eliminado correctamente');
-                        cargarGrupos();
+        Swal.fire({
+            title: '¿Estás seguro de que deseas eliminar este grupo?',
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/eliminar_grupo',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ id_grupo: id }),
+                    success: function (response) {
+                        console.log(response);
+                        $('#mensajeResultado').removeClass().empty();
+                        if (response.error) {
+                            $('#mensajeResultado').addClass('alert alert-danger').text('Error: ' + response.error);
+                        } else {
+                            $('#mensajeResultado').addClass('alert alert-success').text('Grupo eliminado correctamente');
+                            cargarGrupos();
+                        }
+                        $('#mensajeResultado').show();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
                     }
-                    $('#mensajeResultado').show();
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        }
+                });
+            }
+        });
     });
 
     cargarCursosEnFiltro();
