@@ -135,32 +135,33 @@
     </div>
 </div>
 
-<!-- Modal de Ambientes No Definidos -->
 <div class="modal fade" id="ambientesModal" tabindex="-1" aria-labelledby="ambientesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ambientesModalLabel">Cursos con Ambientes No Definidos</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <table class="table table-bordered" id="tablaAmbientesNoDefinidos">
-                    <thead>
-                        <tr>
-                            <th>Curso</th>
-                            <th>Docente</th>
-                            <th>Tipo</th>
-                            <th>Aula</th>
-                            <th>Hora Inicio</th>
-                            <th>Hora Fin</th>
-                            <th>Grupo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Las filas se llenarán dinámicamente con JavaScript -->
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="tablaAmbientesNoDefinidos">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Curso</th>
+                                <th>Docente</th>
+                                <th>Tipo</th>
+                                <th>Aula</th>
+                                <th>Hora Inicio</th>
+                                <th>Hora Fin</th>
+                                <th>Grupo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las filas se llenarán dinámicamente con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -214,6 +215,29 @@
         width: 100%;
         display: block;
         margin: 3px 0;
+    }
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 1rem);
+    }
+
+    .modal-content {
+        width: 100%;
+    }
+
+    .table-responsive {
+        max-height: 70vh; 
+        overflow-y: auto;
+    }
+
+    #tablaAmbientesNoDefinidos th, #tablaAmbientesNoDefinidos td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    #tablaAmbientesNoDefinidos .btn {
+        padding: 0.25rem 0.5rem;
     }
 </style>
 

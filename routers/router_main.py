@@ -1185,6 +1185,13 @@ def obtener_ambientes_curso_endpoint(idcurso):
         return jsonify(ambientes), 500
     return jsonify(ambientes)
 
+@app.route('/eliminar_ambientes_curso/<int:idcurso>', methods=['DELETE'])
+def eliminar_ambientes_curso_route(idcurso):
+    resultado = controlador_curso_ambiente.eliminar_ambientes_curso(idcurso)
+    if 'error' in resultado:
+        return jsonify(resultado), 500
+    return jsonify(resultado)
+
 
 @app.route('/asignar_disponibilidad_excel', methods=['POST'])
 def asignar_disponibilidad_excel():

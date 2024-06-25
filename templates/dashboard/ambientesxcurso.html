@@ -7,12 +7,14 @@
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
-        <li class="breadcrumb-item active"><a href="{{ url_for('ambientesxCursos') }}">Asignar Ambientes por Cursos</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('ambientesxCursos') }}">Asignar Ambientes por Cursos</a>
+        </li>
     </ol>
 </nav>
 <div class="container-fluid my-4">
     <div class="card w-500" id="card_cursos">
-        <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
+            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
             Ambientes por curso
         </div>
         <div class="ms-4 mt-3">
@@ -69,7 +71,8 @@
                 <form id="formAsignacionAmbiente">
                     <div class="mb-3">
                         <label for="buscarAmbiente" class="form-label">Buscar ambiente:</label>
-                        <input type="text" class="form-control" id="buscarAmbiente" placeholder="Escriba para buscar...">
+                        <input type="text" class="form-control" id="buscarAmbiente"
+                            placeholder="Escriba para buscar...">
                         <ul id="sugerenciasAmbiente" class="list-group" style="position: absolute; z-index: 1000;"></ul>
                     </div>
                     <div class="mb-3">
@@ -90,7 +93,7 @@
 </div>
 
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
         var ambientesSeleccionados = [];
         var listaAmbientes = [];
         var ambientesEliminados = [];
@@ -162,24 +165,34 @@ $(document).ready(function () {
         });
 
         $('#guardarAsignacion').on('click', function () {
-            var cursoId = $('#cursoIdSeleccionado').val();
-            var ambientes = ambientesSeleccionados.map(amb => amb.id);
+        var cursoId = $('#cursoIdSeleccionado').val();
+        var ambientes = ambientesSeleccionados.map(amb => amb.id);
 
-            $.ajax({
-                url: '/asignar_ambientes',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ idcurso: cursoId, idambientes: ambientes, eliminados: ambientesEliminados.map(amb => amb.id) }),
-                success: function (response) {
-                    $('#modalAsignacion').modal('hide');
-                    rellenarTablaCursos($('#escuela').val(), $('#semestre').val());
-                    ambientesEliminados = [];  
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error al asignar ambientes:', error);
-                }
-            });
+        $.ajax({
+            url: '/asignar_ambientes',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ idcurso: cursoId, idambientes: ambientes, eliminados: ambientesEliminados.map(amb => amb.id) }),
+            success: function (response) {
+                $('#modalAsignacion').modal('hide');
+                rellenarTablaCursos($('#escuela').val(), $('#semestre').val());
+                ambientesEliminados = [];
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Actualización exitosa',
+                    text: 'Ambientes asignados exitosamente.'
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al asignar ambientes:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al asignar ambientes. Por favor, inténtelo de nuevo.'
+                });
+            }
         });
+    });
 
         $('#tabla-cursos tbody').on('click', '.btnAsignar', function () {
             var cursoId = $(this).data('id');
@@ -188,6 +201,42 @@ $(document).ready(function () {
             $('#cursoIdSeleccionado').val(cursoId);
             cargarAmbientesAsignados(cursoId);
             $('#modalAsignacion').modal('show');
+        });
+
+        $('#tabla-cursos tbody').on('click', '.btnEliminar', function () {
+            var cursoId = $(this).data('id');
+            var cursoNombre = $(this).data('curso');
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esta acción.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminarlo!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/eliminar_ambientes_curso/${cursoId}`,
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ idcurso: cursoId }),
+                        success: function (response) {
+                            if (response.error) {
+                                Swal.fire('Error', response.error, 'error');
+                            } else {
+                                Swal.fire('Éxito', 'La operación se realizó correctamente.', 'success');
+                                rellenarTablaCursos($('#escuela').val(), $('#semestre').val());
+                            }
+
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Error', 'Hubo un error al eliminar el ambiente', 'error');
+                        }
+                    })
+                }
+            });
         });
 
         function cargarAmbientesAsignados(cursoId) {
@@ -212,13 +261,8 @@ $(document).ready(function () {
         var table = $('#tabla-cursos').DataTable({
             paging: false,
             info: false,
-            autoWidth: true,
-            responsive: true,
-            scroller: true,
-            scrollY: '200px',
-            searching: true,
-            processing: true,
-            serverSide: false,
+            scrollY: '800px',
+            order: [[0, 'asc']],
             dom: 'Bfrtip',
             buttons: [
                 {
@@ -292,7 +336,7 @@ $(document).ready(function () {
                     render: function (data, type, row) {
                         return `
                             <button class="btn btn-warning btn-sm btnAsignar" data-id="${row.idcurso}" data-curso="${row.cursos}" title="Asignar"><i class="fas fa-pencil-alt"></i></button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idcurso}" data-nombre="${row.cursos}" title="Eliminar"><i class="fas fa-times"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.idcurso}" data-curso="${row.cursos}" title="Eliminar"><i class="fas fa-times"></i></button>
                         `;
                     },
                     className: "text-center",
