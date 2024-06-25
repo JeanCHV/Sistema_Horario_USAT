@@ -61,7 +61,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="telefonoDocente" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="telefonoDocente" name="telefono" required>
+                            <input type="text" class="form-control" id="telefonoDocente" name="telefono" maxlength="9" pattern="\d{9}" oninput="validarTelefono(this)" required>
+                            <div class="invalid-feedback">
+                                El número de teléfono debe tener exactamente 9 dígitos.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="correoDocente" class="form-label">Correo:</label>
@@ -118,8 +121,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="modificarTelefonoDocente" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono"
-                                required>
+                            <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono" maxlength="9" pattern="\d{9}" oninput="validarTelefono(this)" required>
+                            <div class="invalid-feedback">
+                                El número de teléfono debe tener exactamente 9 dígitos.
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="modificarCorreoDocente" class="form-label">Correo:</label>
@@ -187,6 +192,18 @@
             input.setCustomValidity('');
         } else {
             input.setCustomValidity('El número de documento debe tener exactamente 8 dígitos.');
+        }
+    }
+
+    function validarTelefono(input) {
+        const regex = /^\d{0,9}$/;
+        if (!regex.test(input.value)) {
+            input.value = input.value.slice(0, -1);
+        }
+        if (input.value.length === 9) {
+            input.setCustomValidity('');
+        } else {
+            input.setCustomValidity('El número de teléfono debe tener exactamente 9 dígitos.');
         }
     }
 
