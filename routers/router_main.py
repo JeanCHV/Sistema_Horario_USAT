@@ -127,6 +127,12 @@ def get_docentes_activos():
     docentes_activos = controlador_docente.get_docentes_activos()
     return jsonify(docentes_activos)
 
+
+@app.route("/docentes_validar_horas", methods=["GET"])
+def docentes_validar_horas():
+    docentes_validar_horas = controlador_docente.docentes_validar_horas()
+    return jsonify(docentes_validar_horas)
+
 @app.route("/get_ambientes_disponibles", methods=["GET"])
 def get_ambientes_disponibles():
     ambientes_activos = controlador_ambientes.get_ambientes_disponibles()
@@ -268,16 +274,6 @@ def get_ambiente_semestre():
     nombre = request.json.get('nombre')
     semestre = controlador_ambientes.obtener_ambiente_semestre(nombre)
     return jsonify(semestre)
-
-@app.route("/insertar_horarios_ia", methods=["POST"])
-def insertar_horarios_ia():
-    data = request.get_json()
-    horarios = data.get('horarios')
-    if not horarios:
-        return jsonify({"error": "No se proporcionaron horarios"}), 400
-    
-    resultado = controlador_horario.insertar_horarios_ia(horarios)
-    return jsonify(resultado)
 
 ##VER DETALLES CURSOS
 
