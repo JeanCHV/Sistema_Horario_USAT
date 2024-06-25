@@ -172,7 +172,7 @@ $(document).ready(function () {
         });
     });
 
-    $('#formModificarGrupos').submit(function (e) {
+    $('#formModificarGrupo').submit(function (e) { // Cambié aquí de 'formModificarGrupos' a 'formModificarGrupo'
         e.preventDefault();
         var data = {
             id_grupo: $('#modificarIdGrupo').val(),
@@ -192,12 +192,12 @@ $(document).ready(function () {
                     Swal.fire('Error', response.error, 'error');
                 } else {
                     Swal.fire('Éxito', 'Grupo modificado correctamente', 'success');
-                    table.ajax.reload();
+                    cargarGrupos(); // Cambié de 'table.ajax.reload();' a 'cargarGrupos();'
                     $('#modalModificarGrupo').modal('hide');
                 }
-                $('#mensajeResultado').show();
             },
             error: function (xhr, status, error) {
+                Swal.fire('Error', 'Hubo un error al modificar el grupo', 'error');
                 console.log(error);
             }
         });
@@ -268,15 +268,5 @@ $(document).ready(function () {
                 });
             }
         });
-    });
-
-    cargarCursosEnFiltro();
-    $('#filtro_cursos').on('change', function () {
-        var filtro = $(this).val();
-        if (filtro) {
-            table.column(2).search(cursos[filtro]).draw();
-        } else {
-            table.column(2).search('').draw();
-        }
     });
 });
