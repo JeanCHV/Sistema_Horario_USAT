@@ -43,10 +43,12 @@ $(document).ready(function () {
         var valor = parseInt(element.value, 10);
         if (valor > 0 && valor < 28) {
             checkbox.checked = true;
+            checkbox.disabled = false;
         } else {
             checkbox.checked = false;
-        }
-    }
+            checkbox.disabled = true;
+        }
+    }
 
     window.rellenarTabla = function (escuela, semestre) {
         fetch(`/rellenar_tabla/${escuela}/${semestre}`)
