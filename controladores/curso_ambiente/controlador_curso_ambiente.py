@@ -6,7 +6,7 @@ def get_curso_ambiente():
     cursos_ambiente = []
 
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT * FROM curso_ambiente ")
+        cursor.execute("SELECT idcurso,idambiente FROM curso_ambiente ")
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
 

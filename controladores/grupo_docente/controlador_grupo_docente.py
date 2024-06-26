@@ -7,7 +7,7 @@ def get_grupo_docente():
     grupo_docente = []
 
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT * from grupo_docente")
+        cursor.execute("SELECT idgrupo,idpersona from grupo_docente")
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
 

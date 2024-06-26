@@ -13,13 +13,13 @@ import controladores.docente_disponibilidad.controlador_docente_disponibilidad a
 import controladores.curso_ambiente.controlador_curso_ambiente as controlador_curso_ambiente
 import controladores.grupo_docente.controlador_grupo_docente as controlador_grupo_docente
 
-docentes1 = controlador_docente.get_docentes()
-ambientes1 = controlador_ambiente.get_ambientes()
-cursos1 = controlador_cursos.get_cursos()
-grupo = controlador_grupo.get_grupo()
-disponibilidad = controlador_docente_disponibilidad.get_disponibilidad()
-curso_ambiente = controlador_curso_ambiente.get_curso_ambiente()
-grupo_docente = controlador_grupo_docente.get_grupo_docente()
+docentes1 = controlador_docente.get_docentes()  # SELECT persona.idpersona,persona.nombres,persona.apellidos,persona.cantHoras,persona.tiempo_ref FROM persona WHERE persona.tipopersona='D' AND persona.estado=1
+ambientes1 = controlador_ambiente.get_ambientes()  # SELECT ambiente.idambiente,ambiente.nombre,ambiente.aforo FROM ambiente WHERE ambiente.estado='A'
+cursos1 = controlador_cursos.get_cursos()  # SELECT curso.idcurso,curso.nombre,curso.horas_teoria,curso.horas_practica,curso.tipo_curso,curso.ciclo FROM curso WHERE curso.estado='A'
+grupo = controlador_grupo.get_grupo()  # SELECT id_grupo, nombre, vacantes, idcurso, idsemestre FROM grupo where idsemestre=1
+disponibilidad = controlador_docente_disponibilidad.get_disponibilidad()  # SELECT dia,TIME_FORMAT(hora_inicio,'%H:%i') AS hora_inicio,TIME_FORMAT(hora_fin,'%H:%i') AS hora_fin,idpersona FROM docente_disponibilidad;
+curso_ambiente = controlador_curso_ambiente.get_curso_ambiente()  # SELECT idcurso,idambiente FROM curso_ambiente
+grupo_docente = controlador_grupo_docente.get_grupo_docente()  # SELECT idgrupo,idpersona from grupo_docente
 
 DOCENTES = {docente['idpersona']: docente for docente in docentes1}
 AMBIENTES = {ambiente['idambiente']: ambiente for ambiente in ambientes1}
@@ -68,6 +68,7 @@ def generar_poblacion(tamano):
                                 if int(hora_fin.split(':')[0]) > 22:
                                     continue
 
+                                # Ambiente "No definido" si no hay asignación
                                 ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
                                 horario.append((profesor, idcurso, grupo_curso['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
                                 horas_totales -= duracion
@@ -91,6 +92,7 @@ def generar_poblacion(tamano):
                             if int(hora_fin.split(':')[0]) > 22:
                                 continue
 
+                            # Ambiente "No definido" si no hay asignación
                             ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
                             horario.append((profesor, idcurso, grupo_curso['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
                             horas_totales -= duracion
@@ -98,7 +100,6 @@ def generar_poblacion(tamano):
             poblacion.append(horario)
         return poblacion
     except Exception as e:
-        print(f"Error en generar_poblacion: {str(e)}")
         return []
 
 def calcular_fitness(horario):
@@ -113,7 +114,6 @@ def calcular_fitness(horario):
                 try:
                     profesor, idcurso, idgrupo, aula, d, hora_inicio, hora_fin = entry
                 except ValueError as e:
-                    print(f"Error descomprimiendo entrada en calcular_fitness: {entry}, Error: {e}")
                     continue
                 
                 if d == dia and profesor != "No definido" and aula != "No definido":
@@ -169,9 +169,12 @@ def calcular_fitness(horario):
                         if grupos_docentes[idgrupo] != profesor:
                             fitness -= 1
 
+                    # Nueva restricción: Verificar que los cursos de primer ciclo se dicten en la mañana
+                    if ciclo == 1 and any(hora in horas_inicio_tarde for hora in rango_horas(hora_inicio, hora_fin)):
+                        fitness -= 1
+
         return fitness
     except Exception as e:
-        print(f"Error en calcular_fitness: {str(e)}, Horario: {horario}")
         return -1
 
 def obtener_horas_disponibles(profesor, dia):
@@ -184,7 +187,6 @@ def obtener_horas_disponibles(profesor, dia):
                 horas_disponibles.extend([f"{h}:00" for h in range(hora_inicio, hora_fin)])
         return horas_disponibles
     except Exception as e:
-        print(f"Error en obtener_horas_disponibles: {str(e)}")
         return []
 
 def todas_horas_disponibles(profesor, dia, hora_inicio, hora_fin):
@@ -195,7 +197,6 @@ def todas_horas_disponibles(profesor, dia, hora_inicio, hora_fin):
                 return False
         return True
     except Exception as e:
-        print(f"Error en todas_horas_disponibles: {str(e)}")
         return False
 
 def rango_horas(hora_inicio, hora_fin):
@@ -204,7 +205,6 @@ def rango_horas(hora_inicio, hora_fin):
         fin = int(hora_fin.split(':')[0])
         return [f"{h}:00" for h in range(inicio, fin)]
     except Exception as e:
-        print(f"Error en rango_horas: {str(e)}")
         return []
 
 def seleccion(poblacion):
@@ -212,7 +212,6 @@ def seleccion(poblacion):
         poblacion = sorted(poblacion, key=lambda x: calcular_fitness(x), reverse=True)
         return poblacion[:2]
     except Exception as e:
-        print(f"Error en seleccion: {str(e)}")
         return []
 
 def cruce(padre1, padre2):
@@ -222,7 +221,6 @@ def cruce(padre1, padre2):
         hijo2 = padre2[:punto_cruce] + padre1[punto_cruce:]
         return hijo1, hijo2
     except Exception as e:
-        print(f"Error en cruce: {str(e)}")
         return padre1, padre2
 
 def mutacion(individuo):
@@ -250,25 +248,25 @@ def mutacion(individuo):
             ambiente = next((ca['idambiente'] for ca in CURSO_AMBIENTE if ca['idcurso'] == idcurso), "No definido")
             individuo[i] = (profesor, idcurso, individuo[i][2], ambiente, dia, hora_inicio, hora_fin)
     except Exception as e:
-        print(f"Error en mutacion: {str(e)}")
+        pass
 
 def algoritmo_genetico():
     try:
-        poblacion = generar_poblacion(100)  # Aumentar a 500 para mayor diversidad
+        poblacion = generar_poblacion(10)  # Aumentar a 10 para mayor diversidad
         
-        for generacion in range(100):  # Aumentar a 500 para más iteraciones
+        for generacion in range(10):  # Aumentar a 10 para más iteraciones
             nueva_poblacion = []
             
             padres = seleccion(poblacion)
             
-            while len(nueva_poblacion) < 100:
+            while len(nueva_poblacion) < 10:
                 padre1, padre2 = random.sample(padres, 2)
                 hijo1, hijo2 = cruce(padre1, padre2)
                 mutacion(hijo1)
                 mutacion(hijo2)
                 nueva_poblacion.extend([hijo1, hijo2])
             
-            poblacion = nueva_poblacion[:100]  # Limitar la población a 100
+            poblacion = nueva_poblacion[:10]  # Limitar la población a 10
         
         mejor_individuo = max(poblacion, key=calcular_fitness)
         
@@ -307,9 +305,7 @@ def algoritmo_genetico():
         return resultado
         
     except Exception as e:
-        print(f"Error en algoritmo_genetico: {str(e)}")
         return []
 
 # Ejecución del algoritmo genético mejorado
 resultado = algoritmo_genetico()
-#print(json.dumps(resultado, ensure_ascii=False, indent=4))
