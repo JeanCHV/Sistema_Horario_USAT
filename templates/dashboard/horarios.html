@@ -22,19 +22,23 @@
             <div class="my-3">
                 <div id="estadoGeneracion">
                     <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner1"></div>
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner1">
+                        </div>
                         <div id="estadoDisponibilidad">Disponibilidad de docentes</div>
                     </div>
                     <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner2"></div>
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner2">
+                        </div>
                         <div id="estadoCursosActivos">Cursos Activos</div>
                     </div>
                     <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner3"></div>
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner3">
+                        </div>
                         <div id="estadoAmbientesDisponibles">Ambientes asignados</div>
                     </div>
                     <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner4"></div>
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner4">
+                        </div>
                         <div id="estadoMinimoHorasAsignado">Mínimo de Horas Asignado</div>
                     </div>
                 </div>
@@ -46,7 +50,6 @@
                     <button class="btn btn-success btn-lg mx-2" onclick="generarHorario()">Generar Horario</button>
                     <button class="btn btn-success btn-lg mx-2" onclick="RegistrarHorario()">Registrar Horario</button>
                     <button class="btn btn-danger btn-lg mx-2" onclick="limpiarTabla()">Limpiar</button>
-                    <button class="btn btn-warning btn-lg mx-2" onclick="mostrarAmbientesNoDefinidos()">Ver Ambientes No Definidos</button>
                 </div>
             </div>
             <!-- Progreso de generación de horario -->
@@ -60,7 +63,15 @@
                     <div class="col-md-12" id="espacio_tabla">
                         <table class="table table-bordered text-center" id="tabla_horarios">
                             <thead class="border border-white bg-red-usat -horario-usat">
-                                <!-- Aquí se llenará el thead dinámicamente -->
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Lunes</th>
+                                    <th>Martes</th>
+                                    <th>Miércoles</th>
+                                    <th>Jueves</th>
+                                    <th>Viernes</th>
+                                    <th>Sábado</th>
+                                </tr>
                             </thead>
                             <tbody style="background-color: #EEEEEE;">
                                 <!-- Las filas se llenarán dinámicamente con JavaScript -->
@@ -168,37 +179,22 @@
 </div>
 
 <style>
-    #panel_docentes {
-        display: flex;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-    }
-
-    .docente-tab {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        margin: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-        display: inline-block;
-    }
-
-    .docente-tab.active {
-        background-color: #3e8e41;
-    }
-
-    .docente-tab:hover {
-        background-color: #45a049;
-    }
-
     .curso-detalle {
         font-size: 12px;
         cursor: pointer;
     }
 
-    .curso-tipo {
-        background-color: red;
+    .curso-tipo-presencial {
+        background-color: rgb(0, 38, 255);
+        color: white;
+        font-weight: bold;
+        padding: 2px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    .curso-tipo-virtual {
+        background-color: rgb(255, 0, 0);
         color: white;
         font-weight: bold;
         padding: 2px;
@@ -216,6 +212,7 @@
         display: block;
         margin: 3px 0;
     }
+
     .modal-dialog-centered {
         display: flex;
         align-items: center;
@@ -227,17 +224,8 @@
     }
 
     .table-responsive {
-        max-height: 70vh; 
+        max-height: 70vh;
         overflow-y: auto;
-    }
-
-    #tablaAmbientesNoDefinidos th, #tablaAmbientesNoDefinidos td {
-        vertical-align: middle;
-        text-align: center;
-    }
-
-    #tablaAmbientesNoDefinidos .btn {
-        padding: 0.25rem 0.5rem;
     }
 </style>
 
@@ -271,7 +259,7 @@
             success: function (response) {
                 horario = response;
                 $('#loadingModal').modal('hide');
-                llenarTablaHorarios(response);
+                llenarTablaHorario(horario);
             },
             error: function (xhr, status, error) {
                 console.log(error);
@@ -368,207 +356,70 @@
         });
     }
 
-    function llenarTablaHorarios(data) {
-        const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-        var cursosPorDia = {
-            "Lunes": [],
-            "Martes": [],
-            "Miércoles": [],
-            "Jueves": [],
-            "Viernes": [],
-            "Sábado": []
-        };
+    function llenarTablaHorario(data) {
+        const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const horas = [
+            '07:00 - 08:00',
+            '08:00 - 09:00',
+            '09:00 - 10:00',
+            '10:00 - 11:00',
+            '11:00 - 12:00',
+            '12:00 - 13:00',
+            '13:00 - 14:00',
+            '14:00 - 15:00',
+            '15:00 - 16:00',
+            '16:00 - 17:00',
+            '17:00 - 18:00',
+            '18:00 - 19:00',
+            '19:00 - 20:00',
+            '20:00 - 21:00',
+            '21:00 - 22:00'
+        ];
 
-        // Procesar los datos recibidos y agruparlos por día y grupo
-        for (let curso in data) {
-            for (let grupo in data[curso]) {
-                for (let clase of data[curso][grupo]) {
-                    cursosPorDia[clase.dia].push({
-                        curso: curso,
-                        docente: clase.docente,
-                        tipo: clase.tipo_curso,
-                        aula: clase.aula,
-                        hora_inicio: clase.hora_inicio,
-                        hora_fin: clase.hora_fin,
-                        grupo: grupo,
-                        dia: clase.dia
-                    });
-                }
-            }
-        }
-
-        // Imprimir los cursos de cada día en la consola
-        console.log("Cursos Lunes: ", cursosPorDia["Lunes"]);
-        console.log("Cursos Martes: ", cursosPorDia["Martes"]);
-        console.log("Cursos Miércoles: ", cursosPorDia["Miércoles"]);
-        console.log("Cursos Jueves: ", cursosPorDia["Jueves"]);
-        console.log("Cursos Viernes: ", cursosPorDia["Viernes"]);
-        console.log("Cursos Sábado: ", cursosPorDia["Sábado"]);
-
-        // Crear el encabezado de la tabla
-        let thead = $('#tabla_horarios thead');
-        thead.empty();
-        let filaEncabezado = '<tr><th scope="col" class="border border-white text-light">Horas</th>';
-        for (let dia of dias) {
-            filaEncabezado += `<th scope="col" class="border border-white text-light">${dia}</th>`;
-        }
-        filaEncabezado += '</tr>';
-        thead.append(filaEncabezado);
-
-        // Crear las filas de la tabla
         let tabla = $('#tabla_horarios tbody');
         tabla.empty();
 
-        for (let i = 7; i <= 22; i++) {
-            let fila = `<tr><th scope="row">${i}:00 - ${i + 1}:00</th>`;
-
-            for (let dia of dias) {
-                let cursosDia = cursosPorDia[dia].filter(curso => {
-                    let horaInicio = parseInt(curso.hora_inicio.split(":")[0]);
-                    let horaFin = parseInt(curso.hora_fin.split(":")[0]);
-                    return i >= horaInicio && i < horaFin;
+        horas.forEach(hora => {
+            let fila = $('<tr></tr>');
+            fila.append(`<td>${hora}</td>`);
+            dias.forEach(dia => {
+                let celda = $('<td></td>');
+                data.forEach(curso => {
+                    if (curso.dia === dia && hora === `${curso.hora_inicio} - ${curso.hora_fin}`) {
+                        celda.append(`
+                            <div class="curso-tipo-${curso.tipo_curso.toLowerCase()}">
+                                <strong>${curso.curso}</strong><br>
+                                (Grupo - ${curso.grupo})<br>
+                                ${curso.tipo_curso}<br>
+                                ${curso.docente}<br>
+                                ${curso.aula}<br>
+                                ${curso.dia} (${curso.hora_inicio} - ${curso.hora_fin})
+                            </div>
+                        `);
+                    }
                 });
-
-                if (cursosDia.length > 0) {
-                    let curso = cursosDia[0]; // En caso de solapamiento, toma el primero encontrado
-                    let detalle = `
-                        <div class="curso-detalle" onclick='abrirModal(${JSON.stringify(curso)})'>
-                            <div class="curso">${curso.curso} (Grupo ${curso.grupo})</div><br>
-                            ${curso.docente}<br>
-                            <div class="curso-tipo">${curso.tipo}</div><br>
-                            <div class="ambiente">${curso.aula}</div><br>
-                            ${curso.hora_inicio} - ${curso.hora_fin}
-                        </div>
-                    `;
-                    fila += `<td class="bg-warning text-center curso-cell" style="vertical-align:middle;" rowspan="${curso.hora_fin.split(":")[0] - curso.hora_inicio.split(":")[0]}">${detalle}</td>`;
-                } else {
-                    fila += `<td class="bg-warning text-center curso-cell" style="vertical-align:middle;"></td>`;
-                }
-            }
-
-            fila += `</tr>`;
+                fila.append(celda);
+            });
             tabla.append(fila);
-        }
-    }
-
-    function abrirModal(curso) {
-        cursoEditando = curso;
-        $('#cursoNombre').val(curso.curso);
-        $('#cursoDocente').val(curso.docente);
-        $('#cursoTipo').val(curso.tipo);
-        $('#cursoAula').val(curso.aula);
-        $('#cursoHoraInicio').val(curso.hora_inicio);
-        $('#cursoHoraFin').val(curso.hora_fin);
-        $('#cursoGrupo').val(curso.grupo);
-        $('#editModal').modal('show');
-    }
-
-    function guardarCambios() {
-        let cursoEditado = {
-            curso: $('#cursoNombre').val(),
-            docente: $('#cursoDocente').val(),
-            tipo: $('#cursoTipo').val(),
-            aula: $('#cursoAula').val(),
-            hora_inicio: $('#cursoHoraInicio').val(),
-            hora_fin: $('#cursoHoraFin').val(),
-            grupo: $('#cursoGrupo').val(),
-            dia: cursoEditando.dia
-        };
-
-        for (let curso in horario) {
-            for (let grupo in horario[curso]) {
-                for (let i = 0; i < horario[curso][grupo].length; i++) {
-                    let clase = horario[curso][grupo][i];
-                    if (clase.dia === cursoEditado.dia && clase.aula === cursoEditado.aula && clase.hora_inicio === cursoEditado.hora_inicio) {
-                        horario[curso][grupo][i] = cursoEditado;
-                    }
-                }
-            }
-        }
-
-        $('#editModal').modal('hide');
-        llenarTablaHorarios(horario);
-    }
-
-    function mostrarAmbientesNoDefinidos() {
-        let ambientesNoDefinidos = [];
-
-        for (let curso in horario) {
-            for (let grupo in horario[curso]) {
-                for (let clase of horario[curso][grupo]) {
-                    if (clase.aula === "No definido") {
-                        ambientesNoDefinidos.push({
-                            curso: curso,
-                            docente: clase.docente,
-                            tipo: clase.tipo_curso,
-                            aula: clase.aula,
-                            hora_inicio: clase.hora_inicio,
-                            hora_fin: clase.hora_fin,
-                            grupo: grupo
-                        });
-                    }
-                }
-            }
-        }
-
-        if (ambientesNoDefinidos.length === 0) {
-            console.log("No se encontró 'No definido'");
-            return;
-        }
-
-        let tabla = $('#tablaAmbientesNoDefinidos tbody');
-        tabla.empty();
-
-        for (let curso of ambientesNoDefinidos) {
-            let fila = `
-                <tr>
-                    <td>${curso.curso}</td>
-                    <td>${curso.docente}</td>
-                    <td>${curso.tipo}</td>
-                    <td>${curso.aula}</td>
-                    <td>${curso.hora_inicio}</td>
-                    <td>${curso.hora_fin}</td>
-                    <td>${curso.grupo}</td>
-                    <td><button class="btn btn-primary btn-sm" onclick='editarAmbiente(${JSON.stringify(curso)})'>Editar</button></td>
-                </tr>
-            `;
-            tabla.append(fila);
-        }
-
-        $('#ambientesModal').modal('show');
-    }
-
-    function editarAmbiente(curso) {
-        cursoEditando = curso;
-        $('#cursoNombre').val(curso.curso);
-        $('#cursoDocente').val(curso.docente);
-        $('#cursoTipo').val(curso.tipo);
-        $('#cursoAula').val(curso.aula);
-        $('#cursoHoraInicio').val(curso.hora_inicio);
-        $('#cursoHoraFin').val(curso.hora_fin);
-        $('#cursoGrupo').val(curso.grupo);
-        $('#editModal').modal('show');
-        $('#ambientesModal').modal('hide');
+        });
     }
 
     function RegistrarHorario() {
         let horariosActualizados = [];
 
-        for (let curso in horario) {
-            for (let grupo in horario[curso]) {
-                for (let clase of horario[curso][grupo]) {
-                    horariosActualizados.push({
-                        curso: curso,
-                        grupo: grupo,
-                        dia: clase.dia,
-                        hora_inicio: clase.hora_inicio,
-                        hora_fin: clase.hora_fin,
-                        aula: clase.aula,
-                        docente: clase.docente,
-                        tipo: clase.tipo_curso
-                    });
-                }
-            }
+        for (let dia in cursosPorDia) {
+            cursosPorDia[dia].forEach(curso => {
+                horariosActualizados.push({
+                    curso: curso.curso,
+                    grupo: curso.grupo,
+                    dia: curso.dia,
+                    hora_inicio: curso.hora_inicio,
+                    hora_fin: curso.hora_fin,
+                    aula: curso.aula,
+                    docente: curso.docente,
+                    tipo: curso.tipo_curso
+                });
+            });
         }
 
         console.log(JSON.stringify(horariosActualizados, null, 2));

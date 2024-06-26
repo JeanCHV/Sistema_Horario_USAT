@@ -215,3 +215,16 @@ def asignar_cursos_excel():
         return jsonify(resultados)
     except Exception as e:
         return jsonify({"error": str(e)}), 500    
+    
+
+
+#GRUPO
+@app.route("/obtener_cursos", methods=["GET"])
+def obtener_curso():
+    cursos = controlador_cursos.obtener_cursosFiltro()
+    return jsonify(cursos)
+
+@app.route("/obtener_semestres", methods=["GET"])
+def obtener_semestres():
+    semestres = controlador_semestre.obtener_semestreCombo()
+    return jsonify(semestres)

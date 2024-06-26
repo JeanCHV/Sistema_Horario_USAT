@@ -11,7 +11,7 @@ import controladores.cursos.controlador_cursos as controlador_cursos
 import controladores.grupo.controlador_grupo as controlador_grupo
 import controladores.docente_disponibilidad.controlador_docente_disponibilidad as controlador_docente_disponibilidad
 import controladores.curso_ambiente.controlador_curso_ambiente as controlador_curso_ambiente
-import controladores.curso_docente.controlador_curso_docente as controlador_curso_docente
+import controladores.grupo_docente.controlador_grupo_docente as controlador_grupo_docente
 
 docentes1 = controlador_docente.get_docentes()
 ambientes1 = controlador_ambiente.get_ambientes()
@@ -19,7 +19,7 @@ cursos1 = controlador_cursos.get_cursos()
 grupo = controlador_grupo.get_grupo()
 disponibilidad = controlador_docente_disponibilidad.get_disponibilidad()
 curso_ambiente = controlador_curso_ambiente.get_curso_ambiente()
-curso_docente = controlador_curso_docente.get_curso_docente()
+grupo_docente = controlador_grupo_docente.get_grupo_docente()
 
 DOCENTES = {docente['idpersona']: docente for docente in docentes1}
 AMBIENTES = {ambiente['idambiente']: ambiente for ambiente in ambientes1}
@@ -27,7 +27,7 @@ CURSOS = {curso['idcurso']: curso for curso in cursos1}
 GRUPOS_HORARIO = grupo
 DISPONIBILIDAD_DOCENTES = disponibilidad
 CURSO_AMBIENTE = curso_ambiente
-CURSO_DOCENTE = curso_docente
+GRUPO_DOCENTE = grupo_docente
 
 NUM_PROFESORES = len(docentes1)
 NUM_CURSOS = len(cursos1)
@@ -51,9 +51,9 @@ def generar_poblacion(tamano):
                 grupo_cursos = [g for g in GRUPOS_HORARIO if g['idcurso'] == idcurso]
                 
                 for grupo_curso in grupo_cursos:
-                    docentes_del_curso = [cd['idpersona'] for cd in CURSO_DOCENTE if cd['idcurso'] == idcurso]
-                    if len(docentes_del_curso) > 1:
-                        for profesor in docentes_del_curso:
+                    docentes_del_grupo = [gd['idpersona'] for gd in GRUPO_DOCENTE if gd['idgrupo'] == grupo_curso['id_grupo']]
+                    if len(docentes_del_grupo) > 1:
+                        for profesor in docentes_del_grupo:
                             horas_totales = curso['horas_teoria'] + curso['horas_practica']
                             while horas_totales > 0:
                                 dia = random.choice(DIAS)
@@ -72,8 +72,8 @@ def generar_poblacion(tamano):
                                 horario.append((profesor, idcurso, grupo_curso['id_grupo'], ambiente, dia, hora_inicio, hora_fin))
                                 horas_totales -= duracion
                     else:
-                        if docentes_del_curso:
-                            profesor = docentes_del_curso[0]
+                        if docentes_del_grupo:
+                            profesor = docentes_del_grupo[0]
                         else:
                             profesor = "No definido"
                         
@@ -230,9 +230,9 @@ def mutacion(individuo):
         if random.random() < 0.1:
             i = random.randint(0, len(individuo) - 1)
             idcurso = individuo[i][1]
-            docentes_del_curso = [cd['idpersona'] for cd in CURSO_DOCENTE if cd['idcurso'] == idcurso]
-            if docentes_del_curso:
-                profesor = random.choice(docentes_del_curso)
+            docentes_del_grupo = [gd['idpersona'] for gd in GRUPO_DOCENTE if gd['idgrupo'] == individuo[i][2]]
+            if docentes_del_grupo:
+                profesor = random.choice(docentes_del_grupo)
             else:
                 profesor = "No definido"
             
