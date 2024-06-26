@@ -1,10 +1,9 @@
 from main import app
-from flask import request, session, redirect, url_for
+from flask import request, session, redirect, url_for,render_template
 
 
 @app.errorhandler(404)
-def page_not_found(error):
-    if 'conectado' in session and request.method == 'GET':
-        return redirect(url_for('inicio'))
-    else:
-        return redirect(url_for('inicio'))
+def page_not_found(e):
+    # Aquí puedes redirigir al usuario al index.html o renderizar directamente esa plantilla
+    return redirect(url_for('index'))
+
