@@ -1,0 +1,329 @@
+{% extends "dashboard/index.html" %}
+
+{% block titulo %} Docente por Grupo {% endblock %}
+
+{% block contenido %}
+
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Inicio</a></li>
+        <li class="breadcrumb-item active"><a href="{{ url_for('grupo_docentes') }}">Asignar Docentes por grupo</a></li>
+    </ol>
+</nav>
+<div class="container-fluid my-4">
+    <div class="card w-500" id="card_cursos">
+        <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            Docentes por grupo
+        </div>
+        <div class="ms-4 mt-3">
+            <!-- Semestre -->
+            <div class="d-flex mb-3 mt-3">
+                <label for="" class="mb-2 mt-2" style="width: 8%;">Semestre:</label>
+                <select class="form-select" aria-label="Default select example" id="semestre">
+                    <option selected disabled>-----Seleccione un semestre-----</option>
+                    {% for semestre in semestres %}
+                    <option>{{ semestre[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Escuelas -->
+            <div class="d-flex mb-3 me-4 mt-3">
+                <label for="" class="mb-2 mt-2" style="width: 8%;">Escuela:</label>
+                <select class="form-select" aria-label="Default select example" id="escuela">
+                    <option selected disabled>-----Seleccione una escuela-----</option>
+                    {% for escuela in escuelas %}
+                    <option>{{ escuela[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <hr class="border-black" style="margin-bottom: 0%;">
+        <div class="card-body">
+            <div class="table-responsive" id="miTabla">
+                <table class="table table-striped table-bordered tabla-cursos" style="width:100%" id="tabla-cursos">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center">Ciclo</th>
+                            <th style="text-align:center">Nombre del Curso</th>
+                            <th style="text-align:center">Grupo</th>
+                            <th style="text-align:center">Docente(s)</th>
+                            <th style="text-align:center">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo_tabla">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para la asignación de docentes -->
+<div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="modalAsignacionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAsignacionLabel">Asignar docente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAsignacionDocente">
+                    <div class="mb-3">
+                        <label for="buscarDocente" class="form-label">Buscar docente:</label>
+                        <input type="text" class="form-control" id="buscarDocente" placeholder="Escriba para buscar...">
+                        <ul id="sugerenciasDocente" class="list-group" style="position: absolute; z-index: 1000;"></ul>
+                    </div>
+                    <div class="mb-3">
+                        <label for="docentesSeleccionados" class="form-label">Seleccionados:</label>
+                        <div id="docentesSeleccionados" class="form-control" style="height: auto;">
+                            <!-- Los docentes seleccionados se mostrarán aquí -->
+                        </div>
+                    </div>
+                    <input type="hidden" id="grupoIdSeleccionado" name="grupoIdSeleccionado">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="guardarAsignacion">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function () {
+        var docentesSeleccionados = [];
+        var listaDocentes = [];
+        var docentesEliminados = [];
+
+        $.ajax({
+            url: '/obtener_docentes_activos',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                listaDocentes = response;
+            },
+            error: function (xhr, status, error) {
+                console.log('Error al obtener la lista de docentes:', error);
+            }
+        });
+
+        $('#buscarDocente').on('input', function () {
+            var query = $(this).val().toLowerCase();
+            var sugerencias = listaDocentes.filter(function (docente) {
+                return docente.nombre.toLowerCase().includes(query);
+            });
+            mostrarSugerencias(sugerencias);
+        });
+
+        function mostrarSugerencias(sugerencias) {
+            var contenedorSugerencias = $('#sugerenciasDocente');
+            contenedorSugerencias.empty();
+            sugerencias.forEach(function (docente) {
+                contenedorSugerencias.append(`<li class="list-group-item list-group-item-action" data-id="${docente.idpersona}">${docente.nombre}</li>`);
+            });
+        }
+
+        $('#sugerenciasDocente').on('click', 'li', function () {
+            var id = $(this).data('id');
+            var nombre = $(this).text();
+            if (!docentesSeleccionados.find(doc => doc.id === id)) {
+                docentesSeleccionados.push({ id: id, nombre: nombre });
+                actualizarDocentesSeleccionados();
+            }
+            $('#buscarDocente').val('');
+            $('#sugerenciasDocente').empty();
+        });
+
+        function actualizarDocentesSeleccionados() {
+            var container = $('#docentesSeleccionados');
+            container.empty();
+            if (docentesSeleccionados.length === 0) {
+                container.append('<p class="placeholder-text">No tiene docente asignado</p>');
+            } else {
+                docentesSeleccionados.forEach(function (doc) {
+                    container.append(`
+                        <div class="docente-tag">
+                            ${doc.nombre}
+                            <span class="remove-tag" data-id="${doc.id}">&times;</span>
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        $('#docentesSeleccionados').on('click', '.remove-tag', function () {
+            var id = $(this).data('id');
+            var nombre = $(this).parent().text().slice(0, -1);
+            docentesSeleccionados = docentesSeleccionados.filter(function (doc) {
+                return doc.id !== id;
+            });
+            docentesEliminados.push({ id: id, nombre: nombre });
+            actualizarDocentesSeleccionados();
+        });
+
+        $('#guardarAsignacion').on('click', function () {
+            var grupoId = $('#grupoIdSeleccionado').val();
+            var docentes = docentesSeleccionados.map(doc => doc.id);
+
+            $.ajax({
+                url: '/asignar_docentes',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ grupoId: grupoId, docentes: docentes, eliminados: docentesEliminados.map(doc => doc.id) }),
+                success: function (response) {
+                    $('#modalAsignacion').modal('hide');
+                    rellenarTablaCursos($('#escuela').val(), $('#semestre').val());
+                    docentesEliminados = [];  
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al asignar docentes:', error);
+                }
+            });
+        });
+
+        $('#tabla-cursos tbody').on('click', '.btnAsignar', function () {
+            var grupoId = $(this).data('id');
+            var cursoNombre = $(this).data('curso');
+            $('#modalAsignacionLabel').text(`Asignar docente para ${cursoNombre}`);
+            $('#grupoIdSeleccionado').val(grupoId);
+            cargarDocentesAsignados(grupoId);
+            $('#modalAsignacion').modal('show');
+        });
+
+        function cargarDocentesAsignados(grupoId) {
+            $.ajax({
+                url: `/obtenerDocentesGrupo/${grupoId}`,
+                type: 'GET',
+                success: function (response) {
+                    docentesSeleccionados = response.map(doc => ({ id: doc.idpersona, nombre: doc.nombre }));
+                    actualizarDocentesSeleccionados();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al cargar los docentes asignados:', error);
+                }
+            });
+        }
+
+        $('#modalAsignacion').on('show.bs.modal', function (event) {
+            $('#buscarDocente').val('');
+            $('#sugerenciasDocente').empty();
+        });
+
+        var table = $('#tabla-cursos').DataTable({
+            paging: false,
+            info: false,
+            scrollY: '800px',
+            order: [[0, 'asc']], 
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'collection',
+                    text: '<i class="fas fa-file-import"></i> Importar',
+                    className: 'btn btn-secondary',
+                    buttons: [
+                        {
+                            text: '<i class="fas fa-upload"></i> Subir Archivo',
+                            className: 'dropdown-item',
+                            action: function (e) {
+                                e.preventDefault();
+                                $('#modalSubidaMasiva').modal('show');
+                            }
+                        },
+                        {
+                            text: '<i class="fas fa-download"></i> Descargar Plantilla',
+                            className: 'dropdown-item',
+                            action: function (e) {
+                                e.preventDefault();
+                                descargarPlantilla();
+                            }
+                        },
+                    ]
+                },
+                {
+                    extend: 'collection',
+                    text: '<i class="fas fa-file-export"></i> Exportar/Imprimir',
+                    className: 'btn btn-secondary',
+                    buttons: [
+                        {
+                            extend: 'copy',
+                            text: '<i class="fas fa-copy"></i> Copiar',
+                            className: 'dropdown-item'
+                        },
+                        {
+                            extend: 'csv',
+                            text: '<i class="fas fa-file-csv"></i> CSV',
+                            className: 'dropdown-item'
+                        },
+                        {
+                            extend: 'excel',
+                            text: '<i class="fas fa-file-excel"></i> Excel',
+                            className: 'dropdown-item'
+                        },
+                        {
+                            extend: 'pdf',
+                            text: '<i class="fas fa-file-pdf"></i> PDF',
+                            className: 'dropdown-item'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print"></i> Imprimir',
+                            className: 'dropdown-item'
+                        }
+                    ]
+                },
+            ],
+            columns: [
+                { data: "ciclo", className: "text-center id" },
+                { data: "curso" },
+                { data: "grupo", className: "text-center" },
+                {
+                    data: "docentes",
+                    className: "text-center",
+                    render: function (data, type, row) {
+                        return `<textarea class="form-control" rows="3">${data}</textarea>`;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return `
+                            <button class="btn btn-warning btn-sm btnAsignar" data-id="${row.id_grupo}" data-curso="${row.curso}" title="Asignar"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${row.id_grupo}" data-nombre="${row.nombre}" title="Eliminar"><i class="fas fa-times"></i></button>
+                        `;
+                    },
+                    className: "text-center",
+                }
+            ],
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+            }
+        });
+
+        function rellenarTablaCursos(escuela, semestre) {
+            fetch(`/tabla_curso_docente/${escuela}/${semestre}`)
+                .then(response => response.json())
+                .then(data => {
+                    table.clear();
+                    table.rows.add(data);
+                    table.draw();
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos de la tabla de cursos:', error);
+                });
+        }
+
+        // Evento de cambio para el selector de escuela y semestre
+        $('#escuela, #semestre').on('change', function () {
+            const escuela = $('#escuela').val();
+            const semestre = $('#semestre').val();
+            if (escuela && semestre) {
+                rellenarTablaCursos(escuela, semestre);
+            }
+        });
+
+    });
+</script>
+
+
+{% endblock %}

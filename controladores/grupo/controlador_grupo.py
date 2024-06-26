@@ -138,7 +138,7 @@ def get_grupo():
     conexion = obtener_conexion()
     grupos = []
     with conexion.cursor() as cursor:
-        cursor.execute("SELECT id_grupo, nombre, vacantes, idcurso FROM grupo")
+        cursor.execute("SELECT id_grupo, nombre, vacantes, idcurso, idsemestre FROM grupo where idsemestre=1")
         column_names = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
         rows = cursor.fetchall()
         for row in rows:

@@ -6,8 +6,7 @@ app.secret_key = 'super-secret'
 app.config['UPLOAD_FOLDER'] = 'static/img'
 # app.permanent_session_lifetime = datetime.timedelta(minutes=1)
 from routers.router_main import *
-from routers.router_horario import *
-from routers.router_page_not_found import *
+
 
 if __name__ == "__main__":
     app.run( debug=True) 
