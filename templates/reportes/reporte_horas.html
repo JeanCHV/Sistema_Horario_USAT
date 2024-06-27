@@ -1,0 +1,42 @@
+{% extends "dashboard/index.html" %}
+{% block titulo %} Reporte de Horas {% endblock %}
+{% block contenido %}
+
+<nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="Home">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Reporte de carga académica</li>
+    </ol>
+</nav>
+<div class="card mx-2" id="card_horarios">
+    <div class="card-header bg-red-usat text-white" id="headingOne" data-bs-toggle="collapse"
+        data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Horas prácticas y teóricas de los docentes
+    </div>
+    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#miAccordion">
+        <div class="card-body">
+            <div class="container">
+                <table class="text-center table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Semestre</th>
+                            <th>Docente</th>
+                            <th>Total de Horas Teóricas y Prácticas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fila in reporte %}
+                        <tr>
+                            <td>{{ fila.semestre }}</td>
+                            <td>{{ fila.nombre_docente }} {{ fila.apellido_docente }}</td>
+                            <td>{{ fila.total_horas_clase }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

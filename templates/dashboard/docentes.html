@@ -54,21 +54,24 @@
                         </div>
                         <div class="mb-3">
                             <label for="documentoDocente" class="form-label">Número de Documento:</label>
-                            <input type="text" class="form-control" id="documentoDocente" name="n_documento" maxlength="8" pattern="\d{8}" oninput="validarNumeroDocumento(this)" required>
+                            <input type="text" class="form-control" id="documentoDocente" name="n_documento"
+                                maxlength="8" pattern="\d{8}" oninput="validarNumeroDocumento(this)" required>
                             <div class="invalid-feedback">
                                 El número de documento debe tener exactamente 8 dígitos.
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="telefonoDocente" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="telefonoDocente" name="telefono" maxlength="9" pattern="\d{9}" oninput="validarTelefono(this)" required>
+                            <input type="text" class="form-control" id="telefonoDocente" name="telefono" maxlength="9"
+                                pattern="\d{9}" oninput="validarTelefono(this)" required>
                             <div class="invalid-feedback">
                                 El número de teléfono debe tener exactamente 9 dígitos.
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="correoDocente" class="form-label">Correo:</label>
-                            <input type="email" class="form-control" id="correoDocente" name="correo" oninput="completarCorreo(this)" required>
+                            <input type="email" class="form-control" id="correoDocente" name="correo"
+                                oninput="completarCorreo(this)" required>
                         </div>
                         <div class="mb-3">
                             <label for="cantHorasDocente" class="form-label">Cantidad de Horas:</label>
@@ -121,14 +124,16 @@
                         </div>
                         <div class="mb-3">
                             <label for="modificarTelefonoDocente" class="form-label">Teléfono:</label>
-                            <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono" maxlength="9" pattern="\d{9}" oninput="validarTelefono(this)" required>
+                            <input type="text" class="form-control" id="modificarTelefonoDocente" name="telefono"
+                                maxlength="9" pattern="\d{9}" oninput="validarTelefono(this)" required>
                             <div class="invalid-feedback">
                                 El número de teléfono debe tener exactamente 9 dígitos.
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="modificarCorreoDocente" class="form-label">Correo:</label>
-                            <input type="email" class="form-control" id="modificarCorreoDocente" name="correo" oninput="completarCorreo(this)" required>
+                            <input type="email" class="form-control" id="modificarCorreoDocente" name="correo"
+                                oninput="completarCorreo(this)" required>
                         </div>
                         <div class="mb-3">
                             <label for="modificarCantHoras" class="form-label">Cantidad de Horas:</label>
@@ -188,7 +193,7 @@
         const value = input.value;
         const lastChar = value.charAt(value.length - 1);
         const parts = value.split('@');
-        
+
         if (parts.length > 1) {
             const username = parts[0];
             const domain = parts[1];
@@ -318,28 +323,126 @@
                             {
                                 extend: 'copy',
                                 text: '<i class="fas fa-copy"></i> Copiar',
-                                className: 'dropdown-item'
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
                             },
                             {
                                 extend: 'csv',
                                 text: '<i class="fas fa-file-csv"></i> CSV',
-                                className: 'dropdown-item'
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
                             },
                             {
                                 extend: 'excel',
                                 text: '<i class="fas fa-file-excel"></i> Excel',
-                                className: 'dropdown-item'
-                            },
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                },
+                                customize: function (xlsx) {
+                                    var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                                    // Modificar estilo de la primera y segunda fila
+                                    $('row:nth-child(1) c', sheet).each(function () {
+                                        $(this).attr('s', '32');
+                                    });
+
+                                    $('row:nth-child(2) c', sheet).each(function () {
+                                        $(this).attr('s', '32');
+                                    });
+                                }
+                            }
+
+                            ,
                             {
-                                extend: 'pdf',
-                                text: '<i class="fas fa-file-pdf"></i> PDF',
-                                className: 'dropdown-item'
+                                extend: 'pdfHtml5',
+                                text: '<i class="far fa-file-pdf"></i> PDF',
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                },
+                                orientation: 'portrait', // O 'landscape'
+                                pageSize: 'A4',
+                                customize: function (doc) {
+
+
+                                    var imageUrl = 'static/login/images/usat_logo_red.png';
+                                    // Ajustar márgenes para que la tabla ocupe toda la página
+                                    doc.pageMargins = [20, 10, 20, 20]; // [superior, derecha, inferior, izquierda]
+
+                                    // Personalizar el contenido del PDF
+                                    doc.content[0].text = 'REPORTE DE DOCENTES';
+
+                                    // Cambiar el estilo de la tabla
+                                    doc.styles.tableHeader = {
+                                        fillColor: '#E33439',
+                                        color: 'white',
+                                        fontSize: 12,
+                                        bold: true
+                                    };
+
+                                    doc.styles.table = {
+                                        fillColor: '#ffffff',
+                                        fontSize: 10
+                                    };
+
+                                    var body = doc.content[1].table.body;
+                                   
+
+                                    // Ajustar la tabla para que no tenga bordes
+                                    doc.content[1].layout = {
+                                        hLineWidth: function (i, node) { return 0; },
+                                        vLineWidth: function (i, node) { return 0; },
+                                        paddingLeft: function (i) { return 8; },
+                                        paddingRight: function (i) { return 8; },
+                                        paddingTop: function (i) { return 8; },
+                                        paddingBottom: function (i) { return 8; },
+                                        fillColor: function (rowIndex, node, columnIndex) { return null; }
+                                    };
+                                }
                             },
                             {
                                 extend: 'print',
                                 text: '<i class="fas fa-print"></i> Imprimir',
-                                className: 'dropdown-item'
+                                className: 'dropdown-item',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                },
+                                customize: function (win) {
+                                    // Agregar un encabezado personalizado al documento de impresión
+                                    $(win.document.body).prepend(
+                                        '<h1 style="text-align:center;">REPORTE DE DOCENTES</h1>'
+                                    );
+
+                                    // Ajustar el estilo de la tabla en el documento de impresión
+                                    $(win.document.body).find('table').addClass('display').css('font-size', '10px');
+                                    $(win.document.body).find('thead th').css({
+                                        'background-color': '#E33439',
+                                        'color': 'white'
+                                    });
+
+                                    // Configurar el tamaño de página A4 vertical
+                                    $(win.document.body).find('html').css({
+                                        'font-size': '12px',
+                                        'margin': '0',
+                                        'padding': '0',
+                                        'width': '210mm',  // Ancho para tamaño A4
+                                        'height': '297mm', // Alto para tamaño A4
+                                        'overflow': 'auto' // Para manejar contenido largo
+                                    });
+
+                                    $(win.document.body).find('body').css({
+                                        'font-size': '12px',
+                                        'margin': '20mm 10mm 10mm 10mm'  // Márgenes recomendados para impresión
+                                    });
+                                }
                             }
+
+
                         ]
                     },
                     {
@@ -518,23 +621,35 @@
                 estado: $('#modificarEstadoDocente').val()
             };
 
-            $.ajax({
-                url: '/modificar_docente',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function (response) {
-                    if (response.error) {
-                        Swal.fire('Error', response.error, 'error');
-                    } else {
-                        Swal.fire('Éxito', 'Docente modificado correctamente', 'success');
-                        table.ajax.reload();
-                        $('#modalModificarDocente').modal('hide');
+            Swal.fire({
+                title: `¿Estás seguro de modificar este docente?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, modificar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                $.ajax({
+                    url: '/modificar_docente',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response.error) {
+                            Swal.fire('Error', response.error, 'error');
+                        } else {
+                            Swal.fire('Éxito', 'Docente modificado correctamente', 'success');
+                            table.ajax.reload();
+                            $('#modalModificarDocente').modal('hide');
+                        }
+                        $('#mensajeResultado').show();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
                     }
-                    $('#mensajeResultado').show();
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
+                });
                 }
             });
         });
