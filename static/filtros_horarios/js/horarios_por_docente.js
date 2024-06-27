@@ -250,14 +250,11 @@ function agregarDocentePanel(idpersona, nombre_docente, horarios_docente, semest
 
     let tab = document.createElement("div");
     tab.className = "docente-tab";
+    tab.classList.add('activo');
     tab.id = `tab_${idpersona}`;
 
-    // Añadir estilo para que el fondo y el texto sean de color rojo
-    tab.style.backgroundColor = "#d9534f";
-    tab.style.color = "white";
-
     // Crear el contenido del div con el nombre del docente y el botón de eliminación
-    tab.innerHTML = `${nombre_docente} <span class="eliminar-docente" style="margin-left: 10px; cursor: pointer;">&times;</span>`;
+    tab.innerHTML = `${nombre_docente} <span class="eliminar-docente">X</span>`;
     
     // Añadir evento de click para eliminar el docente seleccionado
     tab.querySelector(".eliminar-docente").addEventListener("click", (event) => {
@@ -269,14 +266,17 @@ function agregarDocentePanel(idpersona, nombre_docente, horarios_docente, semest
             tabla_existente.remove();
         }
         espacio_tabla.innerHTML = "";
-        mostrarFoto(""); // Restablecer la foto de perfil por defecto
+        document.getElementById("foto_perfil").src = "/static/img/USUARIO.jpg"; // Restablecer la foto de perfil por defecto
     });
 
     tab.onclick = () => {
+        desmarcarTabsTodos();
+        tab.classList.add('activo');
         mostrarHorario(idpersona, nombre_docente, horarios_docente, semestre);
         mostrarFotoDocente(idpersona); // Mostrar la foto del docente seleccionado
     };
 
+    desmarcarTabsTodos();
     panel_docentes.appendChild(tab);
 
     mostrarHorario(idpersona, nombre_docente, horarios_docente, semestre);
@@ -284,6 +284,14 @@ function agregarDocentePanel(idpersona, nombre_docente, horarios_docente, semest
 }
 
 
+function desmarcarTabsTodos(){
+    var tabs = document.querySelectorAll('div.docente-tab');
+        tabs.forEach(tab=>{
+            if(tab.classList.contains('activo')){
+                tab.classList.remove('activo');
+            }
+        })
+}
 
 
 

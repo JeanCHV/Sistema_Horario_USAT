@@ -93,7 +93,7 @@
 }
 
 #buscador-multiopcion-sugerencias #bmos-lista-sugerencias {
-    background-color: rgb(217, 217, 217);
+    background-color: #E4E4E4;
     list-style: none;
     margin-top: 8px;
     border-radius: 10px;
@@ -102,6 +102,7 @@
     display: none;
     position: absolute;
     z-index: 999;
+    cursor: pointer;
 }
 
 #buscador-multiopcion-sugerencias #bmos-lista-sugerencias .bmos-sugerencia {
@@ -109,7 +110,8 @@
     padding-left: 10px;
 
     &:hover {
-        background-color: rgb(185, 185, 185);
+        backdrop-filter: brightness(60%);
+        color: white;
     }
 
     
@@ -204,6 +206,36 @@
             font-weight: bold;
             color: #4214fa;
     }
+}
+
+div.docente-tab{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.1rem 1rem;
+    font-weight:600;
+    background-color: #E4E4E4;
+    color: #5d626a;
+    border: 2px solid #808080;
+
+    &:hover{
+        background-color: #909090;
+        color: white;
+        border: 2px solid #898989;
+    }
+}
+
+div.docente-tab.activo{
+    background-color: #E33439;
+    color: white;
+    border: 2px solid #E33439;
+}
+
+
+span.eliminar-docente{
+    margin: 0 0 0 0.8rem;
+    font-size: 1.5rem;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 /*FIN ESTILOS HORARIO*/
