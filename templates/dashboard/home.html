@@ -146,6 +146,7 @@
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
             <div class="col-12 col-md-6 col-xxl-3 d-flex order-2 order-xxl-3">
                 <div class="card flex-fill w-100">
                     <div class="card-header">
@@ -221,6 +222,32 @@
                                 </tbody>
                                 
                                 <div id="no-datos-tabla-cursos-tipo" class="text-center mt-2" style="display: none;">
+=======
+
+            <!-- Reporte de grupos por curso -->
+            <div class="col-12 col-md-12 col-xxl-6 d-flex order-3 order-xxl-2">
+                <div class="card flex-fill w-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Cantidad de grupos por curso en el semestre academico 2024-I</h5>
+                    </div>
+                    <div class="card-body px-4">
+                        <div class="table-responsive" style="max-height:500px; overflow-y: auto;">
+                            <table class="table table-hover my-0">
+                                <thead class="table-header-fixed">
+                                    <tr>
+                                        <th>Nombre del curso</th>
+                                        <th>Cantidad de grupos</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-grupos-cursos">
+                                    <tr class="skeleton skeleton-table"><td colspan="2"></td></tr>
+                                    <tr class="skeleton skeleton-table"><td colspan="2"></td></tr>
+                                    <tr class="skeleton skeleton-table"><td colspan="2"></td></tr>
+                                    <tr class="skeleton skeleton-table"><td colspan="2"></td></tr>
+                                    <tr class="skeleton skeleton-table"><td colspan="2"></td></tr>
+                                </tbody>
+                                <div id="no-datos-grupos-cursos" class="text-center mt-2" style="display: none;">
+>>>>>>> ed30999199b8fe1516e16b6ae47b63ce95a4b162
                                     No hay datos disponibles
                                 </div>
                             </table>
@@ -531,20 +558,15 @@
                 document.getElementById("no-datos-reporte-cursos").style.display = "block";
             });
 
-            fetchData('/get_cant_cursos_docente', function (data) {
-                var labels = data.map(item => item.docente);
-                var cursos = data.map(item => item.cantidad_cursos);
-                removeSkeleton();
-                createChart("chartjs-cursos-docentes", "bar", labels, cursos, {
-                    label: "Cantidad de Cursos",
-                    backgroundColor: window.theme.primary,
-                    borderColor: window.theme.primary,
-                    hoverBackgroundColor: window.theme.primary,
-                    hoverBorderColor: window.theme.primary,
-                    displayLegend: false
+            fetchData('/get_cant_grupos_curso', function (data) {
+                updateTable("tabla-grupos-cursos", data, function (item) {
+                    return `<tr>
+                                <td>${item.nombre_curso}</td>
+                                <td>${item.cantidad_grupos}</td>
+                            </tr>`;
                 });
             }, function () {
-                document.getElementById("no-datos-cursos-docentes").style.display = "block";
+                document.getElementById("no-datos-grupos-cursos").style.display = "block";
             });
 
             fetch('/get_registrodocente_grupo_horario')
