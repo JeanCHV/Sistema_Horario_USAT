@@ -101,10 +101,10 @@ def get_reporte_cursos():
     get_reporte_cursos = controlador_horario.get_reporte_cursos()
     return jsonify(get_reporte_cursos)
 
-@app.route("/get_cant_cursos_docente", methods=["GET"])
-def get_cant_cursos_docente():
-    get_cant_cursos_docente =  controlador_cursos.get_cant_cursos_docente()
-    return jsonify(get_cant_cursos_docente)
+@app.route("/get_cant_grupos_curso", methods=["GET"])
+def get_cant_grupos_curso():
+    get_cant_grupos_curso =  controlador_cursos.get_cant_grupos_curso()
+    return jsonify(get_cant_grupos_curso)
 
 @app.route("/get_cant_grupos_semestre", methods=["GET"])
 def get_cant_grupos_semestre():
