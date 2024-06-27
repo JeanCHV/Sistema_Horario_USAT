@@ -225,7 +225,7 @@ def cruce(padre1, padre2):
 
 def mutacion(individuo):
     try:
-        if random.random() < 0.1:
+        if random.random() < 0.8:
             i = random.randint(0, len(individuo) - 1)
             idcurso = individuo[i][1]
             docentes_del_grupo = [gd['idpersona'] for gd in GRUPO_DOCENTE if gd['idgrupo'] == individuo[i][2]]
@@ -281,6 +281,7 @@ def algoritmo_genetico():
                 continue  # Ignorar esta entrada si el aula no es válida
             
             nombre_curso = CURSOS[idcurso]["nombre"]
+            ciclo = CURSOS[idcurso]["ciclo"]
             tipo_curso = CURSOS[idcurso]["tipo_curso"]
             nombre_docente = DOCENTES[profesor]["nombres"]
             apellidos_docente = DOCENTES[profesor]["apellidos"]
@@ -299,13 +300,53 @@ def algoritmo_genetico():
                     "dia": dia,
                     "hora_inicio": hora_inicio,
                     "hora_fin": hora_fin,
-                    "tipo_curso": tipo_curso_str
+                    "tipo_curso": tipo_curso_str,
+                    "ciclo": ciclo,
                 })
         
-        return resultado
+        return ajustar_cruces(resultado)
         
     except Exception as e:
         return []
+
+def ajustar_cruces(horario):
+    try:
+        horario_por_ciclo = {}
+        for entry in horario:
+            ciclo = entry['ciclo']
+            if ciclo not in horario_por_ciclo:
+                horario_por_ciclo[ciclo] = []
+            horario_por_ciclo[ciclo].append(entry)
+
+        for ciclo, eventos in horario_por_ciclo.items():
+            eventos.sort(key=lambda x: (x['dia'], x['hora_inicio']))
+            for i in range(len(eventos)):
+                for j in range(i + 1, len(eventos)):
+                    if eventos[i]['dia'] == eventos[j]['dia']:
+                        inicio_i = int(eventos[i]['hora_inicio'].split(':')[0])
+                        fin_i = int(eventos[i]['hora_fin'].split(':')[0])
+                        inicio_j = int(eventos[j]['hora_inicio'].split(':')[0])
+                        fin_j = int(eventos[j]['hora_fin'].split(':')[0])
+
+                        if inicio_i < fin_j and inicio_j < fin_i:
+                            if fin_i - inicio_j > fin_j - inicio_i:
+                                eventos[j]['hora_inicio'] = f"{fin_i}:00"
+                                eventos[j]['hora_fin'] = f"{fin_i + (fin_j - inicio_j)}:00"
+                            else:
+                                eventos[i]['hora_inicio'] = f"{fin_j}:00"
+                                eventos[i]['hora_fin'] = f"{fin_j + (fin_i - inicio_j)}:00"
+                            if int(eventos[j]['hora_fin'].split(':')[0]) > 22:
+                                eventos[j]['hora_fin'] = "22:00"
+                            if int(eventos[i]['hora_fin'].split(':')[0]) > 22:
+                                eventos[i]['hora_fin'] = "22:00"
+
+        resultado_ajustado = []
+        for eventos in horario_por_ciclo.values():
+            resultado_ajustado.extend(eventos)
+
+        return resultado_ajustado
+    except Exception as e:
+        return horario
 
 # Ejecución del algoritmo genético mejorado
 resultado = algoritmo_genetico()

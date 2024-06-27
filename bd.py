@@ -2,11 +2,11 @@ import pymysql
 
 #Desarrollo
 def obtener_conexion():
-    return pymysql.connect(host='roundhouse.proxy.rlwy.net',
-                                port=54363,
+    return pymysql.connect(host='127.0.0.1',
+                                port=3306,
                                 user='root',
-                                password='UAumJRVIMWnTGqRdkZNDqvocCpHjzHKl',
-                                db='db_calidad')
+                                password='',
+                                db='bdcalidad')
 
 
 # def obtener_conexion():

@@ -3,7 +3,11 @@
 {% block titulo %} Horarios {% endblock %}
 
 {% block contenido %}
-<script src="{{ url_for('static', filename='login/libs/sweetalert2/sweetalert2.js') }}"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/es.js"></script>
 
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -21,36 +25,11 @@
         <div class="card-body">
             <div class="my-3">
                 <div id="estadoGeneracion">
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner1">
-                        </div>
-                        <div id="estadoDisponibilidad">Disponibilidad de docentes</div>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner2">
-                        </div>
-                        <div id="estadoCursosActivos">Cursos activos</div>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner3">
-                        </div>
-                        <div id="estadoAmbientesDisponibles">Ambientes asignados</div>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner4">
-                        </div>
-                        <div id="estadoMinimoHorasAsignado">Mínimo de horas asignado</div>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner5">
-                        </div>
-                        <div id="get_docentes_no_asignados">Docentes asignados a grupos</div>
-                    </div>
+                    <!-- Estado de generación aquí -->
                 </div>
             </div>
-            <!-- Div superior -->
+            <!-- Botones -->
             <div class="row align-items-end my-3">
-                <!-- Espacio y botones -->
                 <div class="d-flex justify-content-center mt-3">
                     <button class="btn btn-success btn-lg mx-2" onclick="generarHorario()"><i class="fa fa-robot me-2"></i> Generar Horario</button>
                     <button class="btn btn-success btn-lg mx-2 d-none" id="btnRegistrar" onclick="confirmarRegistrarHorario()">
@@ -60,34 +39,15 @@
                         <i class="fa fa-trash me-2"></i>Limpiar
                     </button>
                 </div>
+                <div class="d-flex justify-content-center mt-3">
+                    <button class="btn btn-secondary btn-lg mx-2" onclick="cicloAnterior()"><i class="fa fa-arrow-left me-2"></i>Anterior</button>
+                    <h4 class="mx-3" id="cicloActual">I Ciclo</h4>
+                    <button class="btn btn-secondary btn-lg mx-2" onclick="cicloSiguiente()"><i class="fa fa-arrow-right me-2"></i>Siguiente</button>
+                </div>
             </div>
-            <!-- Progreso de generación de horario -->
-
-            <!-- Tabla inferior -->
+            <!-- Calendario -->
             <div class="card-body show" style="max-height: 600px; overflow-y: auto;">
-                <div id="loading">
-                    <div></div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-md-12" id="espacio_tabla">
-                        <table class="table table-bordered text-center" id="tabla_horarios">
-                            <thead class="border border-white bg-red-usat -horario-usat">
-                                <tr>
-                                    <th>Hora</th>
-                                    <th>Lunes</th>
-                                    <th>Martes</th>
-                                    <th>Miércoles</th>
-                                    <th>Jueves</th>
-                                    <th>Viernes</th>
-                                    <th>Sábado</th>
-                                </tr>
-                            </thead>
-                            <tbody style="background-color: #EEEEEE;">
-                                <!-- Las filas se llenarán dinámicamente con JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <div id="calendar"></div>
             </div>
         </div>
     </div>
@@ -107,92 +67,7 @@
     </div>
 </div>
 
-<!-- Modal de Edición -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Editar Curso</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm">
-                    <div class="mb-3">
-                        <label for="cursoNombre" class="form-label">Curso</label>
-                        <input type="text" class="form-control" id="cursoNombre" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cursoDocente" class="form-label">Docente</label>
-                        <input type="text" class="form-control" id="cursoDocente">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cursoTipo" class="form-label">Tipo</label>
-                        <input type="text" class="form-control" id="cursoTipo">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cursoAula" class="form-label">Aula</label>
-                        <input type="text" class="form-control" id="cursoAula">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cursoHoraInicio" class="form-label">Hora Inicio</label>
-                        <input type="time" class="form-control" id="cursoHoraInicio">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cursoHoraFin" class="form-label">Hora Fin</label>
-                        <input type="time" class="form-control" id="cursoHoraFin">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cursoGrupo" class="form-label">Grupo</label>
-                        <input type="text" class="form-control" id="cursoGrupo" readonly>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="guardarCambios()">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="ambientesModal" tabindex="-1" aria-labelledby="ambientesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ambientesModalLabel">Cursos con Ambientes No Definidos</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="tablaAmbientesNoDefinidos">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Curso</th>
-                                <th>Docente</th>
-                                <th>Tipo</th>
-                                <th>Aula</th>
-                                <th>Hora Inicio</th>
-                                <th>Hora Fin</th>
-                                <th>Grupo</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Las filas se llenarán dinámicamente con JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
-    .curso-detalle {
-        font-size: 12px;
-        cursor: pointer;
-    }
-
     .curso-tipo-presencial {
         background-color: rgb(0, 38, 255);
         color: white;
@@ -210,55 +85,16 @@
         margin-top: 2px;
         margin-bottom: 2px;
     }
-
-    .ambiente {
-        color: #4214fa;
-        font-weight: bold;
-    }
-
-    .curso {
-        width: 100%;
-        display: block;
-        margin: 3px 0;
-    }
-
-    .modal-dialog-centered {
-        display: flex;
-        align-items: center;
-        min-height: calc(100% - 1rem);
-    }
-
-    .modal-content {
-        width: 100%;
-    }
-
-    .table-responsive {
-        max-height: 70vh;
-        overflow-y: auto;
-    }
 </style>
 
 <script>
+    var currentCiclo = 1;
+    var maxCiclo = 1;
+    var allEvents = [];
+
     $(document).ready(function () {
-        $('#tabla-cursos').DataTable({
-            "paging": true,
-            "pagingType": 'numbers',
-            "info": false,
-            "stateSave": true,
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.0.3/i18n/es-ES.json',
-            },
-        });
-
-        verificarDisponibilidadDocentes();
-        verificarCursosActivos();
-        verificarAmbientesDisponibles();
-        verificarMinimoHorasAsignado();
-        get_docentes_no_asignados();
+        generarHorario();
     });
-
-    var horario = [];
-    var cursoEditando = null;
 
     function generarHorario() {
         $('#loadingModal').modal('show');
@@ -267,9 +103,10 @@
             type: 'GET',
             contentType: 'application/json',
             success: function (response) {
-                horario = response;
                 $('#loadingModal').modal('hide');
-                llenarTablaHorario(horario);
+                allEvents = response;
+                maxCiclo = Math.max(...allEvents.map(event => event.ciclo));
+                actualizarCalendario();
                 $('#btnRegistrar').removeClass('d-none');
                 $('#btnLimpiar').removeClass('d-none');
             },
@@ -280,162 +117,53 @@
         });
     }
 
-    function verificarDisponibilidadDocentes() {
-        $.ajax({
-            url: '/get_docente_sin_disponibilidad',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.length > 0) {
-                    $('#spinner1').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                    $('#estadoDisponibilidad').html('Hay Docentes sin disponibilidad Asignada <a href="/disponibilidad" class="btn btn-warning btn-sm ms-2">Ir a disponibilidad</a>');
-                } else if (response.length == 0) {
-                    $('#spinner1').replaceWith('<i class="fa fa-check text-success me-2"></i>');
-                    $('#estadoDisponibilidad').text('Disponibilidad de docentes');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-                $('#spinner1').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                $('#estadoDisponibilidad').text('Error al verificar disponibilidad de docentes');
-            }
+    function actualizarCalendario() {
+        var events = allEvents.filter(event => event.ciclo === currentCiclo).map(function (curso) {
+            return {
+                title: curso.curso + ' (' + curso.docente + ')',
+                start: moment().day(curso.dia).hour(parseInt(curso.hora_inicio.split(':')[0])).minute(parseInt(curso.hora_inicio.split(':')[1])),
+                end: moment().day(curso.dia).hour(parseInt(curso.hora_fin.split(':')[0])).minute(parseInt(curso.hora_fin.split(':')[1])),
+                className: curso.tipo_curso.toLowerCase() === 'presencial' ? 'curso-tipo-presencial' : 'curso-tipo-virtual'
+            };
         });
-    }
 
-    function get_docentes_no_asignados() {
-        $.ajax({
-            url: '/get_docentes_no_asignados',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.length > 0) {
-                    $('#spinner5').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                    $('#get_docentes_no_asignados').html('Hay Docentes sin asignar grupos horarios <a href="/grupo_docentes" class="btn btn-warning btn-sm ms-2">Resolver</a>');
-                } else if (response.length == 0) {
-                    $('#spinner5').replaceWith('<i class="fa fa-check text-success me-2"></i>');
-                    $('#get_docentes_no_asignados').text('Docentes asignados a grupos');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-                $('#spinner1').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                $('#get_docentes_no_asignados').text('Error al verificar asignacion de docentes a grupos');
-            }
-        });
-    }
-
-    function verificarCursosActivos() {
-        $.ajax({
-            url: '/get_cursos_activos',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.length > 0) {
-                    $('#spinner2').replaceWith('<i class="fa fa-check text-success me-2"></i>');
-                    $('#estadoCursosActivos').text('Cursos Activos');
-                } else if (response.length == 0) {
-                    $('#spinner2').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                    $('#estadoCursosActivos').html('No hay cursos activos <a href="/cursos" class="btn btn-warning btn-sm ms-2">Ir a Cursos</a>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-                $('#spinner2').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                $('#estadoCursosActivos').text('Error al verificar cursos activos');
-            }
-        });
-    }
-
-    function verificarAmbientesDisponibles() {
-        $.ajax({
-            url: '/get_ambientes_disponibles',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.length > 0) {
-                    $('#spinner3').replaceWith('<i class="fa fa-check text-success me-2"></i>');
-                    $('#estadoAmbientesDisponibles').text('Ambientes asignados');
-                } else if (response.length == 0) {
-                    $('#spinner3').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                    $('#estadoAmbientesDisponibles').html('No hay ambientes disponibles <a href="/ambientes" class="btn btn-warning btn-sm ms-2">Ir a Ambientes</a>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-                $('#spinner3').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                $('#estadoAmbientesDisponibles').text('Error al verificar ambientes disponibles');
-            }
-        });
-    }
-
-    function verificarMinimoHorasAsignado() {
-        $.ajax({
-            url: '/docentes_validar_horas',
-            type: 'GET',
-            contentType: 'application/json',
-            success: function (response) {
-                if (response.length == 0) {
-                    $('#spinner4').replaceWith('<i class="fa fa-check text-success me-2"></i>');
-                    $('#estadoMinimoHorasAsignado').text('Mínimo de Horas Asignado');
-                } else if (response.length > 0) {
-                    $('#spinner4').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                    $('#estadoMinimoHorasAsignado').html('Docentes sin horas asignadas <a href="/docentes" class="btn btn-warning btn-sm ms-2">Ir a Docentes</a>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-                $('#spinner4').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                $('#estadoMinimoHorasAsignado').text('Error al verificar el mínimo de horas asignado');
-            }
-        });
-    }
-
-    function llenarTablaHorario(data) {
-        const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-        const horas = [
-            '07:00 - 08:00',
-            '08:00 - 09:00',
-            '09:00 - 10:00',
-            '10:00 - 11:00',
-            '11:00 - 12:00',
-            '12:00 - 13:00',
-            '13:00 - 14:00',
-            '14:00 - 15:00',
-            '15:00 - 16:00',
-            '16:00 - 17:00',
-            '17:00 - 18:00',
-            '18:00 - 19:00',
-            '19:00 - 20:00',
-            '20:00 - 21:00',
-            '21:00 - 22:00'
-        ];
-
-        let tabla = $('#tabla_horarios tbody');
-        tabla.empty();
-
-        horas.forEach(hora => {
-            let fila = $('<tr></tr>');
-            fila.append(`<td>${hora}</td>`);
-            dias.forEach(dia => {
-                let celda = $('<td></td>');
-                data.forEach(curso => {
-                    if (curso.dia === dia && hora === `${curso.hora_inicio} - ${curso.hora_fin}`) {
-                        celda.append(`
-                            <div class="curso-tipo-${curso.tipo_curso.toLowerCase()}">
-                                <strong>${curso.curso}</strong><br>
-                                (Grupo - ${curso.grupo})<br>
-                                ${curso.tipo_curso}<br>
-                                ${curso.docente}<br>
-                                ${curso.aula}<br>
-                                ${curso.dia} (${curso.hora_inicio} - ${curso.hora_fin})
-                            </div>
-                        `);
-                    }
+        $('#calendar').fullCalendar('destroy'); // Destroy the existing calendar
+        $('#calendar').fullCalendar({ // Create a new calendar
+            header: false, // Hide navigation header
+            defaultView: 'agendaWeek',
+            locale: 'es',
+            minTime: '07:00:00',
+            maxTime: '24:00:00',
+            hiddenDays: [0], // Hide Sundays
+            events: events,
+            editable: false,
+            eventRender: function(event, element) {
+                element.append("<span class='closeon'>X</span>");
+                element.find(".closeon").click(function() {
+                    $('#calendar').fullCalendar('removeEvents', event._id);
                 });
-                fila.append(celda);
-            });
-            tabla.append(fila);
+            }
         });
+        actualizarTituloCiclo();
+    }
+
+    function cicloAnterior() {
+        if (currentCiclo > 1) {
+            currentCiclo--;
+            actualizarCalendario();
+        }
+    }
+
+    function cicloSiguiente() {
+        if (currentCiclo < maxCiclo) {
+            currentCiclo++;
+            actualizarCalendario();
+        }
+    }
+
+    function actualizarTituloCiclo() {
+        var cicloTitulo = ["I Ciclo", "II Ciclo", "III Ciclo", "IV Ciclo", "V Ciclo", "VI Ciclo", "VII Ciclo", "VIII Ciclo", "IX Ciclo", "X Ciclo"];
+        document.getElementById("cicloActual").innerText = cicloTitulo[currentCiclo - 1];
     }
 
     function confirmarRegistrarHorario() {
@@ -463,6 +191,17 @@
             }
         });
 
+        var events = $('#calendar').fullCalendar('clientEvents');
+        var horario = events.map(event => ({
+            curso: event.title.split(' (')[0],
+            docente: event.title.split(' (')[1].slice(0, -1),
+            dia: event.start.format('dddd'),
+            hora_inicio: event.start.format('HH:mm'),
+            hora_fin: event.end.format('HH:mm'),
+            tipo_curso: event.className[0].includes('presencial') ? 'Presencial' : 'Virtual',
+            ciclo: currentCiclo
+        }));
+
         $.ajax({
             url: '/insertar_horarios_ia',
             type: 'POST',
@@ -488,8 +227,7 @@
     }
 
     function limpiarTabla() {
-        let tabla = $('#tabla_horarios tbody');
-        tabla.empty();
+        $('#calendar').fullCalendar('removeEvents');
         $('#btnRegistrar').addClass('d-none');
         $('#btnLimpiar').addClass('d-none');
     }
