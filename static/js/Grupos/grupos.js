@@ -52,14 +52,14 @@ $(document).ready(function () {
     // Supongamos que tienes una función para editar grupo
     window.cargarDatosEnModal = function (grupo) {
         console.log(grupo);
-        cargarSelects().done(function() {
+        cargarSelects().done(function () {
             $('#grupoId').val(grupo.id_grupo);
             $('#nombreGrupo').val(grupo.nombre);
             $('#vacantesGrupo').val(grupo.vacantes);
             $('#semestreGrupo').val(grupo.idsemestre).change();
 
             // Buscar y seleccionar el curso por su nombre
-            $('#cursoGrupo option').each(function() {
+            $('#cursoGrupo option').each(function () {
                 if ($(this).text() === grupo.curso) {
                     $(this).prop('selected', true);
                 }
@@ -162,11 +162,50 @@ $(document).ready(function () {
                         }
                     },
                     {
-                        extend: 'pdf',
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        extend: 'pdfHtml5',
+                        text: '<i class="far fa-file-pdf"></i> PDF',
                         className: 'dropdown-item',
                         exportOptions: {
                             columns: ':not(:last-child)'
+                        },
+                        orientation: 'portrait', // O 'landscape'
+                        pageSize: 'A4',
+                        customize: function (doc) {
+
+
+                            var imageUrl = 'static/login/images/usat_logo_red.png';
+                            // Ajustar márgenes para que la tabla ocupe toda la página
+                            doc.pageMargins = [20, 10, 20, 20]; // [superior, derecha, inferior, izquierda]
+
+                            // Personalizar el contenido del PDF
+                            doc.content[0].text = 'REPORTE DE GRUPOS';
+
+                            // Cambiar el estilo de la tabla
+                            doc.styles.tableHeader = {
+                                fillColor: '#E33439',
+                                color: 'white',
+                                fontSize: 12,
+                                bold: true
+                            };
+
+                            doc.styles.table = {
+                                fillColor: '#ffffff',
+                                fontSize: 10
+                            };
+
+                            var body = doc.content[1].table.body;
+
+
+                            // Ajustar la tabla para que no tenga bordes
+                            doc.content[1].layout = {
+                                hLineWidth: function (i, node) { return 0; },
+                                vLineWidth: function (i, node) { return 0; },
+                                paddingLeft: function (i) { return 8; },
+                                paddingRight: function (i) { return 8; },
+                                paddingTop: function (i) { return 8; },
+                                paddingBottom: function (i) { return 8; },
+                                fillColor: function (rowIndex, node, columnIndex) { return null; }
+                            };
                         }
                     },
                     {
@@ -186,7 +225,7 @@ $(document).ready(function () {
                     e.preventDefault();
                     $('#formGrupo')[0].reset();
                     $('#grupoId').val(''); // Limpiar el valor de grupoId
-                    cargarSelects().done(function() {
+                    cargarSelects().done(function () {
                         $('#modalGrupoLabel').text('Agregar Grupo');
                         $('#modalGrupo').modal('show');
                     });
