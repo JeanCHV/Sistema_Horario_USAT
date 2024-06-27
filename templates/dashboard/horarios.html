@@ -310,7 +310,7 @@
             success: function (response) {
                 if (response.length > 0) {
                     $('#spinner5').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
-                    $('#get_docentes_no_asignados').html('Hay Docentes sin asignar grupos horarios <a href="/grupos_docente" class="btn btn-warning btn-sm ms-2">Resolver</a>');
+                    $('#get_docentes_no_asignados').html('Hay Docentes sin asignar grupos horarios <a href="/grupo_docentes" class="btn btn-warning btn-sm ms-2">Resolver</a>');
                 } else if (response.length == 0) {
                     $('#spinner5').replaceWith('<i class="fa fa-check text-success me-2"></i>');
                     $('#get_docentes_no_asignados').text('Docentes asignados a grupos');
