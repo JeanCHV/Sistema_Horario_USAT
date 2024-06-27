@@ -179,6 +179,28 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-6 d-flex align-items-stretch">
+                <div class="card mb-4 w-100">
+                    <div class="card-header  text-white">
+                        <h5 class="card-title text-grey">Cantidad de docentes con disponibilidad registrada y no registrada del  semestre académico 2024-I</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartAmbiente"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-stretch">
+                <div class="card mb-4 w-100">
+                    <div class="card-header usat text-white">
+                        <h5 class="card-title text-grey">Cantidad de grupos con horarios asignados y no asignados del semestre académico 2024-I</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartDocente"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- <div class="row"> -->
             <!-- Reporte de Cursos -->
@@ -373,19 +395,8 @@
                         }]
                     },
                     options: {
-                        maintainAspectRatio: false,
-                        legend: { display: options.displayLegend },
-                        scales: {
-                            yAxes: [{
-                                gridLines: { display: false },
-                                stacked: false,
-                                ticks: { stepSize: 5 }
-                            }],
-                            xAxes: [{
-                                stacked: false,
-                                gridLines: { color: "transparent" }
-                            }]
-                        }
+                        maintainAspectRatio: true,
+                        legend: { display: options.displayLegend }
                     }
                 });
             }
@@ -418,14 +429,16 @@
                 var labels = data.map(item => item.tipo);
                 var cursos = data.map(item => item.cursos);
                 removeSkeleton(); 
-                createChart("chartjs-cursos-tipo", "pie", labels, cursos, {
+                createChart("chartjs-cursos-tipo",  'pie',labels, cursos, {
+                    
                     label: "Cursos",
                     backgroundColor: [window.theme.primary, window.theme.warning],
-                    borderColor: window.theme.primary,
-                    hoverBackgroundColor: window.theme.primary,
-                    hoverBorderColor: window.theme.primary,
-                    displayLegend: false
-                });
+                    borderColor: 'rgb(255,255,255)',
+                    hoverBackgroundColor:['rgb(53,126,255)','rgb(255,194,4)'] ,
+                    hoverBorderColor: 'rgb(255,255,255)',
+                    displayLegend: true,
+                },
+                );
                 updateTable("tabla-cursos-tipo", data, createCursoTipoRow);
             }, function () {
                 document.getElementById("no-datos-cursos-tipo").style.display = "block";
@@ -502,6 +515,57 @@
                 document.getElementById("no-datos-cursos-por-facultad").style.display = "block";
             });
 
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ocultar loader después de 2 segundos
+            setTimeout(function () {
+                document.getElementById('loader').style.display = 'none';
+            }, 2000);
+    
+            // Obtener datos desde el servidor utilizando AJAX
+            fetch('/get_registrodocente_grupo_horario')  // Asegúrate de que esta ruta sea correcta
+                .then(response => response.json())
+                .then(data => {
+                    const { docentes_con_disponibilidad, docentes_sin_disponibilidad, grupos_con_horario, grupos_sin_horario } = data;
+    
+                    // Datos para los gráficos
+                    const dataAmbiente = {
+                        labels: ['Docentes con disponibilidad registrada', 'Docentes sin disponibilidad registrada'],
+                        datasets: [{
+                            label: 'Reporte por Docente',
+                            data: [docentes_con_disponibilidad, docentes_sin_disponibilidad],
+                            backgroundColor: ['#FF6384', '#36A2EB'],
+                        }]
+                    };
+    
+                    const dataDocente = {
+                        labels: ['Grupos con horario asignados', 'Grupos sin horarios asignados'],
+                        datasets: [{
+                            label: 'Reporte de Grupos',
+                            data: [grupos_con_horario, grupos_sin_horario],
+                            backgroundColor: ['#FF6384', '#36A2EB'],
+                        }]
+                    };
+    
+                    // Configuración de los gráficos
+                    const configAmbiente = {
+                        type: 'pie',
+                        data: dataAmbiente,
+                    };
+    
+                    const configDocente = {
+                        type: 'pie',
+                        data: dataDocente,
+                    };
+    
+                    // Inicializar los gráficos
+                    new Chart(document.getElementById('chartAmbiente'), configAmbiente);
+                    new Chart(document.getElementById('chartDocente'), configDocente);
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                    document.getElementById('loader').style.display = 'none';  // En caso de error, ocultar loader
+                });
         });
     </script>
 </section>

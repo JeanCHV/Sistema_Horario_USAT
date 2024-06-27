@@ -255,9 +255,7 @@ def mantenimiento_grupos():
     else:
         return jsonify({"mensaje": "Grupos modificados correctamente"})
 
-@app.route('/reportegrupo_docente')
-def reportegrupo_docente():
-    return render_template('dashboard/reporte_gruposdocente.html')
+
 
 @app.route('/get_registrodocente_grupo_horario')
 def get_registrodocente_grupo_horario():
