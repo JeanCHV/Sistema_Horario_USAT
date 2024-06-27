@@ -5,7 +5,7 @@ CREATE TABLE ambiente (
   estado         char(1) NOT NULL comment 'Estado de ambiente(Activo o Inactivo)', 
   idedificio     int(10) NOT NULL comment 'Identificador de referencia de la tabla edificio', 
   idambientetipo int(10) NOT NULL comment 'Identificador de referencia de la tabla ambiente_tipo', 
-  PRIMARY KEY (idambiente)) comment='Contiene información sobre los diferentes ambientes disponibles en la institución, incluyendo su capacidad y estado' AUTO_INCREMENT=165;
+  PRIMARY KEY (idambiente)) comment='Contiene información sobre los diferentes ambientes disponibles en la institución, incluyendo su capacidad y estado' AUTO_INCREMENT=166;
 CREATE TABLE ambiente_tipo (
   idambientetipo int(10) NOT NULL AUTO_INCREMENT comment 'Identificador auto incremental de la tabla ambiente_tipo', 
   nombre         varchar(255) NOT NULL comment 'Nombre de la tabla ambiente_tipo', 
@@ -18,7 +18,7 @@ CREATE TABLE bitacora (
   registro_afectado_id int(10), 
   fecha                timestamp(19) DEFAULT CURRENT_TIMESTAMP NULL, 
   detalles             text, 
-  PRIMARY KEY (id)) AUTO_INCREMENT=327;
+  PRIMARY KEY (id)) AUTO_INCREMENT=651;
 CREATE TABLE curso (
   idcurso         int(10) NOT NULL AUTO_INCREMENT comment 'Identificador auto incremental de la tabla curso', 
   nombre          varchar(255) NOT NULL comment 'Nombre del curso', 
@@ -30,24 +30,19 @@ CREATE TABLE curso (
   tipo_curso      tinyint(1) NOT NULL comment 'Tipo de curso (Virtual o Presencial)', 
   estado          char(1) NOT NULL comment 'Estado del curso (Activo o Inactivo)', 
   id_plan_estudio int(10) NOT NULL comment 'Identificador de referencia de la tabla plan_estudio', 
-  PRIMARY KEY (idcurso)) comment='Registra los cursos ofrecidos por la institución, detallando sus características como nombre, código, créditos y horas' AUTO_INCREMENT=118;
+  PRIMARY KEY (idcurso)) comment='Registra los cursos ofrecidos por la institución, detallando sus características como nombre, código, créditos y horas' AUTO_INCREMENT=143;
 CREATE TABLE curso_ambiente (
   idcurso    int(10) NOT NULL comment 'Identificador de referencia de la tabla curso', 
   idambiente int(10) NOT NULL comment 'Identificador de referencia de la tabla ambiente', 
   PRIMARY KEY (idcurso, 
   idambiente)) comment='Establece la relación entre los cursos y los ambientes donde se imparten';
-CREATE TABLE curso_docente (
-  idcurso   int(10) NOT NULL comment 'Identificador de referencia de la tabla curso', 
-  idpersona int(10) NOT NULL comment 'Identificador de referencia de la tabla persona', 
-  PRIMARY KEY (idcurso, 
-  idpersona)) comment='Asocia a los docentes con los cursos que enseñan, permitiendo gestionar quién enseña qué curso';
 CREATE TABLE docente_disponibilidad (
   dia                       varchar(255) NOT NULL comment 'Día de la semana', 
   hora_inicio               time(6) NOT NULL comment 'Hora de inicio de disponibilidad', 
   hora_fin                  time(6) NOT NULL comment 'Hora de fin de disponibilidad', 
   idpersona                 int(10) NOT NULL comment 'Identificador de referencia de la tabla persona', 
   id_disponibilidad_docente int(10) NOT NULL AUTO_INCREMENT, 
-  PRIMARY KEY (id_disponibilidad_docente)) comment='Almacena la disponibilidad horaria de los docentes para planificar las clases' AUTO_INCREMENT=0;
+  PRIMARY KEY (id_disponibilidad_docente)) comment='Almacena la disponibilidad horaria de los docentes para planificar las clases' AUTO_INCREMENT=227;
 CREATE TABLE edificio (
   idedificio  int(10) NOT NULL AUTO_INCREMENT comment 'Identificador auto incremental de la tabla edificio', 
   nombre      varchar(255) NOT NULL comment 'Nombre del edificio', 
@@ -59,7 +54,7 @@ CREATE TABLE error_sql (
   query         text comment 'Consulta que generó el error', 
   error_message text NOT NULL comment 'Mensaje de error', 
   fecha         date NOT NULL comment 'Fecha en que se presentó el error', 
-  PRIMARY KEY (idError)) comment='Registra los errores SQL ocurridos, incluyendo el mensaje de error y la fecha en que ocurrió' AUTO_INCREMENT=98;
+  PRIMARY KEY (idError)) comment='Registra los errores SQL ocurridos, incluyendo el mensaje de error y la fecha en que ocurrió' AUTO_INCREMENT=107;
 CREATE TABLE escuela (
   id_escuela  int(10) NOT NULL AUTO_INCREMENT comment 'Identificador auto incremental de la tabla escuela', 
   nombre      varchar(255) NOT NULL comment 'Nombre de la escuela', 
@@ -77,15 +72,15 @@ CREATE TABLE facultad (
 CREATE TABLE grupo (
   id_grupo   int(10) NOT NULL AUTO_INCREMENT comment 'Identificador auto incremental de la tabla grupo', 
   nombre     char(1) NOT NULL comment 'Nombre del grupo', 
-  vacantes   int(10) DEFAULT 15 NOT NULL comment 'Vacantes disponibles en el grupo', 
+  vacantes   int(10) NOT NULL comment 'Vacantes disponibles en el grupo', 
   idcurso    int(10) NOT NULL comment 'Identificador de referencia de la tabla curso', 
   idsemestre int(10) NOT NULL comment 'Identificador de referencia de la tabla semestre_academico', 
-  PRIMARY KEY (id_grupo)) comment='Registra los grupos de estudio, incluyendo su nombre, vacantes disponibles y curso asociado' AUTO_INCREMENT=296;
+  PRIMARY KEY (id_grupo)) comment='Registra los grupos de estudio, incluyendo su nombre, vacantes disponibles y curso asociado' AUTO_INCREMENT=298;
 CREATE TABLE grupo_docente (
   idgrupo   int(10) NOT NULL, 
   idpersona int(10) NOT NULL, 
   PRIMARY KEY (idgrupo, 
-  idpersona));
+  idpersona)) comment='Asocia a los docentes con los grupos que enseñan, permitiendo gestionar quién enseña qué curso y grupo';
 CREATE TABLE horario (
   idhorario    int(10) NOT NULL AUTO_INCREMENT comment 'Identificador auto incremental de la tabla horario', 
   idambiente   int(10) NOT NULL comment 'Identificador de referencia de la tabla ambiente', 
@@ -117,7 +112,7 @@ CREATE TABLE persona (
   foto        varchar(255) comment 'Foto de la persona', 
   estado      tinyint(1) NOT NULL comment 'Estado de la persona (Activo o Inactivo)', 
   PRIMARY KEY (idpersona), 
-  UNIQUE INDEX (n_documento)) comment='Almacena la información personal de todos los usuarios del sistema, incluyendo nombres, apellidos y contacto' AUTO_INCREMENT=53;
+  UNIQUE INDEX (n_documento)) comment='Almacena la información personal de todos los usuarios del sistema, incluyendo nombres, apellidos y contacto' AUTO_INCREMENT=59;
 CREATE TABLE plan_estudio (
   id_plan_estudio int(10) NOT NULL AUTO_INCREMENT comment 'Identificador auto incremental de la tabla plan_estudio', 
   nombre          varchar(7) NOT NULL comment 'Nombre del plan de estudio', 
@@ -142,6 +137,8 @@ create view view_docentes_activos as select `db_calidad`.`persona`.`idpersona` A
 create view vista_usuarios as select `db_calidad`.`usuario`.`idusuario` AS `idusuario`,`db_calidad`.`usuario`.`username` AS `username`,`db_calidad`.`usuario`.`estado` AS `estado`,`db_calidad`.`usuario`.`idpersona` AS `idpersona`,`db_calidad`.`usuario`.`token` AS `token` from `db_calidad`.`usuario`;
 CREATE UNIQUE INDEX unique_abreviatura_curso 
   ON escuela (abreviatura);
+CREATE INDEX idgrupo 
+  ON grupo_docente (idgrupo);
 ALTER TABLE horario ADD CONSTRAINT fk_ambiente_horario FOREIGN KEY (idambiente) REFERENCES ambiente (idambiente) ON UPDATE Restrict ON DELETE Restrict;
 ALTER TABLE ambiente ADD CONSTRAINT fk_ambiente_tipo_ambiente FOREIGN KEY (idambientetipo) REFERENCES ambiente_tipo (idambientetipo) ON UPDATE Restrict ON DELETE Restrict;
 ALTER TABLE grupo ADD CONSTRAINT fk_curso_grupo FOREIGN KEY (idcurso) REFERENCES curso (idcurso) ON UPDATE Restrict ON DELETE Restrict;
@@ -158,8 +155,6 @@ ALTER TABLE curso ADD CONSTRAINT fk_plan_estudio_curso FOREIGN KEY (id_plan_estu
 ALTER TABLE grupo ADD CONSTRAINT fk_semestre_academico_grupo FOREIGN KEY (idsemestre) REFERENCES semestre_academico (idsemestre) ON UPDATE Restrict ON DELETE Restrict;
 ALTER TABLE curso_ambiente ADD CONSTRAINT idambiente FOREIGN KEY (idambiente) REFERENCES ambiente (idambiente) ON UPDATE Restrict ON DELETE Restrict;
 ALTER TABLE curso_ambiente ADD CONSTRAINT idcurso FOREIGN KEY (idcurso) REFERENCES curso (idcurso) ON UPDATE Restrict ON DELETE Restrict;
-ALTER TABLE grupo_docente ADD CONSTRAINT idgrupo FOREIGN KEY (idgrupo) REFERENCES grupo (id_grupo) ON UPDATE Restrict ON DELETE Restrict;
-ALTER TABLE grupo_docente ADD CONSTRAINT idpersona FOREIGN KEY (idpersona) REFERENCES persona (idpersona) ON UPDATE Restrict ON DELETE Restrict;
 DROP PROCEDURE IF EXISTS actualizar_grupos;
 create procedure actualizar_grupos(out id_curso int, out n_grupos int, semestre_desc varchar)
 BEGIN
@@ -199,6 +194,121 @@ BEGIN
     DELETE FROM grupos
     WHERE id_curso = id_curso AND idsemestre = id_semestre AND CHAR(64 + n_grupos) < nombre_grupo;
 
+END;
+DROP PROCEDURE IF EXISTS InsertarHorario;
+create procedure InsertarHorario(p_aula varchar, p_curso varchar, p_dia varchar, p_docente varchar, p_grupo varchar, p_hora_fin time, p_hora_inicio time, p_tipo_curso varchar)
+BEGIN
+    -- Declarar variables
+    DECLARE v_idambiente INT;
+    DECLARE v_idpersona INT;
+    DECLARE v_idgrupo INT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Manejar error: Rollback
+        ROLLBACK;
+
+        -- Insertar el error en la tabla error_sql
+        INSERT INTO error_sql (query, error_message, fecha) 
+        VALUES (
+            CONCAT('INSERT INTO horario (idambiente, dia, horainicio, horafin, h_virtual, h_presencial, idpersona, id_grupo) VALUES (', 
+                    IFNULL(v_idambiente, 'NULL'), ', ', 
+                    p_dia, ', ', 
+                    p_hora_inicio, ', ', 
+                    p_hora_fin, ', ', 
+                    IF(p_tipo_curso = 'Virtual', TIMESTAMPDIFF(MINUTE, p_hora_inicio, p_hora_fin)/60, 0), ', ', 
+                    IF(p_tipo_curso = 'Presencial', TIMESTAMPDIFF(MINUTE, p_hora_inicio, p_hora_fin)/60, 0), ', ', 
+                    IFNULL(v_idpersona, 'NULL'), ', ', 
+                    IFNULL(v_idgrupo, 'NULL'), ')'
+            ), 
+            'Error inserting data into horario table', 
+            CURDATE()
+        );
+
+        -- Insertar la incidencia en la tabla incidencia
+        INSERT INTO incidencia (descripcion, estado, idError) 
+        VALUES (
+            'Error al insertar datos en la tabla horario', 
+            1, 
+            (SELECT MAX(idError) FROM error_sql)
+        );
+
+        -- Retornar mensaje de error
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error inserting data into horario table';
+    END;
+
+    -- Empezar la transacción
+    START TRANSACTION;
+
+    -- Obtener el idambiente
+    BEGIN
+        DECLARE CONTINUE HANDLER FOR NOT FOUND 
+        BEGIN
+            INSERT INTO error_sql (query, error_message, fecha)
+            VALUES (
+                CONCAT('SELECT idambiente FROM ambiente WHERE nombre = ', p_aula), 
+                'No se encontró el ambiente especificado', 
+                CURDATE()
+            );
+            ROLLBACK;
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontró el ambiente especificado';
+        END;
+        SELECT idambiente INTO v_idambiente FROM ambiente WHERE nombre = p_aula LIMIT 1;
+    END;
+
+    -- Obtener el idpersona (docente)
+    BEGIN
+        DECLARE CONTINUE HANDLER FOR NOT FOUND 
+        BEGIN
+            INSERT INTO error_sql (query, error_message, fecha)
+            VALUES (
+                CONCAT('SELECT idpersona FROM persona WHERE CONCAT(nombres, apellidos) = ', p_docente), 
+                'No se encontró el docente especificado', 
+                CURDATE()
+            );
+            ROLLBACK;
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontró el docente especificado';
+        END;
+        SELECT idpersona INTO v_idpersona FROM persona WHERE CONCAT(nombres, ' ', apellidos) = p_docente LIMIT 1;
+    END;
+
+    -- Obtener el id_grupo
+    BEGIN
+        DECLARE CONTINUE HANDLER FOR NOT FOUND 
+        BEGIN
+            INSERT INTO error_sql (query, error_message, fecha)
+            VALUES (
+                CONCAT('SELECT grupo.id_grupo FROM grupo INNER JOIN curso ON grupo.idcurso=curso.idcurso INNER JOIN grupo_docente ON grupo.id_grupo=grupo_docente.idgrupo INNER JOIN persona ON grupo_docente.idpersona=persona.idpersona WHERE curso.nombre = ', p_curso, ' AND persona.idpersona = ', v_idpersona), 
+                'No se encontró el grupo especificado', 
+                CURDATE()
+            );
+            ROLLBACK;
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se encontró el grupo especificado';
+        END;
+        SELECT grupo.id_grupo INTO v_idgrupo 
+        FROM grupo 
+        INNER JOIN curso ON grupo.idcurso = curso.idcurso 
+        INNER JOIN grupo_docente ON grupo.id_grupo = grupo_docente.idgrupo 
+        INNER JOIN persona ON grupo_docente.idpersona = persona.idpersona 
+        WHERE curso.nombre = p_curso AND persona.idpersona = v_idpersona
+        LIMIT 1;
+    END;
+
+    -- Insertar datos en horario
+    INSERT INTO horario (idambiente, dia, horainicio, horafin, h_virtual, h_presencial, idpersona, id_grupo)
+    VALUES (
+        v_idambiente,
+        p_dia,
+        p_hora_inicio,
+        p_hora_fin,
+        IF(p_tipo_curso = 'Virtual', TIMESTAMPDIFF(MINUTE, p_hora_inicio, p_hora_fin)/60, 0),
+        IF(p_tipo_curso = 'Presencial', TIMESTAMPDIFF(MINUTE, p_hora_inicio, p_hora_fin)/60, 0),
+        v_idpersona,
+        v_idgrupo
+    );
+
+    -- Commit la transacción
+    COMMIT;
 END;
 DROP PROCEDURE IF EXISTS sp_AmbienteTipo_Gestion;
 create procedure sp_AmbienteTipo_Gestion(out _tipo int, out _idambientetipo int, _nombre varchar)
@@ -1009,27 +1119,6 @@ FOR EACH ROW
 BEGIN
     INSERT INTO bitacora (usuario, accion, tabla_afectada, registro_afectado_id, detalles)
     VALUES (SESSION_USER(), 'DELETE', 'ambiente', OLD.idambiente, CONCAT('Se ha eliminado el ambiente. Nombre: ', OLD.nombre, ', Aforo: ', OLD.aforo));
-END;
-DROP TRIGGER IF EXISTS tr_curso_docente_insert;
-CREATE TRIGGER tr_curso_docente_insert AFTER INSERT ON curso_docente
-FOR EACH ROW
-BEGIN
-    INSERT INTO bitacora (usuario, accion, tabla_afectada, registro_afectado_id, detalles)
-    VALUES (SESSION_USER(), 'INSERT', 'curso_docente', NEW.idcurso, CONCAT('Se ha asignado el curso ', NEW.idcurso, ' al docente ', NEW.idpersona));
-END;
-DROP TRIGGER IF EXISTS tr_curso_docente_update;
-CREATE TRIGGER tr_curso_docente_update AFTER UPDATE ON curso_docente
-FOR EACH ROW
-BEGIN
-    INSERT INTO bitacora (usuario, accion, tabla_afectada, registro_afectado_id, detalles)
-    VALUES (SESSION_USER(), 'UPDATE', 'curso_docente', NEW.idcurso, CONCAT('Se ha actualizado la asignación del curso ', NEW.idcurso, ' al docente ', NEW.idpersona));
-END;
-DROP TRIGGER IF EXISTS tr_curso_docente_delete;
-CREATE TRIGGER tr_curso_docente_delete AFTER DELETE ON curso_docente
-FOR EACH ROW
-BEGIN
-    INSERT INTO bitacora (usuario, accion, tabla_afectada, registro_afectado_id, detalles)
-    VALUES (SESSION_USER(), 'DELETE', 'curso_docente', OLD.idcurso, CONCAT('Se ha eliminado la asignación del curso ', OLD.idcurso, ' del docente ', OLD.idpersona));
 END;
 DROP TRIGGER IF EXISTS tr_docente_disponibilidad_insert;
 CREATE TRIGGER tr_docente_disponibilidad_insert AFTER INSERT ON docente_disponibilidad
