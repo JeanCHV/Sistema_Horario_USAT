@@ -21,7 +21,7 @@
             <!-- Semestre -->
             <div class="d-flex mb-3 mt-3">
                 <label for="" class="mb-2 mt-2" style="width: 8%;">Semestre:</label>
-                <select class="form-select" aria-label="Default select example" id="semestre">
+                <select class="form-select" aria-label="Default select example" id="semestre" style="width: 45%;">
                     <option selected disabled>-----Seleccione un semestre-----</option>
                     {% for semestre in semestres %}
                     <option>{{ semestre[0] }}</option>
@@ -31,7 +31,7 @@
             <!-- Escuelas -->
             <div class="d-flex mb-3 me-4 mt-3">
                 <label for="" class="mb-2 mt-2" style="width: 8%;">Escuela:</label>
-                <select class="form-select" aria-label="Default select example" id="escuela">
+                <select class="form-select" aria-label="Default select example" id="escuela" style="width: 45%;">
                     <option selected disabled>-----Seleccione una escuela-----</option>
                     {% for escuela in escuelas %}
                     <option>{{ escuela[0] }}</option>
