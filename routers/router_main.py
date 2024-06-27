@@ -273,11 +273,11 @@ def get_registrodocente_grupo_horario():
         print(f"Error en la consulta: {str(e)}")
         return jsonify({"error": "Error al obtener registros"}), 500
 
-@app.route("/cursosxescuela")
-def cursosxescuela():
+@app.route("/gruposxcurso")
+def gruposxcurso():
     semestres = controlador_cursos.obtener_semestres()
     escuelas = controlador_cursos.obtener_escuelas()
-    return render_template("dashboard/cursosxescuela.html", semestres=semestres, escuelas=escuelas)
+    return render_template("dashboard/gruposxcurso.html", semestres=semestres, escuelas=escuelas)
 
 @app.route("/usuario")
 def usuario():
@@ -663,13 +663,11 @@ def eliminar_una_disponibilidad(id):
 def obtener_una_disponibilidad(id):
     return controlador_disponibilidad.obtener_disponibilidad_por_id(id)
 
-@app.route('/docentes_disponibilidad', methods=['GET'])
-def obtener_todos_docentes():
-    return obtener_docentes()
+# @app.route('/docentes_disponibilidad', methods=['GET'])
+# def obtener_disponibilidad():
+#     return obtener_docentes()
 
-@app.route('/docente_sin_disponibilidad', methods=['GET'])
-def obtener_docentes_sin_disponibilidad():
-    return controlador_disponibilidad.get_docente_sin_disponibilidad()
+
 
 @app.route('/asignar_disponibilidad', methods=['POST'])
 def asignar_disponibilidad():
@@ -722,6 +720,16 @@ def asignar_docentes():
 @app.route('/obtenerDocentesGrupo/<int:id_grupo>', methods=['GET'])
 def obtenerDocentesGrupo(id_grupo):
     datos = controlador_grupo_docente.obtenerDocentesporGrupo(id_grupo)    
+    return jsonify(datos)
+
+@app.route('/get_docentes_no_asignados', methods=['GET'])
+def get_docentes_no_asignados():
+    datos = controlador_grupo_docente.get_docentes_no_asignados()    
+    return jsonify(datos)
+
+@app.route('/get_docente_sin_disponibilidad ', methods=['GET'])
+def get_docente_sin_disponibilidad():
+    datos=controlador_disponibilidad.get_docente_sin_disponibilidad()
     return jsonify(datos)
 
 @app.route('/eliminar_asignaciones_docentes/<int:idgrupo>', methods=['DELETE'])
@@ -813,13 +821,14 @@ def asignar_disponibilidad_excel():
     try:
         for item in data:
             idpersona = controlador_disponibilidad.obtener_id_persona(item['docente'])
+            print (idpersona)
             if not idpersona:
                 resultados.append({"error": f"No se encontró el docente: {item['docente']}"})
                 continue
             
             try:
                 with conexion.cursor() as cursor:
-                    cursor.callproc('sp_disponibilidad_Gestion', [1, item['dia'], item['hora_inicio'], item['hora_fin'], idpersona])
+                    cursor.callproc('sp_DocenteDisponibilidad_Gestion', [1, item['dia'], item['hora_inicio'], item['hora_fin'], idpersona])
                     conexion.commit()
                     resultados.append({"mensaje": f"Disponibilidad agregada correctamente para {item['docente']}"})
             except Exception as e:

@@ -73,51 +73,84 @@ $(document).ready(function () {
     $('#formGrupo').on('submit', function (event) {
         event.preventDefault();
         const idGrupo = $('#grupoId').val();
-        const formData = {
-            id: idGrupo,
-            nombre: $('#nombreGrupo').val(),
-            vacantes: $('#vacantesGrupo').val(),
-            idcurso: $('#cursoGrupo').val(),
-            idsemestre: $('#semestreGrupo').val()
-        };
-        const url = idGrupo ? '/modificar_grupo' : '/agregar_grupo';
-        const mensajeConfirmacion = idGrupo ? 'modificar' : 'agregar';
-
-        Swal.fire({
-            title: `¿Estás seguro de ${mensajeConfirmacion} este grupo?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: `Sí, ${mensajeConfirmacion}`,
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
-                    success: function (response) {
-                        Swal.fire(
-                            '¡Éxito!',
-                            `El grupo ha sido ${mensajeConfirmacion}do exitosamente.`,
-                            'success'
-                        );
-                        $('#modalGrupo').modal('hide');
-                        $('#tabla-grupo').DataTable().ajax.reload();
-                    },
-                    error: function (xhr, status, error) {
-                        Swal.fire(
-                            '¡Error!',
-                            `Hubo un problema al ${mensajeConfirmacion} el grupo. Inténtalo nuevamente.`,
-                            'error'
-                        );
+        const data1 = { nombre: $('#cursoGrupo').val() };
+    
+        $.ajax({
+            url: 'obtener_idcurso_por_nombre',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data1),
+            success: function (response) {
+                const idCurso = response.idcurso;
+                console.log(idCurso); // Puedes verificar aquí que se obtenga el idCurso correctamente
+    
+                const formData = {
+                    id_grupo: idGrupo,
+                    nombre: $('#nombreGrupo').val(),
+                    vacantes: $('#vacantesGrupo').val(),
+                    idcurso: idCurso,
+                    idsemestre: $('#semestreGrupo').val()
+                };
+    
+                const url = idGrupo ? '/modificar_grupo' : '/agregar_grupo';
+                const mensajeConfirmacion = idGrupo ? 'modificar' : 'agregar';
+    
+                Swal.fire({
+                    title: `¿Estás seguro de ${mensajeConfirmacion} este grupo?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: `Sí, ${mensajeConfirmacion}`,
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(formData),
+                            success: function (response) {
+                                Swal.fire(
+                                    '¡Éxito!',
+                                    `El grupo ha sido ${mensajeConfirmacion}do exitosamente.`,
+                                    'success'
+                                );
+                                $('#modalGrupo').modal('hide');
+                                $('#tabla-grupo').DataTable().ajax.reload();
+                            },
+                            error: function (xhr, status, error) {
+                                if (xhr.responseJSON && xhr.responseJSON.error === "") {
+                                    Swal.fire(
+                                        '¡Error!',
+                                        'Hubo un problema con la operación. Inténtalo nuevamente.',
+                                        'error'
+                                    );
+                                } else {
+                                    Swal.fire(
+                                        '¡Error!',
+                                        `Hubo un problema al ${mensajeConfirmacion} el grupo. Inténtalo nuevamente.`,
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
                     }
                 });
+    
+            },
+            error: function (xhr, status, error) {
+                Swal.fire(
+                    '¡Error!',
+                    `Hubo un problema al obtener el id del curso. Inténtalo nuevamente.`,
+                    'error'
+                );
             }
         });
+    
     });
+    
+
 
     var table = $('#tabla-grupo').DataTable({
         ajax: {

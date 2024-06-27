@@ -142,10 +142,10 @@ def get_docente_sin_disponibilidad():
     try:
         with conexion.cursor() as cursor:
             cursor.execute("""
-SELECT p.idpersona, p.nombres, p.apellidos, p.correo
-FROM persona p
-LEFT JOIN docente_disponibilidad dd ON p.idpersona = dd.idpersona
-WHERE p.tipopersona = 'D' AND dd.idpersona IS NULL;
+            SELECT p.idpersona, p.nombres, p.apellidos, p.correo
+            FROM persona p
+            LEFT JOIN docente_disponibilidad dd ON p.idpersona = dd.idpersona
+            WHERE p.tipopersona = 'D' AND dd.idpersona IS NULL;
             """)
             column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
@@ -163,7 +163,7 @@ def asignar_disponibilidad_docente(tipo, dia, hora_inicio, hora_fin, idpersona):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            cursor.callproc('sp_disponibilidad_Gestion', [tipo, dia, hora_inicio, hora_fin, idpersona])
+            cursor.callproc('sp_DocenteDisponibilidad_Gestion', [1, dia, hora_inicio, hora_fin, idpersona])
             conexion.commit()
             return jsonify({"mensaje": f"Operación {tipo} realizada correctamente para el docente {idpersona} en el día {dia}"})
     except Exception as e:

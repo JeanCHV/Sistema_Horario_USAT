@@ -1,30 +1,33 @@
 $(document).ready(function () {
     var table = $('#tabla-cursos').DataTable({
-        "paging": true,
-        "info": true,
-        "scroller": true,
-        "scrollY": '200px',
-        "columns": [
-            { "data": "idcurso", "className": "text-center id" },
-            { "data": "nombre" },
-            { "data": "ciclo", "className": "text-center" },
+        paging: false,
+        info: false,
+        responsive: true,
+        autoWidth: true,
+        searching: true,
+        scrollY: "400px",
+
+        columns: [
+            { data: "idcurso", className: "text-center id" },
+            { data: "nombre" },
+            { data: "ciclo", className: "text-center" },
             {
-                "data": "total_grupos",
-                "render": function (data, type, row) {
+                data: "total_grupos",
+                render: function (data, type, row) {
                     return `<input type="number" value="${data}" class="numeric-input form-control bg-white text-black mx-auto text-center grupos" style="width:80px">`;
                 },
-                "className": "text-center"
+                className: "text-center"
             },
             {
-                "data": null,
-                "render": function (data, type, row) {
+                data: null,
+                render: function (data, type, row) {
                     return `<input type="checkbox" class="form-check-input me-3 border border-dark che">`;
                 },
-                "className": "text-center",
+                className: "text-center",
                 "orderable": false
             }
         ],
-        "language": {
+        language: {
             "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
         }
     });

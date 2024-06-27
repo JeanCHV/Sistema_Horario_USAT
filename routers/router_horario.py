@@ -27,7 +27,7 @@ def obtener_horarios():
 @app.route("/insertar_horarios_ia", methods=["POST"])
 def insertar_horarios_ia():
     data = request.get_json()
-    horarios = data.get('horarios')
+    horarios = data.get('horariosgenerado')
     if not horarios:
         return jsonify({"error": "No se proporcionaron horarios"}), 400
     resultado = controlador_horario.insertar_horarios_ia(horarios)
