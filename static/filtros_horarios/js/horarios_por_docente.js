@@ -98,17 +98,17 @@ combo_semestre.addEventListener('change', () => {
                 let horarios = obtenerHorariosDocente(id_docente, semestre)
                     .then(horarios => {
                         mostrarHorario(id_docente, nombre_docente, horarios, semestre); 
-                        div_loading.style.display = "none";
                         if(tab.classList.contains('activo')){
                             tab.click();
                         }
+                        div_loading.style.display = "none";
                     })
                     .catch(error => {
                         console.error('Error al obtener horarios:', error);
-                        div_loading.style.display = "none";
                         if(tab.classList.contains('activo')){
                             tab.click();
                         }
+                        div_loading.style.display = "none";
                     });
             });
         }
