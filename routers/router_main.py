@@ -874,3 +874,10 @@ def asignar_disponibilidad_excel():
         conexion.close()
 
     return jsonify(resultados)
+
+import controladores.reportes.controlador_reporte as controlador_reporte
+
+@app.route("/reporte_horas_html", methods=["GET"])
+def reporte_horas_html():
+    reporte = controlador_reporte.obtener_reporte_horas()
+    return render_template('reportes/reporte_horas.html', reporte=reporte)
