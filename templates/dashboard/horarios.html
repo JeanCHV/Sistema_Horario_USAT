@@ -29,7 +29,7 @@
                     <div class="d-flex align-items-center mb-2">
                         <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner2">
                         </div>
-                        <div id="estadoCursosActivos">Cursos Activos</div>
+                        <div id="estadoCursosActivos">Cursos activos</div>
                     </div>
                     <div class="d-flex align-items-center mb-2">
                         <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner3">
@@ -39,7 +39,12 @@
                     <div class="d-flex align-items-center mb-2">
                         <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner4">
                         </div>
-                        <div id="estadoMinimoHorasAsignado">Mínimo de Horas Asignado</div>
+                        <div id="estadoMinimoHorasAsignado">Mínimo de horas asignado</div>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status" id="spinner5">
+                        </div>
+                        <div id="get_docentes_no_asignados">Docentes asignados a grupos</div>
                     </div>
                 </div>
             </div>
@@ -47,9 +52,13 @@
             <div class="row align-items-end my-3">
                 <!-- Espacio y botones -->
                 <div class="d-flex justify-content-center mt-3">
-                    <button class="btn btn-success btn-lg mx-2" onclick="generarHorario()">Generar Horario</button>
-                    <button class="btn btn-success btn-lg mx-2" onclick="RegistrarHorario()">Registrar Horario</button>
-                    <button class="btn btn-danger btn-lg mx-2" onclick="limpiarTabla()">Limpiar</button>
+                    <button class="btn btn-success btn-lg mx-2" onclick="generarHorario()"><i class="fa fa-robot me-2"></i> Generar Horario</button>
+                    <button class="btn btn-success btn-lg mx-2 d-none" id="btnRegistrar" onclick="confirmarRegistrarHorario()">
+                        <i class="fa fa-save me-2"></i>Registrar Horario
+                    </button>
+                    <button class="btn btn-danger btn-lg mx-2 d-none" id="btnLimpiar" onclick="limpiarTabla()">
+                        <i class="fa fa-trash me-2"></i>Limpiar
+                    </button>
                 </div>
             </div>
             <!-- Progreso de generación de horario -->
@@ -245,6 +254,7 @@
         verificarCursosActivos();
         verificarAmbientesDisponibles();
         verificarMinimoHorasAsignado();
+        get_docentes_no_asignados();
     });
 
     var horario = [];
@@ -260,6 +270,8 @@
                 horario = response;
                 $('#loadingModal').modal('hide');
                 llenarTablaHorario(horario);
+                $('#btnRegistrar').removeClass('d-none');
+                $('#btnLimpiar').removeClass('d-none');
             },
             error: function (xhr, status, error) {
                 console.log(error);
@@ -286,6 +298,28 @@
                 console.log(error);
                 $('#spinner1').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
                 $('#estadoDisponibilidad').text('Error al verificar disponibilidad de docentes');
+            }
+        });
+    }
+
+    function get_docentes_no_asignados() {
+        $.ajax({
+            url: '/get_docentes_no_asignados',
+            type: 'GET',
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.length > 0) {
+                    $('#spinner5').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                    $('#get_docentes_no_asignados').html('Hay Docentes sin asignar grupos horarios <a href="/grupo_docentes" class="btn btn-warning btn-sm ms-2">Resolver</a>');
+                } else if (response.length == 0) {
+                    $('#spinner5').replaceWith('<i class="fa fa-check text-success me-2"></i>');
+                    $('#get_docentes_no_asignados').text('Docentes asignados a grupos');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+                $('#spinner1').replaceWith('<i class="fa fa-exclamation-triangle text-danger me-2"></i>');
+                $('#get_docentes_no_asignados').text('Error al verificar asignacion de docentes a grupos');
             }
         });
     }
@@ -404,45 +438,60 @@
         });
     }
 
+    function confirmarRegistrarHorario() {
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "Está a punto de registrar el horario en la base de datos.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, registrar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                RegistrarHorario();
+            }
+        });
+    }
+
     function RegistrarHorario() {
-        let horariosActualizados = [];
+        Swal.fire({
+            title: 'Registrando...',
+            html: 'Por favor, espere mientras se registra el horario.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
-        for (let dia in cursosPorDia) {
-            cursosPorDia[dia].forEach(curso => {
-                horariosActualizados.push({
-                    curso: curso.curso,
-                    grupo: curso.grupo,
-                    dia: curso.dia,
-                    hora_inicio: curso.hora_inicio,
-                    hora_fin: curso.hora_fin,
-                    aula: curso.aula,
-                    docente: curso.docente,
-                    tipo: curso.tipo_curso
-                });
-            });
-        }
-
-        console.log(JSON.stringify(horariosActualizados, null, 2));
-
-        /*
         $.ajax({
             url: '/insertar_horarios_ia',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ horarios: horariosActualizados }),
+            data: JSON.stringify({ horarios: horario }),
             success: function (response) {
-                console.log('Horario registrado exitosamente:', response);
+                Swal.close();
+                Swal.fire(
+                    '¡Registrado!',
+                    'El horario ha sido registrado exitosamente.',
+                    'success'
+                );
             },
             error: function (xhr, status, error) {
-                console.log('Error al registrar el horario:', error);
+                Swal.close();
+                Swal.fire(
+                    'Error',
+                    'Hubo un problema al registrar el horario. Por favor, inténtelo de nuevo.',
+                    'error'
+                );
             }
         });
-        */
     }
 
     function limpiarTabla() {
         let tabla = $('#tabla_horarios tbody');
         tabla.empty();
+        $('#btnRegistrar').addClass('d-none');
+        $('#btnLimpiar').addClass('d-none');
     }
 </script>
 {% endblock %}

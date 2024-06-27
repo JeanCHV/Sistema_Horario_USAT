@@ -77,7 +77,7 @@
 			<div class="loader"></div>
 		</div>
 		<div class="wrapper">
-			<nav id="sidebar" class="sidebar js-sidebar">
+			<nav id="sidebar" class="sidebar js-sidebar" >
 				<div class="sidebar-content js-simplebar">
 
 					<a class="sidebar-brand" href="{{url_for('perfil')}}">
@@ -140,7 +140,7 @@
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('cursosxescuela')}}">
 										<i class="align-middle" data-feather="check-square"></i> <span
-											class="align-middle">Asignar Grupos- Curso</span>
+											class="align-middle">Grupos por curso</span>
 									</a>
 								</li>
 
@@ -217,7 +217,7 @@
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('ambientesxCursos')}}">
 										<img data-image="" src="https://img.icons8.com/ink/48/training--v1.png"
-											alt="training--v1" /> <span class="align-middle">Ambientes por Curso</span>
+											alt="training--v1" /> <span class="align-middle">Ambientes por curso</span>
 									</a>
 								</li>
 
@@ -250,8 +250,7 @@
 								<li class="sidebar-item">
 									<a class="sidebar-link" href="{{url_for('horarios_por_docente')}}">
 										<img data-image="" src="https://img.icons8.com/ios-filled/50/planning-skill.png"
-											alt="planning-skill" /> <span class="align-middle">Horarios por
-											docente</span>
+											alt="planning-skill" /> <span class="align-middle">Horarios por docente</span>
 									</a>
 								</li>
 
@@ -266,7 +265,7 @@
 									<a class="sidebar-link" href="{{url_for('horarios_por_ciclo')}}">
 										<img data-image=""
 											src="https://img.icons8.com/?size=100&id=Lx5iokyeqYUd&format=png&color=000000"
-											alt="planning-skill" /> <span class="align-middle">Horarios por Ciclo</span>
+											alt="planning-skill" /> <span class="align-middle">Horarios por ciclo</span>
 									</a>
 								</li>
 
@@ -295,23 +294,19 @@
 								<li class="sidebar-item a" hidden>
 									<a class="sidebar-link " href="{{url_for('ReporteAmbiente')}}">
 										<i class="align-middle" data-feather="align-left"></i> <span
-											class="align-middle">Reporte Ambientes</span>
+											class="align-middle">Reporte_Ambientes</span>
 									</a>
 								</li>
-							</ul>
-							<!-- aca -->
-							<ul class="list-unstyled px-3">
-								<li class="sidebar-item">
-									<a class="sidebar-link" href="{{ url_for('reportegrupo_docente') }}">
+								<li class="sidebar-item a" hidden>
+									<a class="sidebar-link " href="{{url_for('reporte_horas_html')}}">
 										<i class="align-middle" data-feather="align-left"></i> <span
-											class="align-middle">Reporte Grupos</span>
+											class="align-middle">Reporte carga academica</span>
 									</a>
 								</li>
 							</ul>
-
+							
 						</li>
-
-
+						
 					</ul>
 				</div>
 			</nav>

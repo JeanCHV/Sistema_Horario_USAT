@@ -4,7 +4,7 @@
 <nav style="--bs-breadcrumb-divider: '>'" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{url_for('index')}}">Inicio</a></li>
-        <li class="breadcrumb-item active"><a href="{{url_for('disponibilidad')}}">Disponibilidad</a></li>
+        <li class="breadcrumb-item active"><a href="{{url_for('obtener_disponibilidad')}}">Disponibilidad</a></li>
     </ol>
 </nav>
 
@@ -38,6 +38,7 @@
             </div>
         </div>
     </div>
+</div>
 
 <!-- Modal para agregar o modificar disponibilidad -->
 <div class="modal fade" id="modalDisponibilidad" tabindex="-1" aria-labelledby="modalDisponibilidadLabel" aria-hidden="true">
@@ -78,13 +79,12 @@
                         <label for="horaFin" class="form-label">Hora Fin:</label>
                         <input type="time" class="form-control" id="horaFin" name="horaFin" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardarCambios">Guardar</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 
 <!-- Modal para la subida masiva de datos -->
 <div class="modal fade" id="modalSubidaMasiva" tabindex="-1" aria-labelledby="modalSubidaMasivaLabel"
@@ -141,34 +141,34 @@
     }
 
     function cargarDocentes() {
-    $.ajax({
-        url: '/docentes_disponibilidad',
-        type: 'GET',
-        success: function (data) {
-            if (data.error) {
-                console.error('Error del servidor:', data.error);
-                return;
-            }
-            var docentesSelect = $('#docente');
-            docentesSelect.empty();
-            docentesSelect.append('<option value="">Seleccione</option>');
-            data.forEach(function (docente) {
-                if (docente.idpersona && docente.nombre_completo) {
-                    docentesSelect.append('<option value="' + docente.idpersona + '">' + docente.nombre_completo + '</option>');
-                } else {
-                    console.error('Datos de docente incorrectos:', docente);
+        $.ajax({
+            url: '/docentes_disponibilidad',
+            type: 'GET',
+            success: function (data) {
+                if (data.error) {
+                    console.error('Error del servidor:', data.error);
+                    return;
                 }
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error('Error al cargar los docentes:', error);
-        }
-    });
-}
+                var docentesSelect = $('#docente');
+                docentesSelect.empty();
+                docentesSelect.append('<option value="">Seleccione</option>');
+                data.forEach(function (docente) {
+                    if (docente.idpersona && docente.nombre_completo) {
+                        docentesSelect.append('<option value="' + docente.idpersona + '">' + docente.nombre_completo + '</option>');
+                    } else {
+                        console.error('Datos de docente incorrectos:', docente);
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al cargar los docentes:', error);
+            }
+        });
+    }
 
-$(document).ready(function () {
-    cargarDocentes();
-});
+    $(document).ready(function () {
+        cargarDocentes();
+    });
 
     $(document).ready(function () {
         var disponibilidad = [];
@@ -181,7 +181,7 @@ $(document).ready(function () {
                 autoWidth: true,
                 searching: true,
                 scrollY: "510px",
-                order: [0,'asc'], 
+                order: [0, 'asc'],
                 dom: 'Bfrtip',
                 buttons: [
                     {
@@ -261,26 +261,26 @@ $(document).ready(function () {
                 "processing": true,
                 "serverSide": false, // Desactiva la recarga automática al ordenar
                 "columns": [
-                    { "data": "nombre_completo", "className": 'dt-body-left'},
+                    { "data": "nombre_completo", "className": 'dt-body-left' },
                     { "data": "dia", "className": 'dt-body-center' },
-                    { "data": "hora_inicio", "className": 'dt-body-center'},
-                    { "data": "hora_fin","className": 'dt-body-center' },
+                    { "data": "hora_inicio", "className": 'dt-body-center' },
+                    { "data": "hora_fin", "className": 'dt-body-center' },
                     {
                         "data": null, "className": 'dt-body-center',
-                "render": function (data, type, row) {
-                    return `
-                    <button class="btn btn-warning btn-sm btnModificar" data-id_disponibilidad_docente="${row.id_disponibilidad_docente}" data-dia="${row.dia}" data-hora_inicio="${row.hora_inicio}" data-hora_fin="${row.hora_fin}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
-                    <button class="btn btn-danger btn-sm btnEliminar" data-id_disponibilidad_docente="${row.id_disponibilidad_docente}" data-dia="${row.dia}" data-hora_inicio="${row.hora_inicio}" data-hora_fin="${row.hora_fin}" title="Eliminar"><i class="fas fa-times"></i></button>
-                    `;
-                }
+                        "render": function (data, type, row) {
+                            return `
+                                <button class="btn btn-warning btn-sm btnModificar" data-id_disponibilidad_docente="${row.id_disponibilidad_docente}" title="Modificar"><i class="fas fa-pencil-alt"></i></button>
+                                <button class="btn btn-danger btn-sm btnEliminar" data-id_disponibilidad_docente="${row.id_disponibilidad_docente}" title="Eliminar"><i class="fas fa-times"></i></button>
+                            `;
+                        }
                     }
                 ],
                 "columnDefs": [
-                    { "width": "10%", "targets": 0 }, // Adjust width for "nombre_completo" (Docente) column
-                    { "width": "15%", "targets": 1 }, // Adjust width for "dia" column
-                    { "width": "15%", "targets": 2 }, // Adjust width for "hora_inicio" column
-                    { "width": "15%", "targets": 3 }, // Adjust width for "hora_fin" column
-                    { "width": "15%", "targets": 4 }  // Adjust width for "Opciones" column
+                    { "width": "30%", "targets": 0 }, // Adjust width for "nombre_completo" (Docente) column
+                    { "width": "10%", "targets": 1 }, // Adjust width for "dia" column
+                    { "width": "10%", "targets": 2 }, // Adjust width for "hora_inicio" column
+                    { "width": "10%", "targets": 3 }, // Adjust width for "hora_fin" column
+                    { "width": "10%", "targets": 4 }  // Adjust width for "Opciones" column
                 ],
                 "language": {
                     "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
@@ -323,7 +323,7 @@ $(document).ready(function () {
 
             var idDisponibilidad = $('#idDisponibilidad').val();
             var url = idDisponibilidad ? '/update_disponibilidad' : '/add_disponibilidad';
-            if (idDisponibilidad) data.idDisponibilidad = idDisponibilidad;
+            if (idDisponibilidad) data.id_disponibilidad_docente = idDisponibilidad;
 
             $.ajax({
                 url: url,
@@ -347,149 +347,152 @@ $(document).ready(function () {
         });
 
         $('#formSubidaMasiva').submit(function (e) {
-    e.preventDefault();
-    var fileInput = document.getElementById('archivo');
-    var file = fileInput.files[0];
-    var reader = new FileReader();
+            e.preventDefault();
+            var fileInput = document.getElementById('archivo');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
 
-    reader.onload = function (e) {
-        var data = new Uint8Array(e.target.result);
-        var workbook = XLSX.read(data, { type: 'array' });
-        var firstSheetName = workbook.SheetNames[0];
-        var worksheet = workbook.Sheets[firstSheetName];
-        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            reader.onload = function (e) {
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        var headers = jsonData[1];  // La fila correcta que contiene los encabezados
-        console.log("Headers:", headers);
+                var headers = jsonData[1];  // La fila correcta que contiene los encabezados
+                console.log("Headers:", headers);
 
-        var rows = jsonData.slice(2); 
-        console.log("Rows:", rows);
+                var rows = jsonData.slice(2);
+                console.log("Rows:", rows);
 
-        var formattedData = rows.map((row, index) => {
-            return {
-                docente: row[headers.indexOf("Docente")],
-                dia: row[headers.indexOf("Día")],
-                hora_inicio: row[headers.indexOf("Hora Inicio")],
-                hora_fin: row[headers.indexOf("Hora Fin")]
+                var formattedData = rows.map((row, index) => {
+                    return {
+                        docente: row[headers.indexOf("Docente")],
+                        dia: row[headers.indexOf("Día")],
+                        hora_inicio: row[headers.indexOf("Hora Inicio")],
+                        hora_fin: row[headers.indexOf("Hora Fin")]
+                    };
+                });
+
+                console.log("Formatted Data:", JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
+
+                $.ajax({
+                    url: '/asignar_disponibilidad_excel',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formattedData),
+                    success: function (response) {
+                        if (response.error) {
+                            mostrarAlerta('error', 'Error', response.error);
+                        } else {
+                            mostrarAlerta('success', 'Éxito', 'La subida masiva se realizó correctamente.');
+                            table.ajax.reload();
+                            $('#modalSubidaMasiva').modal('hide');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+                    }
+                });
             };
+
+            reader.readAsArrayBuffer(file);
         });
 
-        console.log("Formatted Data:", JSON.stringify(formattedData, null, 2)); // Visualizar los datos en forma de JSON en la consola
-
-        $.ajax({
-            url: '/asignar_disponibilidad_excel',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(formattedData),
-            success: function (response) {
-                if (response.error) {
-                    mostrarAlerta('error', 'Error', response.error);
-                } else {
-                    mostrarAlerta('success', 'Éxito', 'La subida masiva se realizó correctamente.');
-                    table.ajax.reload();
-                    $('#modalSubidaMasiva').modal('hide');
-                }
-            },
-            error: function (xhr, status, error) {
-                mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+        $('#tabla-disponibilidad tbody').on('click', '.btnModificar', function () {
+            var id_disponibilidad_docente = $(this).data('id_disponibilidad_docente');
+            console.log('id_disponibilidad_docente:', id_disponibilidad_docente);
+            if (id_disponibilidad_docente) {
+                $.ajax({
+                    url: `/get_disponibilidad_by_id/${id_disponibilidad_docente}`,
+                    type: 'GET',
+                    contentType: 'application/json',
+                    success: function (response) {
+                        console.log(response); // Verificar la respuesta en la consola
+                        if (response.error) {
+                            mostrarAlerta('error', 'Error', response.error);
+                        } else {
+                            var disponibilidad = response;
+                            $('#idDisponibilidad').val(disponibilidad.id_disponibilidad_docente); // Guardar el ID en un campo oculto
+                            $('#docente').val(disponibilidad.idpersona);
+                            $('#dia').val(disponibilidad.dia);
+                            $('#horaInicio').val(disponibilidad.hora_inicio);
+                            $('#horaFin').val(disponibilidad.hora_fin);
+                            $('#modalDisponibilidadLabel').text('Modificar Disponibilidad');
+                            $('#modalDisponibilidad').modal('show');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        mostrarAlerta('error', 'Error', 'Hubo un error al obtener los datos de la disponibilidad.');
+                    }
+                });
+            } else {
+                console.error('id_disponibilidad_docente is undefined');
             }
         });
-    };
 
-    reader.readAsArrayBuffer(file);
-});
+        $('#btnGuardarCambios').on('click', function () {
+            var id_disponibilidad_docente = $('#idDisponibilidad').val();
+            var nuevo_dia = $('#dia').val();
+            var nueva_hora_inicio = $('#horaInicio').val();
+            var nueva_hora_fin = $('#horaFin').val();
 
-$('#tabla-disponibilidad tbody').on('click', '.btnModificar', function () {
-    var id_disponibilidad_docente = $(this).data('id_disponibilidad_docente');
-    console.log(id_disponibilidad_docente)
-    $.ajax({
-        url: `/get_disponibilidad_by_id` + id_disponibilidad_docente,
-        type: 'GET',
-        contentType: 'application/json',
-        success: function (response) {
-            var disponibilidad = response;
-            $('#id_disponibilidad_docente').val(id_disponibilidad_docente); // Guardar el ID en un campo oculto
-            $('#docente').val(disponibilidad.idpersona);
-            $('#dia').val(disponibilidad.dia);
-            $('#horaInicio').val(disponibilidad.hora_inicio);
-            $('#horaFin').val(disponibilidad.hora_fin);
-            $('#modalDisponibilidadLabel').text('Modificar Disponibilidad');
-            $('#modalDisponibilidad').modal('show');
-        },
-        error: function (xhr, status, error) {
-            mostrarAlerta('error', 'Error', 'Hubo un error al obtener los datos de la disponibilidad.');
-        }
-    });
-});
+            var data = {
+                id_disponibilidad_docente: id_disponibilidad_docente,
+                nuevo_dia: nuevo_dia,
+                nueva_hora_inicio: nueva_hora_inicio,
+                nueva_hora_fin: nueva_hora_fin
+            };
 
-$('#formModificarDisponibilidad').on('submit', function (e) {
-    e.preventDefault();
-
-    var id_disponibilidad_docente = $('#id_disponibilidad_docente').val();
-    var nuevo_dia = $('#dia').val();
-    var nueva_hora_inicio = $('#horaInicio').val();
-    var nueva_hora_fin = $('#horaFin').val();
-
-    $.ajax({
-        url: '/update_disponibilidad',
-        type: 'PUT',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            id_disponibilidad_docente: id_disponibilidad_docente,
-            nuevo_dia: nuevo_dia,
-            nueva_hora_inicio: nueva_hora_inicio,
-            nueva_hora_fin: nueva_hora_fin
-        }),
-        success: function (response) {
-            $('#modalDisponibilidad').modal('hide');
-            mostrarAlerta('success', 'Éxito', 'Disponibilidad modificada correctamente.');
-            // Actualizar la tabla o realizar cualquier otra acción necesaria
-        },
-        error: function (xhr, status, error) {
-            mostrarAlerta('error', 'Error', 'Hubo un error al modificar la disponibilidad.');
-        }
-    });
-});
-
-
-        $('#tabla-disponibilidad tbody').on('click', '.btnEliminar', function () {
-    var idpersona = $(this).data('idpersona');
-    var dia = $(this).data('dia');
-    var hora_inicio = $(this).data('hora_inicio');
-    var hora_fin = $(this).data('hora_fin');
-
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'No podrás revertir esta acción.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        cancelButtonText: 'Cancelar',
-        confirmButtonText: 'Sí, eliminarlo!'
-    }).then((result) => {
-        if (result.isConfirmed) {
             $.ajax({
-                url: '/eliminar_disponibilidad/' + idpersona,
-                type: 'DELETE',
+                url: '/update_disponibilidad',
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
                 success: function (response) {
-                    if (response.error) {
-                        var errorMsg = response.error;
-                        mostrarAlerta('error', 'Error', errorMsg);
-                    } else {
-                        mostrarAlerta('success', 'Éxito', 'Disponibilidad eliminada correctamente.');
-                        table.ajax.reload();
-                    }
+                    mostrarAlerta('success', 'Éxito', 'Disponibilidad modificada correctamente.');
+                    $('#modalDisponibilidad').modal('hide');
+                    table.ajax.reload();
                 },
                 error: function (xhr, status, error) {
-                    mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+                    mostrarAlerta('error', 'Error', 'Hubo un error al modificar la disponibilidad.');
                 }
             });
-        }
-    });
-});
+        });
 
+        $('#tabla-disponibilidad tbody').on('click', '.btnEliminar', function () {
+            var idpersona = $(this).data('id_disponibilidad_docente');
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: 'No podrás revertir esta acción.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Sí, eliminarlo!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/eliminar_disponibilidad/' + idpersona,
+                        type: 'DELETE',
+                        success: function (response) {
+                            if (response.error) {
+                                var errorMsg = response.error;
+                                mostrarAlerta('error', 'Error', errorMsg);
+                            } else {
+                                mostrarAlerta('success', 'Éxito', 'Disponibilidad eliminada correctamente.');
+                                table.ajax.reload();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            mostrarAlerta('error', 'Error', 'Hubo un error al realizar la operación.');
+                        }
+                    });
+                }
+            });
+        });
     });
 </script>
 {% endblock %}
-

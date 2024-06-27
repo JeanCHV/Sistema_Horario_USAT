@@ -36,6 +36,7 @@ import controladores.curso_docente.controlador_curso_docente as controlador_curs
 import controladores.controlador_edificio as controlador_edificio
 import controladores.disponibilidad.controlador_disponibilidad as controlador_disponibilidad
 import controladores.docente_disponibilidad.controlador_docente_disponibilidad as controlador_docente_disponibilidad
+import controladores.grupo_docente.controlador_grupo_docente as controlador_grupo_docente
 
 login_attempts = {}
 
@@ -100,10 +101,10 @@ def get_reporte_cursos():
     get_reporte_cursos = controlador_horario.get_reporte_cursos()
     return jsonify(get_reporte_cursos)
 
-@app.route("/get_cant_cursos_docente", methods=["GET"])
-def get_cant_cursos_docente():
-    get_cant_cursos_docente =  controlador_cursos.get_cant_cursos_docente()
-    return jsonify(get_cant_cursos_docente)
+@app.route("/get_cant_grupos_curso", methods=["GET"])
+def get_cant_grupos_curso():
+    get_cant_grupos_curso =  controlador_cursos.get_cant_grupos_curso()
+    return jsonify(get_cant_grupos_curso)
 
 @app.route("/get_cant_grupos_semestre", methods=["GET"])
 def get_cant_grupos_semestre():
@@ -255,9 +256,7 @@ def mantenimiento_grupos():
     else:
         return jsonify({"mensaje": "Grupos modificados correctamente"})
 
-@app.route('/reportegrupo_docente')
-def reportegrupo_docente():
-    return render_template('dashboard/reporte_gruposdocente.html')
+
 
 @app.route('/get_registrodocente_grupo_horario')
 def get_registrodocente_grupo_horario():
@@ -643,85 +642,44 @@ def horarios_por_ciclo():
 #DISPONIBILIDAD
 # Ruta para obtener todas las disponibilidades
 @app.route('/get_disponibilidad', methods=['GET'])
-def get_disponibilidad():
-    disponibilidades = controlador_disponibilidad.get_disponibilidad()
-    return jsonify(disponibilidades)
+def obtener_disponibilidad():
+    return controlador_disponibilidad.get_disponibilidad()
 
-@app.route('/get_docente_sin_disponibilidad', methods=['GET'])
-def get_docente_sin_disponibilidad():
-    get_docente_sin_disponibilidad = controlador_disponibilidad.get_docente_sin_disponibilidad()
-    return jsonify(get_docente_sin_disponibilidad)
-
-# Ruta para agregar una nueva disponibilidad
 @app.route('/add_disponibilidad', methods=['POST'])
-def agregar_disponibilidad():
-    datos = request.json
-    idpersona = datos.get('idpersona')
-    dia = datos.get('dia')
-    hora_inicio = datos.get('hora_inicio')
-    hora_fin = datos.get('hora_fin')
-    
-    resultado = controlador_disponibilidad.agregar_disponibilidad(idpersona, dia, hora_inicio, hora_fin)
-    return jsonify(resultado)
+def agregar_nueva_disponibilidad():
+    data = request.get_json()
+    return controlador_disponibilidad.agregar_disponibilidad(data['idpersona'], data['dia'], data['hora_inicio'], data['hora_fin'])
 
-# Ruta para modificar una disponibilidad existente
-@app.route('/update_disponibilidad', methods=['PUT'])
-def modificar_disponibilidad():
-    datos = request.json
-    idpersona = datos.get('idpersona')
-    dia = datos.get('dia')
-    hora_inicio = datos.get('hora_inicio')
-    hora_fin = datos.get('hora_fin')
-    nuevo_dia = datos.get('nuevo_dia')
-    nueva_hora_inicio = datos.get('nueva_hora_inicio')
-    nueva_hora_fin = datos.get('nueva_hora_fin')
-    
-    resultado = controlador_disponibilidad.modificar_disponibilidad(idpersona, dia, hora_inicio, hora_fin, nuevo_dia, nueva_hora_inicio, nueva_hora_fin)
-    return jsonify(resultado)
+@app.route('/update_disponibilidad', methods=['POST'])
+def modificar_una_disponibilidad():
+    data = request.get_json()
+    return controlador_disponibilidad.modificar_disponibilidad(data['id_disponibilidad_docente'], data['dia'], data['hora_inicio'], data['hora_fin'])
 
+@app.route('/eliminar_disponibilidad/<int:id>', methods=['DELETE'])
+def eliminar_una_disponibilidad(id):
+    return controlador_disponibilidad.eliminar_disponibilidad(id)
 
-# Ruta para eliminar una disponibilidad
-@app.route('/eliminar_disponibilidad/<int:idpersona>', methods=['DELETE'])
-def eliminar_disponibilidad_por_idpersona(idpersona):
-    conexion = obtener_conexion()
-    try:
-        with conexion.cursor() as cursor:
-            cursor.execute("DELETE FROM docente_disponibilidad WHERE idpersona = %s", (idpersona,))
-            conexion.commit()
-            return {"mensaje": "Disponibilidad eliminada correctamente"}
-    except Exception as e:
-        conexion.rollback()
-        return {"error": str(e)}
-    finally:
-        conexion.close()
-
-
-# Ruta para obtener una disponibilidad por detalles específicos (idpersona, dia, hora_inicio, hora_fin)
-@app.route('/get_disponibilidad_by_id/<int:id_disponibilidad_docente>', methods=['GET'])
-def get_disponibilidad_by_id(id_disponibilidad_docente):
-    resultado = controlador_disponibilidad.obtener_disponibilidad_por_id(id_disponibilidad_docente)
-    return jsonify(resultado)
-
-@app.route('/update_disponibilidad', methods=['PUT'])
-def actualizar_disponibilidad():
-    datos = request.json
-    id_disponibilidad_docente = datos.get('id_disponibilidad_docente')
-    nuevo_dia = datos.get('nuevo_dia')
-    nueva_hora_inicio = datos.get('nueva_hora_inicio')
-    nueva_hora_fin = datos.get('nueva_hora_fin')
-    
-    resultado = controlador_disponibilidad.modificar_disponibilidad(id_disponibilidad_docente, nuevo_dia, nueva_hora_inicio, nueva_hora_fin)
-    return jsonify(resultado)
-
+@app.route('/get_disponibilidad_by_id/<int:id>', methods=['GET'])
+def obtener_una_disponibilidad(id):
+    return controlador_disponibilidad.obtener_disponibilidad_por_id(id)
 
 @app.route('/docentes_disponibilidad', methods=['GET'])
-def obtener_disponibilidad():
-    try:
-        personas = controlador_disponibilidad.obtener_disponibilidad()
-        return jsonify(personas)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+def obtener_todos_docentes():
+    return obtener_docentes()
 
+@app.route('/docente_sin_disponibilidad', methods=['GET'])
+def obtener_docentes_sin_disponibilidad():
+    return controlador_disponibilidad.get_docente_sin_disponibilidad()
+
+@app.route('/asignar_disponibilidad', methods=['POST'])
+def asignar_disponibilidad():
+    data = request.get_json()
+    return controlador_disponibilidad.asignar_disponibilidad_docente(data['tipo'], data['dia'], data['hora_inicio'], data['hora_fin'], data['idpersona'])
+
+@app.route('/obtener_id_persona', methods=['POST'])
+def obtener_id_de_persona():
+    data = request.get_json()
+    return controlador_disponibilidad.obtener_id_persona(data['nombre_docente'])
 
 
 ###CURSO X DOCENTE
@@ -732,6 +690,7 @@ def docentesxcursos():
     escuelas = controlador_cursos.obtener_escuelas()
     return render_template("dashboard/docentexcurso.html", semestres=semestres , escuelas=escuelas)
 
+##  GRUPOS DOCENTES
 @app.route("/grupo_docentes")
 def grupo_docentes():
     semestres = controlador_cursos.obtener_semestres()
@@ -743,7 +702,7 @@ def grupo_docentes():
 def tabla_curso_docente(escuela,semestre):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
     id_escuela = controlador_curso_docente.obtener_idescuela(escuela)
-    datos = controlador_curso_docente.datosCursoxDocente(id_escuela,id_semestre)
+    datos = controlador_grupo_docente.datosCursoxDocente(id_escuela,id_semestre)
     return jsonify(datos)
 
 @app.route('/asignar_docentes', methods=['POST'])
@@ -753,7 +712,7 @@ def asignar_docentes():
     docentes = data['docentes']
     eliminados = data['eliminados']
     
-    success, error = controlador_curso_docente.asignar_docentes_a_grupo(grupoId, docentes, eliminados)
+    success, error = controlador_grupo_docente.asignar_docentes_a_grupo(grupoId, docentes, eliminados)
     
     if success:
         return jsonify({'success': True})
@@ -762,8 +721,16 @@ def asignar_docentes():
 
 @app.route('/obtenerDocentesGrupo/<int:id_grupo>', methods=['GET'])
 def obtenerDocentesGrupo(id_grupo):
-    datos = controlador_curso_docente.obtenerDocentesporGrupo(id_grupo)    
+    datos = controlador_grupo_docente.obtenerDocentesporGrupo(id_grupo)    
     return jsonify(datos)
+
+@app.route('/eliminar_asignaciones_docentes/<int:idgrupo>', methods=['DELETE'])
+def eliminar_asignaciones_docentes(idgrupo):
+    resultado = controlador_grupo_docente.eliminar_asignaciones_docentes(idgrupo)
+    if 'success' in resultado:
+        return jsonify({'message': 'Asignaciones de docentes eliminadas exitosamente'}), 200
+    else:
+        return jsonify({'error': resultado['error']}), 500
 
 ## CURSO AMBIENTE
 
@@ -861,3 +828,10 @@ def asignar_disponibilidad_excel():
         conexion.close()
 
     return jsonify(resultados)
+
+import controladores.reportes.controlador_reporte as controlador_reporte
+
+@app.route("/reporte_horas_html", methods=["GET"])
+def reporte_horas_html():
+    reporte = controlador_reporte.obtener_reporte_horas()
+    return render_template('reportes/reporte_horas.html', reporte=reporte)

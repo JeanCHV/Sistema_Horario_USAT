@@ -425,7 +425,25 @@ def obtener_cursos_por_ciclo():
     cursos_por_ciclo = []
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT ciclo, COUNT(*) AS cantidad_cursos FROM curso GROUP BY ciclo ORDER BY ciclo;")
+            cursor.execute("""SELECT
+	curso.ciclo, 
+	COUNT(*) AS cantidad_cursos
+FROM
+	curso
+	INNER JOIN
+	grupo
+	ON 
+		curso.idcurso = grupo.idcurso
+	INNER JOIN
+	semestre_academico
+	ON 
+		grupo.idsemestre = semestre_academico.idsemestre
+WHERE
+	semestre_academico.descripcion = '2024-I'
+GROUP BY
+	curso.ciclo
+ORDER BY
+	curso.ciclo ASC;""")
             column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
 
@@ -460,12 +478,18 @@ def get_cursos_tipo():
 
     return cursos_tipo
 
-def get_cant_cursos_docente():
+def get_cant_grupos_curso():
     conexion = obtener_conexion()
     cursos_tipo = []
     try:
         with conexion.cursor() as cursor:
-            cursor.execute("SELECT CONCAT(p.nombres,' ',p.apellidos) AS docente,COUNT(cd.idcurso) AS cantidad_cursos FROM curso_docente cd JOIN persona p ON cd.idpersona=p.idpersona GROUP BY p.nombres,p.apellidos ORDER BY docente;")
+            cursor.execute("""SELECT curso.nombre AS nombre_curso, COUNT(grupo.id_grupo) AS cantidad_grupos
+FROM grupo
+JOIN curso ON grupo.idcurso = curso.idcurso
+JOIN semestre_academico ON grupo.idsemestre = semestre_academico.idsemestre
+WHERE semestre_academico.descripcion = '2024-I'
+GROUP BY curso.nombre;
+""")
             column_names = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
 

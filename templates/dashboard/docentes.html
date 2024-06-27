@@ -621,23 +621,35 @@
                 estado: $('#modificarEstadoDocente').val()
             };
 
-            $.ajax({
-                url: '/modificar_docente',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function (response) {
-                    if (response.error) {
-                        Swal.fire('Error', response.error, 'error');
-                    } else {
-                        Swal.fire('Éxito', 'Docente modificado correctamente', 'success');
-                        table.ajax.reload();
-                        $('#modalModificarDocente').modal('hide');
+            Swal.fire({
+                title: `¿Estás seguro de modificar este docente?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, modificar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                $.ajax({
+                    url: '/modificar_docente',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response.error) {
+                            Swal.fire('Error', response.error, 'error');
+                        } else {
+                            Swal.fire('Éxito', 'Docente modificado correctamente', 'success');
+                            table.ajax.reload();
+                            $('#modalModificarDocente').modal('hide');
+                        }
+                        $('#mensajeResultado').show();
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
                     }
-                    $('#mensajeResultado').show();
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
+                });
                 }
             });
         });

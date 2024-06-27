@@ -21,7 +21,7 @@
             <!-- Semestre -->
             <div class="d-flex mb-3 mt-3">
                 <label for="" class="mb-2 mt-2" style="width: 8%;">Semestre:</label>
-                <select class="form-select" aria-label="Default select example" id="semestre">
+                <select class="form-select" aria-label="Default select example" id="semestre" style="width: 45%;">
                     <option selected disabled>-----Seleccione un semestre-----</option>
                     {% for semestre in semestres %}
                     <option>{{ semestre[0] }}</option>
@@ -31,7 +31,7 @@
             <!-- Escuelas -->
             <div class="d-flex mb-3 me-4 mt-3">
                 <label for="" class="mb-2 mt-2" style="width: 8%;">Escuela:</label>
-                <select class="form-select" aria-label="Default select example" id="escuela">
+                <select class="form-select" aria-label="Default select example" id="escuela" style="width: 45%;">
                     <option selected disabled>-----Seleccione una escuela-----</option>
                     {% for escuela in escuelas %}
                     <option>{{ escuela[0] }}</option>
@@ -168,30 +168,42 @@
         var cursoId = $('#cursoIdSeleccionado').val();
         var ambientes = ambientesSeleccionados.map(amb => amb.id);
 
-        $.ajax({
-            url: '/asignar_ambientes',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ idcurso: cursoId, idambientes: ambientes, eliminados: ambientesEliminados.map(amb => amb.id) }),
-            success: function (response) {
-                $('#modalAsignacion').modal('hide');
-                rellenarTablaCursos($('#escuela').val(), $('#semestre').val());
-                ambientesEliminados = [];
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Actualización exitosa',
-                    text: 'Ambientes asignados exitosamente.'
+        Swal.fire({
+                title: `¿Estás seguro de asignar el(los) ambiente(s)?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, asignar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                $.ajax({
+                    url: '/asignar_ambientes',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ idcurso: cursoId, idambientes: ambientes, eliminados: ambientesEliminados.map(amb => amb.id) }),
+                    success: function (response) {
+                        $('#modalAsignacion').modal('hide');
+                        rellenarTablaCursos($('#escuela').val(), $('#semestre').val());
+                        ambientesEliminados = [];
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Actualización exitosa',
+                            text: 'Ambientes asignados exitosamente.'
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error al asignar ambientes:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al asignar ambientes. Por favor, inténtelo de nuevo.'
+                        });
+                    }
                 });
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al asignar ambientes:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al asignar ambientes. Por favor, inténtelo de nuevo.'
-                });
-            }
-        });
+                }
+            });
     });
 
         $('#tabla-cursos tbody').on('click', '.btnAsignar', function () {

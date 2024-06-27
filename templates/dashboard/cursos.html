@@ -820,22 +820,34 @@
                 id_plan_estudio: $('#planEstudioCursoMod').val()
             };
 
-            $.ajax({
-                url: '/modificar_curso',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function (response) {
-                    if (response.error) {
-                        Swal.fire('Error', response.error, 'error');
-                    } else {
-                        Swal.fire('Éxito', 'Curso modificado correctamente', 'success');
-                        table.ajax.reload();
-                        $('#modalModificarCurso').modal('hide');
+            Swal.fire({
+                title: `¿Estás seguro de modificar este curso?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, modificar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                $.ajax({
+                    url: '/modificar_curso',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        if (response.error) {
+                            Swal.fire('Error', response.error, 'error');
+                        } else {
+                            Swal.fire('Éxito', 'Curso modificado correctamente', 'success');
+                            table.ajax.reload();
+                            $('#modalModificarCurso').modal('hide');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire('Error', 'Hubo un error al modificar el curso', 'error');
                     }
-                },
-                error: function (xhr, status, error) {
-                    Swal.fire('Error', 'Hubo un error al modificar el curso', 'error');
+                });
                 }
             });
         });
