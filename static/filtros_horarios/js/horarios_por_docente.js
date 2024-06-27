@@ -8,7 +8,7 @@ for (let i = 7; i < 23; i++) {
     columna_horas.push(`${i.toString().padStart(2, '0')}:00 - ${(i + 1).toString().padStart(2, '0')}:00`);
 }
 
-const columna_dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Duolingo'];
+const columna_dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 let bmos_lista_datos = [];
 
 function mostrarAlerta(icon, title, text) {
@@ -75,8 +75,8 @@ $(document).ready(function () {
 const bmos_contenedor = document.querySelector("#buscador-multiopcion-sugerencias");
 const bmos_barra_busqueda = document.querySelector("#bmos-barra-busqueda");
 const bmos_input = bmos_barra_busqueda.querySelector("p");
-const bmos_lista_sugerencias = document.querySelector("#bmos-lista-sugerencias");
-const combo_semestre = document.querySelector("#combo_semestre");
+var bmos_lista_sugerencias = document.querySelector("#bmos-lista-sugerencias");
+var combo_semestre = document.querySelector("#combo_semestre");
 let index = -1;
 
 combo_semestre.addEventListener('change', () => {
@@ -87,23 +87,32 @@ combo_semestre.addEventListener('change', () => {
     } else {
         bmos_input.contentEditable = true;
         span_mensaje_error.textContent = "";
-        bmos_input.focus();
 
-        var bmos_etiquetas_busqueda = bmos_barra_busqueda.querySelectorAll(".bmos-etiqueta")
-        if (bmos_etiquetas_busqueda.length > 0) {
+        var tabs = document.querySelectorAll('div.docente-tab');
+        if (tabs.length > 0) {
             div_loading.style.display = "block";
-            bmos_etiquetas_busqueda.forEach(etiqueta => {
-                let horarios = obtenerHorariosDocente(etiqueta.id, combo_semestre.value)
+            tabs.forEach(tab => {
+                var id_docente = tab.id.substring(4);
+                var nombre_docente = tab.textContent.slice(0, -1);
+                var semestre = combo_semestre.value;
+                let horarios = obtenerHorariosDocente(id_docente, semestre)
                     .then(horarios => {
-                        crearTablaHorario(etiqueta.id, etiqueta.textContent.slice(0, -1), horarios);
+                        mostrarHorario(id_docente, nombre_docente, horarios, semestre); 
                         div_loading.style.display = "none";
+                        if(tab.classList.contains('activo')){
+                            tab.click();
+                        }
                     })
                     .catch(error => {
                         console.error('Error al obtener horarios:', error);
                         div_loading.style.display = "none";
+                        if(tab.classList.contains('activo')){
+                            tab.click();
+                        }
                     });
             });
         }
+        bmos_input.focus();
     }
 });
 
@@ -272,13 +281,25 @@ function agregarDocentePanel(idpersona, nombre_docente, horarios_docente, semest
     tab.onclick = () => {
         desmarcarTabsTodos();
         tab.classList.add('activo');
-        mostrarHorario(idpersona, nombre_docente, horarios_docente, semestre);
-        mostrarFotoDocente(idpersona); // Mostrar la foto del docente seleccionado
+        div_loading.style.display = "block";
+        let horariosX = obtenerHorariosDocente(idpersona, combo_semestre.value)
+            .then(horariosX => {
+                mostrarHorario(idpersona, nombre_docente, horariosX, combo_semestre.value);
+                mostrarFotoDocente(idpersona); // Mostrar la foto del docente seleccionado
+                bmos_input.focus();
+                div_loading.style.display = "none";
+            })
+            .catch(error => {
+                mostrarHorario(idpersona, nombre_docente, horariosX, combo_semestre.value);
+                mostrarFotoDocente(idpersona); // Mostrar la foto del docente seleccionado
+                bmos_input.focus();
+                console.error('Error al obtener horarios:', error);
+                div_loading.style.display = "none";
+            });
     };
 
     desmarcarTabsTodos();
     panel_docentes.appendChild(tab);
-
     mostrarHorario(idpersona, nombre_docente, horarios_docente, semestre);
     mostrarFotoDocente(idpersona); // Mostrar la foto del docente seleccionado al agregar el panel
 }
