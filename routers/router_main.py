@@ -652,6 +652,11 @@ def get_docente_sin_disponibilidad():
     get_docente_sin_disponibilidad = controlador_disponibilidad.get_docente_sin_disponibilidad()
     return jsonify(get_docente_sin_disponibilidad)
 
+@app.route('/get_docentes_no_asignados', methods=['GET'])
+def get_docentes_no_asignados():
+    get_docentes_no_asignados = controlador_disponibilidad.get_docentes_no_asignados()
+    return jsonify(get_docentes_no_asignados)
+
 # Ruta para agregar una nueva disponibilidad
 @app.route('/add_disponibilidad', methods=['POST'])
 def agregar_disponibilidad():

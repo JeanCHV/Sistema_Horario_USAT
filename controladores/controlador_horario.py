@@ -28,40 +28,6 @@ def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
     conexion.close()
     return Horarios
 
-#*********CABALLERO CAMBIA TU CONSULTA QUE EN LA BD ACTUALIZADA YA NO HAY SEMESTRE EN HORARIO***********
-
-# def obtener_horarios_por_docenteId_semestre(id_docente,semestre):
-#     conexion = obtener_conexion()
-#     Horarios = None
-#     with conexion.cursor() as cursor:
-#         cursor.execute(
-#             """SELECT idhorario, amb.nombre, dia, horainicio, horafin, h_virtual, h_presencial, sem.descripcion, hor.idpersona, id_grupo FROM horario hor 
-# INNER JOIN ambiente amb ON amb.idambiente = hor.idambiente
-# INNER JOIN persona per ON hor.idpersona = per.idpersona
-# INNER JOIN semestre_academico sem ON sem.idsemestre = hor.idsemestre 
-# WHERE per.idpersona = ""+%s+"" AND sem.descripcion = %s""", (id_docente,semestre))
-#         Horarios = cursor.fetchone()
-#     conexion.close()
-#     return Horarios
-
-# def obtener_horarios_por_docenteNombre_semestre(nombre_docente,semestre):
-#     conexion = obtener_conexion()
-#     Horarios = None
-#     with conexion.cursor() as cursor:
-#         cursor.execute(
-#             """SELECT idhorario, amb.nombre, dia, horainicio, horafin, h_virtual, h_presencial, sem.descripcion, hor.idpersona, id_grupo FROM horario hor 
-# INNER JOIN ambiente amb ON amb.idambiente = hor.idambiente
-# INNER JOIN persona per ON hor.idpersona = per.idpersona
-# INNER JOIN semestre_academico sem ON sem.idsemestre = hor.idsemestre 
-# WHERE per.apellidos||' '||per.nombres = ""+%s+"" AND sem.descripcion = %s""", (nombre_docente,semestre))
-#         Horarios = cursor.fetchone()
-#     conexion.close()
-#     return Horarios
-
-
-
-
-
 
 ######HORARIO POR AMBIENTE
 
@@ -146,20 +112,16 @@ def insertar_horarios_ia(horarios):
     conexion = obtener_conexion()
     try:
         with conexion.cursor() as cursor:
-            consulta_insert = """
-            INSERT INTO horario (idambiente, dia, horainicio, horafin, h_virtual, h_presencial, idpersona, id_grupo)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """
             for horario in horarios:
-                cursor.execute(consulta_insert, (
-                    horario['idambiente'],
+                cursor.callproc('InsertarHorario', (
+                    horario['aula'],
+                    horario['curso'],
                     horario['dia'],
-                    datetime.strptime(horario['horainicio'], '%H:%M:%S').time(),
-                    datetime.strptime(horario['horafin'], '%H:%M:%S').time(),
-                    horario['h_virtual'],
-                    horario['h_presencial'],
-                    horario['idpersona'],
-                    horario['id_grupo']
+                    horario['docente'],
+                    horario['grupo'],
+                    datetime.strptime(horario['hora_fin'], '%H:%M').time(),
+                    datetime.strptime(horario['hora_inicio'], '%H:%M').time(),
+                    horario['tipo_curso']
                 ))
         conexion.commit()
         return {"message": "Horarios insertados correctamente"}
