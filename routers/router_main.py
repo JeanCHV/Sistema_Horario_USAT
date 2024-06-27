@@ -36,6 +36,7 @@ import controladores.curso_docente.controlador_curso_docente as controlador_curs
 import controladores.controlador_edificio as controlador_edificio
 import controladores.disponibilidad.controlador_disponibilidad as controlador_disponibilidad
 import controladores.docente_disponibilidad.controlador_docente_disponibilidad as controlador_docente_disponibilidad
+import controladores.grupo_docente.controlador_grupo_docente as controlador_grupo_docente
 
 login_attempts = {}
 
@@ -650,6 +651,11 @@ def get_docente_sin_disponibilidad():
     get_docente_sin_disponibilidad = controlador_disponibilidad.get_docente_sin_disponibilidad()
     return jsonify(get_docente_sin_disponibilidad)
 
+@app.route('/get_docentes_no_asignados', methods=['GET'])
+def get_docentes_no_asignados():
+    get_docentes_no_asignados = controlador_grupo_docente.get_docentes_no_asignados()
+    return jsonify(get_docentes_no_asignados)
+
 # Ruta para agregar una nueva disponibilidad
 @app.route('/add_disponibilidad', methods=['POST'])
 def agregar_disponibilidad():
@@ -730,6 +736,7 @@ def docentesxcursos():
     escuelas = controlador_cursos.obtener_escuelas()
     return render_template("dashboard/docentexcurso.html", semestres=semestres , escuelas=escuelas)
 
+##  GRUPOS DOCENTES
 @app.route("/grupo_docentes")
 def grupo_docentes():
     semestres = controlador_cursos.obtener_semestres()
@@ -741,7 +748,7 @@ def grupo_docentes():
 def tabla_curso_docente(escuela,semestre):
     id_semestre = controlador_grupo.obtener_idsemestre(semestre)
     id_escuela = controlador_curso_docente.obtener_idescuela(escuela)
-    datos = controlador_curso_docente.datosCursoxDocente(id_escuela,id_semestre)
+    datos = controlador_grupo_docente.datosCursoxDocente(id_escuela,id_semestre)
     return jsonify(datos)
 
 @app.route('/asignar_docentes', methods=['POST'])
@@ -751,7 +758,7 @@ def asignar_docentes():
     docentes = data['docentes']
     eliminados = data['eliminados']
     
-    success, error = controlador_curso_docente.asignar_docentes_a_grupo(grupoId, docentes, eliminados)
+    success, error = controlador_grupo_docente.asignar_docentes_a_grupo(grupoId, docentes, eliminados)
     
     if success:
         return jsonify({'success': True})
@@ -760,8 +767,16 @@ def asignar_docentes():
 
 @app.route('/obtenerDocentesGrupo/<int:id_grupo>', methods=['GET'])
 def obtenerDocentesGrupo(id_grupo):
-    datos = controlador_curso_docente.obtenerDocentesporGrupo(id_grupo)    
+    datos = controlador_grupo_docente.obtenerDocentesporGrupo(id_grupo)    
     return jsonify(datos)
+
+@app.route('/eliminar_asignaciones_docentes/<int:idgrupo>', methods=['DELETE'])
+def eliminar_asignaciones_docentes(idgrupo):
+    resultado = controlador_grupo_docente.eliminar_asignaciones_docentes(idgrupo)
+    if 'success' in resultado:
+        return jsonify({'message': 'Asignaciones de docentes eliminadas exitosamente'}), 200
+    else:
+        return jsonify({'error': resultado['error']}), 500
 
 ## CURSO AMBIENTE
 

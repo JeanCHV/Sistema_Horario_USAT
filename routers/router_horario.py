@@ -30,6 +30,8 @@ def insertar_horarios_ia():
     horarios = data.get('horarios')
     if not horarios:
         return jsonify({"error": "No se proporcionaron horarios"}), 400
-    
     resultado = controlador_horario.insertar_horarios_ia(horarios)
-    return jsonify(resultado)
+    if "error" in resultado:
+        return jsonify(resultado), 500
+
+    return jsonify(resultado), 200

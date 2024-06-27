@@ -252,21 +252,21 @@ def mutacion(individuo):
 
 def algoritmo_genetico():
     try:
-        poblacion = generar_poblacion(10)  # Aumentar a 10 para mayor diversidad
+        poblacion = generar_poblacion(200)  # Aumentar a 200 para mayor diversidad
         
-        for generacion in range(10):  # Aumentar a 10 para más iteraciones
+        for generacion in range(200):  # Aumentar a 200 para más iteraciones
             nueva_poblacion = []
             
             padres = seleccion(poblacion)
             
-            while len(nueva_poblacion) < 10:
+            while len(nueva_poblacion) < 200:
                 padre1, padre2 = random.sample(padres, 2)
                 hijo1, hijo2 = cruce(padre1, padre2)
                 mutacion(hijo1)
                 mutacion(hijo2)
                 nueva_poblacion.extend([hijo1, hijo2])
             
-            poblacion = nueva_poblacion[:10]  # Limitar la población a 10
+            poblacion = nueva_poblacion[:200]  # Limitar la población a 200
         
         mejor_individuo = max(poblacion, key=calcular_fitness)
         
