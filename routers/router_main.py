@@ -645,20 +645,6 @@ def horarios_por_ciclo():
 def obtener_disponibilidad():
     return controlador_disponibilidad.get_disponibilidad()
 
-<<<<<<< Updated upstream
-@app.route('/get_docente_sin_disponibilidad', methods=['GET'])
-def get_docente_sin_disponibilidad():
-    get_docente_sin_disponibilidad = controlador_disponibilidad.get_docente_sin_disponibilidad()
-    return jsonify(get_docente_sin_disponibilidad)
-
-@app.route('/get_docentes_no_asignados', methods=['GET'])
-def get_docentes_no_asignados():
-    get_docentes_no_asignados = controlador_grupo_docente.get_docentes_no_asignados()
-    return jsonify(get_docentes_no_asignados)
-
-# Ruta para agregar una nueva disponibilidad
-=======
->>>>>>> Stashed changes
 @app.route('/add_disponibilidad', methods=['POST'])
 def agregar_nueva_disponibilidad():
     data = request.get_json()
